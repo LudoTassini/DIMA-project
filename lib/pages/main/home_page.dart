@@ -1,4 +1,4 @@
-import 'package:bloqo/pages/user_page.dart';
+import 'package:bloqo/pages/main/user_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/constants.dart';
@@ -22,44 +22,110 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    // Define your screens here
-    const HomePage(title: 'Homepage'),
-    const UserPage(title: 'Account and Settings'),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.russianViolet,
         title: Text(widget.title),
+        backgroundColor: AppColors.russianViolet,
       ),
-      body: _widgetOptions.elementAt(_selectedIndex), // Display selected screen
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.book)),
+            label: 'Learn',
+          ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.search)),
+            label: 'Search',
+          ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.edit)),
+            label: 'Editor',
+          ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.person)),
             label: 'Account',
           ),
-          // Add more items as needed
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.seasalt,
-        onTap: _onItemTapped,
       ),
+      body: <Widget>[
+        /// Home page
+        Card(
+          shadowColor: Colors.transparent,
+          margin: const EdgeInsets.all(8.0),
+          child: SizedBox.expand(
+            child: Center(
+              child: Text(
+                'Home page',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+          ),
+        ),
+
+        /// Learn page
+        Card(
+          shadowColor: Colors.transparent,
+          margin: const EdgeInsets.all(8.0),
+          child: SizedBox.expand(
+            child: Center(
+              child: Text(
+                'Home page',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+          ),
+        ),
+
+        /// Search page
+        Card(
+          shadowColor: Colors.transparent,
+          margin: const EdgeInsets.all(8.0),
+          child: SizedBox.expand(
+            child: Center(
+              child: Text(
+                'Home page',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+          ),
+        ),
+
+        /// Edit page
+        Card(
+          shadowColor: Colors.transparent,
+          margin: const EdgeInsets.all(8.0),
+          child: SizedBox.expand(
+            child: Center(
+              child: Text(
+                'Home page',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+          ),
+        ),
+
+        /// User page
+        const UserPage(title: 'Account and Settings'),
+      ][currentPageIndex],
     );
   }
+
+
 }
