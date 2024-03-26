@@ -8,5 +8,6 @@ class AppColors {
   static const Color primaryBackground = Color(0xFFF1F4F8);
   static const Color secondaryBackground = Color(0xFFFFFFFF);
   static const Color primaryText = Color(0xFF14181B);
+  static const Color newFuchsiaRose = Color(0x009f2f58);
 
 }

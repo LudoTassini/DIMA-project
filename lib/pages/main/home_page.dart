@@ -1,3 +1,4 @@
+import 'package:bloqo/pages/main/nav_bar.dart';
 import 'package:bloqo/pages/main/user_page.dart';
 import 'package:flutter/material.dart';
 
@@ -32,99 +33,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         backgroundColor: AppColors.russianViolet,
       ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.amber,
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.book)),
-            label: 'Learn',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.search)),
-            label: 'Search',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.edit)),
-            label: 'Editor',
-          ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.person)),
-            label: 'Account',
-          ),
-        ],
-      ),
-      body: <Widget>[
-        /// Home page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-
-        /// Learn page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-
-        /// Search page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-
-        /// Edit page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-
-        /// User page
-        const UserPage(title: 'Account and Settings'),
-      ][currentPageIndex],
-    );
+      bottomNavigationBar: const NavBar(),
+      );
   }
 
 
