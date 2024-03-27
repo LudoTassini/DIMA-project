@@ -1,7 +1,15 @@
-import 'pages/all.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
+import 'pages/all.dart';
+
 void main() {
+
+  //ensures that notification bar is shown also on iOS
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
+
+  //runs app
   runApp(const MyApp());
 }
 

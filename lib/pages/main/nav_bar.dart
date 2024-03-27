@@ -1,5 +1,6 @@
-import 'package:bloqo/constants/constants.dart';
 import 'package:flutter/material.dart';
+
+import '../../style/app_colors.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});

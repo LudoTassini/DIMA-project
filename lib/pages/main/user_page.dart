@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/constants.dart';
+import '../../style/app_colors.dart';
 import 'nav_bar.dart';
 
 class UserPage extends StatefulWidget {

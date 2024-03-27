@@ -8,6 +8,9 @@ class AppColors {
   static const Color primaryBackground = Color(0xFFF1F4F8);
   static const Color secondaryBackground = Color(0xFFFFFFFF);
   static const Color primaryText = Color(0xFF14181B);
+
+  // used for navbar workaround to delete overlay when a
+  // navigation destination is selected
   static const Color newFuchsiaRose = Color(0x009f2f58);
 
 }

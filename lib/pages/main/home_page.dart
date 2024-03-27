@@ -1,8 +1,7 @@
 import 'package:bloqo/pages/main/nav_bar.dart';
-import 'package:bloqo/pages/main/user_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants/constants.dart';
+import '../../style/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
