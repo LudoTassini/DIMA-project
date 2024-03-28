@@ -47,8 +47,6 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   background_image: assets/images/bloqo_splashscreen.png
-  android_12:
-    background_image: assets/images/bloqo_splashscreen.png
 
 dev_dependencies:
   flutter_test:
@@ -73,9 +71,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+     - assets/images/bloqo_logo.png
+     - assets/images/bloqo_logo_partial.png
+     - assets/images/bloqo_splashscreen.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

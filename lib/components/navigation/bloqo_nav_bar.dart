@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_colors.dart';
 
-class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+class BloqoNavBar extends StatefulWidget {
+  const BloqoNavBar({super.key});
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<BloqoNavBar> createState() => _BloqoNavBarState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _BloqoNavBarState extends State<BloqoNavBar> {
   int currentPageIndex = 0;
 
   @override

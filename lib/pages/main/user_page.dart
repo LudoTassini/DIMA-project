@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../style/app_colors.dart';
-import 'nav_bar.dart';
+import '../../components/navigation/bloqo_nav_bar.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, required this.title});
@@ -18,11 +18,8 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: AppColors.russianViolet,
-      ),
-      bottomNavigationBar: const NavBar(),
+      appBar: AppBar(),
+      bottomNavigationBar: const BloqoNavBar()
     );
   }
 }
