@@ -1,7 +1,8 @@
-import 'package:bloqo/components/bloqo_text_field.dart';
+import 'package:bloqo/components/containers/bloqo_main_container.dart';
+import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
 import '../../utils/regex_parser.dart';
 
@@ -35,21 +36,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.russianViolet,
-              AppColors.fuchsiaRose
-            ],
-            stops: [0, 1],
-            begin: AlignmentDirectional(0.87, -1),
-            end: AlignmentDirectional(-0.87, 1),
-          ),
-        ),
-        alignment: const AlignmentDirectional(0, 0),
+      body: BloqoMainContainer(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

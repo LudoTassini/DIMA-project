@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../style/app_colors.dart';
+import '../../style/app_colors.dart';
 
 class BloqoTextField extends StatefulWidget {
   const BloqoTextField({
