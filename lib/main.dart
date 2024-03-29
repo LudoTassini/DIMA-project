@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // it's here just to signal I should have installed it (authentication)
 
 
-void main() {
+Future<void> main() async {
 
   //ensures WidgetsFlutterBinding is initialized before changing some preferences
   WidgetsFlutterBinding.ensureInitialized();
