@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "736847386121",
+    "project_id": "dima-project-91bba",
+    "storage_bucket": "dima-project-91bba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736847386121:android:c77590f1a2b58eaa37cad8",
+        "android_client_info": {
+          "package_name": "com.example.bloqo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_guKaBDjSc1VlTfdIzp3HXsSsDP8J0_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
