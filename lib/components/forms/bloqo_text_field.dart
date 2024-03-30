@@ -42,8 +42,6 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
 
   final _focusNode = FocusNode();
 
-  String? value;
-
   @override
   void initState() {
     super.initState();
@@ -93,7 +91,8 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
                 focusedBorder: InputBorder.none,
                 errorBorder: InputBorder.none,
                 focusedErrorBorder: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.always
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                errorMaxLines: 10,
               ),
               style: Theme.of(context).textTheme.bodySmall,
               inputFormatters: [
@@ -102,11 +101,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
               autovalidateMode: AutovalidateMode.disabled,
               validator: widget.validator,
               onChanged: (String? value) {
-                if (widget.formKey.currentState!.validate()) {
-                  setState(() {
-                    this.value = value;
-                  });
-                }
+                widget.formKey.currentState!.validate();
               },
               onTap: widget.onTap,
             )

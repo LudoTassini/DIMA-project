@@ -6,6 +6,7 @@ class AppColors {
   static const Color chineseViolet = Color(0xFF745575); // on FlutterFlow this color is actually Chinese Violet 2
   static const Color darkFuchsia = Color(0xFF953A5C);
   static const Color fuchsiaRose = Color(0xFFD23E74); // on FlutterFlow this color is actually Fuchsia Rose 2
+  static const Color inactiveTracker = Color(0xFFE0E3E7);
 
   static const Color primaryText = Color(0xFF14181B);
   static const Color secondaryText = Color(0xFF57636C);

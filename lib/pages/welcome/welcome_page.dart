@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
-import '../../utils/regex_parser.dart';
+import '../../utils/text_parser.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -26,7 +26,8 @@ class _WelcomePageState extends State<WelcomePage> {
   // state
   bool showLoginError = false;
 
-  final formKey = GlobalKey<FormState>();
+  final formKeyEmail = GlobalKey<FormState>();
+  final formKeyPassword = GlobalKey<FormState>();
 
   late TextEditingController emailController;
   late TextEditingController passwordController;
@@ -72,47 +73,41 @@ class _WelcomePageState extends State<WelcomePage> {
                 child: Column(
                   children: [
                     Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'Welcome!',
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: AppColors.russianViolet
-                              )
-                            ),
-                            BloqoTextField(
-                              formKey: formKey,
-                              controller: emailController,
-                              labelText: "Email",
-                              hintText: "e.g. bloqo@domain.com",
-                              maxInputLength: Constants.maxEmailLength,
-                              validator: (String? value) {
-                                return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
-                              },
-                              keyboardType: TextInputType.emailAddress,
-                              onTap: () {
-                                setState(() {
-                                  showLoginError = false;
-                                });
-                              },
-                            ),
-                            BloqoTextField(
-                              formKey: formKey,
-                              controller: passwordController,
-                              labelText: "Password",
-                              hintText: "type your password here",
-                              maxInputLength: Constants.maxPasswordLength,
-                              obscureText: true,
-                              onTap: () {
-                                setState(() {
-                                  showLoginError = false;
-                                });
-                              },
-                            ),
-                          ],
-                        )
+                      key: formKeyEmail,
+                      child:
+                      BloqoTextField(
+                        formKey: formKeyEmail,
+                        controller: emailController,
+                        labelText: "Email",
+                        hintText: "e.g. bloqo@domain.com",
+                        maxInputLength: Constants.maxEmailLength,
+                        validator: (String? value) {
+                          return (value == null || !TextParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        onTap: () {
+                          setState(() {
+                            showLoginError = false;
+                          });
+                        },
+                      ),
+                    ),
+                    Form(
+                        key: formKeyPassword,
+                        child:
+                        BloqoTextField(
+                          formKey: formKeyPassword,
+                          controller: passwordController,
+                          labelText: "Password",
+                          hintText: "type your password here",
+                          maxInputLength: Constants.maxPasswordLength,
+                          obscureText: true,
+                          onTap: () {
+                            setState(() {
+                              showLoginError = false;
+                            });
+                          },
+                        ),
                     ),
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
