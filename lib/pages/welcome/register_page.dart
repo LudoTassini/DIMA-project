@@ -60,123 +60,128 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                child: BloqoSeasaltContainer(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                          child: Text(
-                              'Thank you for joining the bloQo community!',
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                  color: AppColors.russianViolet
-                              )
-                          ),
-                        ),
-                        Text(
-                          'We want you to have the best experience. That\'s why we are asking a few data about you.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              color: AppColors.russianViolet
-                          ),
-                        ),
-                        BloqoTextField(
-                          formKey: formKey,
-                          controller: emailController,
-                          labelText: "Email",
-                          hintText: "e.g. bloqo@domain.com",
-                          maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) {
-                            return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
-                          },
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        BloqoTextField(
-                          formKey: formKey,
-                          controller: passwordController,
-                          labelText: "Password",
-                          hintText: "type your password here",
-                          maxInputLength: Constants.maxPasswordLength,
-                          obscureText: true,
-                        ),
-                        BloqoTextField(
-                          formKey: formKey,
-                          controller: usernameController,
-                          labelText: "Nickname",
-                          hintText: "e.g. iluvbloqo00",
-                          maxInputLength: Constants.maxUsernameLength,
-                        ),
-                        BloqoTextField(
-                          formKey: formKey,
-                          controller: fullNameController,
-                          labelText: "Full name",
-                          hintText: "e.g. Ludovica Tassini",
-                          maxInputLength: Constants.maxFullNameLength,
-                        ),
+            BloqoSeasaltContainer(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
                       Padding(
-                        padding:
-                        const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Full name visible to others',
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    color: AppColors.russianViolet
-                                ),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                        child: Text(
+                            'Thank you for joining the bloQo community!',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              color: AppColors.russianViolet,
+                              fontSize: 25,
+                            )
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Text(
+                          'We want you to have the best experience.\nThat\'s why we are asking a few data about you.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                            color: AppColors.russianViolet,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      BloqoTextField(
+                        formKey: formKey,
+                        controller: emailController,
+                        labelText: "Email",
+                        hintText: "e.g. bloqo@domain.com",
+                        maxInputLength: Constants.maxEmailLength,
+                        validator: (String? value) {
+                          return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      BloqoTextField(
+                        formKey: formKey,
+                        controller: passwordController,
+                        labelText: "Password",
+                        hintText: "type your password here",
+                        maxInputLength: Constants.maxPasswordLength,
+                        obscureText: true,
+                      ),
+                      BloqoTextField(
+                        formKey: formKey,
+                        controller: usernameController,
+                        labelText: "Nickname",
+                        hintText: "e.g. iluvbloqo00",
+                        maxInputLength: Constants.maxUsernameLength,
+                      ),
+                      BloqoTextField(
+                        formKey: formKey,
+                        controller: fullNameController,
+                        labelText: "Full name",
+                        hintText: "e.g. Ludovica Tassini",
+                        maxInputLength: Constants.maxFullNameLength,
+                      ),
+                    Padding(
+                      padding:
+                      const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'Full name visible to others',
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: AppColors.russianViolet,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      5, 0, 5, 0),
-                                  child: Switch.adaptive(
-                                    value: switchValue,
-                                    onChanged: (newValue) async {
-                                      setState(() =>
-                                        switchValue = newValue);
-                                    },
-                                    activeColor: AppColors.russianViolet,
-                                    activeTrackColor: AppColors.russianViolet,
-                                    inactiveTrackColor: Colors.grey,
-                                    inactiveThumbColor: Colors.grey
-                                  ),
-                                ),
-                                Text(
-                                  'Yes',
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      color: AppColors.russianViolet
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 20),
-                        child: FilledButton(
-                          style: Theme.of(context).filledButtonTheme.style?.copyWith(
-                              backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                           ),
-                          onPressed: () {
-                            tryRegister(email: emailController.text, password: passwordController.text,
-                              username: usernameController.text, fullName: fullNameController.text);
-                          },
-                          child: const Text('Register'),
-                        ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    15, 0, 5, 0),
+                                child: Switch.adaptive(
+                                  value: switchValue,
+                                  onChanged: (newValue) async {
+                                    setState(() =>
+                                      switchValue = newValue);
+                                  },
+                                  activeColor: AppColors.russianViolet,
+                                  activeTrackColor: AppColors.russianViolet,
+                                  inactiveTrackColor: AppColors.inactiveTracker,
+                                  inactiveThumbColor: AppColors.seasalt,
+                                ),
+                              ),
+                              Text(
+                                switchValue ? 'Yes': 'No',
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: AppColors.russianViolet,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 20),
+                      child: FilledButton(
+                        style: Theme.of(context).filledButtonTheme.style?.copyWith(
+                            backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
+                        ),
+                        onPressed: () {
+                          tryRegister(email: emailController.text, password: passwordController.text,
+                            username: usernameController.text, fullName: fullNameController.text);
+                        },
+                        child: const Text('Register'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
