@@ -1,4 +1,6 @@
+import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
+import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,67 +57,64 @@ class _WelcomePageState extends State<WelcomePage> {
                 fit: BoxFit.contain,
               ),
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.seasalt,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 20),
-                  child: Column(
-                    children: [
-                      Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                'Welcome!',
-                                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                  color: AppColors.russianViolet
-                                )
-                              ),
-                              BloqoTextField(
-                                formKey: formKey,
-                                controller: emailController,
-                                labelText: "Email",
-                                hintText: "e.g. bloqo@domain.com",
-                                maxInputLength: Constants.maxEmailLength,
-                                validator: (String? value) {
-                                  return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
-                                },
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                              BloqoTextField(
-                                formKey: formKey,
-                                controller: passwordController,
-                                labelText: "Password",
-                                hintText: "type your password here",
-                                maxInputLength: Constants.maxPasswordLength,
-                                obscureText: true,
-                              ),
-                            ],
-                          )
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 0),
-                        child: FilledButton(
-                          style: Theme.of(context).filledButtonTheme.style?.copyWith(
-                            backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
-                          ),
-                          onPressed: () {
-                            tryLogin(email: emailController.text, password: passwordController.text);
-                          },
-                          child: const Text('Login'),
+            BloqoSeasaltContainer(child:
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 20),
+                child: Column(
+                  children: [
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              'Welcome!',
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                color: AppColors.russianViolet
+                              )
+                            ),
+                            BloqoTextField(
+                              formKey: formKey,
+                              controller: emailController,
+                              labelText: "Email",
+                              hintText: "e.g. bloqo@domain.com",
+                              maxInputLength: Constants.maxEmailLength,
+                              validator: (String? value) {
+                                return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
+                              },
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            BloqoTextField(
+                              formKey: formKey,
+                              controller: passwordController,
+                              labelText: "Password",
+                              hintText: "type your password here",
+                              maxInputLength: Constants.maxPasswordLength,
+                              obscureText: true,
+                            ),
+                          ],
+                        )
+                    ),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 15),
+                      child: FilledButton(
+                        style: Theme.of(context).filledButtonTheme.style?.copyWith(
+                          backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
-                      )
-                    ]
-                  ),
+                        onPressed: () {
+                          tryLogin(email: emailController.text, password: passwordController.text);
+                        },
+                        child: const Text('Login'),
+                      ),
+                    ),
+                    const BloqoClickableText(
+                      text: "Forgot your password?",
+                      color: AppColors.russianViolet
+                    )
+                  ]
                 ),
               ),
-            )
+            ),
           ],
         ),
       )
