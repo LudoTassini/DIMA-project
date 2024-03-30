@@ -24,8 +24,11 @@ class BloqoMainContainer extends StatelessWidget{
         ),
       ),
       alignment: const AlignmentDirectional(0, 0),
-      child: SingleChildScrollView(
-        child: child
+      child: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          child: child
+        )
       )
     );
   }
