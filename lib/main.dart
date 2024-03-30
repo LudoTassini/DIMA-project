@@ -22,6 +22,11 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
+  //initialize Firebase app
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   //runs app
   runApp(const MyApp());
 
