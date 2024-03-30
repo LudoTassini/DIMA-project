@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:bloqo/pages/main/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +20,10 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+
+  // state
+  bool showLoginError = false;
+
   final formKey = GlobalKey<FormState>();
 
   late TextEditingController emailController;
@@ -101,8 +108,26 @@ class _WelcomePageState extends State<WelcomePage> {
                         style: Theme.of(context).filledButtonTheme.style?.copyWith(
                           backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
-                        onPressed: () {
-                          tryLogin(email: emailController.text, password: passwordController.text);
+                        onPressed: () async {
+                          try {
+                            await login(email: emailController.text,
+                                password: passwordController.text).then((value) => {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(
+                                        title: ("Welcome, $value!")
+                                      )
+                                    ),
+                                  )
+                                }
+                            );
+                          } on FirebaseAuthException catch (e) {
+                            print('Error: $e');
+                            setState(() {
+                              showLoginError = true;
+                            });
+                          }
                         },
                         child: const Text('Login'),
                       ),
@@ -115,30 +140,52 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    'New here?',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: AppColors.seasalt,
+                      fontSize: 35,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                    child: FilledButton(
+                      style: Theme.of(context).filledButtonTheme.style?.copyWith(
+                        textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        )),
+                        backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet),
+                        fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
+                        padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(30, 16, 30, 16)),
+                      ),
+                      onPressed: () {
+                        //TODO
+                      },
+                      child: const Text('Register now!'),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       )
     );
   }
 
-  Future<void> tryLogin({required String email, required String password}) async {
-    try {
+  Future<String?> login({required String email, required String password}) async {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       print('Login successful: $userCredential');
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-credential') {
-        print('The username or the password is not correct.');
-      } else {
-        print('An error occurred: ${e.message}');
-        print(e.code);
-      }
-    } catch (e) {
-      print('Unexpected error: $e');
-    }
+      return userCredential.user?.email;
   }
-
 
 }
