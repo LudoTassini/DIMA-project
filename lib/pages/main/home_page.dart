@@ -1,7 +1,6 @@
+import 'package:bloqo/components/navigation/bloqo_app_bar.dart';
 import 'package:bloqo/components/navigation/bloqo_nav_bar.dart';
 import 'package:flutter/material.dart';
-
-import '../../style/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -17,12 +16,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: AppColors.russianViolet,
-      ),
+      appBar: BloqoAppBar.get(context: context, title: widget.title),
       bottomNavigationBar: const BloqoNavBar(),
       );
   }

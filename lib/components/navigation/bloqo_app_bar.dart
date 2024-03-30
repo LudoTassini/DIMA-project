@@ -2,23 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_colors.dart';
 
-class BloqoAppBar extends StatefulWidget {
-  const BloqoAppBar({super.key, required this.title});
+class BloqoAppBar{
 
-  final String title;
-
-  @override
-  State<BloqoAppBar> createState() => _BloqoAppBarState();
-}
-
-class _BloqoAppBarState extends State<BloqoAppBar> {
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: Text(widget.title),
-      backgroundColor: AppColors.russianViolet,
+  static PreferredSize get({required BuildContext context, required String title}){
+    return PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          title: Text(title,
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                color: AppColors.seasalt
+            ),
+          ),
+          backgroundColor: AppColors.russianViolet,
+        )
     );
-  }
-
+  } 
 }
