@@ -1,5 +1,6 @@
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
@@ -121,8 +122,41 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void tryLogin({required String email, required String password}){
-    //TODO
+  /* Future<void> tryLogin({required String email, required String password}) async {
+    print("siamo qui");
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+      print(userCredential);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  } */
+
+  Future<void> tryLogin({required String email, required String password}) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('Login successful: $userCredential');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-credential') {
+        print('The username or the password is not correct.');
+      } else {
+        print('An error occurred: ${e.message}');
+        print(e.code);
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
+
 
 }

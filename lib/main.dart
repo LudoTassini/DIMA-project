@@ -22,14 +22,10 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  //initialize Firestore instance
-  FirebaseFirestore db = FirebaseFirestore.instance;
-
-  await db.collection("DIMA-project").get().then((event) {
-    for (var doc in event.docs) {
-      print("${doc.id} => ${doc.data()}");
-    }
-  });
+  //initialize Firebase app
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   //runs app
   runApp(const MyApp());
