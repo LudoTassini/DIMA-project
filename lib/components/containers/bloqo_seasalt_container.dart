@@ -10,7 +10,7 @@ class BloqoSeasaltContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.seasalt,
