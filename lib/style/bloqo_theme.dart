@@ -55,10 +55,6 @@ class BloqoTheme{
           ),
           elevation: 3,
           padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 12),
-          /*side: const BorderSide(
-            color: Colors.transparent,
-            width: 1,
-          ),*/
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           fixedSize: const Size(double.infinity, 50)
         )
