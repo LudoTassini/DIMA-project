@@ -22,27 +22,28 @@ class _BloqoNavBarState extends State<BloqoNavBar> {
                 (Set<MaterialState> states) => states.contains(MaterialState.selected)
                 ? const TextStyle(
                     color: AppColors.russianViolet,
-                    fontSize: 14
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15
                 )
                 : const TextStyle(
                     color: AppColors.seasalt,
-                    fontSize: 14
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15
                 ),
           ),
         ),
-
         child: NavigationBar(
           onDestinationSelected: (int index) {
             setState(() {
               currentPageIndex = index;
             });
           },
-          indicatorColor: AppColors.newFuchsiaRose,
+          indicatorColor: AppColors.newDarkFuchsia,
           animationDuration: const Duration(),
           elevation: 2,
-          overlayColor: MaterialStateProperty.all(AppColors.fuchsiaRose),
+          overlayColor: MaterialStateProperty.all(AppColors.newDarkFuchsia),
           selectedIndex: currentPageIndex,
-          backgroundColor: AppColors.fuchsiaRose,
+          backgroundColor: AppColors.darkFuchsia,
           destinations: const <Widget>[
             NavigationDestination(
               selectedIcon: Icon(Icons.home_outlined, color: AppColors.russianViolet, size: BloqoNavBar.navBarIconSize,),
