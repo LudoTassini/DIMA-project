@@ -17,6 +17,8 @@ class BloqoTextField extends StatefulWidget {
     this.validator,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+
+    this.onTap
   });
 
   final GlobalKey<FormState> formKey;
@@ -29,6 +31,8 @@ class BloqoTextField extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final bool obscureText;
   final TextInputType keyboardType;
+
+  final Function()? onTap;
 
   @override
   State<BloqoTextField> createState() => _BloqoTextFieldState();
@@ -104,6 +108,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
                   });
                 }
               },
+              onTap: widget.onTap,
             )
           )
         )

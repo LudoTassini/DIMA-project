@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/components/errors/bloqo_error_text.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/main/home_page.dart';
 import 'package:bloqo/pages/welcome/register_page.dart';
@@ -91,6 +92,11 @@ class _WelcomePageState extends State<WelcomePage> {
                                 return (value == null || !RegexParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
                               },
                               keyboardType: TextInputType.emailAddress,
+                              onTap: () {
+                                setState(() {
+                                  showLoginError = false;
+                                });
+                              },
                             ),
                             BloqoTextField(
                               formKey: formKey,
@@ -99,29 +105,37 @@ class _WelcomePageState extends State<WelcomePage> {
                               hintText: "type your password here",
                               maxInputLength: Constants.maxPasswordLength,
                               obscureText: true,
+                              onTap: () {
+                                setState(() {
+                                  showLoginError = false;
+                                });
+                              },
                             ),
                           ],
                         )
                     ),
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 15),
+                      padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
                       child: FilledButton(
                         style: Theme.of(context).filledButtonTheme.style?.copyWith(
                           backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
                         onPressed: () async {
+                          setState(() {
+                            showLoginError = false;
+                          });
                           try {
                             await login(email: emailController.text,
-                                password: passwordController.text).then((value) => {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(
-                                        title: ("Welcome, $value!")
-                                      )
-                                    ),
-                                  )
-                                }
+                              password: passwordController.text).then((value) => {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      title: ("Welcome, $value!")
+                                    )
+                                  ),
+                                )
+                              }
                             );
                           } on FirebaseAuthException catch (e) {
                             print('Error: $e');
@@ -133,9 +147,16 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: const Text('Login'),
                       ),
                     ),
-                    const BloqoClickableText(
+                    showLoginError ? const Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
+                      child: BloqoErrorText(text: "Wrong credentials. Please check them and try again."))
+                    : Container(),
+                    BloqoClickableText(
                       text: "Forgot your password?",
-                      color: AppColors.russianViolet
+                      color: AppColors.russianViolet,
+                      onPressed: () {
+                        //TODO
+                      },
                     )
                   ]
                 ),
@@ -155,7 +176,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                   child: FilledButton(
                     style: Theme.of(context).filledButtonTheme.style?.copyWith(
-                      textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
+                    textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
                       )),

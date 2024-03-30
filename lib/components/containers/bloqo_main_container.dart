@@ -16,7 +16,7 @@ class BloqoMainContainer extends StatelessWidget{
         gradient: LinearGradient(
           colors: [
             AppColors.russianViolet,
-            AppColors.fuchsiaRose
+            AppColors.darkFuchsia
           ],
           stops: [0, 1],
           begin: AlignmentDirectional(0.87, -1),
