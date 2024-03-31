@@ -16,7 +16,7 @@ class BloqoClickableText extends StatelessWidget{
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
-        textStyle: MaterialStateProperty.resolveWith((states) => TextStyle(
+        textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
           fontWeight: FontWeight.bold,
           decoration: TextDecoration.underline
         )),
