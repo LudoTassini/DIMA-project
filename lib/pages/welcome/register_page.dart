@@ -1,9 +1,8 @@
-import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
+import 'package:bloqo/data_structures/bloqo_user.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
@@ -130,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               return null;
                             }
                             else {
-                              String errorMessage = createPasswordErrorString(results);
+                              String errorMessage = _createPasswordErrorString(results);
                               return errorMessage;
                             }
                           },
@@ -148,6 +147,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           validator: (String? value) {
                             if (value == null || value.length < Constants.minUsernameLength) {
                               return "The username must be at least ${Constants.minUsernameLength} characters long.";
+                            }
+                            else{
+                              return null;
                             }
                           }
                         ),
@@ -216,19 +218,26 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: Theme.of(context).filledButtonTheme.style?.copyWith(
                             backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
-                        onPressed: () {
-                          tryRegister(email: emailController.text, password: passwordController.text,
-                            username: usernameController.text, fullName: fullNameController.text,
-                            isFullNameVisible: switchValue);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(
-                                  title: ("Welcome, ${usernameController.text}!")
-                                //FIXME: gestire eccezioni -> vanno spostate qui
+                        onPressed: () async {
+                          try {
+                            await _tryRegister(email: emailController.text,
+                                password: passwordController.text,
+                                username: usernameController.text,
+                                fullName: fullNameController.text,
+                                isFullNameVisible: switchValue);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    HomePage(
+                                        title: ("Welcome, ${usernameController.text}!"
+                                    )
+                                ),
                               )
-                            ),
-                          );
+                            );
+                          } on FirebaseAuthException catch (e) {
+                            print('Error: $e');
+                          } // TODO: messaggi più specifici per ogni tipo di errore
                         },
                         child: const Text('Register'),
                       ),
@@ -244,24 +253,20 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<void> tryRegister({required String email, required String password, required String username,
+Future<void> _tryRegister({required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
-  var db = FirebaseFirestore.instance;
-  final user = <String, Object>{
-    "email": email,
-    "username": username,
-    "full_name": fullName,
-    "is_full_name_visible": isFullNameVisible,
-  };
-  try{
-    FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    db.collection("users").doc().set(user).onError((e, _) => print("Error writing document: $e")); //FIXME: rollback !!!!
-  } on FirebaseAuthException catch (e) {
-    print('Error: $e');
-  } // TODO: messaggi più specifici per ogni tipo di errore
+  final user = BloqoUser(
+      email: email,
+      username: username,
+      fullName: fullName,
+      isFullNameVisible: isFullNameVisible
+  );
+  FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+  var ref = BloqoUser.getRef();
+  await ref.doc().set(user);
 }
 
-String createPasswordErrorString(List<bool> validationResults) {
+String _createPasswordErrorString(List<bool> validationResults) {
   String messages = "";
 
   if (!validationResults[0]) {

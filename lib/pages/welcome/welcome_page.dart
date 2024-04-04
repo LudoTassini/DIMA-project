@@ -10,6 +10,7 @@ import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../data_structures/bloqo_user.dart';
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
 import '../../utils/text_parser.dart';
@@ -120,7 +121,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             showLoginError = false;
                           });
                           try {
-                            await login(email: emailController.text,
+                            await _tryLogin(email: emailController.text,
                               password: passwordController.text).then((value) => {
                                 Navigator.pushReplacement(
                                   context,
@@ -133,7 +134,6 @@ class _WelcomePageState extends State<WelcomePage> {
                               }
                             );
                           } on FirebaseAuthException catch (e) {
-                            print('Error: $e');
                             setState(() {
                               showLoginError = true;
                             });
@@ -198,13 +198,15 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  Future<String?> login({required String email, required String password}) async {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      print('Login successful: $userCredential');
-      return userCredential.user?.email;
-  }
+}
 
+Future<String> _tryLogin({required String email, required String password}) async {
+  await FirebaseAuth.instance.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+  var ref = BloqoUser.getRef();
+  var querySnapshot = await ref.where("email", isEqualTo: email).get();
+  BloqoUser user = querySnapshot.docs.first.data();
+  return user.username;
 }
