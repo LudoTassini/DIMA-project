@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
-import 'package:bloqo/components/errors/bloqo_error_text.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/main/home_page.dart';
 import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../data_structures/bloqo_user.dart';
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
-import '../../utils/text_parser.dart';
+import '../../utils/text_validator.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -68,11 +68,18 @@ class _WelcomePageState extends State<WelcomePage> {
                 fit: BoxFit.contain,
               ),
             ),
-            BloqoSeasaltContainer(child:
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 20),
+            BloqoSeasaltContainer(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 15),
                 child: Column(
                   children: [
+                    Text(
+                      'Welcome!',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        color: AppColors.russianViolet,
+                      )
+                    ),
                     Form(
                       key: formKeyEmail,
                       child:
@@ -82,9 +89,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         labelText: "Email",
                         hintText: "e.g. bloqo@domain.com",
                         maxInputLength: Constants.maxEmailLength,
-                        validator: (String? value) {
-                          return (value == null || !TextParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
-                        },
+                        validator: (String? value) {return _emailValidator(value);},
                         keyboardType: TextInputType.emailAddress,
                         onTap: () {
                           setState(() {
@@ -117,35 +122,31 @@ class _WelcomePageState extends State<WelcomePage> {
                           backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
                         onPressed: () async {
-                          setState(() {
-                            showLoginError = false;
-                          });
-                          try {
-                            await _tryLogin(email: emailController.text,
-                              password: passwordController.text).then((value) => {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                      title: ("Welcome, $value!")
-                                    )
-                                  ),
+                          String? error = await _tryLogin(email: emailController.text, password: passwordController.text);
+                          if(error==null){
+                            String username = await _getUsername(email: emailController.text);
+                            if(!context.mounted) return;
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  title: ("Welcome, $username!")
                                 )
-                              }
+                              ),
                             );
-                          } on FirebaseAuthException catch (e) {
-                            setState(() {
-                              showLoginError = true;
-                            });
+                          }
+                          else{
+                            if(!context.mounted) return;
+                            showErrorAlert(
+                              context: context,
+                              title: "Oops, an error occurred!",
+                              description: error,
+                            );
                           }
                         },
                         child: const Text('Login'),
                       ),
                     ),
-                    showLoginError ? const Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
-                      child: BloqoErrorText(text: "Wrong credentials. Please check them and try again."))
-                    : Container(),
                     BloqoClickableText(
                       text: "Forgot your password?",
                       color: AppColors.russianViolet,
@@ -189,7 +190,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     },
                     child: const Text('Register now!'),
                   ),
-                ),
+                )
               ],
             ),
           ],
@@ -200,11 +201,28 @@ class _WelcomePageState extends State<WelcomePage> {
 
 }
 
-Future<String> _tryLogin({required String email, required String password}) async {
-  await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: email,
-    password: password,
-  );
+Future<String?> _tryLogin({required String email, required String password}) async {
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return null;
+  } on FirebaseAuthException catch (e){
+    switch(e.code){
+      case "user-not-found":
+        return "No account is associated with the given email.";
+      default:
+        return "Wrong credentials. Please check them and try again.";
+    }
+  }
+}
+
+String? _emailValidator(String? email){
+  return (email == null || !TextValidator.validateEmail(email)) ? 'Please enter a valid email address.' : null;
+}
+
+Future<String> _getUsername({required String email}) async {
   var ref = BloqoUser.getRef();
   var querySnapshot = await ref.where("email", isEqualTo: email).get();
   BloqoUser user = querySnapshot.docs.first.data();

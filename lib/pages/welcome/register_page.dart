@@ -1,13 +1,16 @@
+import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/data_structures/bloqo_user.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/buttons/bloqo_clickable_text.dart';
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
-import '../../utils/text_parser.dart';
+import '../../utils/text_validator.dart';
 import '../main/home_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -28,6 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController usernameController;
   late TextEditingController fullNameController;
 
+  // state
   late bool switchValue;
 
   @override
@@ -100,9 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           labelText: "Email",
                           hintText: "e.g. bloqo@domain.com",
                           maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) {
-                            return (value == null || !TextParser.isEmail(value)) ? 'Please enter a valid email address.' : null;
-                          },
+                          validator: (String? value) { return _emailValidator(value); },
                           keyboardType: TextInputType.emailAddress,
                         ),
                       ),
@@ -114,25 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           labelText: "Password",
                           hintText: "type your password here",
                           maxInputLength: Constants.maxPasswordLength,
-                          validator: (String? value) {
-                            if(value == null){
-                              return "The password cannot be empty.";
-                            }
-                            List<bool> results = TextParser.validatePassword(value);
-                            int count = 0;
-                            for (bool result in results){
-                              if(result){
-                                count++;
-                              }
-                            }
-                            if(count==results.length){
-                              return null;
-                            }
-                            else {
-                              String errorMessage = _createPasswordErrorString(results);
-                              return errorMessage;
-                            }
-                          },
+                          validator: (String? value) { return _passwordValidator(value); },
                         ),
                       ),
                       Form(
@@ -143,15 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           labelText: "Nickname",
                           hintText: "e.g. iluvbloqo00",
                           maxInputLength: Constants.maxUsernameLength,
-                          // FIXME: solo caratteri alfanumerici (gli spazi sono ok)
-                          validator: (String? value) {
-                            if (value == null || value.length < Constants.minUsernameLength) {
-                              return "The username must be at least ${Constants.minUsernameLength} characters long.";
-                            }
-                            else{
-                              return null;
-                            }
-                          }
+                          validator: (String? value) { return _usernameValidator(value); }
                         ),
                       ),
                       Form(
@@ -162,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           labelText: "Full name",
                           hintText: "e.g. Vanessa Visconti",
                           maxInputLength: Constants.maxFullNameLength,
-                          // FIXME: solo caratteri alfanumerici (gli spazi sono ok)
+                          validator: (String? value) { return _fullNameValidator(value); }
                         ),
                       ),
                     Padding(
@@ -213,35 +189,58 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     Padding(
                       padding:
-                      const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 20),
+                      const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 15),
                       child: FilledButton(
                         style: Theme.of(context).filledButtonTheme.style?.copyWith(
                             backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet)
                         ),
                         onPressed: () async {
-                          try {
-                            await _tryRegister(email: emailController.text,
-                                password: passwordController.text,
-                                username: usernameController.text,
-                                fullName: fullNameController.text,
-                                isFullNameVisible: switchValue);
+                          String? error = await _tryRegister(email: emailController.text,
+                              password: passwordController.text,
+                              username: usernameController.text,
+                              fullName: fullNameController.text,
+                              isFullNameVisible: switchValue);
+                          if(error == null) {
+                            if(!context.mounted) return;
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    HomePage(
-                                        title: ("Welcome, ${usernameController.text}!"
-                                    )
-                                ),
+                                  HomePage(
+                                    title: ("Welcome, ${usernameController.text}!")
+                                  ),
                               )
                             );
-                          } on FirebaseAuthException catch (e) {
-                            print('Error: $e');
-                          } // TODO: messaggi più specifici per ogni tipo di errore
+                          }
+                          else{
+                            if(!context.mounted) return;
+                            showErrorAlert(
+                              context: context,
+                              title: "Oops, an error occurred!",
+                              description: error,
+                            );
+                          }
                         },
                         child: const Text('Register'),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                      child: BloqoClickableText(
+                        text: "Already have an account? Log in!",
+                        color: AppColors.russianViolet,
+                        onPressed: () {
+                          if(!context.mounted) return;
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                  const WelcomePage(),
+                              )
+                          );
+                        },
+                      )
+                    )
                   ],
                 ),
               ),
@@ -253,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<void> _tryRegister({required String email, required String password, required String username,
+Future<String?> _tryRegister({required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
   final user = BloqoUser(
       email: email,
@@ -261,9 +260,26 @@ Future<void> _tryRegister({required String email, required String password, requ
       fullName: fullName,
       isFullNameVisible: isFullNameVisible
   );
-  FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-  var ref = BloqoUser.getRef();
-  await ref.doc().set(user);
+  if(_emailValidator(user.email) == null && _passwordValidator(password) == null
+      && _usernameValidator(user.username) == null && _fullNameValidator(user.fullName) == null) {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email, password: password);
+      var ref = BloqoUser.getRef();
+      await ref.doc().set(user);
+      return null;
+    } on FirebaseAuthException catch (e) {
+        switch(e.code){
+          case "email-already-in-use":
+            return "There's already an account with the given email. Please login or try entering another one.";
+          default:
+            return "Oops, something went wrong. Please try again.";
+        }
+    }
+  }
+  else{
+    return "All fields are required. Please complete them.";
+  }
 }
 
 String _createPasswordErrorString(List<bool> validationResults) {
@@ -290,3 +306,52 @@ String _createPasswordErrorString(List<bool> validationResults) {
   return messages.trim();
 }
 
+String? _emailValidator(String? email){
+  return (email == null || !TextValidator.validateEmail(email)) ? 'Please enter a valid email address.' : null;
+}
+
+String? _passwordValidator(String? password){
+
+  if(password == null){
+    return "The password cannot be empty.";
+  }
+  List<bool> results = TextValidator.validatePassword(password);
+  int count = 0;
+  for (bool result in results){
+    if(result){
+      count++;
+    }
+  }
+  if(count==results.length){
+    return null;
+  }
+  else {
+    String errorMessage = _createPasswordErrorString(results);
+    return errorMessage;
+  }
+
+}
+
+String? _usernameValidator(String? username){
+  if (username == null || username.length < Constants.minUsernameLength) {
+    return "The username must be at least ${Constants.minUsernameLength} characters long.";
+  }
+  if (!TextValidator.validateUsername(username)){
+    return "The username must be alphanumeric.";
+  }
+  else{
+    return null;
+  }
+}
+
+String? _fullNameValidator(String? fullName){
+  if (fullName == null){
+    return "The full name must not be empty.";
+  }
+  if (!TextValidator.validateFullName(fullName)){
+    return "The full name must be alphanumeric (spaces are allowed).";
+  }
+  else{
+    return null;
+  }
+}
