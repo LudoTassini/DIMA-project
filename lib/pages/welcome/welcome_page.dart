@@ -10,7 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../data_structures/bloqo_user.dart';
+import '../../model/bloqo_user.dart';
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
 import '../../utils/text_validator.dart';

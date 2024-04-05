@@ -1,5 +1,5 @@
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
-import 'package:bloqo/data_structures/bloqo_user.dart';
+import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -262,6 +262,9 @@ Future<String?> _tryRegister({required String email, required String password, r
   );
   if(_emailValidator(user.email) == null && _passwordValidator(password) == null
       && _usernameValidator(user.username) == null && _fullNameValidator(user.fullName) == null) {
+    if(await _isUsernameAlreadyTaken(user.username)){
+      return "The username is already taken. Please choose another one.";
+    }
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -332,7 +335,7 @@ String? _passwordValidator(String? password){
 
 }
 
-String? _usernameValidator(String? username){
+String? _usernameValidator(String? username) {
   if (username == null || username.length < Constants.minUsernameLength) {
     return "The username must be at least ${Constants.minUsernameLength} characters long.";
   }
@@ -353,5 +356,16 @@ String? _fullNameValidator(String? fullName){
   }
   else{
     return null;
+  }
+}
+
+Future<bool> _isUsernameAlreadyTaken(String username) async{
+  var ref = BloqoUser.getRef();
+  var querySnapshot = await ref.where("username", isEqualTo: username).get();
+  if(querySnapshot.docs.length != 0) {
+    return true;
+  }
+  else{
+    return false;
   }
 }
