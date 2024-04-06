@@ -4,10 +4,12 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
+import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/buttons/bloqo_clickable_text.dart';
+import '../../components/forms/bloqo_switch.dart';
 import '../../utils/constants.dart';
 import '../../style/app_colors.dart';
 import '../../utils/text_validator.dart';
@@ -31,9 +33,6 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController usernameController;
   late TextEditingController fullNameController;
 
-  // state
-  late bool switchValue;
-
   @override
   void initState() {
     super.initState();
@@ -41,18 +40,20 @@ class _RegisterPageState extends State<RegisterPage> {
     passwordController = TextEditingController();
     usernameController = TextEditingController();
     fullNameController = TextEditingController();
-    switchValue = true;
   }
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    usernameController.dispose();
+    fullNameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
     return Scaffold(
       body: BloqoMainContainer(
         child: Column(
@@ -157,33 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    15, 0, 5, 0),
-                                child: Switch.adaptive(
-                                  value: switchValue,
-                                  onChanged: (newValue) async {
-                                    setState(() =>
-                                      switchValue = newValue);
-                                  },
-                                  activeColor: AppColors.russianViolet,
-                                  activeTrackColor: AppColors.russianViolet,
-                                  inactiveTrackColor: AppColors.inactiveTracker,
-                                  inactiveThumbColor: AppColors.seasalt,
-                                ),
-                              ),
-                              Text(
-                                switchValue ? 'Yes': 'No',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: AppColors.russianViolet,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                          visibilitySwitch,
                         ],
                       ),
                     ),
@@ -199,7 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               password: passwordController.text,
                               username: usernameController.text,
                               fullName: fullNameController.text,
-                              isFullNameVisible: switchValue);
+                              isFullNameVisible: visibilitySwitch.value.get());
                           if(error == null) {
                             if(!context.mounted) return;
                             Navigator.pushReplacement(
