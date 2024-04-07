@@ -7,4 +7,6 @@ class Constants{
   static const int maxUsernameLength = 32;
   static const int maxFullNameLength = 64;
 
+  static const int maxCourseNameLength = 100;
+
 }

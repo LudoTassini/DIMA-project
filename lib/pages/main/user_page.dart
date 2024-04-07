@@ -16,7 +16,6 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(),
       bottomNavigationBar: const BloqoNavBar()
