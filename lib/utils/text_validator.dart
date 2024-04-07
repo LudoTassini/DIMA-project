@@ -1,8 +1,8 @@
 import 'package:bloqo/utils/constants.dart';
 
-class TextParser{
+class TextValidator{
 
-  static bool isEmail(String email){
+  static bool validateEmail(String email){
     // regex definition
     final RegExp emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
@@ -32,6 +32,14 @@ class TextParser{
     return validationResults;
   }
 
+  static bool validateUsername(String username){
+    final RegExp regExp = RegExp(r'^[a-zA-Z0-9]+$');
+    return regExp.hasMatch(username);
+  }
 
+  static bool validateFullName(String fullName) {
+    RegExp regExp = RegExp(r'^[a-zA-Z0-9\s]+$');
+    return regExp.hasMatch(fullName);
+  }
 
 }
