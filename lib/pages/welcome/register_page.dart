@@ -178,14 +178,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               isFullNameVisible: visibilitySwitch.value.get());
                           if(error == null) {
                             if(!context.mounted) return;
+                            BloqoUser user = await _getUser(email: emailController.text);
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                   HomePage(
-                                    title: ("Welcome, ${usernameController.text}!")
+                                    user: user,)
                                   ),
-                              )
                             );
                           }
                           else{
@@ -345,4 +345,11 @@ Future<bool> _isUsernameAlreadyTaken(String username) async{
   else{
     return false;
   }
+}
+
+Future<BloqoUser> _getUser({required String email}) async {
+  var ref = BloqoUser.getRef();
+  var querySnapshot = await ref.where("email", isEqualTo: email).get();
+  BloqoUser user = querySnapshot.docs.first.data();
+  return user;
 }

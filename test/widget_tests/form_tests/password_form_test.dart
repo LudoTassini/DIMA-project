@@ -1,7 +1,6 @@
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/utils/constants.dart';
-import 'package:bloqo/utils/text_parser.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bloqo/utils/text_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,7 +22,7 @@ void main() {
                 if(value == null){
                   return "The password cannot be empty.";
                 }
-                List<bool> results = TextParser.validatePassword(value);
+                List<bool> results = TextValidator.validatePassword(value);
                 int count = 0;
                 for (bool result in results){
                   if(result){
@@ -58,12 +57,41 @@ void main() {
     expect(find.text(enteredText), findsOneWidget);
   });
 
-  // FIXME: test failed
-  testWidgets('Password form displays error when wrong password is given', (WidgetTester tester) async {
+// --------------------------------------------------------------------------------------------------------
+// Tests on one single condition of the password
+
+  testWidgets('Password form displays error when password with less than 8 characters is given',
+          (WidgetTester tester) async {
+        await tester.pumpWidget(testedWidget);
+        const enteredText = "Pas8!";
+        const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.';
+        final foundWidget = find.byType(BloqoTextField);
+        expect(foundWidget, findsOneWidget);
+
+        await tester.enterText(foundWidget, enteredText);
+        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+      });
+
+  // FIXME: failed
+  testWidgets('Password form displays error when password with more than 32 characters is given',
+          (WidgetTester tester) async {
+        await tester.pumpWidget(testedWidget);
+        const enteredText = "PasswordPasswordPasswordPasswordPassword8!";
+        const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.';
+        final foundWidget = find.byType(BloqoTextField);
+        expect(foundWidget, findsOneWidget);
+
+        await tester.enterText(foundWidget, enteredText);
+        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+      });
+
+  testWidgets('Password form displays error when password without at least one special character is given',
+          (WidgetTester tester) async {
     await tester.pumpWidget(testedWidget);
-    const enteredText = "Pass";
-    const errorText = 'Password must be at least ${Constants
-        .minPasswordLength} characters long.\n';
+    const enteredText = "Password81";
+    const errorText = 'Password must contain at least one special character.';
     final foundWidget = find.byType(BloqoTextField);
     expect(foundWidget, findsOneWidget);
 
@@ -71,6 +99,219 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100)); // delay for validation
     expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
   });
+
+  testWidgets('Password form displays error when password without at least a number is given',
+          (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "Password!";
+    const errorText = 'Password must contain at least one number.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password without at least one upper case character is given',
+          (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "password!8";
+    const errorText = 'Password must contain at least one uppercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password without at least one lower case character is given',
+          (WidgetTester tester) async {
+        await tester.pumpWidget(testedWidget);
+        const enteredText = "PASSWORD!8";
+        const errorText = 'Password must contain at least one lowercase letter.';
+        final foundWidget = find.byType(BloqoTextField);
+        expect(foundWidget, findsOneWidget);
+
+        await tester.enterText(foundWidget, enteredText);
+        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+      });
+
+  // --------------------------------------------------------------------------------------------------------
+  // Tests on two conditions of the password
+  // Tests where the password is less than 8 characters + other conditions
+
+  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
+      'special character is given', (WidgetTester tester) async {
+        await tester.pumpWidget(testedWidget);
+        const enteredText = "Pas8";
+        const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
+            'Password must contain at least one special character.';
+        final foundWidget = find.byType(BloqoTextField);
+        expect(foundWidget, findsOneWidget);
+
+        await tester.enterText(foundWidget, enteredText);
+        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+      });
+
+  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
+      'number is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "Pas!";
+    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
+        'Password must contain at least one number.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
+      'uppercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "pas8!";
+    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
+        'Password must contain at least one uppercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
+      'lowercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "PAS8!";
+    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
+        'Password must contain at least one lowercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // --------------------------------------------------------------------------------------------------------
+  // Tests on two conditions of the password
+  // Tests where the password is more than 32 characters + other conditions
+
+  // FIXME: failed
+  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
+      'special character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "PasswordPasswordPasswordPasswordPassword88";
+    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
+        'Password must contain at least one special character.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // FIXME: failed
+  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
+      'number is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "PasswordPasswordPasswordPasswordPassword!!!";
+    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
+        'Password must contain at least one number.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // FIXME: failed
+  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
+      'uppercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "passwordpasswordpasswordpasswordpassword88!!!";
+    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
+        'Password must contain at least one uppercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // FIXME: failed
+  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
+      'lowercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "PASSWORDPASSWORDPASSWORDPASSWORDPASSWORDPASSWORDPASSWORD88!!!";
+    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
+        'Password must contain at least one lowercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // --------------------------------------------------------------------------------------------------------
+  // Tests on two conditions of the password
+  // Tests where the password does not contain at least one special character + other conditions
+
+  testWidgets('Password form displays error when password without at least one special character'
+      'and without at least one number is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "Password";
+    const errorText = 'Password must contain at least one special character.\n'
+        'Password must contain at least one number.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password without at least one special character'
+      ' and without at least one uppercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "password88";
+    const errorText = 'Password must contain at least one special character.\n'
+        'Password must contain at least one uppercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  testWidgets('Password form displays error when password without at least one special character'
+      ' and without at least one lowercase character is given', (WidgetTester tester) async {
+    await tester.pumpWidget(testedWidget);
+    const enteredText = "PASSWORD88";
+    const errorText = 'Password must contain at least one special character.\n'
+        'Password must contain at least one lowercase letter.';
+    final foundWidget = find.byType(BloqoTextField);
+    expect(foundWidget, findsOneWidget);
+
+    await tester.enterText(foundWidget, enteredText);
+    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+  });
+
+  // --------------------------------------------------------------------------------------------------------
+  // Tests on two conditions of the password
+  // Tests where the password does not contain at least one uppercase character + other conditions
 
 }
 

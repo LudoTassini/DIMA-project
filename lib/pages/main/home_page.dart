@@ -2,6 +2,7 @@ import 'package:bloqo/components/buttons/bloqo_help_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/navigation/bloqo_nav_bar.dart';
 import 'package:bloqo/model/bloqo_user.dart';
+import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/style/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../components/containers/bloqo_main_container.dart';
@@ -16,7 +17,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
-  late BloqoUser _user;
 
 
   @override
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Welcome, ${_user.username}!",
+              "Welcome, ${widget.user.username}!",
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 fontFamily: 'Outfit',
                 color: AppColors.seasalt,
@@ -87,6 +87,28 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+  /*
+                    ListView.builder(
+                      itemCount: widget.user.coursesEnrolledIn?.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        BloqoCourse? course = widget.user.coursesEnrolledIn?[index];
+                          return Card(
+                          margin: EdgeInsets.all(8.0),
+                          child: ListTile(
+                          title: Text(course.name),
+                          subtitle: Text('Author: ${course.authorUsername}'),
+                          // Customize as needed with more details about the course
+                          onTap: () {
+                          // Add onTap behavior if needed
+                          },
+                          ),
+                          );
+                      },
+                    ),
+
+
+
+
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -398,10 +420,11 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
-                              ),
+                              ), */
                             ],
                           ),
                         ),
+                        /*
                         Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -832,12 +855,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              ],
+              ], */
             ),
-          ),
+          ],
         ),
-      ),
-    ),
+      )
+    );
   }
 
 }
