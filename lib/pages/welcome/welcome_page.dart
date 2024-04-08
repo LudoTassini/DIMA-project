@@ -124,13 +124,13 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () async {
                           String? error = await _tryLogin(email: emailController.text, password: passwordController.text);
                           if(error==null){
-                            String username = await _getUsername(email: emailController.text);
+                            BloqoUser user = await _getUser(email: emailController.text);
                             if(!context.mounted) return;
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => HomePage(
-                                  title: ("Welcome, $username!")
+                                  user: user,
                                 )
                               ),
                             );
@@ -227,4 +227,11 @@ Future<String> _getUsername({required String email}) async {
   var querySnapshot = await ref.where("email", isEqualTo: email).get();
   BloqoUser user = querySnapshot.docs.first.data();
   return user.username;
+}
+
+Future<BloqoUser> _getUser({required String email}) async {
+  var ref = BloqoUser.getRef();
+  var querySnapshot = await ref.where("email", isEqualTo: email).get();
+  BloqoUser user = querySnapshot.docs.first.data();
+  return user;
 }

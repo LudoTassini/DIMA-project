@@ -1,14 +1,14 @@
 import 'package:bloqo/components/buttons/bloqo_help_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/navigation/bloqo_nav_bar.dart';
+import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/style/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../components/containers/bloqo_main_container.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key, required this.user});
+  final BloqoUser user;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
+  late BloqoUser _user;
 
 
   @override
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              title, // FIXME: non riesco a passare title
+              "Welcome, ${_user.username}!",
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 fontFamily: 'Outfit',
                 color: AppColors.seasalt,

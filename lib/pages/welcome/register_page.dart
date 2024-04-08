@@ -3,6 +3,7 @@ import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -233,7 +234,8 @@ Future<String?> _tryRegister({required String email, required String password, r
       email: email,
       username: username,
       fullName: fullName,
-      isFullNameVisible: isFullNameVisible
+      isFullNameVisible: isFullNameVisible,
+      coursesEnrolledIn: null
   );
   if(_emailValidator(user.email) == null && _passwordValidator(password) == null
       && _usernameValidator(user.username) == null && _fullNameValidator(user.fullName) == null) {
