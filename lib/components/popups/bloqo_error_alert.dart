@@ -43,7 +43,7 @@ class BloqoErrorAlert extends StatelessWidget{
 
 }
 
-showErrorAlert({required BuildContext context, required String title, required String description}){
+showBloqoErrorAlert({required BuildContext context, required String title, required String description}){
   showDialog(
     context: context,
     builder: (BuildContext context) {

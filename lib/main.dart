@@ -3,6 +3,9 @@ import 'package:bloqo/style/bloqo_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'app_state/navigation_app_state.dart';
+import 'app_state/user_app_state.dart';
 import 'utils/firebase_options.dart';
 
 Future<void> main() async {
@@ -25,7 +28,15 @@ Future<void> main() async {
   );
 
   //runs app
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserAppState()),
+        ChangeNotifierProvider(create: (_) => NavigationAppState()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 
 }
 

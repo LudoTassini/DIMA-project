@@ -10,8 +10,6 @@ class BloqoMainContainer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -19,16 +17,14 @@ class BloqoMainContainer extends StatelessWidget{
             AppColors.darkFuchsia
           ],
           stops: [0, 1],
-          begin: AlignmentDirectional(0.87, -1),
-          end: AlignmentDirectional(-0.87, 1),
+          begin: AlignmentDirectional(0, -1),
+          end: AlignmentDirectional(0, 1),
         ),
       ),
       alignment: const AlignmentDirectional(0, 0),
       child: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          child: child
-        )
+        child: child
       )
     );
   }
