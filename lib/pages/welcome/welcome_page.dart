@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloqo/components/buttons/bloqo_clickable_text.dart';
+import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -14,7 +14,7 @@ import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user.dart';
 import '../../utils/constants.dart';
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 import '../../utils/text_validator.dart';
 import '../main/main_page.dart';
 
@@ -82,7 +82,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         'Welcome!',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: AppColors.russianViolet,
+                          color: BloqoColors.russianViolet,
                         )
                       ),
                       Form(
@@ -145,13 +145,13 @@ class _WelcomePageState extends State<WelcomePage> {
                               );
                             }
                           },
-                          color: AppColors.russianViolet,
+                          color: BloqoColors.russianViolet,
                           text: 'Login',
                         ),
                       ),
-                      BloqoClickableText(
+                      BloqoTextButton(
                         text: "Forgot your password?",
-                        color: AppColors.russianViolet,
+                        color: BloqoColors.russianViolet,
                         onPressed: () {
                           //TODO
                         },
@@ -166,7 +166,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Text(
                     'New here?',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: AppColors.seasalt,
+                      color: BloqoColors.seasalt,
                       fontSize: 35,
                     ),
                   ),
@@ -181,9 +181,10 @@ class _WelcomePageState extends State<WelcomePage> {
                           )
                         );
                       },
-                      color: AppColors.russianViolet,
+                      color: BloqoColors.russianViolet,
                       text: 'Register now!',
-                      fontSize: 35
+                      fontSize: 35,
+                      height: 82,
                     ),
                   )
                 ],
@@ -206,8 +207,8 @@ Future<String?> _tryLogin({required String email, required String password}) asy
     return null;
   } on FirebaseAuthException catch (e){
     switch(e.code){
-      case "user-not-found":
-        return "No account is associated with the given email.";
+      case "network-request-failed":
+        return "Internet connection is required to login. Please check your connection status and try again.";
       default:
         return "Wrong credentials. Please check them and try again.";
     }

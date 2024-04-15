@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 
 class BloqoAppBar{
 
@@ -10,10 +10,10 @@ class BloqoAppBar{
         child: AppBar(
           title: Text(title,
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                color: AppColors.seasalt
+                color: BloqoColors.seasalt
             ),
           ),
-          backgroundColor: AppColors.russianViolet,
+          backgroundColor: BloqoColors.russianViolet,
         )
     );
   } 

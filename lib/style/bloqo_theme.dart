@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_colors.dart';
+import 'bloqo_colors.dart';
 
 class BloqoTheme{
 
@@ -40,7 +40,7 @@ class BloqoTheme{
           fontSize: 18,
           fontWeight: FontWeight.bold,
           fontFamily: 'Readex Pro',
-          color: AppColors.russianViolet
+          color: BloqoColors.russianViolet
       ),
     );
     FilledButtonThemeData filledButtonThemeData = FilledButtonThemeData(
@@ -49,7 +49,7 @@ class BloqoTheme{
             fontSize: 20,
             fontWeight: FontWeight.bold,
             fontFamily: 'Readex Pro',
-            color: AppColors.seasalt
+            color: BloqoColors.seasalt
         ),
         elevation: 3,
         padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 12),
@@ -61,21 +61,8 @@ class BloqoTheme{
       useMaterial3: true,
       textTheme: textTheme,
       filledButtonTheme: filledButtonThemeData,
-      /*colorScheme: const ColorScheme(
-        brightness: Brightness.light,
-        primary: AppColors.fuchsiaRose,
-        onPrimary: AppColors.seasalt,
-        secondary: AppColors.darkFuchsia,
-        onSecondary: AppColors.seasalt,
-        error: AppColors.error,
-        onError: AppColors.seasalt,
-        background: AppColors.seasalt,
-        onBackground: AppColors.primaryText,
-        surface: AppColors.seasalt,
-        onSurface: AppColors.primaryText,
-      ),*/
       datePickerTheme: DatePickerThemeData(
-        backgroundColor: AppColors.seasalt,
+        backgroundColor: BloqoColors.seasalt,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         headerHelpStyle: const TextStyle(
@@ -87,14 +74,14 @@ class BloqoTheme{
         ),
         weekdayStyle: const TextStyle(
           fontSize: 22,
-          color: AppColors.darkFuchsia,
+          color: BloqoColors.darkFuchsia,
         ),
-        headerBackgroundColor: AppColors.russianViolet,
-        headerForegroundColor: AppColors.seasalt,
+        headerBackgroundColor: BloqoColors.russianViolet,
+        headerForegroundColor: BloqoColors.seasalt,
         dayBackgroundColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.selected)) {
-              return AppColors.russianViolet;
+              return BloqoColors.russianViolet;
             }
             else {
               return null;
@@ -104,22 +91,22 @@ class BloqoTheme{
         dayForegroundColor: MaterialStateProperty.resolveWith<Color>(
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.selected)) {
-              return AppColors.seasalt;
+              return BloqoColors.seasalt;
             }
             else {
-              return AppColors.russianViolet;
+              return BloqoColors.russianViolet;
             }
           }
         ),
         todayBorder: BorderSide.none,
-        dividerColor: AppColors.russianViolet,
+        dividerColor: BloqoColors.russianViolet,
         cancelButtonStyle: filledButtonThemeData.style?.copyWith(
           textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           )),
-          foregroundColor: MaterialStateProperty.resolveWith((_) => AppColors.seasalt),
-          backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.error),
+          foregroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt),
+          backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.error),
           fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
           padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
         ),
@@ -128,11 +115,30 @@ class BloqoTheme{
               fontSize: 18,
               fontWeight: FontWeight.bold,
           )),
-          foregroundColor: MaterialStateProperty.resolveWith((_) => AppColors.seasalt),
-          backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.russianViolet),
+          foregroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt),
+          backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.russianViolet),
           fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
           padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
         ),
+      ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        textStyle: textTheme.displaySmall?.copyWith(
+          overflow: TextOverflow.ellipsis
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: BloqoColors.russianViolet,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          labelStyle: textTheme.labelMedium,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+        ),
+        menuStyle: MenuStyle(
+          surfaceTintColor: MaterialStateProperty.resolveWith((states) => Colors.transparent),
+        )
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BloqoClickableText extends StatelessWidget{
-  const BloqoClickableText({
+class BloqoTextButton extends StatelessWidget{
+  const BloqoTextButton({
     super.key,
     required this.text,
     required this.color,

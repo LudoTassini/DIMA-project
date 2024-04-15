@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 
 class BloqoTextField extends StatefulWidget {
   const BloqoTextField({
@@ -64,10 +64,10 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
         padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 0),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.seasalt,
+            color: BloqoColors.seasalt,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color: AppColors.russianViolet
+              color: BloqoColors.russianViolet
             ),
           ),
           child: Padding(
@@ -85,7 +85,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
                 labelStyle: Theme.of(context).textTheme.labelMedium,
                 hintText: widget.hintText,
                 hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.secondaryText
+                  color: BloqoColors.secondaryText
                 ),
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,

@@ -6,16 +6,18 @@ class BloqoFilledButton extends StatelessWidget{
     required this.color,
     required this.onPressed,
     required this.text,
-    this.iconData,
-    this.fontSize = 20
+    this.icon,
+    this.fontSize = 20,
+    this.height = 48,
   });
 
   final Color color;
   final Function() onPressed;
   final String text;
 
-  final IconData? iconData;
+  final IconData? icon;
   final double fontSize;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +28,17 @@ class BloqoFilledButton extends StatelessWidget{
           fontWeight: FontWeight.bold,
         )),
         backgroundColor: MaterialStateProperty.resolveWith((_) => color),
-        fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
+        fixedSize: MaterialStateProperty.resolveWith((_) => Size(double.infinity, height)),
         padding: MaterialStateProperty.resolveWith((_) => EdgeInsetsDirectional.fromSTEB(22 * fontSize/20, 12 * fontSize/20, 22 * fontSize/20, 12 * fontSize/20)),
       ),
       onPressed: onPressed,
-      child: iconData == null ? Text(text) : Row(
+      child: icon == null ? Text(text) : Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(iconData),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+            child: Icon(icon),
+          ),
           Text(text)
         ],
       ),

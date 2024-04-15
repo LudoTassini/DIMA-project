@@ -1,10 +1,18 @@
+import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
+import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:bloqo/model/bloqo_sorting_option.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
-import '../../style/app_colors.dart';
+import '../../components/forms/bloqo_dropdown.dart';
+import '../../components/forms/bloqo_switch.dart';
+import '../../model/courses/tags/bloqo_course_tag.dart';
+import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
+import '../../utils/toggle.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -20,10 +28,18 @@ class _SearchPageState extends State<SearchPage> {
   final formKeyMinimumPublicationDate = GlobalKey<FormState>();
   final formKeyMaximumPublicationDate = GlobalKey<FormState>();
 
+  final Toggle publicCoursesToggle = Toggle(initialValue: true);
+  final Toggle privateCoursesToggle = Toggle(initialValue: false);
+
   late TextEditingController courseNameController;
   late TextEditingController authorUsernameController;
   late TextEditingController minimumPublicationDateController;
   late TextEditingController maximumPublicationDateController;
+  late TextEditingController subjectTagController;
+  late TextEditingController durationTagController;
+  late TextEditingController modalityTagController;
+  late TextEditingController difficultyTagController;
+  late TextEditingController sortByController;
 
   @override
   void initState() {
@@ -32,6 +48,11 @@ class _SearchPageState extends State<SearchPage> {
     authorUsernameController = TextEditingController();
     minimumPublicationDateController = TextEditingController();
     maximumPublicationDateController = TextEditingController();
+    subjectTagController = TextEditingController();
+    durationTagController = TextEditingController();
+    modalityTagController = TextEditingController();
+    difficultyTagController = TextEditingController();
+    sortByController = TextEditingController();
   }
 
   @override
@@ -40,26 +61,37 @@ class _SearchPageState extends State<SearchPage> {
     authorUsernameController.dispose();
     minimumPublicationDateController.dispose();
     maximumPublicationDateController.dispose();
+    subjectTagController.dispose();
+    durationTagController.dispose();
+    modalityTagController.dispose();
+    difficultyTagController.dispose();
+    sortByController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject);
+    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration);
+    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality);
+    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty);
+    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList();
+
     return BloqoMainContainer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
+          Flexible(
+            child: ListView(
               children: [
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Text(
                     'Tell us what you are looking for.',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: AppColors.seasalt,
+                      color: BloqoColors.seasalt,
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
                     ),
@@ -70,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: Text(
                     'Every field is optional. Freely choose your filters and sorting options.',
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: AppColors.seasalt,
+                      color: BloqoColors.seasalt,
                     )
                   ),
                 ),
@@ -108,7 +140,7 @@ class _SearchPageState extends State<SearchPage> {
                         formKey: formKeyMinimumPublicationDate,
                         controller: minimumPublicationDateController,
                         labelText: 'Minimum publication date',
-                        hintText: 'e.g. 01/01/2024',
+                        hintText: 'e.g. 2024/01/01',
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
@@ -121,7 +153,7 @@ class _SearchPageState extends State<SearchPage> {
                               minimumPublicationDateController.text = "";
                             }
                             else{
-                              minimumPublicationDateController.text = picked.toString();
+                              minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
                             }
                           });
                         }
@@ -136,7 +168,7 @@ class _SearchPageState extends State<SearchPage> {
                         formKey: formKeyMaximumPublicationDate,
                         controller: maximumPublicationDateController,
                         labelText: 'Maximum publication date',
-                        hintText: 'e.g. 01/01/2024',
+                        hintText: 'e.g. 2024/01/31',
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
@@ -149,13 +181,224 @@ class _SearchPageState extends State<SearchPage> {
                               maximumPublicationDateController.text = "";
                             }
                             else{
-                              maximumPublicationDateController.text = picked.toString();
+                              maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
                             }
                           });
                         }
                       )
                   ),
                 ),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Flexible(
+                      child: BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 10, 0),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                  child: Text(
+                                    'Public\nCourses',
+                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        fontSize: 13,
+                                        color: BloqoColors.russianViolet,
+                                        fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              BloqoSwitch(
+                                value: publicCoursesToggle,
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      child: BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 20, 0),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                  child: Text(
+                                    'Private\nCourses',
+                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                      fontSize: 13,
+                                      color: BloqoColors.russianViolet,
+                                      fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              BloqoSwitch(
+                                value: privateCoursesToggle,
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                BloqoSeasaltContainer(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'You can also filter by tag.',
+                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: BloqoColors.russianViolet
+                            )
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
+                                    color: Color(0xFFFF0000),
+                                    size: 24,
+                                  ),
+                                ),
+                                BloqoDropdown(
+                                  controller: subjectTagController,
+                                  dropdownMenuEntries: subjectTags,
+                                  initialSelection: subjectTags[0].value,
+                                  label: "Subject Tag"
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
+                                    color: Color(0xFF0000FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                BloqoDropdown(
+                                  controller: durationTagController,
+                                  dropdownMenuEntries: durationTags,
+                                  initialSelection: durationTags[0].value,
+                                  label: "Duration Tag"
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
+                                    color: Color(0xFF00FF00),
+                                    size: 24,
+                                  ),
+                                ),
+                                BloqoDropdown(
+                                  controller: modalityTagController,
+                                  dropdownMenuEntries: modalityTags,
+                                  initialSelection: modalityTags[0].value,
+                                  label: "Modality Tag"
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
+                                    color: Color(0xFFFFFF00),
+                                    size: 24,
+                                  ),
+                                ),
+                                BloqoDropdown(
+                                  controller: difficultyTagController,
+                                  dropdownMenuEntries: difficultyTags,
+                                  initialSelection: difficultyTags[0].value,
+                                  label: "Difficulty Tag"
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                ),
+                BloqoSeasaltContainer(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                          child: Text(
+                            'Finally, you can sort your results.',
+                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BloqoColors.russianViolet
+                            )
+                          ),
+                        ),
+                        BloqoDropdown(
+                          controller: sortByController,
+                          dropdownMenuEntries: sortingOptions,
+                          label: "Sort by",
+                          initialSelection: sortingOptions[0].value,
+                        )
+                      ]
+                    )
+                  )
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                  child: Center(
+                    child: BloqoTextButton(
+                      color: BloqoColors.error,
+                      onPressed: () => _resetSearchCriteria(),
+                      text: "Reset Search Criteria",
+                    )
+                  )
+                )
               ]
             )
           ),
@@ -165,39 +408,42 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
+                Expanded(
                   flex: 1,
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                     child: BloqoFilledButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => Container()
                           )
                         );
                       },
-                      color: AppColors.chineseViolet,
+                      color: BloqoColors.chineseViolet,
+                      icon: Icons.qr_code,
                       text: 'Scan QR Code',
+                      fontSize: 16
                     ),
                   ),
                 ),
-                Flexible(
+                Expanded(
                   flex: 1,
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Container()
                             )
                         );
                       },
-                      color: AppColors.russianViolet,
-                      text: 'Find',
+                      color: BloqoColors.russianViolet,
+                      text: 'Search',
+                      icon: Icons.search
                     ),
                   ),
                 ),
@@ -207,6 +453,26 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
+  }
+
+  void _resetSearchCriteria(){
+
+    setState(() {
+      courseNameController.text = "";
+      authorUsernameController.text = "";
+      minimumPublicationDateController.text = "";
+      maximumPublicationDateController.text = "";
+
+      publicCoursesToggle.reset();
+      privateCoursesToggle.reset();
+
+      subjectTagController.text = "None";
+      durationTagController.text = "None";
+      modalityTagController.text = "None";
+      difficultyTagController.text = "None";
+      sortByController.text = "None";
+    });
+
   }
 
 }

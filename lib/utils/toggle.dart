@@ -1,8 +1,10 @@
 class Toggle{
 
+  late bool _initialValue;
   bool _value = true;
 
   Toggle({required bool initialValue}){
+    _initialValue = initialValue;
     _value = initialValue;
   }
 
@@ -12,6 +14,10 @@ class Toggle{
 
   toggle(){
     _value = !_value;
+  }
+
+  reset(){
+    _value = _initialValue;
   }
 
 }

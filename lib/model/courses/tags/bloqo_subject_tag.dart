@@ -6,7 +6,7 @@ class BloqoSubjectTag extends BloqoCourseTag{
 
 }
 
-enum BloqoCourseTagSubjectValue{
+enum BloqoSubjectTagValue{
   figurativeArts,
   technology,
   naturalScience,
@@ -37,67 +37,67 @@ enum BloqoCourseTagSubjectValue{
   other
 }
 
-extension BloqoCourseTagSubjectValueExtension on BloqoCourseTagSubjectValue {
+extension BloqoSubjectTagValueExtension on BloqoSubjectTagValue {
   String get text {
     switch (this) {
-      case BloqoCourseTagSubjectValue.architecture:
+      case BloqoSubjectTagValue.architecture:
         return "Architecture";
-      case BloqoCourseTagSubjectValue.cooking:
+      case BloqoSubjectTagValue.cooking:
         return "Cooking";
-      case BloqoCourseTagSubjectValue.design:
+      case BloqoSubjectTagValue.design:
         return "Design";
-      case BloqoCourseTagSubjectValue.economics:
+      case BloqoSubjectTagValue.economics:
         return "Economics";
-      case BloqoCourseTagSubjectValue.education:
+      case BloqoSubjectTagValue.education:
         return "Education";
-      case BloqoCourseTagSubjectValue.esotericism:
+      case BloqoSubjectTagValue.esotericism:
         return "Esotericism";
-      case BloqoCourseTagSubjectValue.fashion:
+      case BloqoSubjectTagValue.fashion:
         return "Fashion";
-      case BloqoCourseTagSubjectValue.figurativeArts:
+      case BloqoSubjectTagValue.figurativeArts:
         return "Figurative Arts";
-      case BloqoCourseTagSubjectValue.geography:
+      case BloqoSubjectTagValue.geography:
         return "Geography";
-      case BloqoCourseTagSubjectValue.health:
+      case BloqoSubjectTagValue.health:
         return "Health";
-      case BloqoCourseTagSubjectValue.history:
+      case BloqoSubjectTagValue.history:
         return "History";
-      case BloqoCourseTagSubjectValue.languages:
+      case BloqoSubjectTagValue.languages:
         return "Languages";
-      case BloqoCourseTagSubjectValue.law:
+      case BloqoSubjectTagValue.law:
         return "Law";
-      case BloqoCourseTagSubjectValue.literature:
+      case BloqoSubjectTagValue.literature:
         return "Literature";
-      case BloqoCourseTagSubjectValue.mathematics:
+      case BloqoSubjectTagValue.mathematics:
         return "Mathematics";
-      case BloqoCourseTagSubjectValue.medicine:
+      case BloqoSubjectTagValue.medicine:
         return "Medicine";
-      case BloqoCourseTagSubjectValue.music:
+      case BloqoSubjectTagValue.music:
         return "Music";
-      case BloqoCourseTagSubjectValue.naturalScience:
+      case BloqoSubjectTagValue.naturalScience:
         return "Natural Science";
-      case BloqoCourseTagSubjectValue.other:
+      case BloqoSubjectTagValue.other:
         return "Other";
-      case BloqoCourseTagSubjectValue.performativeArts:
+      case BloqoSubjectTagValue.performativeArts:
         return "Performative Arts";
-      case BloqoCourseTagSubjectValue.philosophy:
+      case BloqoSubjectTagValue.philosophy:
         return "Philosophy";
-      case BloqoCourseTagSubjectValue.politics:
+      case BloqoSubjectTagValue.politics:
         return "Politics";
-      case BloqoCourseTagSubjectValue.psychology:
+      case BloqoSubjectTagValue.psychology:
         return "Psychology";
-      case BloqoCourseTagSubjectValue.society:
+      case BloqoSubjectTagValue.society:
         return "Society";
-      case BloqoCourseTagSubjectValue.sports:
+      case BloqoSubjectTagValue.sports:
         return "Sports";
-      case BloqoCourseTagSubjectValue.sustainability:
+      case BloqoSubjectTagValue.sustainability:
         return "Sustainability";
-      case BloqoCourseTagSubjectValue.technology:
+      case BloqoSubjectTagValue.technology:
         return "Technology";
-      case BloqoCourseTagSubjectValue.visualArts:
+      case BloqoSubjectTagValue.visualArts:
         return "Visual Arts";
       default:
-        throw Exception("Unknown CourseTagSubjectValue");
+        throw Exception("Unknown SubjectTagValue");
     }
   }
 }

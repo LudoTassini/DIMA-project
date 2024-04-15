@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
-import '../../components/buttons/bloqo_clickable_text.dart';
+import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_switch.dart';
 import '../../utils/constants.dart';
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 import '../../utils/text_validator.dart';
 import '../main/home_page.dart';
 
@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
+    final BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -69,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Text(
                   'bloQo',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: AppColors.seasalt,
+                    color: BloqoColors.seasalt,
                     fontSize: 60,
                   ),
                 ),
@@ -86,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               'Thank you for joining the bloQo community!',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: AppColors.russianViolet,
+                                color: BloqoColors.russianViolet,
                                 fontSize: 25,
                               )
                           ),
@@ -97,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             'We want you to have the best experience.\nThat\'s why we are asking a few data about you.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: AppColors.russianViolet,
+                              color: BloqoColors.russianViolet,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Text(
                                 'Full name visible to others',
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: AppColors.russianViolet,
+                                  color: BloqoColors.russianViolet,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -197,15 +197,15 @@ class _RegisterPageState extends State<RegisterPage> {
                               );
                             }
                           },
-                          color: AppColors.russianViolet,
+                          color: BloqoColors.russianViolet,
                           text: 'Register',
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                        child: BloqoClickableText(
+                        child: BloqoTextButton(
                           text: "Already have an account? Log in!",
-                          color: AppColors.russianViolet,
+                          color: BloqoColors.russianViolet,
                           onPressed: () {
                             if(!context.mounted) return;
                             Navigator.pushReplacement(
@@ -253,6 +253,8 @@ Future<String?> _tryRegister({required String email, required String password, r
         switch(e.code){
           case "email-already-in-use":
             return "There's already an account with the given email. Please login or try entering another one.";
+          case "network-request-failed":
+            return "Internet connection is required to login. Please check your connection status and try again.";
           default:
             return "Oops, something went wrong. Please try again.";
         }

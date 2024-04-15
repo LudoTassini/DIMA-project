@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 
 class BloqoMainContainer extends StatelessWidget{
   const BloqoMainContainer({super.key, required this.child});
@@ -13,8 +13,8 @@ class BloqoMainContainer extends StatelessWidget{
         decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.russianViolet,
-            AppColors.darkFuchsia
+            BloqoColors.russianViolet,
+            BloqoColors.darkFuchsia
           ],
           stops: [0, 1],
           begin: AlignmentDirectional(0, -1),

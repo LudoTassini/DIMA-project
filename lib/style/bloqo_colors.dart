@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppColors {
+class BloqoColors {
   static const Color seasalt = Color(0xFFF7F9F9);
   static const Color russianViolet = Color(0xFF442367); // on FlutterFlow this color is actually Russian Violet 2
   static const Color chineseViolet = Color(0xFF745575); // on FlutterFlow this color is actually Chinese Violet 2
