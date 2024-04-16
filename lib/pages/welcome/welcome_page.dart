@@ -5,11 +5,12 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/welcome/register_page.dart';
+import 'package:bloqo/utils/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user.dart';
@@ -124,11 +125,13 @@ class _WelcomePageState extends State<WelcomePage> {
                         padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
                         child: BloqoFilledButton(
                           onPressed: () async {
+                            context.loaderOverlay.show();
                             String? error = await _tryLogin(email: emailController.text, password: passwordController.text);
                             if(error==null){
-                              BloqoUser user = await _getUserFromEmail(email: emailController.text);
+                              BloqoUser user = await getUserFromEmail(email: emailController.text);
                               if(!context.mounted) return;
-                              _saveUserToAppState(context, user);
+                              saveUserToAppState(context, user);
+                              context.loaderOverlay.hide();
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -138,6 +141,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             }
                             else{
                               if(!context.mounted) return;
+                              context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
                                 title: "Oops, an error occurred!",
@@ -200,10 +204,12 @@ class _WelcomePageState extends State<WelcomePage> {
 
 Future<String?> _tryLogin({required String email, required String password}) async {
   try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    await login(email: email, password: password);
+    //save on the shared preferences that the user is logged in
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(sharedLogged, true);
+    await prefs.setString(sharedUser, email);
+    await prefs.setString(sharedPassword, password);
     return null;
   } on FirebaseAuthException catch (e){
     switch(e.code){
@@ -217,15 +223,4 @@ Future<String?> _tryLogin({required String email, required String password}) asy
 
 String? _emailValidator(String? email){
   return (email == null || !TextValidator.validateEmail(email)) ? 'Please enter a valid email address.' : null;
-}
-
-Future<BloqoUser> _getUserFromEmail({required String email}) async {
-  var ref = BloqoUser.getRef();
-  var querySnapshot = await ref.where("email", isEqualTo: email).get();
-  BloqoUser user = querySnapshot.docs.first.data();
-  return user;
-}
-
-void _saveUserToAppState(BuildContext context, BloqoUser user){
-  Provider.of<UserAppState>(context, listen: false).set(user);
 }

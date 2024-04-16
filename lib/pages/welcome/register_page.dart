@@ -7,12 +7,12 @@ import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
-import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_switch.dart';
+import '../../utils/auth.dart';
 import '../../utils/constants.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/text_validator.dart';
@@ -172,15 +172,17 @@ class _RegisterPageState extends State<RegisterPage> {
                         const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 15),
                         child: BloqoFilledButton(
                           onPressed: () async {
+                            context.loaderOverlay.show();
                             String? error = await _tryRegister(email: emailController.text,
                                 password: passwordController.text,
                                 username: usernameController.text,
                                 fullName: fullNameController.text,
                                 isFullNameVisible: visibilitySwitch.value.get());
                             if(error == null) {
-                              BloqoUser user = await _getUserFromEmail(email: emailController.text);
+                              BloqoUser user = await getUserFromEmail(email: emailController.text);
                               if(!context.mounted) return;
-                              _saveUserToAppState(context, user);
+                              saveUserToAppState(context, user);
+                              context.loaderOverlay.hide();
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -190,6 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             }
                             else{
                               if(!context.mounted) return;
+                              context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
                                 title: "Oops, an error occurred!",
@@ -348,15 +351,4 @@ Future<bool> _isUsernameAlreadyTaken(String username) async{
   else{
     return false;
   }
-}
-
-Future<BloqoUser> _getUserFromEmail({required String email}) async {
-  var ref = BloqoUser.getRef();
-  var querySnapshot = await ref.where("email", isEqualTo: email).get();
-  BloqoUser user = querySnapshot.docs.first.data();
-  return user;
-}
-
-void _saveUserToAppState(BuildContext context, BloqoUser user){
-  Provider.of<UserAppState>(context, listen: false).set(user);
 }

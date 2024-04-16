@@ -1,9 +1,15 @@
+import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
+import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:bloqo/style/bloqo_theme.dart';
+import 'package:bloqo/utils/auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state/user_app_state.dart';
 import 'utils/firebase_options.dart';
 
@@ -26,20 +32,29 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  final bool userIsLoggedIn = await checkIfUserIsLoggedIn();
+
   //runs app
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserAppState()),
       ],
-      child: const MyApp(),
+      child: MyApp(
+        userIsLoggedIn: userIsLoggedIn,
+      ),
     ),
   );
 
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+    required this.userIsLoggedIn
+  });
+
+  final bool userIsLoggedIn;
 
   // This widget is the root of your application.
   @override
@@ -47,7 +62,29 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'bloQo',
       theme: BloqoTheme.get(),
-      home: const WelcomePage(),
+      home: LoaderOverlay(
+          useDefaultLoading: false,
+          overlayWidgetBuilder: (_) {
+            return Center(
+              child: LoadingAnimationWidget.prograssiveDots(
+                color: BloqoColors.russianViolet,
+                size: 100
+              )
+            );
+          },
+          child: userIsLoggedIn ? const MainPage() : const WelcomePage()),
     );
   }
+}
+
+Future<bool> checkIfUserIsLoggedIn() async {
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool(sharedLogged) != null && prefs.getBool(sharedLogged)!) {
+    await login(email: prefs.getString(sharedUser)!, password: prefs.getString(sharedPassword)!).then((response) {
+      return true;
+    }).catchError((error) {
+        return false;
+    });
+  }
+  return false;
 }
