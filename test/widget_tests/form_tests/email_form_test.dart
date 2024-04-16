@@ -17,9 +17,7 @@ void main() {
           labelText: "Email",
           hintText: "hint",
           maxInputLength: Constants.maxEmailLength,
-          validator: (String? value) {
-            return (value == null || !TextValidator.validateEmail(value)) ? 'Please enter a valid email address.' : null;
-          }
+          validator: (email) { return emailValidator(email); }
         ),
       )
     )

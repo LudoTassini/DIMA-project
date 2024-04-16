@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 
 class BloqoErrorAlert extends StatelessWidget{
   const BloqoErrorAlert({
@@ -17,23 +17,23 @@ class BloqoErrorAlert extends StatelessWidget{
     return AlertDialog(
       title: Text(title),
       content: Text(description),
-      backgroundColor: AppColors.error,
+      backgroundColor: BloqoColors.error,
       titleTextStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
-        color: AppColors.seasalt,
+        color: BloqoColors.seasalt,
         fontSize: 24
       ),
       contentTextStyle: Theme.of(context).textTheme.displayMedium?.copyWith(
-          color: AppColors.seasalt,
+          color: BloqoColors.seasalt,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       actions: [
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: MaterialStateProperty.resolveWith((_) => AppColors.seasalt)
+              backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt)
           ),
           onPressed: () => Navigator.pop(context, "OK"),
           child: Text("OK", style: Theme.of(context).textTheme.displayMedium?.copyWith(
-            color: AppColors.error,
+            color: BloqoColors.error,
             fontWeight: FontWeight.bold
           )),
         )
@@ -43,7 +43,7 @@ class BloqoErrorAlert extends StatelessWidget{
 
 }
 
-showErrorAlert({required BuildContext context, required String title, required String description}){
+showBloqoErrorAlert({required BuildContext context, required String title, required String description}){
   showDialog(
     context: context,
     builder: (BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BloqoClickableText extends StatelessWidget{
-  const BloqoClickableText({
+class BloqoTextButton extends StatelessWidget{
+  const BloqoTextButton({
     super.key,
     required this.text,
     required this.color,
@@ -16,7 +16,7 @@ class BloqoClickableText extends StatelessWidget{
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
-        textStyle: MaterialStateProperty.resolveWith((states) => TextStyle(
+        textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
           fontWeight: FontWeight.bold,
           decoration: TextDecoration.underline
         )),
