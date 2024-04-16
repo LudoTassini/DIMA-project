@@ -174,7 +174,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: BloqoFilledButton(
                           onPressed: () async {
                             context.loaderOverlay.show();
-                            String? error = await _tryRegister(email: emailController.text,
+                            String? error = await _tryRegister(context: context,
+                                email: emailController.text,
                                 password: passwordController.text,
                                 username: usernameController.text,
                                 fullName: fullNameController.text,
@@ -234,7 +235,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<String?> _tryRegister({required String email, required String password, required String username,
+Future<String?> _tryRegister({required BuildContext context, required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
   final user = BloqoUser(
       email: email,
@@ -245,7 +246,8 @@ Future<String?> _tryRegister({required String email, required String password, r
   if(emailValidator(user.email) == null && passwordValidator(password) == null
       && usernameValidator(user.username) == null && fullNameValidator(user.fullName) == null) {
     if(await _isUsernameAlreadyTaken(user.username)){
-      return "The username is already taken. Please choose another one.";
+      if(!context.mounted) return "Error";
+      return AppLocalizations.of(context)!.username_already_taken;
     }
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -254,18 +256,19 @@ Future<String?> _tryRegister({required String email, required String password, r
       await ref.doc().set(user);
       return null;
     } on FirebaseAuthException catch (e) {
+        if(!context.mounted) return "Error";
         switch(e.code){
           case "email-already-in-use":
-            return "There's already an account with the given email. Please login or try entering another one.";
+            return AppLocalizations.of(context)!.register_email_already_taken;
           case "network-request-failed":
-            return "Internet connection is required to login. Please check your connection status and try again.";
+            return AppLocalizations.of(context)!.register_network_error;
           default:
-            return "Oops, something went wrong. Please try again.";
+            return AppLocalizations.of(context)!.register_error;
         }
     }
   }
   else{
-    return "All fields are required. Please complete them.";
+    return AppLocalizations.of(context)!.register_incomplete_error;
   }
 }
 

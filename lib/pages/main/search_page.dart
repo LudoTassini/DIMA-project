@@ -5,6 +5,7 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
@@ -90,7 +91,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Text(
-                    'Tell us what you are looking for.',
+                    AppLocalizations.of(context)!.search_page_header_1,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                       color: BloqoColors.seasalt,
                       fontSize: 30,
@@ -101,7 +102,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Text(
-                    'Every field is optional. Freely choose your filters and sorting options.',
+                    AppLocalizations.of(context)!.search_page_header_2,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       color: BloqoColors.seasalt,
                     )
@@ -114,8 +115,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: BloqoTextField(
                       formKey: formKeyCourseName,
                       controller: courseNameController,
-                      labelText: 'Course name',
-                      hintText: 'e.g. Basic English for Italian Speakers',
+                      labelText: AppLocalizations.of(context)!.course_name,
+                      hintText: AppLocalizations.of(context)!.course_name_hint,
                       maxInputLength: Constants.maxCourseNameLength,
                     )
                   ),
@@ -127,8 +128,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: BloqoTextField(
                       formKey: formKeyAuthorUsername,
                       controller: authorUsernameController,
-                      labelText: 'Author username',
-                      hintText: 'e.g. Vanessa Visconti',
+                      labelText: AppLocalizations.of(context)!.author_username,
+                      hintText: AppLocalizations.of(context)!.author_username_hint,
                       maxInputLength: Constants.maxUsernameLength,
                     )
                   ),
@@ -140,8 +141,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       child: BloqoTextField(
                         formKey: formKeyMinimumPublicationDate,
                         controller: minimumPublicationDateController,
-                        labelText: 'Minimum publication date',
-                        hintText: 'e.g. 2024/01/01',
+                        labelText: AppLocalizations.of(context)!.minimum_publication_date,
+                        hintText: AppLocalizations.of(context)!.minimum_publication_date_hint,
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
@@ -168,8 +169,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       child: BloqoTextField(
                         formKey: formKeyMaximumPublicationDate,
                         controller: maximumPublicationDateController,
-                        labelText: 'Maximum publication date',
-                        hintText: 'e.g. 2024/01/31',
+                        labelText: AppLocalizations.of(context)!.maximum_publication_date,
+                        hintText: AppLocalizations.of(context)!.maximum_publication_date_hint,
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
@@ -205,7 +206,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                                   child: Text(
-                                    'Public\nCourses',
+                                    AppLocalizations.of(context)!.public_courses,
                                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                         fontSize: 13,
                                         color: BloqoColors.russianViolet,
@@ -236,7 +237,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                                   child: Text(
-                                    'Private\nCourses',
+                                    AppLocalizations.of(context)!.private_courses,
                                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                       fontSize: 13,
                                       color: BloqoColors.russianViolet,
@@ -265,7 +266,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'You can also filter by tag.',
+                              AppLocalizations.of(context)!.search_page_tag_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BloqoColors.russianViolet
@@ -288,7 +289,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: subjectTagController,
                                   dropdownMenuEntries: subjectTags,
                                   initialSelection: subjectTags[0].value,
-                                  label: "Subject Tag"
+                                  label: AppLocalizations.of(context)!.subject_tag
                                 )
                               ],
                             ),
@@ -310,7 +311,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: durationTagController,
                                   dropdownMenuEntries: durationTags,
                                   initialSelection: durationTags[0].value,
-                                  label: "Duration Tag"
+                                  label: AppLocalizations.of(context)!.duration_tag
                                 )
                               ],
                             ),
@@ -332,7 +333,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: modalityTagController,
                                   dropdownMenuEntries: modalityTags,
                                   initialSelection: modalityTags[0].value,
-                                  label: "Modality Tag"
+                                  label: AppLocalizations.of(context)!.modality_tag
                                 )
                               ],
                             ),
@@ -354,7 +355,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: difficultyTagController,
                                   dropdownMenuEntries: difficultyTags,
                                   initialSelection: difficultyTags[0].value,
-                                  label: "Difficulty Tag"
+                                  label: AppLocalizations.of(context)!.difficulty_tag
                                 )
                               ],
                             ),
@@ -373,7 +374,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
                           child: Text(
-                            'Finally, you can sort your results.',
+                            AppLocalizations.of(context)!.search_page_sort_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: BloqoColors.russianViolet
@@ -383,7 +384,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         BloqoDropdown(
                           controller: sortByController,
                           dropdownMenuEntries: sortingOptions,
-                          label: "Sort by",
+                          label: AppLocalizations.of(context)!.sort_by,
                           initialSelection: sortingOptions[0].value,
                         )
                       ]
@@ -396,7 +397,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: BloqoTextButton(
                       color: BloqoColors.error,
                       onPressed: () => _resetSearchCriteria(),
-                      text: "Reset Search Criteria",
+                      text: AppLocalizations.of(context)!.reset_search_criteria,
                     )
                   )
                 )
@@ -424,7 +425,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       },
                       color: BloqoColors.chineseViolet,
                       icon: Icons.qr_code,
-                      text: 'Scan QR Code',
+                      text: AppLocalizations.of(context)!.scan_qr_code,
                       fontSize: 16
                     ),
                   ),
@@ -443,7 +444,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         );
                       },
                       color: BloqoColors.russianViolet,
-                      text: 'Search',
+                      text: AppLocalizations.of(context)!.search,
                       icon: Icons.search
                     ),
                   ),
@@ -470,11 +471,11 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       publicCoursesToggle.reset();
       privateCoursesToggle.reset();
 
-      subjectTagController.text = "None";
-      durationTagController.text = "None";
-      modalityTagController.text = "None";
-      difficultyTagController.text = "None";
-      sortByController.text = "None";
+      subjectTagController.text = AppLocalizations.of(context)!.none;
+      durationTagController.text = AppLocalizations.of(context)!.none;
+      modalityTagController.text = AppLocalizations.of(context)!.none;
+      difficultyTagController.text = AppLocalizations.of(context)!.none;
+      sortByController.text = AppLocalizations.of(context)!.none;
     });
 
   }

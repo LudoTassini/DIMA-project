@@ -2,6 +2,7 @@ import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
@@ -48,21 +49,22 @@ class _MainPageState extends State<MainPage>{
   Widget build(BuildContext context) {
 
     late String title;
+    if(!context.mounted) return const Text("Error");
     switch(_selectedPageIndex){
       case 0:
-        title = "Welcome, ${Provider.of<UserAppState>(context, listen: false).get()!.username}!";
+        title = "${AppLocalizations.of(context)!.home_page_title}, ${Provider.of<UserAppState>(context, listen: false).get()!.username}!";
         break;
       case 1:
-        title = "Learn";
+        title = AppLocalizations.of(context)!.learn_page_title;
         break;
       case 2:
-        title = "Search";
+        title = AppLocalizations.of(context)!.search_page_title;
         break;
       case 3:
-        title = "Editor";
+        title = AppLocalizations.of(context)!.editor_page_title;
         break;
       case 4:
-        title = "Account and Settings";
+        title = AppLocalizations.of(context)!.user_page_title;
         break;
       default:
         title = "Error";
