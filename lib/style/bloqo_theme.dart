@@ -140,6 +140,21 @@ class BloqoTheme{
           surfaceTintColor: MaterialStateProperty.resolveWith((states) => Colors.transparent),
         )
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
+              (Set<MaterialState> states) => states.contains(MaterialState.selected)
+              ? const TextStyle(
+              color: BloqoColors.russianViolet,
+              fontWeight: FontWeight.w500,
+              fontSize: 15
+          )
+              : const TextStyle(
+              color: BloqoColors.seasalt,
+              fontWeight: FontWeight.w500,
+              fontSize: 15
+          ),
+        ),
+      ),
     );
   }
 

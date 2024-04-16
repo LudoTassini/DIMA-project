@@ -7,10 +7,14 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<UserPage>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return const Text("User page");
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -7,10 +7,14 @@ class LearnPage extends StatefulWidget {
   State<LearnPage> createState() => _LearnPageState();
 }
 
-class _LearnPageState extends State<LearnPage> {
+class _LearnPageState extends State<LearnPage> with AutomaticKeepAliveClientMixin<LearnPage>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return const Text("Learn page");
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
