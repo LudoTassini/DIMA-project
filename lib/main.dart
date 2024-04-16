@@ -6,6 +6,7 @@ import 'package:bloqo/utils/auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final bool userIsLoggedIn = await checkIfUserIsLoggedIn();
+  final bool userIsLoggedIn = await _checkIfUserIsLoggedIn();
 
   //runs app
   runApp(
@@ -62,6 +63,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'bloQo',
       theme: BloqoTheme.get(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: LoaderOverlay(
           useDefaultLoading: false,
           overlayWidgetBuilder: (_) {
@@ -77,7 +80,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Future<bool> checkIfUserIsLoggedIn() async {
+Future<bool> _checkIfUserIsLoggedIn() async {
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getBool(sharedLogged) != null && prefs.getBool(sharedLogged)!) {
     await login(email: prefs.getString(sharedUser)!, password: prefs.getString(sharedPassword)!).then((response) {

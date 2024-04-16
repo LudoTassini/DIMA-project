@@ -8,6 +8,7 @@ import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -83,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                           child: Text(
-                              'Thank you for joining the bloQo community!',
+                              AppLocalizations.of(context)!.register_thank_you,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                 color: BloqoColors.russianViolet,
@@ -94,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
                           child: Text(
-                            'We want you to have the best experience.\nThat\'s why we are asking a few data about you.',
+                            AppLocalizations.of(context)!.register_explanation,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
                               color: BloqoColors.russianViolet,
@@ -107,10 +108,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyEmail,
                             controller: emailController,
-                            labelText: "Email",
-                            hintText: "e.g. bloqo@domain.com",
+                            labelText: AppLocalizations.of(context)!.email,
+                            hintText: AppLocalizations.of(context)!.email_hint,
                             maxInputLength: Constants.maxEmailLength,
-                            validator: (String? value) { return _emailValidator(value); },
+                            validator: (String? value) { return emailValidator(value); },
                             keyboardType: TextInputType.emailAddress,
                           ),
                         ),
@@ -119,10 +120,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyPassword,
                             controller: passwordController,
-                            labelText: "Password",
-                            hintText: "type your password here",
+                            labelText: AppLocalizations.of(context)!.password,
+                            hintText: AppLocalizations.of(context)!.password_hint,
                             maxInputLength: Constants.maxPasswordLength,
-                            validator: (String? value) { return _passwordValidator(value); },
+                            validator: (String? value) { return passwordValidator(value); },
                           ),
                         ),
                         Form(
@@ -130,10 +131,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyUsername,
                             controller: usernameController,
-                            labelText: "Nickname",
-                            hintText: "e.g. iluvbloqo00",
+                            labelText: AppLocalizations.of(context)!.username,
+                            hintText: AppLocalizations.of(context)!.username_hint,
                             maxInputLength: Constants.maxUsernameLength,
-                            validator: (String? value) { return _usernameValidator(value); }
+                            validator: (String? value) { return usernameValidator(value); }
                           ),
                         ),
                         Form(
@@ -141,10 +142,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyFullName,
                             controller: fullNameController,
-                            labelText: "Full name",
-                            hintText: "e.g. Vanessa Visconti",
+                            labelText: AppLocalizations.of(context)!.full_name,
+                            hintText: AppLocalizations.of(context)!.full_name_hint,
                             maxInputLength: Constants.maxFullNameLength,
-                            validator: (String? value) { return _fullNameValidator(value); }
+                            validator: (String? value) { return fullNameValidator(value); }
                           ),
                         ),
                       Padding(
@@ -156,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           children: [
                             Flexible(
                               child: Text(
-                                'Full name visible to others',
+                                AppLocalizations.of(context)!.full_name_visible,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   color: BloqoColors.russianViolet,
                                   fontWeight: FontWeight.w500,
@@ -195,19 +196,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
-                                title: "Oops, an error occurred!",
+                                title: AppLocalizations.of(context)!.error_title,
                                 description: error,
                               );
                             }
                           },
                           color: BloqoColors.russianViolet,
-                          text: 'Register',
+                          text: AppLocalizations.of(context)!.register,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
                         child: BloqoTextButton(
-                          text: "Already have an account? Log in!",
+                          text: AppLocalizations.of(context)!.back_to_login,
                           color: BloqoColors.russianViolet,
                           onPressed: () {
                             if(!context.mounted) return;
@@ -241,8 +242,8 @@ Future<String?> _tryRegister({required String email, required String password, r
       fullName: fullName,
       isFullNameVisible: isFullNameVisible
   );
-  if(_emailValidator(user.email) == null && _passwordValidator(password) == null
-      && _usernameValidator(user.username) == null && _fullNameValidator(user.fullName) == null) {
+  if(emailValidator(user.email) == null && passwordValidator(password) == null
+      && usernameValidator(user.username) == null && fullNameValidator(user.fullName) == null) {
     if(await _isUsernameAlreadyTaken(user.username)){
       return "The username is already taken. Please choose another one.";
     }
@@ -265,80 +266,6 @@ Future<String?> _tryRegister({required String email, required String password, r
   }
   else{
     return "All fields are required. Please complete them.";
-  }
-}
-
-String _createPasswordErrorString(List<bool> validationResults) {
-  String messages = "";
-
-  if (!validationResults[0]) {
-    messages += 'Password must be at least ${Constants.minPasswordLength} characters long.\n';
-  }
-  if (!validationResults[1]) {
-    messages+= 'Password must be at most ${Constants.maxPasswordLength} characters long.\n';
-  }
-  if (!validationResults[2]) {
-    messages+= 'Password must contain at least one special character.\n';
-  }
-  if (!validationResults[3]) {
-    messages+= 'Password must contain at least one number.\n';
-  }
-  if (!validationResults[4]) {
-    messages+= 'Password must contain at least one uppercase letter.\n';
-  }
-  if (!validationResults[5]) {
-    messages+= 'Password must contain at least one lowercase letter.\n';
-  }
-  return messages.trim();
-}
-
-String? _emailValidator(String? email){
-  return (email == null || !TextValidator.validateEmail(email)) ? 'Please enter a valid email address.' : null;
-}
-
-String? _passwordValidator(String? password){
-
-  if(password == null){
-    return "The password cannot be empty.";
-  }
-  List<bool> results = TextValidator.validatePassword(password);
-  int count = 0;
-  for (bool result in results){
-    if(result){
-      count++;
-    }
-  }
-  if(count==results.length){
-    return null;
-  }
-  else {
-    String errorMessage = _createPasswordErrorString(results);
-    return errorMessage;
-  }
-
-}
-
-String? _usernameValidator(String? username) {
-  if (username == null || username.length < Constants.minUsernameLength) {
-    return "The username must be at least ${Constants.minUsernameLength} characters long.";
-  }
-  if (!TextValidator.validateUsername(username)){
-    return "The username must be alphanumeric.";
-  }
-  else{
-    return null;
-  }
-}
-
-String? _fullNameValidator(String? fullName){
-  if (fullName == null){
-    return "The full name must not be empty.";
-  }
-  if (!TextValidator.validateFullName(fullName)){
-    return "The full name must be alphanumeric (spaces are allowed).";
-  }
-  else{
-    return null;
   }
 }
 

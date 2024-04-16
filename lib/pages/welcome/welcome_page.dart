@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
@@ -80,7 +81,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: Column(
                     children: [
                       Text(
-                        'Welcome!',
+                        AppLocalizations.of(context)!.welcome,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: BloqoColors.russianViolet,
@@ -92,10 +93,10 @@ class _WelcomePageState extends State<WelcomePage> {
                         BloqoTextField(
                           formKey: formKeyEmail,
                           controller: emailController,
-                          labelText: "Email",
-                          hintText: "e.g. bloqo@domain.com",
+                          labelText: AppLocalizations.of(context)!.email,
+                          hintText: AppLocalizations.of(context)!.email_hint,
                           maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) {return _emailValidator(value);},
+                          validator: (String? value) {return emailValidator(value);},
                           keyboardType: TextInputType.emailAddress,
                           onTap: () {
                             setState(() {
@@ -110,8 +111,8 @@ class _WelcomePageState extends State<WelcomePage> {
                           BloqoTextField(
                             formKey: formKeyPassword,
                             controller: passwordController,
-                            labelText: "Password",
-                            hintText: "type your password here",
+                            labelText: AppLocalizations.of(context)!.password,
+                            hintText: AppLocalizations.of(context)!.password_hint,
                             maxInputLength: Constants.maxPasswordLength,
                             obscureText: true,
                             onTap: () {
@@ -126,7 +127,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: BloqoFilledButton(
                           onPressed: () async {
                             context.loaderOverlay.show();
-                            String? error = await _tryLogin(email: emailController.text, password: passwordController.text);
+                            String? error = await _tryLogin(context: context, email: emailController.text, password: passwordController.text);
                             if(error==null){
                               BloqoUser user = await getUserFromEmail(email: emailController.text);
                               if(!context.mounted) return;
@@ -144,17 +145,17 @@ class _WelcomePageState extends State<WelcomePage> {
                               context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
-                                title: "Oops, an error occurred!",
+                                title: AppLocalizations.of(context)!.error_title,
                                 description: error,
                               );
                             }
                           },
                           color: BloqoColors.russianViolet,
-                          text: 'Login',
+                          text: AppLocalizations.of(context)!.login,
                         ),
                       ),
                       BloqoTextButton(
-                        text: "Forgot your password?",
+                        text: AppLocalizations.of(context)!.forgot_password,
                         color: BloqoColors.russianViolet,
                         onPressed: () {
                           //TODO
@@ -168,7 +169,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    'New here?',
+                    AppLocalizations.of(context)!.new_here,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                       color: BloqoColors.seasalt,
                       fontSize: 35,
@@ -186,7 +187,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         );
                       },
                       color: BloqoColors.russianViolet,
-                      text: 'Register now!',
+                      text: AppLocalizations.of(context)!.register_now,
                       fontSize: 35,
                       height: 82,
                     ),
@@ -202,7 +203,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
 }
 
-Future<String?> _tryLogin({required String email, required String password}) async {
+Future<String?> _tryLogin({required BuildContext context, required String email, required String password}) async {
   try {
     await login(email: email, password: password);
     //save on the shared preferences that the user is logged in
@@ -214,13 +215,11 @@ Future<String?> _tryLogin({required String email, required String password}) asy
   } on FirebaseAuthException catch (e){
     switch(e.code){
       case "network-request-failed":
-        return "Internet connection is required to login. Please check your connection status and try again.";
+        if(!context.mounted) return "Error";
+        return AppLocalizations.of(context)!.login_network_error;
       default:
-        return "Wrong credentials. Please check them and try again.";
+        if(!context.mounted) return "Error";
+        return AppLocalizations.of(context)!.login_credentials_error;
     }
   }
-}
-
-String? _emailValidator(String? email){
-  return (email == null || !TextValidator.validateEmail(email)) ? 'Please enter a valid email address.' : null;
 }
