@@ -21,8 +21,8 @@ class BloqoTheme{
           fontWeight: FontWeight.normal,
           fontFamily: 'Readex Pro'
       ),
-      bodyLarge: TextStyle(
-          fontSize: 28,
+      bodyLarge: TextStyle( // date picker input style
+          fontSize: 20,
           fontWeight: FontWeight.normal,
           fontFamily: 'Readex Pro'
       ),
@@ -41,6 +41,11 @@ class BloqoTheme{
           fontWeight: FontWeight.bold,
           fontFamily: 'Readex Pro',
           color: BloqoColors.russianViolet
+      ),
+      titleSmall: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Readex Pro',
       ),
     );
     FilledButtonThemeData filledButtonThemeData = FilledButtonThemeData(
@@ -68,6 +73,9 @@ class BloqoTheme{
         headerHelpStyle: const TextStyle(
           fontSize: 18
         ),
+        headerHeadlineStyle: const TextStyle(
+            fontSize: 30
+        ),
         dayStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500
@@ -75,6 +83,9 @@ class BloqoTheme{
         weekdayStyle: const TextStyle(
           fontSize: 22,
           color: BloqoColors.darkFuchsia,
+        ),
+        yearStyle: const TextStyle(
+          fontSize: 22,
         ),
         headerBackgroundColor: BloqoColors.russianViolet,
         headerForegroundColor: BloqoColors.seasalt,
@@ -98,6 +109,26 @@ class BloqoTheme{
             }
           }
         ),
+        yearBackgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return BloqoColors.russianViolet;
+              }
+              else {
+                return null;
+              }
+            }
+        ),
+        yearForegroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.selected)) {
+                return BloqoColors.seasalt;
+              }
+              else {
+                return BloqoColors.russianViolet;
+              }
+            }
+        ),
         todayBorder: BorderSide.none,
         dividerColor: BloqoColors.russianViolet,
         cancelButtonStyle: filledButtonThemeData.style?.copyWith(
@@ -119,6 +150,18 @@ class BloqoTheme{
           backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.russianViolet),
           fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
           padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: BloqoColors.russianViolet,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          labelStyle: textTheme.labelMedium,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
         ),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(

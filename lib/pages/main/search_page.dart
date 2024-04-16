@@ -483,9 +483,11 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
 
 Future<DateTime?> _selectDate({required BuildContext context}) async {
   final DateTime? picked = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2100)
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2024),
+    lastDate: DateTime(2100),
+    keyboardType: TextInputType.datetime,
   );
   return picked;
 }
