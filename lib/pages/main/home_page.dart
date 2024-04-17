@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import '../../components/containers/bloqo_main_container.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.user});
-  final BloqoUser user;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

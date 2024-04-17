@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/app_colors.dart';
+import '../../style/bloqo_colors.dart';
 
 class BloqoHelpButton extends StatelessWidget {
   const BloqoHelpButton({
@@ -16,7 +16,7 @@ class BloqoHelpButton extends StatelessWidget {
           .style
           ?.copyWith(
         backgroundColor: MaterialStateProperty.resolveWith((_) =>
-        AppColors.darkFuchsia),
+        BloqoColors.darkFuchsia),
       ),
       onPressed: () {
         print('Button pressed ...');
@@ -29,7 +29,7 @@ class BloqoHelpButton extends StatelessWidget {
             .textTheme
             .displaySmall
             ?.copyWith(
-          color: AppColors.seasalt,
+          color: BloqoColors.seasalt,
           fontSize: 12,
         ),
       ),

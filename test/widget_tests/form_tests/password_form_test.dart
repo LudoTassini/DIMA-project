@@ -59,7 +59,7 @@ void main() {
   testWidgets('Password form displays error when password with more than 32 characters is given',
           (WidgetTester tester) async {
         await tester.pumpWidget(testedWidget);
-        const enteredText = "PasswordPasswordPasswordPasswordPassword8!";
+        const enteredText = "PasswordPasswordPasswordPasswo8!";
         const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.';
         final foundWidget = find.byType(BloqoTextField);
         expect(foundWidget, findsOneWidget);
