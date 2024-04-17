@@ -3,7 +3,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/navigation/bloqo_nav_bar.dart';
 import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
-import 'package:bloqo/style/app_colors.dart';
+import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import '../../components/containers/bloqo_main_container.dart';
 
@@ -22,11 +22,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BloqoNavBar(),
+      bottomNavigationBar: const BloqoNavBar(onDestinationSelected: (int ) {  },),
 
       // appBar: BloqoAppBar.get(context: context, title: widget.title),
       appBar: AppBar(
-        backgroundColor: AppColors.russianViolet,
+        backgroundColor: BloqoColors.russianViolet,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisSize: MainAxisSize.max,
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               "Welcome, ${widget.user.username}!",
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                 fontFamily: 'Outfit',
-                color: AppColors.seasalt,
+                color: BloqoColors.seasalt,
                 fontSize: 22,),
               ),
             const BloqoHelpButton(), // FIXME: spero vada bene
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                 child: Text(
                   'Do you mind some learning today?',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: AppColors.seasalt,
+                    color: BloqoColors.seasalt,
                     fontSize: 30,
                   ),
                 ),
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 fontStyle: FontStyle.italic,
-                                color: AppColors.russianViolet,
+                                color: BloqoColors.russianViolet,
                               ),
                             ),
                           ),

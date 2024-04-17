@@ -18,25 +18,7 @@ void main() {
               labelText: "Password",
               hintText: "type your password here",
               maxInputLength: Constants.maxPasswordLength,
-              validator: (String? value) {
-                if(value == null){
-                  return "The password cannot be empty.";
-                }
-                List<bool> results = TextValidator.validatePassword(value);
-                int count = 0;
-                for (bool result in results){
-                  if(result){
-                    count++;
-                  }
-                }
-                if(count==results.length){
-                  return null;
-                }
-                else {
-                  String errorMessage = createPasswordErrorString(results);
-                  return errorMessage;
-                }
-              },
+              validator: (password) { return passwordValidator(password); },
           ),
         )
       )
