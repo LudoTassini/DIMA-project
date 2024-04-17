@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
   int currentPageIndex = 0;
 
 
@@ -862,5 +862,8 @@ class _HomePageState extends State<HomePage> {
       )
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }
