@@ -14,7 +14,8 @@ class BloqoUser{
     required this.username,
     required this.fullName,
     required this.isFullNameVisible,
-    this.coursesEnrolledIn
+    this.coursesEnrolledIn,
+
   });
 
   factory BloqoUser.fromFirestore(

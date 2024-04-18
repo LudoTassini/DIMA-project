@@ -1,3 +1,4 @@
+import 'package:bloqo/components/buttons/bloqo_help_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../style/bloqo_colors.dart';
@@ -13,6 +14,9 @@ class BloqoAppBar{
                 color: BloqoColors.seasalt
             ),
           ),
+          actions: const <Widget>[
+            BloqoHelpButton(), // TODO: controllare che help button vada bene e che funzioni
+          ],
           backgroundColor: BloqoColors.russianViolet,
         )
     );
