@@ -8,6 +8,7 @@ class BloqoUser{
   final bool isFullNameVisible;
 
   List<BloqoCourse>? coursesEnrolledIn;
+  List<BloqoCourse>? coursesCreated;
 
   BloqoUser({
     required this.email,
@@ -15,7 +16,7 @@ class BloqoUser{
     required this.fullName,
     required this.isFullNameVisible,
     this.coursesEnrolledIn,
-
+    this.coursesCreated,
   });
 
   factory BloqoUser.fromFirestore(
@@ -23,8 +24,9 @@ class BloqoUser{
     SnapshotOptions? options,
   ){
     final data = snapshot.data();
+    // retrieving courses the user is enrolled in
     List<dynamic> subDocumentReferences = data?['courses_enrolled_in'];
-    List<BloqoCourse>? courses;
+    List<BloqoCourse>? coursesEnrolledIn;
 
     for (dynamic subDocumentReference in subDocumentReferences) {
       //Fetch each referenced sub-document from Firestore
@@ -38,7 +40,30 @@ class BloqoUser{
             name: courseName,
             author: courseAuthor,
         );
-        courses!.add(course);
+        coursesEnrolledIn!.add(course);
+      } else {
+        print('Sub-document does not exist');
+        // FIXME
+      }
+    }
+
+    // retrieving courses the user created
+    subDocumentReferences = data?['courses_created'];
+    List<BloqoCourse>? coursesCreated;
+
+    for (dynamic subDocumentReference in subDocumentReferences) {
+      //Fetch each referenced sub-document from Firestore
+      DocumentSnapshot subDocumentSnapshot = subDocumentReference.get();
+      if (subDocumentSnapshot.exists) {
+        //Extract the desired variables from each sub-document
+        String courseName = subDocumentSnapshot['name'];
+        //TODO: aggiungere parametri per contare numero di capitoli e di sezioni
+
+        final course = BloqoCourse(
+          name: courseName,
+          author: data?['username'],
+        );
+        coursesEnrolledIn!.add(course);
       } else {
         print('Sub-document does not exist');
         // FIXME
@@ -50,18 +75,21 @@ class BloqoUser{
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
-      coursesEnrolledIn: courses,
+      coursesEnrolledIn: coursesEnrolledIn,
+      coursesCreated: coursesCreated,
     );
   }
 
   Map<String, dynamic> toFirestore() {
     List? coursesEnrolledInReferences = coursesEnrolledIn?.map((course) => BloqoCourse.getRef()).toList();
+    List? coursesCreatedReferences = coursesCreated?.map((course) => BloqoCourse.getRef()).toList();
     return {
       "email": email,
       "username": username,
       "full_name": fullName,
       "is_full_name_visible": isFullNameVisible,
       "courses_enrolled_in": coursesEnrolledInReferences,
+      "courses_created": coursesCreatedReferences,
     };
   }
 

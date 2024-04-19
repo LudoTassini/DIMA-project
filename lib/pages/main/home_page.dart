@@ -16,12 +16,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
-  int currentPageIndex = 0;
-  BloqoUser user = Provider.of<UserAppState>(context, listen: false).get()!;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    BloqoUser user = Provider.of<UserAppState>(context, listen: false).get()!;
 
     return BloqoMainContainer(
         child: Column(
@@ -216,7 +215,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                                     progressColor: BloqoColors.success,
                                                     backgroundColor: BloqoColors.inactiveTracker,
                                                     center: Text(
-                                                      '50% of course completed',
+                                                      '50% of course completed', //FIXME
                                                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                       fontSize: 10,
                                                       fontFamily: 'Outfit',
@@ -283,455 +282,135 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ),
                         ),
                         ListView.builder(
-                          itemCount: user.coursesEnrolledIn?.length,
+                          itemCount: user.coursesCreated?.length,
                           itemBuilder: (BuildContext context, int index) {
-                          BloqoCourse? course = user.coursesEnrolledIn?[index];
+                          BloqoCourse? course = user.coursesCreated?[index];
                           return BloqoSeasaltContainer(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
-                                      15, 15, 15, 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      shape: BoxShape.rectangle,
-                                      border: Border.all(
-                                        color: FlutterFlowTheme.of(context)
-                                            .chineseViolet,
-                                        width: 3,
-                                      ),
-                                    ),
-                                    child: Column(
+                                    15, 15, 15, 0),
+                                  child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Row(
                                       mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
+                                        Align(
+                                          alignment: const AlignmentDirectional(-1, 0),
+                                          child: Column(
                                           mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Align(
-                                              alignment:
-                                              AlignmentDirectional(-1, 0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsetsDirectional
-                                                        .fromSTEB(10, 10, 10, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                      MainAxisSize.max,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 0, 5, 0),
-                                                          child: Icon(
-                                                            Icons
-                                                                .menu_book_rounded,
-                                                            color: FlutterFlowTheme
-                                                                .of(context)
-                                                                .russianViolet2,
-                                                            size: 24,
-                                                          ),
-                                                        ),
-                                                        Flexible(
-                                                          child: Align(
-                                                            alignment:
-                                                            AlignmentDirectional(
-                                                                -1, 0),
-                                                            child: Text(
-                                                              'Math Basics',
-                                                              style: FlutterFlowTheme
-                                                                  .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                fontFamily:
-                                                                'Readex Pro',
-                                                                fontSize: 16,
-                                                                letterSpacing:
-                                                                0,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(10, 5, 10, 10),
-                                                    child: Text(
-                                                      '2 chapters, 15 sections',
-                                                      style: FlutterFlowTheme.of(
-                                                          context)
-                                                          .bodyMedium
-                                                          .override(
-                                                        fontFamily:
-                                                        'Readex Pro',
-                                                        fontSize: 12,
-                                                        letterSpacing: 0,
-                                                        fontWeight:
-                                                        FontWeight.w300,
-                                                        fontStyle:
-                                                        FontStyle.italic,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
                                             Padding(
-                                              padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 10, 0),
-                                              child: Icon(
-                                                Icons.play_circle,
-                                                color:
-                                                FlutterFlowTheme.of(context)
-                                                    .russianViolet2,
-                                                size: 24,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      15, 15, 15, 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      shape: BoxShape.rectangle,
-                                      border: Border.all(
-                                        color: FlutterFlowTheme.of(context)
-                                            .chineseViolet2,
-                                        width: 3,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Align(
-                                                alignment:
-                                                AlignmentDirectional(0, 0),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          10, 10, 10, 0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                        MainAxisSize.max,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(0,
-                                                                0, 5, 0),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .menu_book_rounded,
-                                                              color: FlutterFlowTheme
-                                                                  .of(context)
-                                                                  .russianViolet2,
-                                                              size: 24,
-                                                            ),
-                                                          ),
-                                                          Flexible(
-                                                            child: Align(
-                                                              alignment:
-                                                              AlignmentDirectional(
-                                                                  -1, 0),
-                                                              child: Text(
-                                                                'Synchronization Techniques in Distributed Systems',
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                  fontFamily:
-                                                                  'Readex Pro',
-                                                                  fontSize:
-                                                                  16,
-                                                                  letterSpacing:
-                                                                  0,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                              padding: const EdgeInsetsDirectional
+                                                .fromSTEB(10, 10, 10, 0),
+                                              child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                const Padding(
+                                                  padding:
+                                                    EdgeInsetsDirectional.fromSTEB(
+                                                      0, 0, 5, 0),
+                                                  child: Icon(
+                                                    Icons.menu_book_rounded,
+                                                    color: BloqoColors.russianViolet,
+                                                    size: 24,
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          10, 5, 10, 10),
+                                                  ),
+                                                Flexible(
+                                                  child: Align(
+                                                    alignment:const AlignmentDirectional(-1, 0),
                                                       child: Text(
-                                                        '5 chapters, 60 sections',
-                                                        style: FlutterFlowTheme
-                                                            .of(context)
-                                                            .bodyMedium
-                                                            .override(
-                                                          fontFamily:
-                                                          'Readex Pro',
-                                                          fontSize: 12,
-                                                          letterSpacing: 0,
-                                                          fontWeight:
-                                                          FontWeight.w300,
-                                                          fontStyle: FontStyle
-                                                              .italic,
+                                                        course!.name,
+                                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                        fontSize: 16,
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 10, 0),
-                                              child: Icon(
-                                                Icons.play_circle,
-                                                color:
-                                                FlutterFlowTheme.of(context)
-                                                    .russianViolet2,
-                                                size: 24,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      15, 15, 15, 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      shape: BoxShape.rectangle,
-                                      border: Border.all(
-                                        color: FlutterFlowTheme.of(context)
-                                            .chineseViolet2,
-                                        width: 3,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Align(
-                                              alignment:
-                                              AlignmentDirectional(-1, 0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(10, 10, 10, 0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                      MainAxisSize.max,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 0, 5, 0),
-                                                          child: Icon(
-                                                            Icons
-                                                                .menu_book_rounded,
-                                                            color: FlutterFlowTheme
-                                                                .of(context)
-                                                                .russianViolet2,
-                                                            size: 24,
-                                                          ),
-                                                        ),
-                                                        Flexible(
-                                                          child: Align(
-                                                            alignment:
-                                                            AlignmentDirectional(
-                                                                -1, 0),
-                                                            child: Text(
-                                                              'Geometry Basics',
-                                                              style: FlutterFlowTheme
-                                                                  .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                fontFamily:
-                                                                'Readex Pro',
-                                                                fontSize: 16,
-                                                                letterSpacing:
-                                                                0,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsetsDirectional
-                                                        .fromSTEB(10, 5, 10, 10),
-                                                    child: Text(
-                                                      '5 chapters, 9 sections',
-                                                      style: FlutterFlowTheme.of(
-                                                          context)
-                                                          .bodyMedium
-                                                          .override(
-                                                        fontFamily:
-                                                        'Readex Pro',
-                                                        fontSize: 12,
-                                                        letterSpacing: 0,
-                                                        fontWeight:
-                                                        FontWeight.w300,
-                                                        fontStyle:
-                                                        FontStyle.italic,
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 10, 0),
-                                              child: Icon(
-                                                Icons.play_circle,
-                                                color:
-                                                FlutterFlowTheme.of(context)
-                                                    .russianViolet2,
-                                                size: 24,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: AlignmentDirectional(1, -1),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        15, 15, 15, 0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(0),
-                                        shape: BoxShape.rectangle,
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 0, 0, 10),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Align(
-                                              alignment:
-                                              AlignmentDirectional(1, 0),
-                                              child: Text(
-                                                'View more',
-                                                textAlign: TextAlign.start,
-                                                style: FlutterFlowTheme.of(
-                                                    context)
-                                                    .bodyMedium
-                                                    .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  color: FlutterFlowTheme.of(
-                                                      context)
-                                                      .secondaryText,
-                                                  fontSize: 14,
-                                                  letterSpacing: 0,
-                                                  fontWeight: FontWeight.w600,
+                                          Padding(
+                                            padding: const EdgeInsetsDirectional
+                                              .fromSTEB(10, 5, 10, 10),
+                                            child: Text(
+                                              '2 chapters, 15 sections', //FIXME
+                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300,
+                                              fontStyle: FontStyle.italic,
                                                 ),
                                               ),
                                             ),
-                                            Icon(
-                                              Icons.keyboard_arrow_right_sharp,
-                                              color: FlutterFlowTheme.of(context)
-                                                  .secondaryText,
-                                              size: 25,
-                                            ),
                                           ],
                                         ),
                                       ),
-                                    ),
+                                      const Padding(
+                                        padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                          0, 0, 10, 0),
+                                          child: Icon(
+                                            Icons.play_circle,
+                                            color: BloqoColors.russianViolet,
+                                            size: 24,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          )
-
-
-
-
-
-
-
-
-
+                          );
+                        } ),
+                        Align( //FIXME
+                          alignment: const AlignmentDirectional(1,-1),
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                15, 15, 15, 0),
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 0, 0, 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Align(
+                                    alignment:
+                                    const AlignmentDirectional(1, 0),
+                                    child: Text(
+                                      'View more',
+                                      textAlign: TextAlign.start,
+                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                        color: BloqoColors.secondaryText,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.keyboard_arrow_right_sharp,
+                                    color: BloqoColors.secondaryText,
+                                    size: 25,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-      )
+          ),
+        )],
+      ),
     );
   }
 
