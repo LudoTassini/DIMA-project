@@ -1,3 +1,4 @@
+import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../model/courses/bloqo_course.dart';
@@ -136,31 +137,15 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 ),
               ],
             ),
-            Flexible(
+            const Flexible(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: LinearPercentIndicator(
-                      percent: 0.5, //FIXME: deve essere calcolato di volta in volta
-                      width: 295,
-                      lineHeight: 15,
-                      animation: true,
-                      animateFromLastPercent: true,
-                      progressColor: BloqoColors.success,
-                      backgroundColor: BloqoColors.inactiveTracker,
-                      center:
-                      Text(
-                        '50% of course completed', //FIXME
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          fontSize: 10,
-                          fontFamily: 'Outfit',
-                        ),
-                      ),
-                      barRadius: const Radius.circular(5),
-                      padding: EdgeInsets.zero,
-                    ),
+                    padding: EdgeInsets.all(10),
+                    child: BloqoProgressBar(
+                      percentage: 0.5,
+                    )
                   ),
                 ],
               ),

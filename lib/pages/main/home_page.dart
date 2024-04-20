@@ -1,3 +1,4 @@
+import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/bloqo_user.dart';
@@ -129,90 +130,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(user.coursesCreated?.length ?? 0, (index) {
                               BloqoCourse? course = user.coursesCreated?[index];
-
-                              return BloqoSeasaltContainer(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                        15, 15, 15, 0),
-                                      child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Align(
-                                              alignment: const AlignmentDirectional(-1, 0),
-                                              child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(10, 10, 10, 0),
-                                                  child: Row(
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  children: [
-                                                    const Padding(
-                                                      padding:
-                                                        EdgeInsetsDirectional.fromSTEB(
-                                                          0, 0, 5, 0),
-                                                      child: Icon(
-                                                        Icons.menu_book_rounded,
-                                                        color: BloqoColors.russianViolet,
-                                                        size: 24,
-                                                        ),
-                                                      ),
-                                                    Flexible(
-                                                      child: Align(
-                                                        alignment:const AlignmentDirectional(-1, 0),
-                                                          child: Text(
-                                                            course!.name,
-                                                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                            fontSize: 16,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional
-                                                  .fromSTEB(10, 5, 10, 10),
-                                                child: Text(
-                                                  '2 chapters, 15 sections', //FIXME
-                                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w300,
-                                                  fontStyle: FontStyle.italic,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                              0, 0, 10, 0),
-                                              child: Icon(
-                                                Icons.play_circle,
-                                                color: BloqoColors.russianViolet,
-                                                size: 24,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                              return BloqoCourseCreated(
+                                  course: course,
+                                  );
                             } ),
                             ),
                           ),

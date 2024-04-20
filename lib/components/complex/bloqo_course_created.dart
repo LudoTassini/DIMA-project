@@ -7,10 +7,9 @@ class BloqoCourseCreated extends StatelessWidget {
 
   const BloqoCourseCreated({
     super.key,
-    required this.course, required this.child,
+    required this.course,
   });
 
-  final Widget child;
   final BloqoCourse? course;
 
   @override
