@@ -27,7 +27,7 @@ class BloqoUser{
 
     // Check if courses_enrolled_in is null or not
     List<dynamic>? enrolledCoursesData = data?['courses_enrolled_in'];
-    List<BloqoCourse>? coursesEnrolledIn;
+    List<BloqoCourse> coursesEnrolledIn = [];
 
     if (enrolledCoursesData != null) {
       for (dynamic subDocumentReference in enrolledCoursesData) {
@@ -44,7 +44,7 @@ class BloqoUser{
               name: courseName,
               author: courseAuthor,
             );
-            coursesEnrolledIn!.add(course);
+            coursesEnrolledIn.add(course);
           } else {
             print('Sub-document does not exist');
             //FIXME
@@ -53,8 +53,7 @@ class BloqoUser{
       }
     }
 
-    List<BloqoCourse>? coursesCreated;
-
+    List<BloqoCourse> coursesCreated = [];
     if (data?['courses_created'] != null) {
       // retrieving courses the user created
       List<dynamic> subDocumentReferences = data?['courses_created'];
@@ -73,15 +72,13 @@ class BloqoUser{
               name: courseName,
               author: data?['username'],
             );
-            coursesCreated!.add(course);
+            coursesCreated.add(course);
           } else {
             print('Sub-document does not exist');
             // FIXME
           }
         });
       }
-    } else {
-      coursesCreated = null;
     }
 
     return BloqoUser(
