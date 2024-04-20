@@ -20,54 +20,68 @@ class BloqoUser{
   });
 
   factory BloqoUser.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-    SnapshotOptions? options,
-  ){
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options,
+      ) {
     final data = snapshot.data();
-    // retrieving courses the user is enrolled in
-    List<dynamic> subDocumentReferences = data?['courses_enrolled_in'];
+
+    // Check if courses_enrolled_in is null or not
+    List<dynamic>? enrolledCoursesData = data?['courses_enrolled_in'];
     List<BloqoCourse>? coursesEnrolledIn;
 
-    for (dynamic subDocumentReference in subDocumentReferences) {
-      //Fetch each referenced sub-document from Firestore
-      DocumentSnapshot subDocumentSnapshot = subDocumentReference.get();
-      if (subDocumentSnapshot.exists) {
-        //Extract the desired variables from each sub-document
-        String courseName = subDocumentSnapshot['name'];
-        String courseAuthor = subDocumentSnapshot['author_username'];
+    if (enrolledCoursesData != null) {
+      for (dynamic subDocumentReference in enrolledCoursesData) {
+        // Fetch each referenced sub-document from Firestore
+        Future<DocumentSnapshot<Map<String, dynamic>>> subDocumentSnapshotFuture = subDocumentReference.get();
 
-        final course = BloqoCourse(
-            name: courseName,
-            author: courseAuthor,
-        );
-        coursesEnrolledIn!.add(course);
-      } else {
-        print('Sub-document does not exist');
-        // FIXME
+        subDocumentSnapshotFuture.then((subDocumentSnapshot) {
+          if (subDocumentSnapshot.exists) {
+            // Extract the desired variables from each sub-document
+            String courseName = subDocumentSnapshot['name'];
+            String courseAuthor = subDocumentSnapshot['author_username'];
+
+            final course = BloqoCourse(
+              name: courseName,
+              author: courseAuthor,
+            );
+            coursesEnrolledIn!.add(course);
+          } else {
+            print('Sub-document does not exist');
+            //FIXME
+          }
+        });
       }
     }
 
-    // retrieving courses the user created
-    subDocumentReferences = data?['courses_created'];
     List<BloqoCourse>? coursesCreated;
 
-    for (dynamic subDocumentReference in subDocumentReferences) {
-      //Fetch each referenced sub-document from Firestore
-      DocumentSnapshot subDocumentSnapshot = subDocumentReference.get();
-      if (subDocumentSnapshot.exists) {
-        //Extract the desired variables from each sub-document
-        String courseName = subDocumentSnapshot['name'];
-        //TODO: aggiungere parametri per contare numero di capitoli e di sezioni
+    if (data?['courses_created'] != null) {
+      // retrieving courses the user created
+      List<dynamic> subDocumentReferences = data?['courses_created'];
 
-        final course = BloqoCourse(
-          name: courseName,
-          author: data?['username'],
-        );
-        coursesEnrolledIn!.add(course);
-      } else {
-        print('Sub-document does not exist');
-        // FIXME
+      for (dynamic subDocumentReference in subDocumentReferences) {
+        //Fetch each referenced sub-document from Firestore
+        Future<DocumentSnapshot<Map<String, dynamic>>> subDocumentSnapshotFuture = subDocumentReference.get();
+
+        subDocumentSnapshotFuture.then((subDocumentSnapshot) {
+          if (subDocumentSnapshot.exists) {
+            //Extract the desired variables from each sub-document
+            String courseName = subDocumentSnapshot['name'];
+            //TODO: aggiungere parametri per contare numero di capitoli e di sezioni
+
+            final course = BloqoCourse(
+              name: courseName,
+              author: data?['username'],
+            );
+            coursesCreated!.add(course);
+          } else {
+            print('Sub-document does not exist');
+            // FIXME
+          }
+        });
       }
+    } else {
+      coursesCreated = null;
     }
 
     return BloqoUser(

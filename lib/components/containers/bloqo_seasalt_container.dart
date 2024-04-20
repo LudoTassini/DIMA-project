@@ -6,7 +6,8 @@ class BloqoSeasaltContainer extends StatelessWidget {
   const BloqoSeasaltContainer({
     super.key,
     required this.child,
-    this.padding = const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20)
+    this.padding = const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+    final double? height,
   });
 
   final Widget child;
