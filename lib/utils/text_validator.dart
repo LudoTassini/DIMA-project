@@ -1,13 +1,14 @@
 import 'package:bloqo/utils/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-String? emailValidator(String? email){
-  return (email == null || !_validateEmail(email)) ? 'Please enter a valid email address.' : null;
+String? emailValidator({String? email, required AppLocalizations localizedText}){
+  return (email == null || !_validateEmail(email)) ? localizedText.error_enter_valid_email : null;
 }
 
-String? passwordValidator(String? password){
+String? passwordValidator({String? password, required AppLocalizations localizedText}){
 
   if(password == null){
-    return "The password cannot be empty.";
+    return localizedText.error_password_empty;
   }
   List<bool> results = _validatePassword(password);
   int count = 0;
@@ -20,30 +21,30 @@ String? passwordValidator(String? password){
     return null;
   }
   else {
-    String errorMessage = _createPasswordErrorString(results);
+    String errorMessage = _createPasswordErrorString(validationResults: results, localizedText: localizedText);
     return errorMessage;
   }
 
 }
 
-String? usernameValidator(String? username) {
+String? usernameValidator({String? username, required AppLocalizations localizedText}) {
   if (username == null || username.length < Constants.minUsernameLength) {
-    return "The username must be at least ${Constants.minUsernameLength} characters long.";
+    return localizedText.error_username_short(Constants.minUsernameLength.toString());
   }
   if (!_validateUsername(username)){
-    return "The username must be alphanumeric.";
+    return localizedText.error_username_alphanumeric;
   }
   else{
     return null;
   }
 }
 
-String? fullNameValidator(String? fullName){
+String? fullNameValidator({String? fullName, required AppLocalizations localizedText}){
   if (fullName == null){
-    return "The full name must not be empty.";
+    return localizedText.error_full_name_empty;
   }
   if (!_validateFullName(fullName)){
-    return "The full name must be alphanumeric (spaces are allowed).";
+    return localizedText.error_full_name_alphanumeric;
   }
   else{
     return null;
@@ -80,26 +81,26 @@ List<bool> _validatePassword(String password) {
   return validationResults;
 }
 
-String _createPasswordErrorString(List<bool> validationResults) {
+String _createPasswordErrorString({required List<bool> validationResults, required AppLocalizations localizedText}) {
   String messages = "";
 
   if (!validationResults[0]) {
-    messages += 'Password must be at least ${Constants.minPasswordLength} characters long.\n';
+    messages += "${localizedText.error_password_short(Constants.minPasswordLength.toString())}\n";
   }
   if (!validationResults[1]) {
-    messages+= 'Password must be at most ${Constants.maxPasswordLength} characters long.\n';
+    messages+= '${localizedText.error_password_long(Constants.maxPasswordLength.toString())}\n';
   }
   if (!validationResults[2]) {
-    messages+= 'Password must contain at least one special character.\n';
+    messages+= '${localizedText.error_password_special_char}\n';
   }
   if (!validationResults[3]) {
-    messages+= 'Password must contain at least one number.\n';
+    messages+= '${localizedText.error_password_number}\n';
   }
   if (!validationResults[4]) {
-    messages+= 'Password must contain at least one uppercase letter.\n';
+    messages+= '${localizedText.error_password_uppercase}\n';
   }
   if (!validationResults[5]) {
-    messages+= 'Password must contain at least one lowercase letter.\n';
+    messages+= '${localizedText.error_password_lowercase}\n';
   }
   return messages.trim();
 }
