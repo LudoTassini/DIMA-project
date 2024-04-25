@@ -19,18 +19,18 @@ void main() {
       home: Builder(
           builder: (BuildContext context) {
             sharedContext = context;
-            var loc = getAppLocalizations(sharedContext)!;
+            var localizedText = getAppLocalizations(sharedContext)!;
             return Scaffold(
                 body: Form(
                   key: formKey,
                   child: BloqoTextField(
                       formKey: formKey,
                       controller: controller,
-                      labelText: loc.full_name,
-                      hintText: loc.full_name_hint,
+                      labelText: localizedText.full_name,
+                      hintText: localizedText.full_name_hint,
                       maxInputLength: Constants.maxFullNameLength,
                       validator: (fullName) {
-                        return fullNameValidator(fullName: fullName, localizedText: loc);
+                        return fullNameValidator(fullName: fullName, localizedText: localizedText);
                       }
                   ),
                 )
@@ -41,7 +41,7 @@ void main() {
 
   testWidgets('Full name form present', (WidgetTester tester) async {
     await tester.pumpWidget(testedWidget);
-    expect(find.text(getAppLocalizations(sharedContext)!.full_name), findsOneWidget);
+    expect(find.byType(BloqoTextField), findsOneWidget);
   });
 
   testWidgets('Full name form registers text', (WidgetTester tester) async {

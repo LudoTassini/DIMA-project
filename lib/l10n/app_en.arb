@@ -90,5 +90,7 @@
   "error_password_uppercase": "Password must contain at least one uppercase letter.",
   "error_password_lowercase": "Password must contain at least one lowercase letter.",
   "error_invalid_date_format": "Invalid format.",
-  "error_date_out_of_range": "Out of range."
+  "error_date_out_of_range": "Out of range.",
+  "yes": "Yes",
+  "no": "No "
 }

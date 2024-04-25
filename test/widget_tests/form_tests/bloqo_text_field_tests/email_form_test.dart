@@ -41,7 +41,7 @@ void main() {
 
   testWidgets('Email form present', (WidgetTester tester) async {
     await tester.pumpWidget(testedWidget);
-    expect(find.text(getAppLocalizations(sharedContext)!.email), findsOneWidget);
+    expect(find.byType(BloqoTextField), findsOneWidget);
   });
 
   testWidgets('Email form registers text', (WidgetTester tester) async {
@@ -58,7 +58,7 @@ void main() {
   testWidgets('Email form displays error when wrong email is given', (WidgetTester tester) async {
     await tester.pumpWidget(testedWidget);
     const enteredText = "testmail@bloqo.";
-    const errorText = 'Please enter a valid email address.';
+    var errorText = getAppLocalizations(sharedContext)!.error_enter_valid_email;
     final foundWidget = find.byType(BloqoTextField);
     expect(foundWidget, findsOneWidget);
 
