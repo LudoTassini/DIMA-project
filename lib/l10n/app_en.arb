@@ -52,5 +52,45 @@
   "reset_search_criteria": "Reset Search Criteria",
   "scan_qr_code": "Scan QR Code",
   "search": "Search",
-  "none": "None"
+  "none": "None",
+  "error_enter_valid_email": "Please enter a valid email address.",
+  "error_password_empty": "The password cannot be empty.",
+  "error_username_short": "The username must be at least {num} characters long.",
+  "@error_username_short": {
+    "placeholders": {
+      "num": {
+        "type": "String",
+        "example": "ERROR"
+      }
+    }
+  },
+  "error_username_alphanumeric": "The username must be alphanumeric.",
+  "error_full_name_empty": "The full name must not be empty.",
+  "error_full_name_alphanumeric": "The full name must be alphanumeric (spaces are allowed).",
+  "error_password_short": "Password must be at least {num} characters long.",
+  "@error_password_short": {
+    "placeholders": {
+      "num": {
+        "type": "String",
+        "example": "ERROR"
+      }
+    }
+  },
+  "error_password_long": "Password must be at most {num} characters long.",
+  "@error_password_long": {
+    "placeholders": {
+      "num": {
+        "type": "String",
+        "example": "ERROR"
+      }
+    }
+  },
+  "error_password_special_char": "Password must contain at least one special character.",
+  "error_password_number": "Password must contain at least one number.",
+  "error_password_uppercase": "Password must contain at least one uppercase letter.",
+  "error_password_lowercase": "Password must contain at least one lowercase letter.",
+  "error_invalid_date_format": "Invalid format.",
+  "error_date_out_of_range": "Out of range.",
+  "yes": "Yes",
+  "no": "No "
 }

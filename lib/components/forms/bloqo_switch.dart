@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../style/bloqo_colors.dart';
+import '../../utils/localization.dart';
 import '../../utils/toggle.dart';
 
 class BloqoSwitch extends StatefulWidget{
@@ -21,6 +22,7 @@ class _BloqoSwitchState extends State<BloqoSwitch>{
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = getAppLocalizations(context)!;
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -38,7 +40,7 @@ class _BloqoSwitchState extends State<BloqoSwitch>{
           ),
         ),
         Text(
-          widget.value.get() ? 'Yes': 'No ',
+          widget.value.get() ? localizedText.yes : localizedText.no,
           style: Theme.of(context).textTheme.displaySmall?.copyWith(
             color: BloqoColors.russianViolet,
             fontWeight: FontWeight.w500,

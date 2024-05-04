@@ -6,11 +6,11 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:bloqo/utils/auth.dart';
+import 'package:bloqo/utils/localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
@@ -54,6 +54,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = getAppLocalizations(context)!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -81,7 +82,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: Column(
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.welcome,
+                          localizedText.welcome,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: BloqoColors.russianViolet,
@@ -93,10 +94,10 @@ class _WelcomePageState extends State<WelcomePage> {
                         BloqoTextField(
                           formKey: formKeyEmail,
                           controller: emailController,
-                          labelText: AppLocalizations.of(context)!.email,
-                          hintText: AppLocalizations.of(context)!.email_hint,
+                          labelText: localizedText.email,
+                          hintText: localizedText.email_hint,
                           maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) {return emailValidator(value);},
+                          validator: (String? value) {return emailValidator(email: value, localizedText: localizedText);},
                           keyboardType: TextInputType.emailAddress,
                           onTap: () {
                             setState(() {
@@ -111,8 +112,8 @@ class _WelcomePageState extends State<WelcomePage> {
                           BloqoTextField(
                             formKey: formKeyPassword,
                             controller: passwordController,
-                            labelText: AppLocalizations.of(context)!.password,
-                            hintText: AppLocalizations.of(context)!.password_hint,
+                            labelText: localizedText.password,
+                            hintText: localizedText.password_hint,
                             maxInputLength: Constants.maxPasswordLength,
                             obscureText: true,
                             onTap: () {
@@ -127,7 +128,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: BloqoFilledButton(
                           onPressed: () async {
                             context.loaderOverlay.show();
-                            String? error = await _tryLogin(context: context, email: emailController.text, password: passwordController.text);
+                            String? error = await _tryLogin(localizedText: localizedText, email: emailController.text, password: passwordController.text);
                             if(error==null){
                               BloqoUser user = await getUserFromEmail(email: emailController.text);
                               if(!context.mounted) return;
@@ -145,17 +146,17 @@ class _WelcomePageState extends State<WelcomePage> {
                               context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
-                                title: AppLocalizations.of(context)!.error_title,
+                                title: localizedText.error_title,
                                 description: error,
                               );
                             }
                           },
                           color: BloqoColors.russianViolet,
-                          text: AppLocalizations.of(context)!.login,
+                          text: localizedText.login,
                         ),
                       ),
                       BloqoTextButton(
-                        text: AppLocalizations.of(context)!.forgot_password,
+                        text: localizedText.forgot_password,
                         color: BloqoColors.russianViolet,
                         onPressed: () {
                           //TODO
@@ -169,7 +170,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.new_here,
+                    localizedText.new_here,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                       color: BloqoColors.seasalt,
                       fontSize: 35,
@@ -187,7 +188,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         );
                       },
                       color: BloqoColors.russianViolet,
-                      text: AppLocalizations.of(context)!.register_now,
+                      text: localizedText.register_now,
                       fontSize: 35,
                       height: 82,
                     ),
@@ -203,7 +204,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
 }
 
-Future<String?> _tryLogin({required BuildContext context, required String email, required String password}) async {
+Future<String?> _tryLogin({required var localizedText, required String email, required String password}) async {
   try {
     await login(email: email, password: password);
     //save on the shared preferences that the user is logged in
@@ -215,11 +216,9 @@ Future<String?> _tryLogin({required BuildContext context, required String email,
   } on FirebaseAuthException catch (e){
     switch(e.code){
       case "network-request-failed":
-        if(!context.mounted) return "Error";
-        return AppLocalizations.of(context)!.login_network_error;
+        return localizedText.login_network_error;
       default:
-        if(!context.mounted) return "Error";
-        return AppLocalizations.of(context)!.login_credentials_error;
+        return localizedText.login_credentials_error;
     }
   }
 }
