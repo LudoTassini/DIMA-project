@@ -1,7 +1,7 @@
 class Toggle{
 
   late bool _initialValue;
-  bool _value = true;
+  late bool _value;
 
   Toggle({required bool initialValue}){
     _initialValue = initialValue;

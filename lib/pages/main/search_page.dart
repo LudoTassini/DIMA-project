@@ -3,9 +3,9 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
+import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
@@ -80,6 +80,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty);
     final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList();
 
+    final localizedText = getAppLocalizations(context)!;
+
     return BloqoMainContainer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -91,7 +93,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Text(
-                    AppLocalizations.of(context)!.search_page_header_1,
+                    localizedText.search_page_header_1,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                       color: BloqoColors.seasalt,
                       fontSize: 30,
@@ -102,7 +104,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Text(
-                    AppLocalizations.of(context)!.search_page_header_2,
+                    localizedText.search_page_header_2,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       color: BloqoColors.seasalt,
                     )
@@ -115,8 +117,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: BloqoTextField(
                       formKey: formKeyCourseName,
                       controller: courseNameController,
-                      labelText: AppLocalizations.of(context)!.course_name,
-                      hintText: AppLocalizations.of(context)!.course_name_hint,
+                      labelText: localizedText.course_name,
+                      hintText: localizedText.course_name_hint,
                       maxInputLength: Constants.maxCourseNameLength,
                     )
                   ),
@@ -128,8 +130,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: BloqoTextField(
                       formKey: formKeyAuthorUsername,
                       controller: authorUsernameController,
-                      labelText: AppLocalizations.of(context)!.author_username,
-                      hintText: AppLocalizations.of(context)!.author_username_hint,
+                      labelText: localizedText.author_username,
+                      hintText: localizedText.author_username_hint,
                       maxInputLength: Constants.maxUsernameLength,
                     )
                   ),
@@ -141,15 +143,15 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       child: BloqoTextField(
                         formKey: formKeyMinimumPublicationDate,
                         controller: minimumPublicationDateController,
-                        labelText: AppLocalizations.of(context)!.minimum_publication_date,
-                        hintText: AppLocalizations.of(context)!.minimum_publication_date_hint,
+                        labelText: localizedText.minimum_publication_date,
+                        hintText: localizedText.minimum_publication_date_hint,
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
                           // Below line stops keyboard from appearing
                           FocusScope.of(context).requestFocus(FocusNode());
                           // Show Date Picker Here
-                          DateTime? picked = await _selectDate(context: context);
+                          DateTime? picked = await _selectDate(localizedText: localizedText, context: context);
                           setState(() {
                             if(picked == null){
                               minimumPublicationDateController.text = "";
@@ -169,15 +171,15 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       child: BloqoTextField(
                         formKey: formKeyMaximumPublicationDate,
                         controller: maximumPublicationDateController,
-                        labelText: AppLocalizations.of(context)!.maximum_publication_date,
-                        hintText: AppLocalizations.of(context)!.maximum_publication_date_hint,
+                        labelText: localizedText.maximum_publication_date,
+                        hintText: localizedText.maximum_publication_date_hint,
                         keyboardType: TextInputType.datetime,
                         maxInputLength: 10,
                         onTap: () async {
                           // Below line stops keyboard from appearing
                           FocusScope.of(context).requestFocus(FocusNode());
                           // Show Date Picker Here
-                          DateTime? picked = await _selectDate(context: context);
+                          DateTime? picked = await _selectDate(localizedText: localizedText, context: context);
                           setState(() {
                             if(picked == null){
                               maximumPublicationDateController.text = "";
@@ -206,7 +208,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                                   child: Text(
-                                    AppLocalizations.of(context)!.public_courses,
+                                    localizedText.public_courses,
                                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                         fontSize: 13,
                                         color: BloqoColors.russianViolet,
@@ -237,7 +239,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                                   child: Text(
-                                    AppLocalizations.of(context)!.private_courses,
+                                    localizedText.private_courses,
                                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                       fontSize: 13,
                                       color: BloqoColors.russianViolet,
@@ -266,7 +268,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              AppLocalizations.of(context)!.search_page_tag_header,
+                              localizedText.search_page_tag_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: BloqoColors.russianViolet
@@ -289,7 +291,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: subjectTagController,
                                   dropdownMenuEntries: subjectTags,
                                   initialSelection: subjectTags[0].value,
-                                  label: AppLocalizations.of(context)!.subject_tag
+                                  label: localizedText.subject_tag
                                 )
                               ],
                             ),
@@ -311,7 +313,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: durationTagController,
                                   dropdownMenuEntries: durationTags,
                                   initialSelection: durationTags[0].value,
-                                  label: AppLocalizations.of(context)!.duration_tag
+                                  label: localizedText.duration_tag
                                 )
                               ],
                             ),
@@ -333,7 +335,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: modalityTagController,
                                   dropdownMenuEntries: modalityTags,
                                   initialSelection: modalityTags[0].value,
-                                  label: AppLocalizations.of(context)!.modality_tag
+                                  label: localizedText.modality_tag
                                 )
                               ],
                             ),
@@ -355,7 +357,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   controller: difficultyTagController,
                                   dropdownMenuEntries: difficultyTags,
                                   initialSelection: difficultyTags[0].value,
-                                  label: AppLocalizations.of(context)!.difficulty_tag
+                                  label: localizedText.difficulty_tag
                                 )
                               ],
                             ),
@@ -374,7 +376,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
                           child: Text(
-                            AppLocalizations.of(context)!.search_page_sort_header,
+                            localizedText.search_page_sort_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: BloqoColors.russianViolet
@@ -384,7 +386,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         BloqoDropdown(
                           controller: sortByController,
                           dropdownMenuEntries: sortingOptions,
-                          label: AppLocalizations.of(context)!.sort_by,
+                          label: localizedText.sort_by,
                           initialSelection: sortingOptions[0].value,
                         )
                       ]
@@ -396,8 +398,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Center(
                     child: BloqoTextButton(
                       color: BloqoColors.error,
-                      onPressed: () => _resetSearchCriteria(),
-                      text: AppLocalizations.of(context)!.reset_search_criteria,
+                      onPressed: () => _resetSearchCriteria(localizedText: localizedText),
+                      text: localizedText.reset_search_criteria,
                     )
                   )
                 )
@@ -425,7 +427,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       },
                       color: BloqoColors.chineseViolet,
                       icon: Icons.qr_code,
-                      text: AppLocalizations.of(context)!.scan_qr_code,
+                      text: localizedText.scan_qr_code,
                       fontSize: 16
                     ),
                   ),
@@ -444,7 +446,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         );
                       },
                       color: BloqoColors.russianViolet,
-                      text: AppLocalizations.of(context)!.search,
+                      text: localizedText.search,
                       icon: Icons.search
                     ),
                   ),
@@ -460,7 +462,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   @override
   bool get wantKeepAlive => true;
 
-  void _resetSearchCriteria(){
+  void _resetSearchCriteria({required var localizedText}){
 
     setState(() {
       courseNameController.text = "";
@@ -471,24 +473,26 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       publicCoursesToggle.reset();
       privateCoursesToggle.reset();
 
-      subjectTagController.text = AppLocalizations.of(context)!.none;
-      durationTagController.text = AppLocalizations.of(context)!.none;
-      modalityTagController.text = AppLocalizations.of(context)!.none;
-      difficultyTagController.text = AppLocalizations.of(context)!.none;
-      sortByController.text = AppLocalizations.of(context)!.none;
+      subjectTagController.text = localizedText.none;
+      durationTagController.text = localizedText.none;
+      modalityTagController.text = localizedText.none;
+      difficultyTagController.text = localizedText.none;
+      sortByController.text = localizedText.none;
     });
 
   }
 
 }
 
-Future<DateTime?> _selectDate({required BuildContext context}) async {
+Future<DateTime?> _selectDate({required var localizedText, required BuildContext context}) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: DateTime.now(),
     firstDate: DateTime(2024),
     lastDate: DateTime(2100),
     keyboardType: TextInputType.datetime,
+    errorFormatText: localizedText.error_invalid_date_format,
+    errorInvalidText: localizedText.error_date_out_of_range
   );
   return picked;
 }

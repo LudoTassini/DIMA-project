@@ -5,11 +5,11 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
+import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -59,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
+    final localizedText = getAppLocalizations(context)!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -85,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                           child: Text(
-                              AppLocalizations.of(context)!.register_thank_you,
+                              localizedText.register_thank_you,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                 color: BloqoColors.russianViolet,
@@ -96,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
                           child: Text(
-                            AppLocalizations.of(context)!.register_explanation,
+                            localizedText.register_explanation,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
                               color: BloqoColors.russianViolet,
@@ -109,10 +110,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyEmail,
                             controller: emailController,
-                            labelText: AppLocalizations.of(context)!.email,
-                            hintText: AppLocalizations.of(context)!.email_hint,
+                            labelText: localizedText.email,
+                            hintText: localizedText.email_hint,
                             maxInputLength: Constants.maxEmailLength,
-                            validator: (String? value) { return emailValidator(value); },
+                            validator: (String? value) { return emailValidator(email: value, localizedText: localizedText); },
                             keyboardType: TextInputType.emailAddress,
                           ),
                         ),
@@ -121,10 +122,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyPassword,
                             controller: passwordController,
-                            labelText: AppLocalizations.of(context)!.password,
-                            hintText: AppLocalizations.of(context)!.password_hint,
+                            labelText: localizedText.password,
+                            hintText: localizedText.password_hint,
                             maxInputLength: Constants.maxPasswordLength,
-                            validator: (String? value) { return passwordValidator(value); },
+                            validator: (String? value) { return passwordValidator(password: value, localizedText: localizedText); },
                           ),
                         ),
                         Form(
@@ -132,10 +133,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyUsername,
                             controller: usernameController,
-                            labelText: AppLocalizations.of(context)!.username,
-                            hintText: AppLocalizations.of(context)!.username_hint,
+                            labelText: localizedText.username,
+                            hintText: localizedText.username_hint,
                             maxInputLength: Constants.maxUsernameLength,
-                            validator: (String? value) { return usernameValidator(value); }
+                            validator: (String? value) { return usernameValidator(username: value, localizedText: localizedText); }
                           ),
                         ),
                         Form(
@@ -143,10 +144,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: BloqoTextField(
                             formKey: formKeyFullName,
                             controller: fullNameController,
-                            labelText: AppLocalizations.of(context)!.full_name,
-                            hintText: AppLocalizations.of(context)!.full_name_hint,
+                            labelText: localizedText.full_name,
+                            hintText: localizedText.full_name_hint,
                             maxInputLength: Constants.maxFullNameLength,
-                            validator: (String? value) { return fullNameValidator(value); }
+                            validator: (String? value) { return fullNameValidator(fullName: value, localizedText: localizedText); }
                           ),
                         ),
                       Padding(
@@ -158,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           children: [
                             Flexible(
                               child: Text(
-                                AppLocalizations.of(context)!.full_name_visible,
+                                localizedText.full_name_visible,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   color: BloqoColors.russianViolet,
                                   fontWeight: FontWeight.w500,
@@ -175,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: BloqoFilledButton(
                           onPressed: () async {
                             context.loaderOverlay.show();
-                            String? error = await _tryRegister(context: context,
+                            String? error = await _tryRegister(localizedText: localizedText,
                                 email: emailController.text,
                                 password: passwordController.text,
                                 username: usernameController.text,
@@ -198,19 +199,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
-                                title: AppLocalizations.of(context)!.error_title,
+                                title: localizedText.error_title,
                                 description: error,
                               );
                             }
                           },
                           color: BloqoColors.russianViolet,
-                          text: AppLocalizations.of(context)!.register,
+                          text: localizedText.register,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
                         child: BloqoTextButton(
-                          text: AppLocalizations.of(context)!.back_to_login,
+                          text: localizedText.back_to_login,
                           color: BloqoColors.russianViolet,
                           onPressed: () {
                             if(!context.mounted) return;
@@ -236,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<String?> _tryRegister({required BuildContext context, required String email, required String password, required String username,
+Future<String?> _tryRegister({required var localizedText, required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
   final user = BloqoUser(
       email: email,
@@ -244,11 +245,12 @@ Future<String?> _tryRegister({required BuildContext context, required String ema
       fullName: fullName,
       isFullNameVisible: isFullNameVisible
   );
-  if(emailValidator(user.email) == null && passwordValidator(password) == null
-      && usernameValidator(user.username) == null && fullNameValidator(user.fullName) == null) {
+  if(emailValidator(email: user.email, localizedText: localizedText) == null &&
+      passwordValidator(password: password, localizedText: localizedText) == null &&
+      usernameValidator(username: user.username, localizedText: localizedText) == null &&
+      fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
     if(await _isUsernameAlreadyTaken(user.username)){
-      if(!context.mounted) return "Error";
-      return AppLocalizations.of(context)!.username_already_taken;
+      return localizedText.username_already_taken;
     }
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -257,19 +259,18 @@ Future<String?> _tryRegister({required BuildContext context, required String ema
       await ref.doc().set(user);
       return null;
     } on FirebaseAuthException catch (e) {
-        if(!context.mounted) return "Error";
         switch(e.code){
           case "email-already-in-use":
-            return AppLocalizations.of(context)!.register_email_already_taken;
+            return localizedText.register_email_already_taken;
           case "network-request-failed":
-            return AppLocalizations.of(context)!.register_network_error;
+            return localizedText.register_network_error;
           default:
-            return AppLocalizations.of(context)!.register_error;
+            return localizedText.register_error;
         }
     }
   }
   else{
-    return AppLocalizations.of(context)!.register_incomplete_error;
+    return localizedText.register_incomplete_error;
   }
 }
 
