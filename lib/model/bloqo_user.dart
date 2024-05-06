@@ -1,12 +1,16 @@
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'courses/bloqo_chapter.dart';
+import 'courses/bloqo_section.dart';
+
 class BloqoUser{
   final String email;
   final String username;
   final String fullName;
   final bool isFullNameVisible;
 
+  String? documentId;
   List<BloqoCourse>? coursesEnrolledIn;
   List<BloqoCourse>? coursesCreated;
 
@@ -15,6 +19,7 @@ class BloqoUser{
     required this.username,
     required this.fullName,
     required this.isFullNameVisible,
+    this.documentId,
     this.coursesEnrolledIn,
     this.coursesCreated,
   });
@@ -24,11 +29,11 @@ class BloqoUser{
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
-
     // Check if courses_enrolled_in is null or not
     List<dynamic>? enrolledCoursesData = data?['courses_enrolled_in'];
     List<BloqoCourse> coursesEnrolledIn = [];
 
+    /*
     if (enrolledCoursesData != null) {
       for (dynamic subDocumentReference in enrolledCoursesData) {
         // Fetch each referenced sub-document from Firestore
@@ -39,10 +44,12 @@ class BloqoUser{
             // Extract the desired variables from each sub-document
             String courseName = subDocumentSnapshot['name'];
             String courseAuthor = subDocumentSnapshot['author_username'];
+            List<BloqoChapter> courseChapters = [];
 
             final course = BloqoCourse(
               name: courseName,
               author: courseAuthor,
+              chapters: courseChapters,
             );
             coursesEnrolledIn.add(course);
           } else {
@@ -79,15 +86,14 @@ class BloqoUser{
           }
         });
       }
-    }
+    } */
 
     return BloqoUser(
+      documentId: snapshot.id,
       email: data!["email"],
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
-      coursesEnrolledIn: coursesEnrolledIn,
-      coursesCreated: coursesCreated,
     );
   }
 
@@ -110,6 +116,26 @@ class BloqoUser{
       fromFirestore: BloqoUser.fromFirestore,
       toFirestore: (BloqoUser user, _) => user.toFirestore(),
     );
+  }
+
+  void getCoursesEnrolledIn() async {
+    coursesEnrolledIn = [];
+    try {
+      DocumentSnapshot userSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(documentId).get();
+      List<dynamic> coursesRef = userSnapshot['courses_enrolled_in'];
+
+      for (dynamic courseRef in coursesRef) {
+        DocumentSnapshot courseSnapshot = await courseRef.get();
+        BloqoCourse course = BloqoCourse(
+          name: courseSnapshot['name'],
+          author: courseSnapshot['author_username'],
+        );
+        coursesEnrolledIn?.add(course);
+      }
+    } catch (e) {
+      print("Error fetching courses: $e");
+    }
   }
 
 }

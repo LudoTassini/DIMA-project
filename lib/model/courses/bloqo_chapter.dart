@@ -9,6 +9,9 @@ class BloqoChapter{
 
   BloqoChapter({
     required this.name,
+    this.sections,
   });
+
+
 
 }

@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     BloqoUser user = Provider.of<UserAppState>(context, listen: false).get()!;
+    //user.getCoursesEnrolledIn();
 
     return BloqoMainContainer(
         child: Column(

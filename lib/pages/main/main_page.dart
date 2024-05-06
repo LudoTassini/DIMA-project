@@ -1,3 +1,4 @@
+import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,8 @@ class _MainPageState extends State<MainPage>{
     if(!context.mounted) return const Text("Error");
     switch(_selectedPageIndex){
       case 0:
-        title = "${AppLocalizations.of(context)!.home_page_title}, ${Provider.of<UserAppState>(context, listen: false).get()!.username}!";
+        BloqoUser user = Provider.of<UserAppState>(context, listen: false).get()!;
+        title = "${AppLocalizations.of(context)!.home_page_title}, ${user.username}!";
         break;
       case 1:
         title = AppLocalizations.of(context)!.learn_page_title;

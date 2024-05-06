@@ -20,6 +20,7 @@ Future<BloqoUser> getUserFromEmail({required String email}) async {
   var ref = BloqoUser.getRef();
   var querySnapshot = await ref.where("email", isEqualTo: email).get();
   BloqoUser user = querySnapshot.docs.first.data();
+  user.getCoursesEnrolledIn();
   return user;
 }
 
