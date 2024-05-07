@@ -3,8 +3,8 @@ import 'package:bloqo/model/bloqo_user.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
+import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -176,14 +176,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: BloqoFilledButton(
                           onPressed: () async {
                             context.loaderOverlay.show();
-                            String? error = await _tryRegister(localizedText: localizedText,
+                            try {
+                              await _tryRegister(localizedText: localizedText,
                                 email: emailController.text,
                                 password: passwordController.text,
                                 username: usernameController.text,
                                 fullName: fullNameController.text,
                                 isFullNameVisible: visibilitySwitch.value.get());
-                            if(error == null) {
-                              BloqoUser user = await getUserFromEmail(email: emailController.text);
+                              BloqoUser user = await getUserFromEmail(localizedText: localizedText,
+                                  email: emailController.text);
                               if(!context.mounted) return;
                               saveUserToAppState(context, user);
                               context.loaderOverlay.hide();
@@ -193,14 +194,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                   builder: (context) => const HomePage(),
                                 )
                               );
-                            }
-                            else{
+                            } on BloqoException catch(e){
                               if(!context.mounted) return;
                               context.loaderOverlay.hide();
                               showBloqoErrorAlert(
                                 context: context,
                                 title: localizedText.error_title,
-                                description: error,
+                                description: e.message,
                               );
                             }
                           },
@@ -237,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<String?> _tryRegister({required var localizedText, required String email, required String password, required String username,
+Future<void> _tryRegister({required var localizedText, required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
   final user = BloqoUser(
       email: email,
@@ -249,38 +249,46 @@ Future<String?> _tryRegister({required var localizedText, required String email,
       passwordValidator(password: password, localizedText: localizedText) == null &&
       usernameValidator(username: user.username, localizedText: localizedText) == null &&
       fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
-    if(await _isUsernameAlreadyTaken(user.username)){
-      return localizedText.username_already_taken;
+    if(await _isUsernameAlreadyTaken(localizedText: localizedText, username: user.username)){
+      throw BloqoException(message: localizedText.username_already_taken);
     }
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email, password: password);
       var ref = BloqoUser.getRef();
       await ref.doc().set(user);
-      return null;
     } on FirebaseAuthException catch (e) {
         switch(e.code){
           case "email-already-in-use":
-            return localizedText.register_email_already_taken;
+            throw BloqoException(message: localizedText.register_email_already_taken);
           case "network-request-failed":
-            return localizedText.register_network_error;
+            throw BloqoException(message: localizedText.register_network_error);
           default:
-            return localizedText.register_error;
+            throw BloqoException(message: localizedText.register_error);
         }
     }
   }
   else{
-    return localizedText.register_incomplete_error;
+    throw BloqoException(message: localizedText.register_incomplete_error);
   }
 }
 
-Future<bool> _isUsernameAlreadyTaken(String username) async{
-  var ref = BloqoUser.getRef();
-  var querySnapshot = await ref.where("username", isEqualTo: username).get();
-  if(querySnapshot.docs.length != 0) {
-    return true;
-  }
-  else{
-    return false;
+Future<bool> _isUsernameAlreadyTaken({required var localizedText, required String username}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("username", isEqualTo: username).get();
+    if (querySnapshot.docs.length != 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

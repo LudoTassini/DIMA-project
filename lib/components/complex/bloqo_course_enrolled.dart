@@ -1,11 +1,11 @@
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
 import '../../style/bloqo_colors.dart';
 import '../containers/bloqo_seasalt_container.dart';
 
 class BloqoCourseEnrolled extends StatelessWidget{
-  final BloqoCourse? course;
+  final BloqoUserCourseEnrolled? course;
 
   const BloqoCourseEnrolled({
     super.key,
@@ -52,7 +52,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                                 child: Align(
                                   alignment:const AlignmentDirectional(-1, 0),
                                   child: Text(
-                                    course!.name,
+                                    course!.courseName,
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                       fontSize: 16, ),
                                   ),
@@ -79,7 +79,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               ),
                               Flexible(
                                 child: Text(
-                                  course!.author,
+                                  course!.courseAuthor,
                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                     fontSize: 14,
                                   ),
@@ -106,7 +106,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               ),
                               Flexible(
                                 child: Text(
-                                  'Section 2-3: DIMA projects', //TODO: replace
+                                  course!.sectionName,
                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                     fontSize: 20,
                                   ),
@@ -136,14 +136,14 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 ),
               ],
             ),
-            const Flexible(
+            Flexible(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: BloqoProgressBar(
-                      percentage: 0.5,
+                      percentage: course!.numSectionsCompleted/course!.totNumSections,
                     )
                   ),
                 ],

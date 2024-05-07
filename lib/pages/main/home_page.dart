@@ -7,7 +7,11 @@ import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/user_app_state.dart';
+import '../../app_state/user_courses_created_app_state.dart';
+import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/containers/bloqo_main_container.dart';
+import '../../model/bloqo_user_course_created.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,7 +26,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     BloqoUser user = Provider.of<UserAppState>(context, listen: false).get()!;
-    //user.getCoursesEnrolledIn();
+    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get()!;
+    List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get()!;
 
     return BloqoMainContainer(
         child: Column(
@@ -69,8 +74,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     Flexible(
                       child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: List.generate(user.coursesEnrolledIn?.length ?? 0, (index) {
-                          BloqoCourse? course = user.coursesEnrolledIn?[index];
+                      children: List.generate(userCoursesEnrolled.length ?? 0, (index) {
+                          BloqoUserCourseEnrolled? course = userCoursesEnrolled[index];
                             return BloqoCourseEnrolled(
                                 course: course,
                                 );
@@ -129,8 +134,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           Flexible(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              children: List.generate(user.coursesCreated?.length ?? 0, (index) {
-                              BloqoCourse? course = user.coursesCreated?[index];
+                              children: List.generate(userCoursesCreated.length ?? 0, (index) {
+                              BloqoUserCourseCreated? course = userCoursesCreated[index];
                               return BloqoCourseCreated(
                                   course: course,
                                   );

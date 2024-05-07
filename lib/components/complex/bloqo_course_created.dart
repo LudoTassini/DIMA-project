@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/bloqo_user_course_created.dart';
 import '../../style/bloqo_colors.dart';
 import '../containers/bloqo_seasalt_container.dart';
 
@@ -10,7 +10,7 @@ class BloqoCourseCreated extends StatelessWidget {
     required this.course,
   });
 
-  final BloqoCourse? course;
+  final BloqoUserCourseCreated? course;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class BloqoCourseCreated extends StatelessWidget {
                                   child: Align(
                                     alignment:const AlignmentDirectional(-1, 0),
                                     child: Text(
-                                      course!.name,
+                                      course!.courseName,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         fontSize: 16,
                                       ),
@@ -68,7 +68,7 @@ class BloqoCourseCreated extends StatelessWidget {
                             padding: const EdgeInsetsDirectional
                                 .fromSTEB(10, 5, 10, 10),
                             child: Text(
-                              '2 chapters, 15 sections', //FIXME
+                              '${'${course!.numChaptersCreated} chapters, ${course!.numSectionsCreated}'} sections',
                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w300,

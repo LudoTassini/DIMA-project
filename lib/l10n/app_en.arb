@@ -1,10 +1,12 @@
 {
+  "generic_error": "We were unable to complete the action due to an unknown error. Please try again.",
   "welcome": "Welcome!",
   "email": "Email",
   "email_hint": "e.g. bloqo@domain.com",
   "password": "Password",
   "password_hint": "type your password here",
   "login": "Login",
+  "network_error": "Your device is not connected to Internet. Please check ypur connection status and try again.",
   "login_network_error": "Internet connection is required to login. Please check your connection status and try again.",
   "login_credentials_error": "Wrong credentials. Please check them and try again.",
   "forgot_password": "Forgot your password?",
