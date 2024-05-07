@@ -235,7 +235,10 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
     var querySnapshot = await ref.where("user_email", isEqualTo: user.email).get();
-    List<BloqoUserCourseEnrolled> userCourses = querySnapshot.docs.data();
+    List<BloqoUserCourseEnrolled> userCourses = [];
+    for(var doc in querySnapshot.docs) {
+        userCourses.add(doc.data());
+      }
     return userCourses;
   } on FirebaseAuthException catch(e){
     switch(e.code){
@@ -252,7 +255,10 @@ Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var locali
   try {
     var ref = BloqoUserCourseCreated.getRef();
     var querySnapshot = await ref.where("user_email", isEqualTo: user.email).get();
-    List<BloqoUserCourseCreated> userCourses = querySnapshot.docs.data();
+    List<BloqoUserCourseCreated> userCourses = [];
+    for(var doc in querySnapshot.docs) {
+      userCourses.add(doc.data());
+    }
     return userCourses;
   } on FirebaseAuthException catch(e){
     switch(e.code){
