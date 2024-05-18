@@ -141,7 +141,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                     child: BloqoProgressBar(
                       percentage: course!.numSectionsCompleted/course!.totNumSections,
                     )

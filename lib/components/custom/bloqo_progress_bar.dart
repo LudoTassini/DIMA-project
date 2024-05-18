@@ -24,7 +24,7 @@ class BloqoProgressBar extends StatelessWidget{
         alignment: const AlignmentDirectional(0, 0),
         child:
           LinearPercentIndicator(
-            percent: percentage, //FIXME: deve essere calcolato di volta in volta
+            percent: percentage,
             width: 295,
             lineHeight: 15,
             animation: true,

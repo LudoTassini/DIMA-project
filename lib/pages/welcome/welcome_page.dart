@@ -230,7 +230,7 @@ Future<void> _tryLogin({required var localizedText, required String email, requi
   }
 }
 
-// FIXME: limitare a tre corsi e che siano i più recenti (guaradre the latest update)
+// FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
@@ -250,7 +250,7 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
   }
 }
 
-// FIXME: limitare a tre corsi e che siano i più recenti (guaradre the latest update)
+// FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
 Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseCreated.getRef();

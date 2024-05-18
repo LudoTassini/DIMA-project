@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import '../../style/bloqo_colors.dart';
 
 class BloqoNavBar extends StatefulWidget {
+
   const BloqoNavBar({
     super.key,
     required this.onDestinationSelected,
+    this.initialPageIndex = 0,
   });
 
   final Function(int) onDestinationSelected;
+  final int initialPageIndex;
 
   @override
   State<StatefulWidget> createState() => _BloqoNavBarState();
@@ -19,6 +22,12 @@ class _BloqoNavBarState extends State<BloqoNavBar>{
   static const navBarIconSize = 30.0;
 
   int currentPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    currentPageIndex = widget.initialPageIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

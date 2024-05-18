@@ -13,7 +13,12 @@ import 'home_page.dart';
 import 'learn_page.dart';
 
 class MainPage extends StatefulWidget{
-  const MainPage({super.key});
+  final int selectedPageIndex;
+
+  const MainPage({
+    super.key,
+    this.selectedPageIndex = 0,
+  });
 
   @override
   State<StatefulWidget> createState() => _MainPageState();
@@ -22,14 +27,14 @@ class MainPage extends StatefulWidget{
 
 class _MainPageState extends State<MainPage>{
 
-  int _selectedPageIndex = 0;
+  late int _selectedPageIndex;
   late List<Widget> _pages;
   late PageController _pageController;
 
   @override
   void initState(){
     super.initState();
-    _selectedPageIndex = 0;
+    _selectedPageIndex = widget.selectedPageIndex;
     _pages = [
       const HomePage(),
       const LearnPage(),
@@ -82,6 +87,7 @@ class _MainPageState extends State<MainPage>{
               _pageController.jumpToPage(index);
             });
           },
+          initialPageIndex: widget.selectedPageIndex,
         ),
         body: PageView(
           controller: _pageController,

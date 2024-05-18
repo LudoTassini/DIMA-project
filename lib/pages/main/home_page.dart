@@ -2,15 +2,19 @@ import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/bloqo_user.dart';
+import 'package:bloqo/pages/main/learn_page.dart';
+import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
+import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
+import 'editor_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -56,7 +60,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Flexible(
+                            Expanded(
                               child: Text(
                                 '"The greatest enemy of knowledge is not ignorance, it is the illusion of knowledge." - Stephen Hawking',
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -70,8 +74,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ],
                         ),
                       ),
-                    Flexible(
-                      child: userCoursesEnrolled.isNotEmpty ? Column(
+                    if (userCoursesEnrolled.isNotEmpty)
+                      Column(
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(
                           userCoursesEnrolled.length,
@@ -81,24 +85,38 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           },
                         ),
                       )
-                      : Padding(
+                    else
+                      Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
-                              child: Text(
-                                'You are not enrolled in any courses. Check out the Learn page to discover new courses!',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.primaryText,
-                                  fontSize: 14,
-                                ),
+                            Text(
+                              'You are not enrolled in any courses. Check out the Learn page to discover new courses!',
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: BloqoColors.primaryText,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                              child: BloqoFilledButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MainPage(selectedPageIndex: 1,),
+                                    ),
+                                  );
+                                },
+                                color: BloqoColors.russianViolet,
+                                text: "Take me there!",
+                                fontSize: 16,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -129,7 +147,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Flexible(
+                            Expanded(
                               child: Text(
                                 '"Tell me and I forget. Teach me and I remember. Involve me and I learn. - Benjamin Franklin"',
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -143,9 +161,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ],
                         ),
                       ),
-                    Flexible(
-                      child: userCoursesCreated.isNotEmpty
-                          ? Column(
+                    if (userCoursesCreated.isNotEmpty)
+                      Column(
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(
                           userCoursesCreated.length,
@@ -155,29 +172,44 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           },
                         ),
                       )
-                      : Padding(
+                    else
+                      Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
-                              child: Text(
-                                'You have not created any courses. Check out the Edit page to discover how to create one!',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.primaryText,
-                                  fontSize: 14,
+                            Text(
+                              'You have not created any courses. Check out the Edit page to discover how to create one!',
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: BloqoColors.primaryText,
+                                fontSize: 14,
                               ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                              child: BloqoFilledButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MainPage(selectedPageIndex: 3,),
+                                    ),
+                                  );
+                                },
+                                color: BloqoColors.russianViolet,
+                                text: "Take me there!",
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+
+          ],
       ),
     );
   }
