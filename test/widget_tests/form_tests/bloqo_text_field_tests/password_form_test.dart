@@ -1,5 +1,6 @@
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/utils/constants.dart';
+import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/text_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,8 @@ void main() {
   //TODO
   // Initializing BloqoTextField outside the testWidgets function
   final formKey = GlobalKey<FormState>();
+  BuildContext context;
+  final localizedText = getAppLocalizations(context)!;
   final testedWidget = MaterialApp(
       home: Scaffold(
           body: Form(
@@ -18,7 +21,7 @@ void main() {
               labelText: "Password",
               hintText: "type your password here",
               maxInputLength: Constants.maxPasswordLength,
-              validator: (password) { return passwordValidator(password); },
+              validator: (password) { return passwordValidator(password: password, localizedText: localizedText); },
           ),
         )
       )

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../style/bloqo_colors.dart';
+import '../../utils/localization.dart';
 
 class BloqoProgressBar extends StatelessWidget{
   const BloqoProgressBar({
@@ -13,6 +14,7 @@ class BloqoProgressBar extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = getAppLocalizations(context)!;
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -33,7 +35,7 @@ class BloqoProgressBar extends StatelessWidget{
             backgroundColor: BloqoColors.inactiveTracker,
             center:
             Text(
-              '50% of course completed', //FIXME
+              (percentage * 100).toStringAsFixed(0) + localizedText.progress_bar_completion,
               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                 fontSize: 10,
                 fontFamily: 'Outfit',
