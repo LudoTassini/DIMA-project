@@ -11,7 +11,7 @@ abstract class BloqoCourseTag{
 
   BloqoCourseTag({
     required this.type,
-    required this.text
+    required this.text,
   });
 }
 
@@ -22,47 +22,30 @@ enum BloqoCourseTagType {
   difficulty
 }
 
-extension BloqoCourseTagTypeExtension on BloqoCourseTagType {
-  String get text {
-    switch (this) {
-      case BloqoCourseTagType.subject:
-        return "Subject";
-      case BloqoCourseTagType.duration:
-        return "Duration";
-      case BloqoCourseTagType.modality:
-        return "Modality";
-      case BloqoCourseTagType.difficulty:
-        return "Difficulty";
-      default:
-        throw Exception("Unknown CourseTagType");
-    }
-  }
-}
-
-List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, bool withNone = true}){
+List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, required var localizedText, bool withNone = true}){
 
   final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
 
   switch(type){
     case BloqoCourseTagType.subject:
       for (var entry in BloqoSubjectTagValue.values){
-        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.text, label: entry.text));
+        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.name, label: entry.text(localizedText: localizedText)));
       }
-      dropdownMenuEntries.sort((a, b) => a.value.compareTo(b.value)); // sorts the list alphabetically
+      dropdownMenuEntries.sort((a, b) => a.label.compareTo(b.label)); // sorts the list alphabetically
       break;
     case BloqoCourseTagType.difficulty:
       for (var entry in BloqoDifficultyTagValue.values){
-        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.text, label: entry.text));
+        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.name, label: entry.text(localizedText: localizedText)));
       }
       break;
     case BloqoCourseTagType.modality:
       for (var entry in BloqoModalityTagValue.values){
-        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.text, label: entry.text));
+        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.name, label: entry.text(localizedText: localizedText)));
       }
       break;
     case BloqoCourseTagType.duration:
       for (var entry in BloqoDurationTagValue.values){
-        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.text, label: entry.text));
+        dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.name, label: entry.text(localizedText: localizedText)));
       }
       break;
     default:
@@ -70,7 +53,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
   }
 
   if(withNone) {
-    dropdownMenuEntries.insert(0, const DropdownMenuEntry<String>(value: "None", label: 'None'));
+    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(value: "None", label: localizedText.none));
   }
 
   return dropdownMenuEntries;

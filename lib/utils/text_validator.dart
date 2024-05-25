@@ -40,7 +40,7 @@ String? usernameValidator({String? username, required AppLocalizations localized
 }
 
 String? fullNameValidator({String? fullName, required AppLocalizations localizedText}){
-  if (fullName == null){
+  if (fullName == null || fullName == ""){
     return localizedText.error_full_name_empty;
   }
   if (!_validateFullName(fullName)){

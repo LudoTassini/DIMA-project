@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/localization.dart';
 
 class BloqoNavBar extends StatefulWidget {
   const BloqoNavBar({
@@ -22,6 +23,7 @@ class _BloqoNavBarState extends State<BloqoNavBar>{
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = getAppLocalizations(context)!;
     return NavigationBar(
       onDestinationSelected: (index) {
         widget.onDestinationSelected(index);
@@ -35,42 +37,42 @@ class _BloqoNavBarState extends State<BloqoNavBar>{
       overlayColor: MaterialStateProperty.all(BloqoColors.newDarkFuchsia),
       selectedIndex: currentPageIndex,
       backgroundColor: BloqoColors.darkFuchsia,
-      destinations: const <Widget>[
+      destinations: <Widget>[
         NavigationDestination(
-          selectedIcon: Icon(
+          selectedIcon: const Icon(
             Icons.home_outlined, color: BloqoColors.russianViolet,
             size: navBarIconSize,),
-          icon: Icon(Icons.home_outlined, color: BloqoColors.seasalt,
+          icon: const Icon(Icons.home_outlined, color: BloqoColors.seasalt,
             size: navBarIconSize,),
-          label: 'Home',
+          label: localizedText.home,
         ),
         NavigationDestination(
-          selectedIcon: Icon(Icons.book, color: BloqoColors.russianViolet,
+          selectedIcon: const Icon(Icons.book, color: BloqoColors.russianViolet,
             size: navBarIconSize,),
-          icon: Icon(Icons.book, color: BloqoColors.seasalt,
+          icon: const Icon(Icons.book, color: BloqoColors.seasalt,
             size: navBarIconSize,),
-          label: 'Learn',
+          label: localizedText.learn,
         ),
         NavigationDestination(
-          selectedIcon: Icon(Icons.search, color: BloqoColors.russianViolet,
+          selectedIcon: const Icon(Icons.search, color: BloqoColors.russianViolet,
             size: navBarIconSize,),
-          icon: Icon(Icons.search, color: BloqoColors.seasalt,
+          icon: const Icon(Icons.search, color: BloqoColors.seasalt,
             size: navBarIconSize,),
-          label: 'Search',
+          label: localizedText.search,
         ),
         NavigationDestination(
-          selectedIcon: Icon(Icons.edit, color: BloqoColors.russianViolet,
+          selectedIcon: const Icon(Icons.edit, color: BloqoColors.russianViolet,
             size: navBarIconSize,),
-          icon: Icon(Icons.edit, color: BloqoColors.seasalt,
+          icon: const Icon(Icons.edit, color: BloqoColors.seasalt,
             size: navBarIconSize,),
-          label: 'Editor',
+          label: localizedText.editor,
         ),
         NavigationDestination(
-          selectedIcon: Icon(Icons.person, color: BloqoColors.russianViolet,
+          selectedIcon: const Icon(Icons.person, color: BloqoColors.russianViolet,
             size: navBarIconSize,),
-          icon: Icon(Icons.person, color: BloqoColors.seasalt,
+          icon: const Icon(Icons.person, color: BloqoColors.seasalt,
             size: navBarIconSize,),
-          label: 'Account',
+          label: localizedText.account,
         ),
       ],
     );

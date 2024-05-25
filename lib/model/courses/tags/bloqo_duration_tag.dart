@@ -14,16 +14,16 @@ enum BloqoDurationTagValue{
 }
 
 extension BloqoDurationTagValueExtension on BloqoDurationTagValue{
-  String get text {
+  String text({required var localizedText}) {
     switch (this) {
       case BloqoDurationTagValue.lessThanOneHour:
-        return "1 hour or less";
+        return localizedText.one_hour_less;
       case BloqoDurationTagValue.oneHourTwoHours:
-        return "1-2 hours";
+        return localizedText.one_two_hours;
       case BloqoDurationTagValue.twoHoursThreeHours:
-        return "2-3 hours";
+        return localizedText.two_three_hours;
       case BloqoDurationTagValue.moreThanThreeHours:
-        return "3 hours or more";
+        return localizedText.three_hours_more;
       default:
         throw Exception("Unknown DurationTagValue");
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../style/bloqo_colors.dart';
+import '../../utils/localization.dart';
 
 class BloqoErrorAlert extends StatelessWidget{
   const BloqoErrorAlert({
@@ -14,6 +15,7 @@ class BloqoErrorAlert extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = getAppLocalizations(context)!;
     return AlertDialog(
       title: Text(title),
       content: Text(description),
@@ -32,7 +34,7 @@ class BloqoErrorAlert extends StatelessWidget{
               backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt)
           ),
           onPressed: () => Navigator.pop(context, "OK"),
-          child: Text("OK", style: Theme.of(context).textTheme.displayMedium?.copyWith(
+          child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(
             color: BloqoColors.error,
             fontWeight: FontWeight.bold
           )),

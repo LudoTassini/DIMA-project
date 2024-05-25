@@ -74,13 +74,13 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
 
-    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject);
-    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration);
-    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality);
-    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty);
-    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList();
-
     final localizedText = getAppLocalizations(context)!;
+
+    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList(localizedText: localizedText);
 
     return BloqoMainContainer(
       child: Column(
@@ -287,12 +287,14 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: subjectTagController,
-                                  dropdownMenuEntries: subjectTags,
-                                  initialSelection: subjectTags[0].value,
-                                  label: localizedText.subject_tag
-                                )
+                                Expanded(
+                                  child: BloqoDropdown(
+                                    controller: subjectTagController,
+                                    dropdownMenuEntries: subjectTags,
+                                    initialSelection: subjectTags[0].value,
+                                    label: localizedText.subject_tag,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -309,12 +311,14 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: durationTagController,
-                                  dropdownMenuEntries: durationTags,
-                                  initialSelection: durationTags[0].value,
-                                  label: localizedText.duration_tag
-                                )
+                                Expanded(
+                                  child: BloqoDropdown(
+                                    controller: durationTagController,
+                                    dropdownMenuEntries: durationTags,
+                                    initialSelection: durationTags[0].value,
+                                    label: localizedText.duration_tag,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -331,12 +335,14 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: modalityTagController,
-                                  dropdownMenuEntries: modalityTags,
-                                  initialSelection: modalityTags[0].value,
-                                  label: localizedText.modality_tag
-                                )
+                                Expanded(
+                                  child: BloqoDropdown(
+                                    controller: modalityTagController,
+                                    dropdownMenuEntries: modalityTags,
+                                    initialSelection: modalityTags[0].value,
+                                    label: localizedText.modality_tag,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -353,15 +359,17 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: difficultyTagController,
-                                  dropdownMenuEntries: difficultyTags,
-                                  initialSelection: difficultyTags[0].value,
-                                  label: localizedText.difficulty_tag
-                                )
+                                Expanded(
+                                  child: BloqoDropdown(
+                                    controller: difficultyTagController,
+                                    dropdownMenuEntries: difficultyTags,
+                                    initialSelection: difficultyTags[0].value,
+                                    label: localizedText.difficulty_tag,
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
+                          )
                         ],
                       ),
                     )
@@ -378,20 +386,26 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                           child: Text(
                             localizedText.search_page_sort_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: BloqoColors.russianViolet
-                            )
+                              fontWeight: FontWeight.bold,
+                              color: BloqoColors.russianViolet,
+                            ),
                           ),
                         ),
-                        BloqoDropdown(
-                          controller: sortByController,
-                          dropdownMenuEntries: sortingOptions,
-                          label: localizedText.sort_by,
-                          initialSelection: sortingOptions[0].value,
-                        )
-                      ]
-                    )
-                  )
+                        Row(
+                          children: [
+                            Flexible(
+                              child: BloqoDropdown(
+                                controller: sortByController,
+                                dropdownMenuEntries: sortingOptions,
+                                label: localizedText.sort_by,
+                                initialSelection: sortingOptions[0].value,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),

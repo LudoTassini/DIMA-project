@@ -6,76 +6,83 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-
-  late BuildContext sharedContext;
-
   // Initializing BloqoTextField outside the testWidgets function
   final formKey = GlobalKey<FormState>();
-  final TextEditingController controller = TextEditingController();
+  late TextEditingController controller;
 
-  final testedWidget = MaterialApp(
+  setUp(() {
+    controller = TextEditingController();
+  });
+
+  Widget buildTestWidget() {
+    return MaterialApp(
       localizationsDelegates: getLocalizationDelegates(),
       supportedLocales: getSupportedLocales(),
       home: Builder(
-          builder: (BuildContext context) {
-            sharedContext = context;
-            var localizedText = getAppLocalizations(sharedContext)!;
-            return Scaffold(
-                body: Form(
-                  key: formKey,
-                  child: BloqoTextField(
-                      formKey: formKey,
-                      controller: controller,
-                      labelText: localizedText.username,
-                      hintText: localizedText.username_hint,
-                      maxInputLength: Constants.maxUsernameLength,
-                      validator: (username) {
-                        return usernameValidator(username: username, localizedText: localizedText);
-                      }
-                  ),
-                )
-            );
-          }
-      )
-  );
+        builder: (BuildContext context) {
+          var localizedText = getAppLocalizations(context)!;
+          return Scaffold(
+            body: Form(
+              key: formKey,
+              child: BloqoTextField(
+                formKey: formKey,
+                controller: controller,
+                labelText: localizedText.username,
+                hintText: localizedText.username_hint,
+                maxInputLength: Constants.maxUsernameLength,
+                validator: (username) {
+                  return usernameValidator(username: username, localizedText: localizedText);
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   testWidgets('Username form present', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
+    await tester.pumpWidget(buildTestWidget());
     expect(find.byType(BloqoTextField), findsOneWidget);
   });
 
   testWidgets('Username form registers text', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
+    await tester.pumpWidget(buildTestWidget());
     const enteredText = "testusername";
     final foundWidget = find.byType(BloqoTextField);
     expect(foundWidget, findsOneWidget);
 
     await tester.enterText(foundWidget, enteredText);
+    await tester.pumpAndSettle();
     expect(find.text(enteredText), findsOneWidget);
+    expect(controller.text, enteredText);
   });
 
   testWidgets('Username form displays error when wrong username is given (too short)', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
+    await tester.pumpWidget(buildTestWidget());
     const enteredText = "tst";
-    var errorText = getAppLocalizations(sharedContext)!.error_username_short(Constants.minUsernameLength.toString());
+    var errorText = getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+        .error_username_short(Constants.minUsernameLength.toString());
     final foundWidget = find.byType(BloqoTextField);
     expect(foundWidget, findsOneWidget);
 
     await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    await tester.tap(find.byType(Form)); // Trigger validation by tapping outside the text field
+    await tester.pumpAndSettle(); // Wait for the error message to appear
     expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
   });
 
   testWidgets('Username form displays error when wrong username is given (not alphanumeric)', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
+    await tester.pumpWidget(buildTestWidget());
     const enteredText = "test_";
-    var errorText = getAppLocalizations(sharedContext)!.error_username_alphanumeric;
+    var errorText = getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+        .error_username_alphanumeric;
     final foundWidget = find.byType(BloqoTextField);
     expect(foundWidget, findsOneWidget);
 
     await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
+    await tester.tap(find.byType(Form)); // Trigger validation by tapping outside the text field
+    await tester.pumpAndSettle(); // Wait for the error message to appear
     expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
   });
-
 }
