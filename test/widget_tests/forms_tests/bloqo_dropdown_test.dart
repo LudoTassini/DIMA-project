@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final formKey = GlobalKey<FormState>();
   late TextEditingController controller;
 
   setUp(() {
@@ -22,6 +21,7 @@ void main() {
             DropdownMenuEntry(value: "Test 1", label: "Test 1"),
             DropdownMenuEntry(value: "Test 2", label: "Test 2"),
           ],
+          width: 300
         ),
       ),
     );

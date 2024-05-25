@@ -5,6 +5,7 @@ class BloqoDropdown extends StatefulWidget {
     super.key,
     required this.controller,
     required this.dropdownMenuEntries,
+    required this.width,
     this.label,
     this.initialSelection,
     this.hintText,
@@ -12,6 +13,7 @@ class BloqoDropdown extends StatefulWidget {
 
   final TextEditingController controller;
   final List<DropdownMenuEntry<String>> dropdownMenuEntries;
+  final double width;
   final String? label;
   final String? initialSelection;
   final String? hintText;
@@ -24,6 +26,7 @@ class _BloqoDropdownState extends State<BloqoDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownMenu(
+      width: widget.width,
       controller: widget.controller,
       dropdownMenuEntries: widget.dropdownMenuEntries,
       initialSelection: widget.initialSelection,

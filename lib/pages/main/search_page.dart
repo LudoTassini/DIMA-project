@@ -288,12 +288,23 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Expanded(
-                                  child: BloqoDropdown(
-                                    controller: subjectTagController,
-                                    dropdownMenuEntries: subjectTags,
-                                    initialSelection: subjectTags[0].value,
-                                    label: localizedText.subject_tag,
-                                  ),
+                                    child: LayoutBuilder(
+                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                        double availableWidth = constraints.maxWidth;
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: subjectTagController,
+                                                dropdownMenuEntries: subjectTags,
+                                                initialSelection: subjectTags[0].value,
+                                                label: localizedText.subject_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                        );
+                                      }
+                                    )
                                 ),
                               ],
                             ),
@@ -312,13 +323,24 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Expanded(
-                                  child: BloqoDropdown(
-                                    controller: durationTagController,
-                                    dropdownMenuEntries: durationTags,
-                                    initialSelection: durationTags[0].value,
-                                    label: localizedText.duration_tag,
-                                  ),
-                                ),
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children:[
+                                          BloqoDropdown(
+                                              controller: durationTagController,
+                                              dropdownMenuEntries: durationTags,
+                                              initialSelection: durationTags[0].value,
+                                              label: localizedText.duration_tag,
+                                              width: availableWidth
+                                          ),
+                                        ]
+                                      );
+                                    }
+                                  )
+                                )
                               ],
                             ),
                           ),
@@ -336,13 +358,24 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Expanded(
-                                  child: BloqoDropdown(
-                                    controller: modalityTagController,
-                                    dropdownMenuEntries: modalityTags,
-                                    initialSelection: modalityTags[0].value,
-                                    label: localizedText.modality_tag,
-                                  ),
-                                ),
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: modalityTagController,
+                                                dropdownMenuEntries: modalityTags,
+                                                initialSelection: modalityTags[0].value,
+                                                label: localizedText.modality_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                      );
+                                    }
+                                  )
+                                )
                               ],
                             ),
                           ),
@@ -360,13 +393,24 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Expanded(
-                                  child: BloqoDropdown(
-                                    controller: difficultyTagController,
-                                    dropdownMenuEntries: difficultyTags,
-                                    initialSelection: difficultyTags[0].value,
-                                    label: localizedText.difficulty_tag,
-                                  ),
-                                ),
+                                    child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: difficultyTagController,
+                                                dropdownMenuEntries: difficultyTags,
+                                                initialSelection: difficultyTags[0].value,
+                                                label: localizedText.difficulty_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                      );
+                                    }
+                                  )
+                                )
                               ],
                             ),
                           )
@@ -391,18 +435,23 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                             ),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: BloqoDropdown(
-                                controller: sortByController,
-                                dropdownMenuEntries: sortingOptions,
-                                label: localizedText.sort_by,
-                                initialSelection: sortingOptions[0].value,
-                              ),
-                            ),
-                          ],
-                        ),
+                        LayoutBuilder(
+                          builder: (BuildContext context, BoxConstraints constraints) {
+                            double availableWidth = constraints.maxWidth;
+                            return Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children:[
+                                BloqoDropdown(
+                                  controller: sortByController,
+                                  dropdownMenuEntries: sortingOptions,
+                                  label: localizedText.sort_by,
+                                  initialSelection: sortingOptions[0].value,
+                                  width: availableWidth,
+                                )
+                              ]
+                            );
+                          }
+                        )
                       ],
                     ),
                   ),

@@ -38,11 +38,26 @@ List<DropdownMenuEntry<String>> buildSortingOptionsList({required var localizedT
   final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
 
   for (var entry in BloqoSortingOption.values){
-    dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.name, label: entry.text(localizedText: localizedText)));
+    dropdownMenuEntries.add(DropdownMenuEntry<String>(
+      value: entry.name,
+      label: entry.text(localizedText: localizedText),
+      labelWidget: Text(
+        entry.text(localizedText: localizedText),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,)
+    ));
   }
 
   if(withNone) {
-    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(value: "None", label: localizedText.none));
+    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(
+      value: "None",
+      label: localizedText.none,
+      labelWidget: Text(
+        localizedText.none,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      )
+    ));
   }
 
   return dropdownMenuEntries;
