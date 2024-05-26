@@ -554,6 +554,8 @@ Future<DateTime?> _selectDate({required var localizedText, required BuildContext
     firstDate: DateTime(2024),
     lastDate: DateTime(2100),
     keyboardType: TextInputType.datetime,
+    confirmText: localizedText.ok,
+    cancelText: localizedText.cancel,
     errorFormatText: localizedText.error_invalid_date_format,
     errorInvalidText: localizedText.error_date_out_of_range
   );
