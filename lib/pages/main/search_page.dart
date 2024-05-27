@@ -36,6 +36,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   late TextEditingController authorUsernameController;
   late TextEditingController minimumPublicationDateController;
   late TextEditingController maximumPublicationDateController;
+  late TextEditingController languageTagController;
   late TextEditingController subjectTagController;
   late TextEditingController durationTagController;
   late TextEditingController modalityTagController;
@@ -49,6 +50,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     authorUsernameController = TextEditingController();
     minimumPublicationDateController = TextEditingController();
     maximumPublicationDateController = TextEditingController();
+    languageTagController = TextEditingController();
     subjectTagController = TextEditingController();
     durationTagController = TextEditingController();
     modalityTagController = TextEditingController();
@@ -62,6 +64,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     authorUsernameController.dispose();
     minimumPublicationDateController.dispose();
     maximumPublicationDateController.dispose();
+    languageTagController.dispose();
     subjectTagController.dispose();
     durationTagController.dispose();
     modalityTagController.dispose();
@@ -76,6 +79,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
 
     final localizedText = getAppLocalizations(context)!;
 
+    final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
@@ -273,6 +277,41 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               fontWeight: FontWeight.bold,
                               color: BloqoColors.russianViolet
                             )
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
+                                    color: Color(0xFFFF00FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: LayoutBuilder(
+                                        builder: (BuildContext context, BoxConstraints constraints) {
+                                          double availableWidth = constraints.maxWidth;
+                                          return Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children:[
+                                                BloqoDropdown(
+                                                    controller: languageTagController,
+                                                    dropdownMenuEntries: languageTags,
+                                                    initialSelection: languageTags[0].value,
+                                                    label: localizedText.language_tag,
+                                                    width: availableWidth
+                                                ),
+                                              ]
+                                          );
+                                        }
+                                    )
+                                ),
+                              ],
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
@@ -536,6 +575,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       publicCoursesToggle.reset();
       privateCoursesToggle.reset();
 
+      languageTagController.text = localizedText.none;
       subjectTagController.text = localizedText.none;
       durationTagController.text = localizedText.none;
       modalityTagController.text = localizedText.none;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'bloqo_difficulty_tag.dart';
 import 'bloqo_duration_tag.dart';
+import 'bloqo_language_tag.dart';
 import 'bloqo_modality_tag.dart';
 import 'bloqo_subject_tag.dart';
 
@@ -19,13 +20,29 @@ enum BloqoCourseTagType {
   subject,
   duration,
   modality,
-  difficulty
+  difficulty,
+  language
 }
 
 List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, required var localizedText, bool withNone = true}) {
   final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
 
   switch(type){
+    case BloqoCourseTagType.language:
+      for (var entry in BloqoLanguageTagValue.values){
+        dropdownMenuEntries.add(DropdownMenuEntry<String>(
+          value: entry.name,
+          label: entry.text(localizedText: localizedText),
+          labelWidget: Text(
+            entry.text(localizedText: localizedText),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2, // Adjust the maxLines as needed
+          ),
+        )
+        );
+      }
+      dropdownMenuEntries.sort((a, b) => a.label.compareTo(b.label)); // sorts the list alphabetically
+      break;
     case BloqoCourseTagType.subject:
       for (var entry in BloqoSubjectTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(

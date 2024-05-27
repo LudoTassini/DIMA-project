@@ -43,6 +43,7 @@
   "public_courses": "Public\nCourses",
   "private_courses": "Private\nCourses",
   "search_page_tag_header": "You can also filter by tag.",
+  "language_tag": "Language Tag",
   "subject_tag": "Subject Tag",
   "duration_tag": "Duration Tag",
   "modality_tag": "Modality Tag",
@@ -142,5 +143,7 @@
   "author_username_az": "Author username (alphabetical)",
   "author_username_za": "Author username (reverse alphabetical)",
   "best_rated": "Best rated",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "english": "English",
+  "italian": "Italian"
 }
