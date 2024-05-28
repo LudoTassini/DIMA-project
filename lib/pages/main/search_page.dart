@@ -535,7 +535,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
-                      onPressed: () => widget.onPush(const SearchResultsPage()),
+                      onPressed: () => widget.onPush(SearchResultsPage(onPush: widget.onPush)),
                       color: BloqoColors.russianViolet,
                       text: localizedText.search,
                       icon: Icons.search

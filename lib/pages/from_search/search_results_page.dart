@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class SearchResultsPage extends StatefulWidget {
-  const SearchResultsPage({super.key});
+
+  const SearchResultsPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<SearchResultsPage> createState() => _SearchResultsPageState();
@@ -12,7 +18,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
   @override
   Widget build(BuildContext context){
     super.build(context);
-    return const Text("Prova");
+    return const Text("Search Results Page");
   }
 
   @override

@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
-  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
