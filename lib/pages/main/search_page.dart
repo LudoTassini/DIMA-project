@@ -196,72 +196,61 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       )
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(
-                      child: BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 10, 0),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                  child: Text(
-                                    localizedText.public_courses,
-                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                        fontSize: 13,
-                                        color: BloqoColors.russianViolet,
-                                        fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
+                BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                            child: Text(
+                              localizedText.show_public_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: BloqoColors.russianViolet,
+                                  fontWeight: FontWeight.w600
                               ),
-                              BloqoSwitch(
-                                value: publicCoursesToggle,
-                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        BloqoSwitch(
+                          value: publicCoursesToggle,
+                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                        )
+                      ],
                     ),
-                    Flexible(
-                      child: BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 20, 0),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                  child: Text(
-                                    localizedText.private_courses,
-                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                      fontSize: 13,
-                                      color: BloqoColors.russianViolet,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
+                  ),
+                ),
+                BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                            child: Text(
+                              localizedText.show_private_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: BloqoColors.russianViolet,
+                                fontWeight: FontWeight.w600
                               ),
-                              BloqoSwitch(
-                                value: privateCoursesToggle,
-                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        BloqoSwitch(
+                          value: privateCoursesToggle,
+                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 BloqoSeasaltContainer(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
