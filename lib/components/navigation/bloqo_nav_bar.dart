@@ -2,32 +2,24 @@ import 'package:flutter/material.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
-class BloqoNavBar extends StatefulWidget {
+class BloqoNavBar extends StatelessWidget {
   const BloqoNavBar({
     super.key,
     required this.onItemTapped,
+    required this.currentIndex,
   });
 
   final Function(int) onItemTapped;
-
-  @override
-  State<BloqoNavBar> createState() => _BloqoNavBarState();
-}
-
-class _BloqoNavBarState extends State<BloqoNavBar> {
-  int currentPageIndex = 0;
+  final int currentIndex;
 
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
     return BottomNavigationBar(
       onTap: (index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-        widget.onItemTapped(index);
+        onItemTapped(index);
       },
-      currentIndex: currentPageIndex,
+      currentIndex: currentIndex,
       selectedItemColor: BloqoColors.russianViolet,
       unselectedItemColor: BloqoColors.seasalt,
       backgroundColor: BloqoColors.darkFuchsia,
@@ -37,7 +29,7 @@ class _BloqoNavBarState extends State<BloqoNavBar> {
       selectedFontSize: 16.0,
       unselectedFontSize: 14.0,
       selectedLabelStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.bold
       ),
       items: [
         BottomNavigationBarItem(
