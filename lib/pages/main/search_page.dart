@@ -199,7 +199,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 BloqoSeasaltContainer(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,7 +227,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                 BloqoSeasaltContainer(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                   child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
