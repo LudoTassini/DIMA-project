@@ -9,7 +9,7 @@ class BloqoSubjectTag extends BloqoCourseTag{
 enum BloqoSubjectTagValue{
   figurativeArts,
   technology,
-  naturalScience,
+  naturalSciences,
   history,
   philosophy,
   languages,
@@ -38,64 +38,64 @@ enum BloqoSubjectTagValue{
 }
 
 extension BloqoSubjectTagValueExtension on BloqoSubjectTagValue {
-  String get text {
+  String text({required var localizedText}) {
     switch (this) {
       case BloqoSubjectTagValue.architecture:
-        return "Architecture";
+        return localizedText.architecture;
       case BloqoSubjectTagValue.cooking:
-        return "Cooking";
+        return localizedText.cooking;
       case BloqoSubjectTagValue.design:
-        return "Design";
+        return localizedText.design;
       case BloqoSubjectTagValue.economics:
-        return "Economics";
+        return localizedText.economics;
       case BloqoSubjectTagValue.education:
-        return "Education";
+        return localizedText.education;
       case BloqoSubjectTagValue.esotericism:
-        return "Esotericism";
+        return localizedText.esotericism;
       case BloqoSubjectTagValue.fashion:
-        return "Fashion";
+        return localizedText.fashion;
       case BloqoSubjectTagValue.figurativeArts:
-        return "Figurative Arts";
+        return localizedText.figurative_arts;
       case BloqoSubjectTagValue.geography:
-        return "Geography";
+        return localizedText.geography;
       case BloqoSubjectTagValue.health:
-        return "Health";
+        return localizedText.health;
       case BloqoSubjectTagValue.history:
-        return "History";
+        return localizedText.history;
       case BloqoSubjectTagValue.languages:
-        return "Languages";
+        return localizedText.languages;
       case BloqoSubjectTagValue.law:
-        return "Law";
+        return localizedText.law;
       case BloqoSubjectTagValue.literature:
-        return "Literature";
+        return localizedText.literature;
       case BloqoSubjectTagValue.mathematics:
-        return "Mathematics";
+        return localizedText.mathematics;
       case BloqoSubjectTagValue.medicine:
-        return "Medicine";
+        return localizedText.medicine;
       case BloqoSubjectTagValue.music:
-        return "Music";
-      case BloqoSubjectTagValue.naturalScience:
-        return "Natural Science";
+        return localizedText.music;
+      case BloqoSubjectTagValue.naturalSciences:
+        return localizedText.natural_sciences;
       case BloqoSubjectTagValue.other:
-        return "Other";
+        return localizedText.other;
       case BloqoSubjectTagValue.performativeArts:
-        return "Performative Arts";
+        return localizedText.performative_arts;
       case BloqoSubjectTagValue.philosophy:
-        return "Philosophy";
+        return localizedText.philosophy;
       case BloqoSubjectTagValue.politics:
-        return "Politics";
+        return localizedText.politics;
       case BloqoSubjectTagValue.psychology:
-        return "Psychology";
+        return localizedText.psychology;
       case BloqoSubjectTagValue.society:
-        return "Society";
+        return localizedText.society;
       case BloqoSubjectTagValue.sports:
-        return "Sports";
+        return localizedText.sports;
       case BloqoSubjectTagValue.sustainability:
-        return "Sustainability";
+        return localizedText.sustainability;
       case BloqoSubjectTagValue.technology:
-        return "Technology";
+        return localizedText.technology;
       case BloqoSubjectTagValue.visualArts:
-        return "Visual Arts";
+        return localizedText.visual_arts;
       default:
         throw Exception("Unknown SubjectTagValue");
     }

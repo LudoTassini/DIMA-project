@@ -14,9 +14,16 @@ import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/toggle.dart';
+import '../from_search/search_results_page.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+
+  const SearchPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -36,6 +43,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   late TextEditingController authorUsernameController;
   late TextEditingController minimumPublicationDateController;
   late TextEditingController maximumPublicationDateController;
+  late TextEditingController languageTagController;
   late TextEditingController subjectTagController;
   late TextEditingController durationTagController;
   late TextEditingController modalityTagController;
@@ -49,6 +57,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     authorUsernameController = TextEditingController();
     minimumPublicationDateController = TextEditingController();
     maximumPublicationDateController = TextEditingController();
+    languageTagController = TextEditingController();
     subjectTagController = TextEditingController();
     durationTagController = TextEditingController();
     modalityTagController = TextEditingController();
@@ -62,6 +71,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     authorUsernameController.dispose();
     minimumPublicationDateController.dispose();
     maximumPublicationDateController.dispose();
+    languageTagController.dispose();
     subjectTagController.dispose();
     durationTagController.dispose();
     modalityTagController.dispose();
@@ -74,13 +84,14 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
 
-    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject);
-    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration);
-    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality);
-    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty);
-    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList();
-
     final localizedText = getAppLocalizations(context)!;
+
+    final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList(localizedText: localizedText);
 
     return BloqoMainContainer(
       child: Column(
@@ -192,72 +203,61 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       )
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(
-                      child: BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 10, 0),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                  child: Text(
-                                    localizedText.public_courses,
-                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                        fontSize: 13,
-                                        color: BloqoColors.russianViolet,
-                                        fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
+                BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                            child: Text(
+                              localizedText.show_public_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: BloqoColors.russianViolet,
+                                  fontWeight: FontWeight.w600
                               ),
-                              BloqoSwitch(
-                                value: publicCoursesToggle,
-                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        BloqoSwitch(
+                          value: publicCoursesToggle,
+                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                        )
+                      ],
                     ),
-                    Flexible(
-                      child: BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 20, 0),
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                  child: Text(
-                                    localizedText.private_courses,
-                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                      fontSize: 13,
-                                      color: BloqoColors.russianViolet,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                ),
+                  ),
+                ),
+                BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                            child: Text(
+                              localizedText.show_private_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: BloqoColors.russianViolet,
+                                fontWeight: FontWeight.w600
                               ),
-                              BloqoSwitch(
-                                value: privateCoursesToggle,
-                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        BloqoSwitch(
+                          value: privateCoursesToggle,
+                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 BloqoSeasaltContainer(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
@@ -283,16 +283,64 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
                                   child: Icon(
                                     Icons.label,
+                                    color: Color(0xFFFF00FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: LayoutBuilder(
+                                        builder: (BuildContext context, BoxConstraints constraints) {
+                                          double availableWidth = constraints.maxWidth;
+                                          return Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children:[
+                                                BloqoDropdown(
+                                                    controller: languageTagController,
+                                                    dropdownMenuEntries: languageTags,
+                                                    initialSelection: languageTags[0].value,
+                                                    label: localizedText.language_tag,
+                                                    width: availableWidth
+                                                ),
+                                              ]
+                                          );
+                                        }
+                                    )
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                  child: Icon(
+                                    Icons.label,
                                     color: Color(0xFFFF0000),
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: subjectTagController,
-                                  dropdownMenuEntries: subjectTags,
-                                  initialSelection: subjectTags[0].value,
-                                  label: localizedText.subject_tag
-                                )
+                                Expanded(
+                                    child: LayoutBuilder(
+                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                        double availableWidth = constraints.maxWidth;
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: subjectTagController,
+                                                dropdownMenuEntries: subjectTags,
+                                                initialSelection: subjectTags[0].value,
+                                                label: localizedText.subject_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                        );
+                                      }
+                                    )
+                                ),
                               ],
                             ),
                           ),
@@ -309,11 +357,24 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: durationTagController,
-                                  dropdownMenuEntries: durationTags,
-                                  initialSelection: durationTags[0].value,
-                                  label: localizedText.duration_tag
+                                Expanded(
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children:[
+                                          BloqoDropdown(
+                                              controller: durationTagController,
+                                              dropdownMenuEntries: durationTags,
+                                              initialSelection: durationTags[0].value,
+                                              label: localizedText.duration_tag,
+                                              width: availableWidth
+                                          ),
+                                        ]
+                                      );
+                                    }
+                                  )
                                 )
                               ],
                             ),
@@ -331,11 +392,24 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: modalityTagController,
-                                  dropdownMenuEntries: modalityTags,
-                                  initialSelection: modalityTags[0].value,
-                                  label: localizedText.modality_tag
+                                Expanded(
+                                  child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: modalityTagController,
+                                                dropdownMenuEntries: modalityTags,
+                                                initialSelection: modalityTags[0].value,
+                                                label: localizedText.modality_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                      );
+                                    }
+                                  )
                                 )
                               ],
                             ),
@@ -353,15 +427,28 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                     size: 24,
                                   ),
                                 ),
-                                BloqoDropdown(
-                                  controller: difficultyTagController,
-                                  dropdownMenuEntries: difficultyTags,
-                                  initialSelection: difficultyTags[0].value,
-                                  label: localizedText.difficulty_tag
+                                Expanded(
+                                    child: LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      double availableWidth = constraints.maxWidth;
+                                      return Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children:[
+                                            BloqoDropdown(
+                                                controller: difficultyTagController,
+                                                dropdownMenuEntries: difficultyTags,
+                                                initialSelection: difficultyTags[0].value,
+                                                label: localizedText.difficulty_tag,
+                                                width: availableWidth
+                                            ),
+                                          ]
+                                      );
+                                    }
+                                  )
                                 )
                               ],
                             ),
-                          ),
+                          )
                         ],
                       ),
                     )
@@ -378,20 +465,31 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                           child: Text(
                             localizedText.search_page_sort_header,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: BloqoColors.russianViolet
-                            )
+                              fontWeight: FontWeight.bold,
+                              color: BloqoColors.russianViolet,
+                            ),
                           ),
                         ),
-                        BloqoDropdown(
-                          controller: sortByController,
-                          dropdownMenuEntries: sortingOptions,
-                          label: localizedText.sort_by,
-                          initialSelection: sortingOptions[0].value,
+                        LayoutBuilder(
+                          builder: (BuildContext context, BoxConstraints constraints) {
+                            double availableWidth = constraints.maxWidth;
+                            return Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children:[
+                                BloqoDropdown(
+                                  controller: sortByController,
+                                  dropdownMenuEntries: sortingOptions,
+                                  label: localizedText.sort_by,
+                                  initialSelection: sortingOptions[0].value,
+                                  width: availableWidth,
+                                )
+                              ]
+                            );
+                          }
                         )
-                      ]
-                    )
-                  )
+                      ],
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
@@ -437,14 +535,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Container()
-                            )
-                        );
-                      },
+                      onPressed: () => widget.onPush(SearchResultsPage(onPush: widget.onPush)),
                       color: BloqoColors.russianViolet,
                       text: localizedText.search,
                       icon: Icons.search
@@ -473,6 +564,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
       publicCoursesToggle.reset();
       privateCoursesToggle.reset();
 
+      languageTagController.text = localizedText.none;
       subjectTagController.text = localizedText.none;
       durationTagController.text = localizedText.none;
       modalityTagController.text = localizedText.none;
@@ -491,6 +583,8 @@ Future<DateTime?> _selectDate({required var localizedText, required BuildContext
     firstDate: DateTime(2024),
     lastDate: DateTime(2100),
     keyboardType: TextInputType.datetime,
+    confirmText: localizedText.ok,
+    cancelText: localizedText.cancel,
     errorFormatText: localizedText.error_invalid_date_format,
     errorInvalidText: localizedText.error_date_out_of_range
   );

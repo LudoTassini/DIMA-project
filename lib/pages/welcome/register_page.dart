@@ -18,7 +18,7 @@ import '../../utils/auth.dart';
 import '../../utils/constants.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/text_validator.dart';
-import '../main/home_page.dart';
+import '../main/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -191,8 +191,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const HomePage(),
-                                )
+                                  builder: (context) => const MainPage(),
+                                ),
                               );
                             } on BloqoException catch(e){
                               if(!context.mounted) return;

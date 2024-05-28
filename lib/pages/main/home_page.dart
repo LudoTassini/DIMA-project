@@ -14,7 +14,13 @@ import '../../model/bloqo_user_course_enrolled.dart';
 import '../../utils/localization.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+
+  const HomePage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<HomePage> createState() => _HomePageState();

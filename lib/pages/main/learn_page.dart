@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LearnPage extends StatefulWidget {
-  const LearnPage({super.key});
+
+  const LearnPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<LearnPage> createState() => _LearnPageState();
