@@ -19,7 +19,7 @@ void main() {
             return Scaffold(
               body: Container(),
               bottomNavigationBar: BloqoNavBar(
-                onDestinationSelected: (int index) {
+                onItemTapped: (int index) {
                   selectedIndex = index;
                 },
               ),
