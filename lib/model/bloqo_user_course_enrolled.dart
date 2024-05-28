@@ -9,6 +9,7 @@ class BloqoUserCourseEnrolled {
   String sectionName;
   DocumentReference sectionToComplete;
   final String userEmail;
+  Timestamp lastUpdated;
 
   BloqoUserCourseEnrolled({
     required this.course,
@@ -19,6 +20,7 @@ class BloqoUserCourseEnrolled {
     required this.sectionName,
     required this.sectionToComplete,
     required this.userEmail,
+    required this.lastUpdated,
   });
 
   factory BloqoUserCourseEnrolled.fromFirestore(
@@ -35,6 +37,7 @@ class BloqoUserCourseEnrolled {
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
       userEmail: data['user_email'],
+      lastUpdated: data['last_updated'],
     );
   }
 
@@ -48,6 +51,7 @@ class BloqoUserCourseEnrolled {
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,
       'user_email': userEmail,
+      'last_updated': FieldValue.serverTimestamp(),
     };
   }
 

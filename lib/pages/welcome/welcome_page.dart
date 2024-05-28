@@ -8,6 +8,7 @@ import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -230,6 +231,7 @@ Future<void> _tryLogin({required var localizedText, required String email, requi
   }
 }
 
+/*
 // FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
   try {
@@ -248,7 +250,34 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
         throw BloqoException(message: localizedText.generic_error);
     }
   }
+} */
+
+Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({ required var localizedText,
+  required BloqoUser user, DocumentSnapshot? lastDocument,
+}) async {
+  int limit = 3;
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    var query = ref.where("userEmail", isEqualTo: user.email).orderBy("lastUpdated", descending: true).limit(limit);
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+    var querySnapshot = await query.get();
+    List<BloqoUserCourseEnrolled> userCourses = [];
+    for (var doc in querySnapshot.docs) {
+      userCourses.add(doc.data());
+    }
+    return userCourses;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
 }
+
 
 // FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
 Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
