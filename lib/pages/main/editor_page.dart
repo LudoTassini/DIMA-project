@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class EditorPage extends StatefulWidget {
-  const EditorPage({super.key});
+
+  const EditorPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<EditorPage> createState() => _EditorPageState();

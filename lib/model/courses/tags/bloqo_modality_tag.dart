@@ -13,14 +13,14 @@ enum BloqoModalityTagValue{
 }
 
 extension BloqoModalityTagValueExtension on BloqoModalityTagValue{
-  String get text {
+  String text({required var localizedText}) {
     switch (this) {
       case BloqoModalityTagValue.lessonsOnly:
-        return "Lessons Only";
+        return localizedText.lessons_only;
       case BloqoModalityTagValue.quizzesOnly:
-        return "Quizzes Only";
+        return localizedText.quizzes_only;
       case BloqoModalityTagValue.lessonsAndQuizzes:
-        return "Lessons and Quizzes";
+        return localizedText.lessons_quizzes;
       default:
         throw Exception("Unknown ModalityTagValue");
     }

@@ -11,38 +11,53 @@ enum BloqoSortingOption{
 }
 
 extension BloqoSortingOptionExtension on BloqoSortingOption{
-  String get text {
+  String text({required var localizedText}) {
     switch (this) {
       case BloqoSortingOption.publicationDateLatestFirst:
-        return "Publication Date (latest first)";
+        return localizedText.publication_date_latest;
       case BloqoSortingOption.publicationDateOldestFirst:
-        return "Publication Date (oldest first)";
+        return localizedText.publication_date_oldest;
       case BloqoSortingOption.courseNameAZ:
-        return "Course Name (alphabetical)";
+        return localizedText.course_name_az;
       case BloqoSortingOption.courseNameZA:
-        return "Course Name (reverse alphabetical)";
+        return localizedText.course_name_za;
       case BloqoSortingOption.authorNameAZ:
-        return "Author Name (alphabetical)";
+        return localizedText.author_username_az;
       case BloqoSortingOption.authorNameZA:
-        return "Author Name (reverse alphabetical)";
+        return localizedText.author_username_za;
       case BloqoSortingOption.bestRated:
-        return "Best Rated";
+        return localizedText.best_rated;
       default:
         throw Exception("Unknown SortingOption");
     }
   }
 }
 
-List<DropdownMenuEntry<String>> buildSortingOptionsList({bool withNone = true}){
+List<DropdownMenuEntry<String>> buildSortingOptionsList({required var localizedText, bool withNone = true}){
 
   final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
 
   for (var entry in BloqoSortingOption.values){
-    dropdownMenuEntries.add(DropdownMenuEntry<String>(value: entry.text, label: entry.text));
+    dropdownMenuEntries.add(DropdownMenuEntry<String>(
+      value: entry.name,
+      label: entry.text(localizedText: localizedText),
+      labelWidget: Text(
+        entry.text(localizedText: localizedText),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,)
+    ));
   }
 
   if(withNone) {
-    dropdownMenuEntries.insert(0, const DropdownMenuEntry<String>(value: "None", label: 'None'));
+    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(
+      value: "None",
+      label: localizedText.none,
+      labelWidget: Text(
+        localizedText.none,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      )
+    ));
   }
 
   return dropdownMenuEntries;

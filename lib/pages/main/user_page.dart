@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class UserPage extends StatefulWidget {
-  const UserPage({super.key});
+
+  const UserPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<UserPage> createState() => _UserPageState();
