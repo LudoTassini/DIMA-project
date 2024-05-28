@@ -12,6 +12,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state/user_app_state.dart';
+import 'app_state/user_courses_created_app_state.dart';
+import 'app_state/user_courses_enrolled_app_state.dart';
 import 'utils/firebase_options.dart';
 
 Future<void> main() async {
@@ -40,6 +42,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserAppState()),
+        ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
+        ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
       ],
       child: MyApp(
         userIsLoggedIn: userIsLoggedIn,

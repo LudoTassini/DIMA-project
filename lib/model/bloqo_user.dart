@@ -14,15 +14,16 @@ class BloqoUser{
   });
 
   factory BloqoUser.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-    SnapshotOptions? options,
-  ){
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options,
+      ) {
     final data = snapshot.data();
+
     return BloqoUser(
       email: data!["email"],
       username: data["username"],
       fullName: data["full_name"],
-      isFullNameVisible: data["is_full_name_visible"]
+      isFullNameVisible: data["is_full_name_visible"],
     );
   }
 
