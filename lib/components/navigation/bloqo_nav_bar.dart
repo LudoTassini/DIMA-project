@@ -5,77 +5,72 @@ import '../../utils/localization.dart';
 class BloqoNavBar extends StatefulWidget {
   const BloqoNavBar({
     super.key,
-    required this.onDestinationSelected,
+    required this.onItemTapped,
   });
 
-  final Function(int) onDestinationSelected;
+  final Function(int) onItemTapped;
 
   @override
-  State<StatefulWidget> createState() => _BloqoNavBarState();
-
+  State<BloqoNavBar> createState() => _BloqoNavBarState();
 }
 
-class _BloqoNavBarState extends State<BloqoNavBar>{
-
-  static const navBarIconSize = 30.0;
-
+class _BloqoNavBarState extends State<BloqoNavBar> {
   int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
-    return NavigationBar(
-      onDestinationSelected: (index) {
-        widget.onDestinationSelected(index);
+    return BottomNavigationBar(
+      onTap: (index) {
         setState(() {
           currentPageIndex = index;
         });
+        widget.onItemTapped(index);
       },
-      indicatorColor: BloqoColors.newDarkFuchsia,
-      animationDuration: const Duration(),
-      elevation: 2,
-      overlayColor: MaterialStateProperty.all(BloqoColors.newDarkFuchsia),
-      selectedIndex: currentPageIndex,
+      currentIndex: currentPageIndex,
+      selectedItemColor: BloqoColors.russianViolet,
+      unselectedItemColor: BloqoColors.seasalt,
       backgroundColor: BloqoColors.darkFuchsia,
-      destinations: <Widget>[
-        NavigationDestination(
-          selectedIcon: const Icon(
-            Icons.home_outlined, color: BloqoColors.russianViolet,
-            size: navBarIconSize,),
-          icon: const Icon(Icons.home_outlined, color: BloqoColors.seasalt,
-            size: navBarIconSize,),
+      elevation: 2,
+      type: BottomNavigationBarType.fixed,
+      iconSize: 30.0,
+      selectedFontSize: 16.0,
+      unselectedFontSize: 14.0,
+      selectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+      ),
+      items: [
+        BottomNavigationBarItem(
+          icon: const Icon(
+            Icons.home_outlined,
+          ),
           label: localizedText.home,
         ),
-        NavigationDestination(
-          selectedIcon: const Icon(Icons.book, color: BloqoColors.russianViolet,
-            size: navBarIconSize,),
-          icon: const Icon(Icons.book, color: BloqoColors.seasalt,
-            size: navBarIconSize,),
+        BottomNavigationBarItem(
+          icon: const Icon(
+            Icons.book,
+          ),
           label: localizedText.learn,
         ),
-        NavigationDestination(
-          selectedIcon: const Icon(Icons.search, color: BloqoColors.russianViolet,
-            size: navBarIconSize,),
-          icon: const Icon(Icons.search, color: BloqoColors.seasalt,
-            size: navBarIconSize,),
+        BottomNavigationBarItem(
+          icon: const Icon(
+            Icons.search,
+          ),
           label: localizedText.search,
         ),
-        NavigationDestination(
-          selectedIcon: const Icon(Icons.edit, color: BloqoColors.russianViolet,
-            size: navBarIconSize,),
-          icon: const Icon(Icons.edit, color: BloqoColors.seasalt,
-            size: navBarIconSize,),
+        BottomNavigationBarItem(
+          icon: const Icon(
+            Icons.edit,
+          ),
           label: localizedText.editor,
         ),
-        NavigationDestination(
-          selectedIcon: const Icon(Icons.person, color: BloqoColors.russianViolet,
-            size: navBarIconSize,),
-          icon: const Icon(Icons.person, color: BloqoColors.seasalt,
-            size: navBarIconSize,),
+        BottomNavigationBarItem(
+          icon: const Icon(
+            Icons.person,
+          ),
           label: localizedText.account,
         ),
       ],
     );
   }
-
 }

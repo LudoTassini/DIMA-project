@@ -14,9 +14,16 @@ import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/toggle.dart';
+import '../from_search/search_results_page.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+
+  const SearchPage({
+    super.key,
+    required this.onPush
+  });
+
+  final void Function(Widget) onPush;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -528,14 +535,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Container()
-                            )
-                        );
-                      },
+                      onPressed: () => widget.onPush(const SearchResultsPage()),
                       color: BloqoColors.russianViolet,
                       text: localizedText.search,
                       icon: Icons.search
