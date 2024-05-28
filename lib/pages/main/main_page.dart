@@ -12,14 +12,19 @@ import 'home_page.dart';
 import 'learn_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({
+    super.key,
+    this.selectedPageIndex = 0,
+  });
+
+  final int selectedPageIndex;
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedPageIndex = 0;
+  late int _selectedPageIndex;
   late PageController _pageController;
   final ValueNotifier<bool> _canPopNotifier = ValueNotifier(false);
 
@@ -34,6 +39,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    _selectedPageIndex = widget.selectedPageIndex;
     _pageController = PageController(initialPage: _selectedPageIndex);
   }
 

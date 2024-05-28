@@ -231,7 +231,7 @@ Future<void> _tryLogin({required var localizedText, required String email, requi
   }
 }
 
-/*
+
 // FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
   try {
@@ -250,8 +250,9 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
         throw BloqoException(message: localizedText.generic_error);
     }
   }
-} */
+}
 
+/*
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({ required var localizedText,
   required BloqoUser user, DocumentSnapshot? lastDocument,
 }) async {
@@ -276,7 +277,7 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({ required var loc
         throw BloqoException(message: localizedText.generic_error);
     }
   }
-}
+} */
 
 
 // FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
