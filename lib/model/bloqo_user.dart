@@ -5,12 +5,16 @@ class BloqoUser{
   final String username;
   final String fullName;
   final bool isFullNameVisible;
+  final int followers;
+  final int following;
 
   BloqoUser({
     required this.email,
     required this.username,
     required this.fullName,
     required this.isFullNameVisible,
+    required this.followers,
+    required this.following
   });
 
   factory BloqoUser.fromFirestore(
@@ -24,6 +28,8 @@ class BloqoUser{
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
+      followers: data["followers"],
+      following: data["following"]
     );
   }
 
@@ -33,6 +39,8 @@ class BloqoUser{
       "username": username,
       "full_name": fullName,
       "is_full_name_visible": isFullNameVisible,
+      "followers": followers,
+      "following": following
     };
   }
 

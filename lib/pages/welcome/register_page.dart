@@ -243,7 +243,9 @@ Future<void> _tryRegister({required var localizedText, required String email, re
       email: email,
       username: username,
       fullName: fullName,
-      isFullNameVisible: isFullNameVisible
+      isFullNameVisible: isFullNameVisible,
+      followers: 0,
+      following: 0
   );
   if(emailValidator(email: user.email, localizedText: localizedText) == null &&
       passwordValidator(password: password, localizedText: localizedText) == null &&

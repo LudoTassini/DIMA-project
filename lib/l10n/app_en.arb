@@ -157,5 +157,15 @@
   "best_rated": "Best rated",
   "cancel": "Cancel",
   "english": "English",
-  "italian": "Italian"
+  "italian": "Italian",
+  "followers": "followers",
+  "following": "following",
+  "account_settings_title": "Account Settings",
+  "account_settings_description": "Browse and update your user data and preferences.",
+  "notification_settings_title": "Notification Settings",
+  "notification_settings_description": "Choose which notifications you wish to receive.",
+  "external_accounts_title": "External Accounts",
+  "external_accounts_description": "Manage which external accounts you want to link to bloQo.",
+  "sign_out_title": "Sign Out",
+  "sign_out_description": "Log out of the application."
 }
