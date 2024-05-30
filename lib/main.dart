@@ -1,8 +1,11 @@
+import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:bloqo/style/bloqo_theme.dart';
 import 'package:bloqo/utils/auth.dart';
+import 'package:bloqo/utils/localization.dart';
+import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,7 +21,6 @@ import 'app_state/user_courses_enrolled_app_state.dart';
 import 'utils/firebase_options.dart';
 
 Future<void> main() async {
-
   // Ensure WidgetsFlutterBinding is initialized before changing some preferences
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -50,7 +52,7 @@ Future<void> main() async {
         child: MyApp(
           userIsLoggedIn: userIsLoggedIn,
         ),
-      )
+      ),
     ),
   );
 }
@@ -58,43 +60,66 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
-    required this.userIsLoggedIn
+    required this.userIsLoggedIn,
   });
 
   final bool userIsLoggedIn;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var localizedText = getAppLocalizations(context);
     return MaterialApp(
       title: 'bloQo',
       theme: BloqoTheme.get(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: LoaderOverlay(
-          useDefaultLoading: false,
-          overlayWidgetBuilder: (_) {
-            return Center(
-                child: LoadingAnimationWidget.prograssiveDots(
-                    color: BloqoColors.russianViolet,
-                    size: 100
+        useDefaultLoading: false,
+        overlayWidgetBuilder: (_) {
+          return Center(
+            child: LoadingAnimationWidget.prograssiveDots(
+              color: BloqoColors.russianViolet,
+              size: 100,
+            ),
+          );
+        },
+        child: FutureBuilder<bool>(
+          future: _checkIfUserIsLoggedIn(localizedText: localizedText),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return BloqoMainContainer(child:
+                Center(
+                  child: LoadingAnimationWidget.prograssiveDots(
+                    color: BloqoColors.seasalt,
+                    size: 100,
+                  ),
                 )
-            );
+              );
+            } else if (snapshot.hasData && snapshot.data == true) {
+              return const MainPage();
+            } else {
+              return const WelcomePage();
+            }
           },
-          child: userIsLoggedIn ? const MainPage() : const WelcomePage()
+        ),
       ),
     );
   }
 }
 
-Future<bool> _checkIfUserIsLoggedIn() async {
+Future<bool> _checkIfUserIsLoggedIn({AppLocalizations? localizedText}) async {
   final prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool(sharedLogged) != null && prefs.getBool(sharedLogged)!) {
-    await login(email: prefs.getString(sharedUser)!, password: prefs.getString(sharedPassword)!).then((response) {
+  if (prefs.getBool(sharedLogged) ?? false) {
+    try {
+      await login(
+        email: prefs.getString(sharedUserEmail)!,
+        password: prefs.getString(sharedPassword)!,
+        localizedText: localizedText!,
+      );
       return true;
-    }).catchError((error) {
+    } catch (error) {
       return false;
-    });
+    }
   }
   return false;
 }

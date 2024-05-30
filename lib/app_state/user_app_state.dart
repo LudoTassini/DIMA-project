@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../model/bloqo_user.dart';
 
@@ -34,4 +35,8 @@ class UserAppState with ChangeNotifier{
       });
     }
   }
+}
+
+void saveUserToAppState({required BuildContext context, required BloqoUser user}){
+  Provider.of<UserAppState>(context, listen: false).set(user);
 }
