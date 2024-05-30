@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../app_state/user_app_state.dart';
 import '../model/bloqo_user.dart';
+import 'connectivity.dart';
 
 const String sharedLogged = "USER_IS_LOGGED";
 const String sharedUser = "USER";
@@ -15,6 +16,21 @@ Future<void> login({required String email, required String password}) async {
     email: email,
     password: password,
   );
+}
+
+Future<void> logout({required var localizedText}) async {
+  await checkConnectivity(localizedText: localizedText);
+  try {
+    await FirebaseAuth.instance.signOut();
+  }
+  on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
 }
 
 Future<BloqoUser> getUserFromEmailSkipLogin({required String email}) async {

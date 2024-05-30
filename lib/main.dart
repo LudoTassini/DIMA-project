@@ -3,11 +3,11 @@ import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:bloqo/style/bloqo_theme.dart';
 import 'package:bloqo/utils/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -36,24 +36,21 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Disable Firestore cache persistence
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: false,
-  );
-
   final bool userIsLoggedIn = await _checkIfUserIsLoggedIn();
 
   // Run app
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserAppState()),
-        ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
-        ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
-      ],
-      child: MyApp(
-        userIsLoggedIn: userIsLoggedIn,
-      ),
+    Phoenix(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserAppState()),
+          ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
+          ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
+        ],
+        child: MyApp(
+          userIsLoggedIn: userIsLoggedIn,
+        ),
+      )
     ),
   );
 }

@@ -2,15 +2,19 @@ import 'package:bloqo/components/complex/bloqo_setting.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
-import 'package:bloqo/pages/welcome/welcome_page.dart';
+import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/auth.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 import '../../utils/text_validator.dart';
@@ -115,31 +119,35 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            user.fullName,
-                                            textAlign: TextAlign.start,
-                                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                              color: BloqoColors.secondaryText,
-                                              fontSize: 16,
-                                              letterSpacing: 0,
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              user.fullName,
+                                              textAlign: TextAlign.start,
+                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                color: BloqoColors.secondaryText,
+                                                fontSize: 16,
+                                                letterSpacing: 0,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            user.username,
-                                            textAlign: TextAlign.start,
-                                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                              color: BloqoColors.primaryText,
-                                              fontSize: 22,
-                                              letterSpacing: 0,
+                                            Text(
+                                              user.username,
+                                              textAlign: TextAlign.start,
+                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                color: BloqoColors.primaryText,
+                                                fontSize: 22,
+                                                letterSpacing: 0,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     Align(
@@ -163,9 +171,9 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                 ),
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  child: Wrap(
+                                    spacing: 15.0,
+                                    runSpacing: 10.0,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
@@ -223,7 +231,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                   ),
                                 ),
                               ],
-                            ),
+                            )
                           ),
                         ),
                       ],
@@ -300,10 +308,10 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                         context: context,
                         title: localizedText.warning,
                         description: localizedText.logout_confirmation,
-                        confirmationFunction: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const WelcomePage()),
+                        confirmationFunction: () async {
+                          _confirmationFunction(
+                              context: context,
+                              localizedText: localizedText
                           );
                         }
                     );
@@ -321,6 +329,24 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
         ),
       ),
     );
+  }
+
+  Future<void> _confirmationFunction({required BuildContext context, required var localizedText}) async {
+    context.loaderOverlay.show();
+    try{
+      await logout(localizedText: localizedText);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      Phoenix.rebirth(context);
+    }
+    on BloqoException catch(e) {
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
+      );
+      context.loaderOverlay.hide();
+    }
   }
 
   @override
