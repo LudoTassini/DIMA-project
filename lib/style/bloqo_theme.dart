@@ -198,6 +198,9 @@ class BloqoTheme{
           ),
         ),
       ),
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: textTheme.displayMedium
+      )
     );
   }
 

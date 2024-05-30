@@ -3,6 +3,7 @@ import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:bloqo/style/bloqo_theme.dart';
 import 'package:bloqo/utils/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,26 +19,31 @@ import 'utils/firebase_options.dart';
 
 Future<void> main() async {
 
-  //ensures WidgetsFlutterBinding is initialized before changing some preferences
+  // Ensure WidgetsFlutterBinding is initialized before changing some preferences
   WidgetsFlutterBinding.ensureInitialized();
 
-  //ensures that notification bar is shown also on iOS
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
+  // Ensure that notification bar is shown also on iOS
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
 
-  //prevents application from rotating in "landscape" mode
+  // Prevent application from rotating in "landscape" mode
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  //initialize Firebase app
+  // Initialize Firebase app
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Disable Firestore cache persistence
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: false,
+  );
+
   final bool userIsLoggedIn = await _checkIfUserIsLoggedIn();
 
-  //runs app
+  // Run app
   runApp(
     MultiProvider(
       providers: [
@@ -50,7 +56,6 @@ Future<void> main() async {
       ),
     ),
   );
-
 }
 
 class MyApp extends StatelessWidget {
@@ -73,13 +78,14 @@ class MyApp extends StatelessWidget {
           useDefaultLoading: false,
           overlayWidgetBuilder: (_) {
             return Center(
-              child: LoadingAnimationWidget.prograssiveDots(
-                color: BloqoColors.russianViolet,
-                size: 100
-              )
+                child: LoadingAnimationWidget.prograssiveDots(
+                    color: BloqoColors.russianViolet,
+                    size: 100
+                )
             );
           },
-          child: userIsLoggedIn ? const MainPage() : const WelcomePage()),
+          child: userIsLoggedIn ? const MainPage() : const WelcomePage()
+      ),
     );
   }
 }
@@ -90,7 +96,7 @@ Future<bool> _checkIfUserIsLoggedIn() async {
     await login(email: prefs.getString(sharedUser)!, password: prefs.getString(sharedPassword)!).then((response) {
       return true;
     }).catchError((error) {
-        return false;
+      return false;
     });
   }
   return false;

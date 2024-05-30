@@ -17,6 +17,17 @@ Future<void> login({required String email, required String password}) async {
   );
 }
 
+Future<BloqoUser> getUserFromEmailSkipLogin({required String email}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("email", isEqualTo: email).get();
+    BloqoUser user = querySnapshot.docs.first.data();
+    return user;
+  } on FirebaseAuthException {
+    throw Exception("Error");
+  }
+}
+
 Future<BloqoUser> getUserFromEmail({required var localizedText, required String email}) async {
   try {
     var ref = BloqoUser.getRef();

@@ -12,6 +12,26 @@ class UserAppState with ChangeNotifier{
 
   void set(BloqoUser user){
     _user = user;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
+  void updateFullName(String newFullName){
+    if (_user != null) {
+      _user!.fullName = newFullName;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void updateIsFullNameVisible(bool newFullNameVisible){
+    if (_user != null) {
+      _user!.isFullNameVisible = newFullNameVisible;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
 }

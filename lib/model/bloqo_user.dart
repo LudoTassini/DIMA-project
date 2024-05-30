@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BloqoUser{
-  final String email;
-  final String username;
-  final String fullName;
-  final bool isFullNameVisible;
-  final int followers;
-  final int following;
+  late String email;
+  late String username;
+  late String fullName;
+  late bool isFullNameVisible;
+  late int followers;
+  late int following;
 
   BloqoUser({
     required this.email,
