@@ -596,9 +596,6 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
           onPush: widget.onPush,
       ));
     }
-    else{
-      print(permissionStatus);
-    }
   }
 
 }

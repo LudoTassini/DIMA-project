@@ -1,16 +1,18 @@
 import 'package:permission_handler/permission_handler.dart';
 
 Future<PermissionStatus> requestCameraPermission() async {
-  var status = await Permission.camera.status;
-  if (status.isPermanentlyDenied){
-    await openAppSettings();
-    return status;
-  }
-  else if (!status.isGranted) {
-    PermissionStatus permissionStatus = await Permission.camera.request();
+  PermissionStatus permissionStatus = await Permission.camera.status;
+  if(permissionStatus.isGranted){
     return permissionStatus;
   }
-  else {
-    return PermissionStatus.granted;
+  else{
+    permissionStatus = await Permission.camera.request();
+    if (permissionStatus.isPermanentlyDenied){
+      await openAppSettings();
+      return permissionStatus;
+    }
+    else{
+      return permissionStatus;
+    }
   }
 }
