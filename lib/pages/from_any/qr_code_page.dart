@@ -1,6 +1,9 @@
+import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../components/containers/bloqo_main_container.dart';
+import '../../style/bloqo_colors.dart';
 
 class QrCodePage extends StatelessWidget {
 
@@ -18,14 +21,23 @@ class QrCodePage extends StatelessWidget {
     return BloqoMainContainer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(qrCodeTitle),
-          /*QrImage(
-            data: qrCodeContent,
-            version: QrVersions.auto,
-            size: 200.0,
-          ),*/
+          Text(
+            qrCodeTitle,
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+              color: BloqoColors.seasalt
+            ),
+          ),
+          BloqoSeasaltContainer(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: QrImageView(
+                data: qrCodeContent,
+                version: QrVersions.auto,
+              ),
+            )
+          )
         ],
       ),
     );

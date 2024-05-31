@@ -4,6 +4,7 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
+import 'package:bloqo/utils/bloqo_qr_code_type.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -361,7 +362,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   void _showUserQrCode({required String username, required String userId}){
     widget.onPush(QrCodePage(
         qrCodeTitle: username,
-        qrCodeContent: userId
+        qrCodeContent: "${BloqoQrCodeType.user.name}_$userId"
     ));
   }
 

@@ -46,7 +46,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
             flex: 1,
             child: Center(
               child: (result != null)
-                  ? Text('ID Utente: ${result!.code}')
+                  ? Text('ID Utente: ${result!.code}') //TODO
                   : Text('Scansiona un QR code'),
             ),
           )
@@ -65,9 +65,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
         result = scanData;
       });
       if (result != null) {
-        // Fai qualcosa con l'ID dell'utente scansionato
-        print('ID Utente: ${result!.code}');
-        // Ad esempio, puoi navigare a un'altra schermata
+        // TODO need to understand if code is user or course
         // TODO widget.onPush();
       }
     });
