@@ -17,9 +17,9 @@ import '../../utils/bloqo_setting_type.dart';
 import '../../utils/localization.dart';
 
 class SettingPage extends StatefulWidget {
+
   const SettingPage({
     super.key,
-    required this.onPush,
     required this.settingTitle,
     required this.settingDescription,
     required this.forms,
@@ -27,7 +27,6 @@ class SettingPage extends StatefulWidget {
     required this.settingType,
   });
 
-  final void Function(Widget) onPush;
   final String settingTitle;
   final String settingDescription;
   final List<Widget> forms;

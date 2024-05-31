@@ -2,18 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>bloQo needs access to the camera to scan QR codes.</string>
+	<string>bloQo need access to the camera to scan QR codes.</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>bloQo</string>
+	<string>Bloqo</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

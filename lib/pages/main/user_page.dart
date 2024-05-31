@@ -3,6 +3,7 @@ import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
+import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -158,13 +159,18 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                           color: BloqoColors.russianViolet,
                                           borderRadius: BorderRadius.circular(10),
                                         ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(5),
-                                          child: Icon(
+                                        child: IconButton(
+                                          icon: const Icon(
                                             Icons.qr_code_2,
                                             color: BloqoColors.seasalt,
-                                            size: 28,
+                                            size: 32,
                                           ),
+                                          onPressed: () {
+                                            _showUserQrCode(
+                                              username: user.username,
+                                              userId: user.id,
+                                            );
+                                          },
                                         ),
                                       ),
                                     ),
@@ -246,7 +252,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                   onPressed: () {
                     fullNameController.text = user.fullName;
                     widget.onPush(SettingPage(
-                      onPush: widget.onPush,
                       settingTitle: localizedText.account_settings_title,
                       settingDescription: localizedText.account_settings_description,
                       forms: [
@@ -292,12 +297,11 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                 ), TODO */
                 BloqoSetting(
                   onPressed: () => widget.onPush(SettingPage(
-                    onPush: widget.onPush,
                     settingTitle: localizedText.external_accounts_title,
                     settingDescription: localizedText.external_accounts_description,
                     settingType: BloqoSettingType.external,
-                    controllers: [],
-                    forms: [],
+                    controllers: [/* TODO */],
+                    forms: [/* TODO */],
                   )),
                   settingTitle: localizedText.external_accounts_title,
                   settingDescription: localizedText.external_accounts_description,
@@ -353,4 +357,12 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
 
   @override
   bool get wantKeepAlive => true;
+
+  void _showUserQrCode({required String username, required String userId}){
+    widget.onPush(QrCodePage(
+        qrCodeTitle: username,
+        qrCodeContent: userId
+    ));
+  }
+
 }

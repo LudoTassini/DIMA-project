@@ -7,7 +7,7 @@
 		<string>en</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>bloQo needs access to the camera to scan QR codes.</string>
+	<string>bloQo need access to the camera to scan QR codes.</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>
