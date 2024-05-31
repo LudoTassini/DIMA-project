@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleLocalizations</key>
-    <array>
-        <string>en</string>
-        <string>it</string>
-    </array>
+	<array>
+		<string>en</string>
+		<string>it</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
-    <string>bloQo needs access to the camera to scan QR codes.</string>
+	<string>bloQo ha bisogno di accedere alla fotocamera per scansionare i codici QR.</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>
