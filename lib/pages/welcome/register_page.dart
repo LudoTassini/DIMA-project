@@ -232,7 +232,8 @@ Future<void> _tryRegister({required BuildContext context, required var localized
         fullName: fullName,
         isFullNameVisible: isFullNameVisible,
         followers: 0,
-        following: 0
+        following: 0,
+        pictureUrl: "none"
     );
 
     if(emailValidator(email: user.email, localizedText: localizedText) == null &&

@@ -11,6 +11,7 @@ class BloqoUser{
   late bool isFullNameVisible;
   late int followers;
   late int following;
+  late String pictureUrl;
 
   BloqoUser({
     required this.id,
@@ -19,7 +20,8 @@ class BloqoUser{
     required this.fullName,
     required this.isFullNameVisible,
     required this.followers,
-    required this.following
+    required this.following,
+    required this.pictureUrl
   });
 
   factory BloqoUser.fromFirestore(
@@ -35,19 +37,21 @@ class BloqoUser{
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
       followers: data["followers"],
-      following: data["following"]
+      following: data["following"],
+      pictureUrl: data["picture_url"]
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      "id": id,
+      "id": id ,
       "email": email,
       "username": username,
       "full_name": fullName,
       "is_full_name_visible": isFullNameVisible,
       "followers": followers,
-      "following": following
+      "following": following,
+      "picture_url": pictureUrl
     };
   }
 
@@ -76,6 +80,32 @@ Future<BloqoUser> getUserFromEmail({required var localizedText, required String 
     }
   }
 }
+
+Future<void> saveUserPictureUrl({
+  required var localizedText,
+  required String userId,
+  required String pictureUrl,
+}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("id", isEqualTo: userId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "picture_url": pictureUrl,
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
 
 Future<bool> isUsernameAlreadyTaken({required var localizedText, required String username}) async {
   try {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloqo/components/complex/bloqo_setting.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -6,20 +8,25 @@ import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/utils/bloqo_qr_code_type.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
+import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
+import '../../utils/multimedia_uploader.dart';
 import '../../utils/text_validator.dart';
 import '../../utils/toggle.dart';
 import '../from_user/setting_page.dart';
@@ -37,6 +44,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<UserPage> {
+
+  String? url;
   final formKeyFullName = GlobalKey<FormState>();
   late TextEditingController fullNameController;
 
@@ -63,6 +72,9 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
         child: Consumer<UserAppState>(
           builder: (context, userAppState, _) {
             final user = userAppState.get()!;
+            if(user.pictureUrl != "none"){
+              url = user.pictureUrl;
+            }
             final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
             return Column(
               mainAxisSize: MainAxisSize.max,
@@ -78,11 +90,21 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                           child: Stack(
                             alignment: const AlignmentDirectional(0, 1),
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/914/600',
-                                  fit: BoxFit.cover,
+                              AspectRatio(
+                                aspectRatio: 1.0,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: url != null
+                                      ? FadeInImage.assetNetwork(
+                                    placeholder: "assets/images/portrait_placeholder.png",
+                                    image: url!,
+                                    fit: BoxFit.cover,
+                                    placeholderFit: BoxFit.cover,
+                                  )
+                                      : Image.asset(
+                                    "assets/images/portrait_placeholder.png",
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               Align(
@@ -97,13 +119,26 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                       topRight: Radius.circular(0),
                                     ),
                                   ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(3),
-                                    child: Icon(
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    visualDensity: VisualDensity.compact,
+                                    icon: const Icon(
                                       Icons.camera_alt,
                                       color: BloqoColors.seasalt,
-                                      size: 16,
+                                      size: 22,
                                     ),
+                                    onPressed: () async {
+                                      final newUrl = await _askUserForAnImage(
+                                        context: context,
+                                        localizedText: localizedText,
+                                        userId: user.id
+                                      );
+                                      if(newUrl != null) {
+                                        if(!context.mounted) return;
+                                        final userAppState = Provider.of<UserAppState>(context, listen: false);
+                                        userAppState.updatePictureUrl(newUrl);
+                                      }
+                                    },
                                   ),
                                 ),
                               ),
@@ -364,6 +399,42 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
         qrCodeTitle: username,
         qrCodeContent: "${BloqoQrCodeType.user.name}_$userId"
     ));
+  }
+
+  Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String userId}) async {
+    PermissionStatus permissionStatus = await requestPhotoLibraryPermission();
+    if(permissionStatus.isGranted) {
+      final pickedFile = await ImagePicker().pickImage(
+          source: ImageSource.gallery);
+      if (pickedFile != null) {
+        if(!context.mounted) return null;
+        context.loaderOverlay.show();
+        try {
+          final image = File(pickedFile.path);
+          final url = await uploadImage(
+              localizedText: localizedText,
+              image: image,
+              userId: userId
+          );
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+          ScaffoldMessenger.of(context).showSnackBar(
+            BloqoSnackBar.get(child: Text(localizedText.done)),
+          );
+          return url;
+        }
+        on BloqoException catch (e) {
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+          showBloqoErrorAlert(
+              context: context,
+              title: localizedText.error_title,
+              description: e.message
+          );
+        }
+      }
+    }
+    return null;
   }
 
 }

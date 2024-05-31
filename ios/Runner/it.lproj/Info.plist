@@ -9,6 +9,8 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>bloQo ha bisogno di accedere alla fotocamera per scansionare i codici QR.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>bloQo ha bisogno di accedere alla galleria per caricare la tua foto profilo.</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>

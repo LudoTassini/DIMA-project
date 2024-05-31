@@ -35,6 +35,15 @@ class UserAppState with ChangeNotifier{
       });
     }
   }
+
+  void updatePictureUrl(String newUrl){
+    if (_user != null) {
+      _user!.pictureUrl = newUrl;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
 }
 
 void saveUserToAppState({required BuildContext context, required BloqoUser user}){

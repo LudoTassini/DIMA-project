@@ -23,7 +23,7 @@ class BloqoNavBar extends StatelessWidget {
       selectedItemColor: BloqoColors.russianViolet,
       unselectedItemColor: BloqoColors.seasalt,
       backgroundColor: BloqoColors.darkFuchsia,
-      elevation: 2,
+      elevation: 20,
       type: BottomNavigationBarType.fixed,
       iconSize: 30.0,
       selectedFontSize: 16.0,
