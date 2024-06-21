@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../style/bloqo_colors.dart';
 
 class BloqoMainContainer extends StatelessWidget{
-  const BloqoMainContainer({super.key, required this.child});
+  const BloqoMainContainer({
+    super.key,
+    required this.child,
+    this.alignment = const AlignmentDirectional(0, 0)
+  });
 
   final Widget child;
+  final AlignmentGeometry alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class BloqoMainContainer extends StatelessWidget{
           end: AlignmentDirectional(0, 1),
         ),
       ),
-      alignment: const AlignmentDirectional(0, 0),
+      alignment: alignment,
       child: SafeArea(
         bottom: false,
         child: child

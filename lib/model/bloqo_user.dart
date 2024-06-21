@@ -1,16 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../utils/bloqo_exception.dart';
 
 class BloqoUser{
-  final String email;
-  final String username;
-  final String fullName;
-  final bool isFullNameVisible;
+  late String id;
+  late String email;
+  late String username;
+  late String fullName;
+  late bool isFullNameVisible;
+  late int followers;
+  late int following;
+  late String pictureUrl;
 
   BloqoUser({
+    required this.id,
     required this.email,
     required this.username,
     required this.fullName,
     required this.isFullNameVisible,
+    required this.followers,
+    required this.following,
+    required this.pictureUrl
   });
 
   factory BloqoUser.fromFirestore(
@@ -20,19 +31,27 @@ class BloqoUser{
     final data = snapshot.data();
 
     return BloqoUser(
-      email: data!["email"],
+      id: data!["id"],
+      email: data["email"],
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
+      followers: data["followers"],
+      following: data["following"],
+      pictureUrl: data["picture_url"]
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
+      "id": id ,
       "email": email,
       "username": username,
       "full_name": fullName,
       "is_full_name_visible": isFullNameVisible,
+      "followers": followers,
+      "following": following,
+      "picture_url": pictureUrl
     };
   }
 
@@ -44,4 +63,66 @@ class BloqoUser{
     );
   }
 
+}
+
+Future<BloqoUser> getUserFromEmail({required var localizedText, required String email}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("email", isEqualTo: email).get();
+    BloqoUser user = querySnapshot.docs.first.data();
+    return user;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> saveUserPictureUrl({
+  required var localizedText,
+  required String userId,
+  required String pictureUrl,
+}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("id", isEqualTo: userId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "picture_url": pictureUrl,
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+
+Future<bool> isUsernameAlreadyTaken({required var localizedText, required String username}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    var querySnapshot = await ref.where("username", isEqualTo: username).get();
+    if (querySnapshot.docs.length != 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
 }

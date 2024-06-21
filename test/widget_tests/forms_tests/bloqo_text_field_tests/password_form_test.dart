@@ -6,322 +6,683 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  //TODO
   // Initializing BloqoTextField outside the testWidgets function
   final formKey = GlobalKey<FormState>();
-  BuildContext context;
-  final localizedText = getAppLocalizations(context)!;
-  final testedWidget = MaterialApp(
-      home: Scaffold(
-          body: Form(
-            key: formKey,
-            child: BloqoTextField(
-              formKey: formKey,
-              controller: TextEditingController(),
-              labelText: "Password",
-              hintText: "type your password here",
-              maxInputLength: Constants.maxPasswordLength,
-              validator: (password) { return passwordValidator(password: password, localizedText: localizedText); },
-          ),
-        )
-      )
-  );
+  late TextEditingController controller;
+
+  setUp(() {
+    controller = TextEditingController();
+  });
+
+  Widget buildTestWidget() {
+    return MaterialApp(
+      localizationsDelegates: getLocalizationDelegates(),
+      supportedLocales: getSupportedLocales(),
+      home: Builder(
+        builder: (BuildContext context) {
+          var localizedText = getAppLocalizations(context)!;
+          return Scaffold(
+            body: Form(
+              key: formKey,
+              child: BloqoTextField(
+                formKey: formKey,
+                controller: controller,
+                labelText: localizedText.password,
+                hintText: localizedText.password_hint,
+                maxInputLength: Constants.maxPasswordLength,
+                validator: (password) {
+                  return passwordValidator(password: password, localizedText: localizedText);
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   testWidgets('Password form present', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    expect(find.text('Password'), findsOneWidget);
+    await tester.pumpWidget(buildTestWidget());
+    expect(find.byType(BloqoTextField), findsOneWidget);
   });
 
   testWidgets('Password form registers text', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "Password81!";
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Password123!');
+    await tester.pump(); // Let the form update
 
-    await tester.enterText(foundWidget, enteredText);
-    expect(find.text(enteredText), findsOneWidget);
+    expect(controller.text, 'Password123!');
   });
 
-// --------------------------------------------------------------------------------------------------------
-// Tests on one single condition of the password
+  testWidgets('Password form shows error if the password is too short', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short');
+    await tester.pump(); // Let the form validate
 
-  testWidgets('Password form displays error when password with less than 8 characters is given',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(testedWidget);
-        const enteredText = "Pas8!";
-        const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.';
-        final foundWidget = find.byType(BloqoTextField);
-        expect(foundWidget, findsOneWidget);
-
-        await tester.enterText(foundWidget, enteredText);
-        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
-      });
-
-  // FIXME: failed
-  testWidgets('Password form displays error when password with more than 32 characters is given',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(testedWidget);
-        const enteredText = "PasswordPasswordPasswordPasswo8!";
-        const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.';
-        final foundWidget = find.byType(BloqoTextField);
-        expect(foundWidget, findsOneWidget);
-
-        await tester.enterText(foundWidget, enteredText);
-        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
-      });
-
-  testWidgets('Password form displays error when password without at least one special character is given',
-          (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "Password81";
-    const errorText = 'Password must contain at least one special character.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
-
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password without at least a number is given',
-          (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "Password!";
-    const errorText = 'Password must contain at least one number.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain a special character', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Password123');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.text(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password without at least one upper case character is given',
-          (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "password!8";
-    const errorText = 'Password must contain at least one uppercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain a number', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Password!');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.text(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password without at least one lower case character is given',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(testedWidget);
-        const enteredText = "PASSWORD!8";
-        const errorText = 'Password must contain at least one lowercase letter.';
-        final foundWidget = find.byType(BloqoTextField);
-        expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'password123!');
+    await tester.pump(); // Let the form validate
 
-        await tester.enterText(foundWidget, enteredText);
-        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
-      });
-
-  // --------------------------------------------------------------------------------------------------------
-  // Tests on two conditions of the password
-  // Tests where the password is less than 8 characters + other conditions
-
-  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
-      'special character is given', (WidgetTester tester) async {
-        await tester.pumpWidget(testedWidget);
-        const enteredText = "Pas8";
-        const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
-            'Password must contain at least one special character.';
-        final foundWidget = find.byType(BloqoTextField);
-        expect(foundWidget, findsOneWidget);
-
-        await tester.enterText(foundWidget, enteredText);
-        await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-        expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
-      });
-
-  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
-      'number is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "Pas!";
-    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
-        'Password must contain at least one number.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
-
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.text(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
-      'uppercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "pas8!";
-    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
-        'Password must contain at least one uppercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'PASSWORD123!');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.text(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password with less than 8 characters and without at least one '
-      'lowercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "PAS8!";
-    const errorText = 'Password must be at least ${Constants.minPasswordLength} characters long.\n'
-        'Password must contain at least one lowercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form does not accept more than max length characters', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    // Generate a long string
+    String longPassword = 'a' * (Constants.maxPasswordLength + 1);
+    await tester.enterText(find.byType(TextField), longPassword);
+    await tester.pump(); // Let the form update
+
+    // The text in the controller should be truncated to max length
+    expect(controller.text.length, Constants.maxPasswordLength);
   });
 
-  // --------------------------------------------------------------------------------------------------------
-  // Tests on two conditions of the password
-  // Tests where the password is more than 32 characters + other conditions
+  testWidgets('Password form shows error if the password is too short and does not contain a special character', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Short1');
+    await tester.pump(); // Let the form validate
 
-  // FIXME: failed
-  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
-      'special character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "PasswordPasswordPasswordPasswordPassword88";
-    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
-        'Password must contain at least one special character.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
-
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
   });
 
-  // FIXME: failed
-  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
-      'number is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "PasswordPasswordPasswordPasswordPassword!!!";
-    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
-        'Password must contain at least one number.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password is too short and does not contain a number', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Short!');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
   });
 
-  // FIXME: failed
-  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
-      'uppercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "passwordpasswordpasswordpasswordpassword88!!!";
-    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
-        'Password must contain at least one uppercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password is too short and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short1!');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
   });
 
-  // FIXME: failed
-  testWidgets('Password form displays error when password with more than 32 characters and without at least one '
-      'lowercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "PASSWORDPASSWORDPASSWORDPASSWORDPASSWORDPASSWORDPASSWORD88!!!";
-    const errorText = 'Password must be at most ${Constants.maxPasswordLength} characters long.\n'
-        'Password must contain at least one lowercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password is too short and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'SHORT1!');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
   });
 
-  // --------------------------------------------------------------------------------------------------------
-  // Tests on two conditions of the password
-  // Tests where the password does not contain at least one special character + other conditions
+  testWidgets('Password form shows error if the password does not contain a special character and does not contain a number', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'Password');
+    await tester.pump(); // Let the form validate
 
-  testWidgets('Password form displays error when password without at least one special character'
-      'and without at least one number is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "Password";
-    const errorText = 'Password must contain at least one special character.\n'
-        'Password must contain at least one number.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
-
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password without at least one special character'
-      ' and without at least one uppercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "password88";
-    const errorText = 'Password must contain at least one special character.\n'
-        'Password must contain at least one uppercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain a special character and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'password123');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Password form displays error when password without at least one special character'
-      ' and without at least one lowercase character is given', (WidgetTester tester) async {
-    await tester.pumpWidget(testedWidget);
-    const enteredText = "PASSWORD88";
-    const errorText = 'Password must contain at least one special character.\n'
-        'Password must contain at least one lowercase letter.';
-    final foundWidget = find.byType(BloqoTextField);
-    expect(foundWidget, findsOneWidget);
+  testWidgets('Password form shows error if the password does not contain a special character and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'PASSWORD123');
+    await tester.pump(); // Let the form validate
 
-    await tester.enterText(foundWidget, enteredText);
-    await tester.pump(const Duration(milliseconds: 100)); // delay for validation
-    expect(find.descendant(of: foundWidget, matching: find.text(errorText)), findsOneWidget);
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
   });
 
-  // --------------------------------------------------------------------------------------------------------
-  // Tests on two conditions of the password
-  // Tests where the password does not contain at least one uppercase character + other conditions
+  testWidgets('Password form shows error if the password does not contain a number and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'password!');
+    await tester.pump(); // Let the form validate
 
-}
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+  });
 
-String createPasswordErrorString(List<bool> validationResults) {
-  String messages = "";
+  testWidgets('Password form shows error if the password does not contain a number and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'PASSWORD!');
+    await tester.pump(); // Let the form validate
 
-  if (!validationResults[0]) {
-    messages += 'Password must be at least ${Constants
-        .minPasswordLength} characters long.\n';
-  }
-  if (!validationResults[1]) {
-    messages += 'Password must be at most ${Constants
-        .maxPasswordLength} characters long.\n';
-  }
-  if (!validationResults[2]) {
-    messages += 'Password must contain at least one special character.\n';
-  }
-  if (!validationResults[3]) {
-    messages += 'Password must contain at least one number.\n';
-  }
-  if (!validationResults[4]) {
-    messages += 'Password must contain at least one uppercase letter.\n';
-  }
-  if (!validationResults[5]) {
-    messages += 'Password must contain at least one lowercase letter.\n';
-  }
-  return messages.trim();
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain an uppercase letter and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '123456789!');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, and does not contain a number', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'SHORT1');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a number, and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a number, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'SHORT!');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '123!');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain a special character, does not contain a number, and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'password');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain a special character, does not contain a number, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'PASSWORD');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain a special character, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '123456789');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain a number, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '!!!!!!!!!!');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, does not contain a number, and does not contain an uppercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'short');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, does not contain a number, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'SHORT');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '12345');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a number, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), '!!!!!');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password does not contain a special character, does not contain a number, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), ' ' * 8);
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Password form shows error if the password is too short, does not contain a special character, does not contain a number, does not contain an uppercase letter, and does not contain a lowercase letter', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget());
+    await tester.enterText(find.byType(TextField), 'test');
+    await tester.enterText(find.byType(TextField), '');
+    await tester.pump(); // Let the form validate
+
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_short(Constants.minPasswordLength.toString())),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_special_char),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_number),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_uppercase),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(getAppLocalizations(tester.element(find.byType(BloqoTextField)))!
+          .error_password_lowercase),
+      findsOneWidget,
+    );
+  });
+
+
 }

@@ -13,11 +13,12 @@ class BloqoTextField extends StatefulWidget {
     required this.hintText,
     required this.maxInputLength,
 
-    this.initialValue,
-    this.validator,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+    this.padding = const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 0),
 
+    this.initialValue,
+    this.validator,
     this.onTap
   });
 
@@ -27,11 +28,12 @@ class BloqoTextField extends StatefulWidget {
   final String hintText;
   final int maxInputLength;
 
-  final String? initialValue;
-  final FormFieldValidator<String>? validator;
   final bool obscureText;
   final TextInputType keyboardType;
+  final EdgeInsetsDirectional padding;
 
+  final String? initialValue;
+  final FormFieldValidator<String>? validator;
   final Function()? onTap;
 
   @override
@@ -61,7 +63,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 0),
+        padding: widget.padding,
         child: Container(
           decoration: BoxDecoration(
             color: BloqoColors.seasalt,

@@ -3,9 +3,12 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
+import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
 import 'package:bloqo/utils/localization.dart';
+import 'package:bloqo/utils/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
@@ -162,7 +165,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                           // Below line stops keyboard from appearing
                           FocusScope.of(context).requestFocus(FocusNode());
                           // Show Date Picker Here
-                          DateTime? picked = await _selectDate(localizedText: localizedText, context: context);
+                          DateTime? picked = await _selectDate(localizedText: localizedText);
                           setState(() {
                             if(picked == null){
                               minimumPublicationDateController.text = "";
@@ -190,7 +193,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                           // Below line stops keyboard from appearing
                           FocusScope.of(context).requestFocus(FocusNode());
                           // Show Date Picker Here
-                          DateTime? picked = await _selectDate(localizedText: localizedText, context: context);
+                          DateTime? picked = await _selectDate(localizedText: localizedText);
                           setState(() {
                             if(picked == null){
                               maximumPublicationDateController.text = "";
@@ -515,12 +518,9 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                     child: BloqoFilledButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Container()
-                          )
+                      onPressed: () async {
+                        await _goToQrCodeScanPage(
+                          localizedText: localizedText
                         );
                       },
                       color: BloqoColors.chineseViolet,
@@ -574,19 +574,28 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
 
   }
 
-}
+  Future<DateTime?> _selectDate({required var localizedText}) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2024),
+        lastDate: DateTime(2100),
+        keyboardType: TextInputType.datetime,
+        confirmText: localizedText.ok,
+        cancelText: localizedText.cancel,
+        errorFormatText: localizedText.error_invalid_date_format,
+        errorInvalidText: localizedText.error_date_out_of_range
+    );
+    return picked;
+  }
 
-Future<DateTime?> _selectDate({required var localizedText, required BuildContext context}) async {
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(2024),
-    lastDate: DateTime(2100),
-    keyboardType: TextInputType.datetime,
-    confirmText: localizedText.ok,
-    cancelText: localizedText.cancel,
-    errorFormatText: localizedText.error_invalid_date_format,
-    errorInvalidText: localizedText.error_date_out_of_range
-  );
-  return picked;
+  Future<void> _goToQrCodeScanPage({required var localizedText}) async{
+    PermissionStatus permissionStatus = await requestCameraPermission();
+    if(permissionStatus.isGranted) {
+      widget.onPush(QrCodeScanPage(
+          onPush: widget.onPush,
+      ));
+    }
+  }
+
 }
