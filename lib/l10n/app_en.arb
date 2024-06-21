@@ -64,6 +64,7 @@
   "homepage_editing_quote": "\"Tell me and I forget. Teach me and I remember. Involve me and I learn. - Benjamin Franklin\"",
   "homepage_no_created_courses": "You have not created any courses. Check out the Edit page to discover how to create one!",
   "progress_bar_completion": "% of course completed",
+  "load_more_courses": "Load more",
 
   "none": "None",
   "error_enter_valid_email": "Please enter a valid email address.",

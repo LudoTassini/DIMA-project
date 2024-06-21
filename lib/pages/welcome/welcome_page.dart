@@ -232,11 +232,11 @@ Future<void> _tryLogin({required var localizedText, required String email, requi
 }
 
 
-// FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
+// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).get();
+    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseEnrolled> userCourses = [];
     for(var doc in querySnapshot.docs) {
         userCourses.add(doc.data());
@@ -252,39 +252,11 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
   }
 }
 
-/*
-Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({ required var localizedText,
-  required BloqoUser user, DocumentSnapshot? lastDocument,
-}) async {
-  int limit = 3;
-  try {
-    var ref = BloqoUserCourseEnrolled.getRef();
-    var query = ref.where("userEmail", isEqualTo: user.email).orderBy("lastUpdated", descending: true).limit(limit);
-    if (lastDocument != null) {
-      query = query.startAfterDocument(lastDocument);
-    }
-    var querySnapshot = await query.get();
-    List<BloqoUserCourseEnrolled> userCourses = [];
-    for (var doc in querySnapshot.docs) {
-      userCourses.add(doc.data());
-    }
-    return userCourses;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-} */
-
-
-// FIXME: limitare a tre corsi e che siano i più recenti (guardare the latest update)
+// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseCreated.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).get();
+    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseCreated> userCourses = [];
     for(var doc in querySnapshot.docs) {
       userCourses.add(doc.data());

@@ -28,191 +28,209 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
+  int _coursesDisplayed = 3;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get()!;
     List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get()!;
+    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get()!;
+
+    void loadMoreCourses() {
+      setState(() {
+        _coursesDisplayed += 3;
+      });
+    }
 
     return BloqoMainContainer(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                child: Text(
-                  localizedText.homepage_learning,
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: BloqoColors.seasalt,
-                    fontSize: 30,
-                  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+              child: Text(
+                localizedText.homepage_learning,
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  color: BloqoColors.seasalt,
+                  fontSize: 30,
                 ),
               ),
             ),
-            BloqoSeasaltContainer(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (userCoursesEnrolled.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                localizedText.homepage_learning_quote,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontStyle: FontStyle.italic,
-                                  color: BloqoColors.primaryText,
-                                ),
+          ),
+          BloqoSeasaltContainer(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (userCoursesEnrolled.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              localizedText.homepage_learning_quote,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.italic,
+                                color: BloqoColors.primaryText,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                     if (userCoursesEnrolled.isNotEmpty)
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(
-                          userCoursesEnrolled.length,
-                              (index) {
-                            BloqoUserCourseEnrolled? course = userCoursesEnrolled[index];
+                          _coursesDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
+                          (index) {
+                            BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
                             return BloqoCourseEnrolled(course: course);
                           },
                         ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              localizedText.homepage_no_enrolled_courses,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: BloqoColors.primaryText,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                              child: BloqoFilledButton(
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const MainPage(selectedPageIndex: 1,),
-                                    ),
-                                  );
-                                },
-                                color: BloqoColors.russianViolet,
-                                text: localizedText.take_me_there_button,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                      ),
+                    if (_coursesDisplayed < userCoursesEnrolled.length)
+                      TextButton(
+                        onPressed: loadMoreCourses,
+                        child: Text(
+                        localizedText.load_more_courses,
+                        style: const TextStyle(
+                        color: BloqoColors.primaryText,
+                        decoration: TextDecoration.underline,
                         ),
                       ),
-                  ],
-                ),
-              ),
-            ),
-
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                child: Text(
-                  localizedText.homepage_editing,
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: BloqoColors.seasalt,
-                    fontSize: 30,
-                  ),
-                ),
-              ),
-            ),
-            BloqoSeasaltContainer(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (userCoursesCreated.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                localizedText.homepage_editing_quote,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.primaryText,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (userCoursesCreated.isNotEmpty)
-                      Column(
+                    ),
+                  if (userCoursesEnrolled.isEmpty)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          userCoursesCreated.length,
-                              (index) {
-                            BloqoUserCourseCreated? course = userCoursesCreated[index];
-                            return BloqoCourseCreated(course: course);
-                          },
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              localizedText.homepage_no_created_courses,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: BloqoColors.primaryText,
-                                fontSize: 14,
-                              ),
+                        children: [
+                          Text(
+                            localizedText.homepage_no_enrolled_courses,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              color: BloqoColors.primaryText,
+                              fontSize: 14,
                             ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                              child: BloqoFilledButton(
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const MainPage(selectedPageIndex: 3,),
-                                    ),
-                                  );
-                                },
-                                color: BloqoColors.russianViolet,
-                                text: localizedText.take_me_there_button,
-                                fontSize: 16,
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                            child: BloqoFilledButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MainPage(selectedPageIndex: 1,),
+                                  ),
+                                );
+                              },
+                              color: BloqoColors.russianViolet,
+                              text: localizedText.take_me_there_button,
+                              fontSize: 16,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                  ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+              child: Text(
+                localizedText.homepage_editing,
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  color: BloqoColors.seasalt,
+                  fontSize: 30,
                 ),
               ),
             ),
-
-          ],
+          ),
+          BloqoSeasaltContainer(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (userCoursesCreated.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              localizedText.homepage_editing_quote,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: BloqoColors.primaryText,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (userCoursesCreated.isNotEmpty)
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        userCoursesCreated.length,
+                            (index) {
+                          BloqoUserCourseCreated? course = userCoursesCreated[index];
+                          return BloqoCourseCreated(course: course);
+                        },
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            localizedText.homepage_no_created_courses,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              color: BloqoColors.primaryText,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                            child: BloqoFilledButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MainPage(selectedPageIndex: 3,),
+                                  ),
+                                );
+                              },
+                              color: BloqoColors.russianViolet,
+                              text: localizedText.take_me_there_button,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
