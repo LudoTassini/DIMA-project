@@ -1,0 +1,4 @@
+enum BloqoQrCodeType{
+  user,
+  course
+}

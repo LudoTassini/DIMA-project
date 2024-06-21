@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleLocalizations</key>
-    <array>
-        <string>en</string>
-        <string>it</string>
-    </array>
+	<array>
+		<string>en</string>
+		<string>it</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
-    <string>bloQo needs access to the camera to scan QR codes.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>bloQo needs access to the photo library to upload your profile picture.</string>
+	<string>bloQo ha bisogno di accedere alla fotocamera per scansionare i codici QR.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>bloQo ha bisogno di accedere alla galleria per caricare la tua foto profilo.</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>

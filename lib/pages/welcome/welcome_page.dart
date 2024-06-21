@@ -8,13 +8,12 @@ import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -24,6 +23,7 @@ import '../../model/bloqo_user_course_created.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../utils/constants.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/shared_preferences.dart';
 import '../../utils/text_validator.dart';
 import '../main/main_page.dart';
 
@@ -35,9 +35,6 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-
-  // state
-  bool showLoginError = false;
 
   final formKeyEmail = GlobalKey<FormState>();
   final formKeyPassword = GlobalKey<FormState>();
@@ -106,11 +103,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           maxInputLength: Constants.maxEmailLength,
                           validator: (String? value) {return emailValidator(email: value, localizedText: localizedText);},
                           keyboardType: TextInputType.emailAddress,
-                          onTap: () {
-                            setState(() {
-                              showLoginError = false;
-                            });
-                          },
                         ),
                       ),
                       Form(
@@ -123,42 +115,17 @@ class _WelcomePageState extends State<WelcomePage> {
                             hintText: localizedText.password_hint,
                             maxInputLength: Constants.maxPasswordLength,
                             obscureText: true,
-                            onTap: () {
-                              setState(() {
-                                showLoginError = false;
-                              });
-                            },
                           ),
                       ),
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
                         child: BloqoFilledButton(
                           onPressed: () async {
-                            context.loaderOverlay.show();
-                            try {
-                              await _tryLogin(localizedText: localizedText, email: emailController.text, password: passwordController.text);
-                              BloqoUser user = await getUserFromEmail(localizedText: localizedText, email: emailController.text);
-                              List<BloqoUserCourseEnrolled> userCoursesEnrolled = await _getUserCoursesEnrolled(
-                                  localizedText: localizedText, user: user);
-                              List<BloqoUserCourseCreated> userCoursesCreated = await _getUserCoursesCreated(
-                                  localizedText: localizedText, user: user);
-                              if(!context.mounted) return;
-                              saveUserToAppState(context, user);
-                              saveUserCoursesToAppState(context: context, userCoursesEnrolled: userCoursesEnrolled,
-                                  userCoursesCreated: userCoursesCreated);
-                              context.loaderOverlay.hide();
-                              Navigator.pushReplacement(context, MaterialPageRoute(
-                                builder: (context) => const MainPage()),
-                              );
-                            } on BloqoException catch (e) {
-                              if(!context.mounted) return;
-                              context.loaderOverlay.hide();
-                              showBloqoErrorAlert(
-                                context: context,
-                                title: localizedText.error_title,
-                                description: e.message,
-                              );
-                            }
+                            await _tryLogin(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  email: emailController.text,
+                                  password: passwordController.text);
                           },
                           color: BloqoColors.russianViolet,
                           text: localizedText.login,
@@ -211,26 +178,58 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-}
+  Future<void> _tryLogin({required BuildContext context, required var localizedText, required String email, required String password}) async {
+    context.loaderOverlay.show();
+    try {
 
-Future<void> _tryLogin({required var localizedText, required String email, required String password}) async {
-  try {
-    await login(email: email, password: password);
-    //save on the shared preferences that the user is logged in
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(sharedLogged, true);
-    await prefs.setString(sharedUser, email);
-    await prefs.setString(sharedPassword, password);
-  } on FirebaseAuthException catch (e){
-    switch(e.code){
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.login_network_error);
-      default:
-        throw BloqoException(message: localizedText.login_credentials_error);
+      // logs in
+      await login(
+        localizedText: localizedText,
+        email: email,
+        password: password);
+
+      // gets user data
+      BloqoUser user = await getUserFromEmail(
+          localizedText: localizedText, email: email);
+
+      // saves on the shared preferences that the user is logged in along with some data
+      addSharedPreferences(
+        id: user.id,
+        email: email,
+        password: password
+      );
+
+      List<BloqoUserCourseEnrolled> userCoursesEnrolled = await _getUserCoursesEnrolled(
+          localizedText: localizedText, user: user);
+      List<BloqoUserCourseCreated> userCoursesCreated = await _getUserCoursesCreated(
+          localizedText: localizedText, user: user);
+
+      if (!context.mounted) return;
+
+      saveUserToAppState(context: context, user: user);
+      saveUserCoursesToAppState(
+          context: context,
+          userCoursesEnrolled: userCoursesEnrolled,
+          userCoursesCreated: userCoursesCreated);
+
+      context.loaderOverlay.hide();
+
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => const MainPage()),
+      );
+    }
+    on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
     }
   }
-}
 
+}
 
 // FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {

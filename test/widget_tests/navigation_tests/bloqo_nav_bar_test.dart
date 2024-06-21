@@ -22,6 +22,7 @@ void main() {
                 onItemTapped: (int index) {
                   selectedIndex = index;
                 },
+                currentIndex: 0,
               ),
             );
           }

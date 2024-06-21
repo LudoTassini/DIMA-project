@@ -12,19 +12,14 @@ import 'home_page.dart';
 import 'learn_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({
-    super.key,
-    this.selectedPageIndex = 0,
-  });
-
-  final int selectedPageIndex;
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  late int _selectedPageIndex;
+  int _selectedPageIndex = 0;
   late PageController _pageController;
   final ValueNotifier<bool> _canPopNotifier = ValueNotifier(false);
 
@@ -39,7 +34,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _selectedPageIndex = widget.selectedPageIndex;
     _pageController = PageController(initialPage: _selectedPageIndex);
   }
 
@@ -51,6 +45,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onItemTapped(int index) {
+    _navigateToPage(index);
+  }
+
+  void _navigateToPage(int index) {
     if (_selectedPageIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
@@ -59,6 +57,13 @@ class _MainPageState extends State<MainPage> {
       });
       _pageController.jumpToPage(index);
     }
+    _updateCanPop();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedPageIndex = index;
+    });
     _updateCanPop();
   }
 
@@ -120,10 +125,12 @@ class _MainPageState extends State<MainPage> {
                 : null,
           ),
           bottomNavigationBar: BloqoNavBar(
+            currentIndex: _selectedPageIndex,
             onItemTapped: _onItemTapped,
           ),
           body: PageView(
             controller: _pageController,
+            onPageChanged: _onPageChanged,
             physics: const NeverScrollableScrollPhysics(),
             children: _buildPageViews(),
           ),
@@ -135,7 +142,7 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> _buildPageViews() {
     return [
-      _buildNavigator(_navigatorKeys[0], HomePage(onPush: (newPage) => _pushNewPage(_navigatorKeys[0], newPage))),
+      _buildNavigator(_navigatorKeys[0], HomePage(onPush: (newPage) => _pushNewPage(_navigatorKeys[0], newPage), onNavigateToPage: _navigateToPage)),
       _buildNavigator(_navigatorKeys[1], LearnPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[1], newPage))),
       _buildNavigator(_navigatorKeys[2], SearchPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[2], newPage))),
       _buildNavigator(_navigatorKeys[3], EditorPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[3], newPage))),

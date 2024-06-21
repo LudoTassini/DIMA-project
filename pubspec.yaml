@@ -47,6 +47,14 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   percent_indicator: ^4.2.3
+  connectivity_plus: ^6.0.3
+  flutter_phoenix: ^1.1.1
+  uuid: ^4.4.0
+  qr_flutter: ^4.1.0
+  qr_code_scanner: ^1.0.1
+  permission_handler: ^11.3.1
+  firebase_storage: ^11.7.7
+  image_picker: ^1.1.1
 
 flutter_launcher_icons:
   image_path: assets/images/bloqo_logo.png
@@ -86,6 +94,7 @@ flutter:
      - assets/images/bloqo_logo.png
      - assets/images/bloqo_logo_partial.png
      - assets/images/bloqo_splashscreen.png
+     - assets/images/portrait_placeholder.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

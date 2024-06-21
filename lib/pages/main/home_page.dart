@@ -1,7 +1,6 @@
 import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
-import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +16,12 @@ class HomePage extends StatefulWidget {
 
   const HomePage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.onNavigateToPage
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -34,8 +35,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get()!;
-    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get()!;
+    List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
+    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
 
     void loadMoreCourses() {
       setState(() {
@@ -123,14 +124,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                             child: BloqoFilledButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MainPage(selectedPageIndex: 1,),
-                                  ),
-                                );
-                              },
+                              onPressed: () => widget.onNavigateToPage(2),
                               color: BloqoColors.russianViolet,
                               text: localizedText.take_me_there_button,
                               fontSize: 16,
@@ -210,14 +204,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                             child: BloqoFilledButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MainPage(selectedPageIndex: 3,),
-                                  ),
-                                );
-                              },
+                              onPressed: () => widget.onNavigateToPage(3),
                               color: BloqoColors.russianViolet,
                               text: localizedText.take_me_there_button,
                               fontSize: 16,
