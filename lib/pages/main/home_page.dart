@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     }
 
     return BloqoMainContainer(
+      child: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -219,6 +220,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           ),
         ],
       ),
+    ),
     );
   }
 

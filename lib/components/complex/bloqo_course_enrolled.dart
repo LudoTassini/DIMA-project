@@ -14,10 +14,12 @@ class BloqoCourseEnrolled extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    // FIXME: mettere button come in bloqo_setting e fare custom seasalt container
     return BloqoSeasaltContainer(
       borderColor: BloqoColors.russianViolet,
       borderWidth: 3,
       borderRadius: 10,
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
       child:
         Column(
           mainAxisSize: MainAxisSize.min,
