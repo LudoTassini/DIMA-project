@@ -29,7 +29,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
-  int _coursesDisplayed = 3;
+  int _coursesEnrolledInDisplayed = 3;
+  int _coursesCreatedDisplayed = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +39,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
     List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
 
-    void loadMoreCourses() {
+    void loadMoreEnrolledCourses() {
       setState(() {
-        _coursesDisplayed += 3;
+        _coursesEnrolledInDisplayed += 3;
+      });
+    }
+
+    void loadMoreCreatedCourses() {
+      setState(() {
+        _coursesCreatedDisplayed += 3;
       });
     }
 
@@ -91,16 +98,17 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(
-                          _coursesDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
+                          _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                           (index) {
                             BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
                             return BloqoCourseEnrolled(course: course);
                           },
                         ),
                       ),
-                    if (_coursesDisplayed < userCoursesEnrolled.length)
+
+                    if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
                       TextButton(
-                        onPressed: loadMoreCourses,
+                        onPressed: loadMoreEnrolledCourses,
                         child: Text(
                         localizedText.load_more_courses,
                         style: const TextStyle(
@@ -109,6 +117,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ),
                       ),
                     ),
+
                   if (userCoursesEnrolled.isEmpty)
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -178,33 +187,47 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ],
                       ),
                     ),
-                  if (userCoursesCreated.isNotEmpty)
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        userCoursesCreated.length,
-                            (index) {
-                          BloqoUserCourseCreated? course = userCoursesCreated[index];
-                          return BloqoCourseCreated(course: course);
-                        },
-                      ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                      child: Column(
+
+                    if (userCoursesCreated.isNotEmpty)
+                      Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            localizedText.homepage_no_created_courses,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        children: List.generate(
+                          _coursesCreatedDisplayed > userCoursesCreated.length ? userCoursesCreated.length : _coursesCreatedDisplayed,
+                          (index) {
+                            BloqoUserCourseCreated course = userCoursesCreated[index];
+                            return BloqoCourseCreated(course: course);
+                          },
+                        ),
+                      ),
+
+                    if (_coursesCreatedDisplayed < userCoursesCreated.length)
+                      TextButton(
+                        onPressed: loadMoreCreatedCourses,
+                        child: Text(
+                          localizedText.load_more_courses,
+                          style: const TextStyle(
+                          color: BloqoColors.primaryText,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+
+                    if (userCoursesCreated.isEmpty)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              localizedText.homepage_no_created_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
                               color: BloqoColors.primaryText,
                               fontSize: 14,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                            child: BloqoFilledButton(
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                              child: BloqoFilledButton(
                               onPressed: () => widget.onNavigateToPage(3),
                               color: BloqoColors.russianViolet,
                               text: localizedText.take_me_there_button,
