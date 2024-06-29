@@ -8,7 +8,7 @@ class BloqoUserCourseEnrolled {
   final int totNumSections;
   String sectionName;
   DocumentReference sectionToComplete;
-  final String userEmail;
+  final String authorId;
   Timestamp lastUpdated;
 
   BloqoUserCourseEnrolled({
@@ -19,7 +19,7 @@ class BloqoUserCourseEnrolled {
     required this.totNumSections,
     required this.sectionName,
     required this.sectionToComplete,
-    required this.userEmail,
+    required this.authorId,
     required this.lastUpdated,
   });
 
@@ -36,7 +36,7 @@ class BloqoUserCourseEnrolled {
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
-      userEmail: data['user_email'],
+      authorId: data['author_id'],
       lastUpdated: data['last_updated'],
     );
   }
@@ -50,7 +50,7 @@ class BloqoUserCourseEnrolled {
       'tot_num_sections': totNumSections,
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,
-      'user_email': userEmail,
+      'author_id': authorId,
       'last_updated': FieldValue.serverTimestamp(),
     };
   }

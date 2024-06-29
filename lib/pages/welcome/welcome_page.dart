@@ -235,7 +235,7 @@ class _WelcomePageState extends State<WelcomePage> {
 Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
+    var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseEnrolled> userCourses = [];
     for(var doc in querySnapshot.docs) {
         userCourses.add(doc.data());
@@ -255,7 +255,7 @@ Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var loca
 Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
   try {
     var ref = BloqoUserCourseCreated.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
+    var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseCreated> userCourses = [];
     for(var doc in querySnapshot.docs) {
       userCourses.add(doc.data());

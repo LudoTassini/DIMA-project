@@ -34,12 +34,13 @@ class BloqoFilledButton extends StatelessWidget{
       onPressed: onPressed,
       child: icon == null ? Text(text) : Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
             child: Icon(icon),
           ),
-          Text(text)
+          Flexible(child: Text(text))
         ],
       ),
     );

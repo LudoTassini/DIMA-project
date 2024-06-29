@@ -200,6 +200,24 @@ class BloqoTheme{
       ),
       snackBarTheme: SnackBarThemeData(
         contentTextStyle: textTheme.displayMedium
+      ),
+      tabBarTheme: TabBarTheme(
+        labelColor: BloqoColors.seasalt,
+        unselectedLabelColor: BloqoColors.seasalt,
+        labelStyle: textTheme.displayMedium!.copyWith(
+          fontSize: 18,
+          fontWeight: FontWeight.bold
+        ),
+        unselectedLabelStyle: textTheme.displayMedium!.copyWith(
+          fontSize: 18
+        ),
+        dividerColor: Colors.transparent,
+        indicator: const UnderlineTabIndicator(
+          borderSide: BorderSide(
+            color: BloqoColors.darkFuchsia,
+            width: 3.0
+          ),
+        )
       )
     );
   }

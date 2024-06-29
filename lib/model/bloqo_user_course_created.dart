@@ -5,14 +5,16 @@ class BloqoUserCourseCreated {
   final String courseName;
   int numSectionsCreated;
   int numChaptersCreated;
-  final String userEmail;
+  final String authorId;
+  bool published;
 
   BloqoUserCourseCreated({
     required this.course,
     required this.courseName,
     required this.numSectionsCreated,
     required this.numChaptersCreated,
-    required this.userEmail,
+    required this.authorId,
+    required this.published
   });
 
   factory BloqoUserCourseCreated.fromFirestore(
@@ -25,7 +27,8 @@ class BloqoUserCourseCreated {
       courseName: data['course_name'],
       numSectionsCreated: data['num_sections_created'],
       numChaptersCreated: data['num_chapters_created'],
-      userEmail: data['user_email'],
+      authorId: data['author_id'],
+      published: data['published']
     );
   }
 
@@ -35,7 +38,8 @@ class BloqoUserCourseCreated {
       'course_name': courseName,
       'num_sections_created': numSectionsCreated,
       'num_chapters_created': numChaptersCreated,
-      'user_email': userEmail,
+      'author_id': authorId,
+      'published': published
     };
   }
 

@@ -53,16 +53,16 @@
   "search_page_sort_header": "Finally, you can sort your results.",
   "sort_by": "Sort by",
   "reset_search_criteria": "Reset Search Criteria",
-  "scan_qr_code": "Scan QR Code",
+  "scan_qr_code": "QR Code",
   "search": "Search",
 
   "homepage_learning":"Do you mind some learning today?",
   "homepage_learning_quote": "\"The greatest enemy of knowledge is not ignorance, it is the illusion of knowledge.\" - Stephen Hawking",
-  "homepage_no_enrolled_courses": "You are not enrolled in any courses. Check out the Learn page to discover new courses!",
+  "homepage_no_enrolled_courses": "You are not enrolled in any courses. Why not searching for new courses?",
   "take_me_there_button": "Take me there!",
   "homepage_editing": "You have some work yet to be completed.",
-  "homepage_editing_quote": "\"Tell me and I forget. Teach me and I remember. Involve me and I learn. - Benjamin Franklin\"",
-  "homepage_no_created_courses": "You have not created any courses. Check out the Edit page to discover how to create one!",
+  "homepage_editing_quote": "\"Tell me and I forget. Teach me and I remember. Involve me and I learn.\" - Benjamin Franklin",
+  "homepage_no_created_courses": "You have not created any courses yet. Go to the Editor and create a new one now!",
   "progress_bar_completion": "% of course completed",
   "load_more_courses": "Load more",
 
@@ -172,5 +172,16 @@
   "save_settings": "Save Settings",
   "done": "Done.",
   "warning": "Warning!",
-  "logout_confirmation": "Are you sure you want to log out of the application? If you confirm, the next time you open bloQo you will have to log in."
+  "logout_confirmation": "Are you sure you want to log out of the application? If you confirm, the next time you open bloQo you will have to log in.",
+  "in_progress": "In progress",
+  "published": "Published",
+  "editor_page_header_1": "These are the courses you are creating.",
+  "editor_page_header_2": "These are the courses you published.",
+  "publish": "Publish",
+  "new_course": "New Course",
+  "editor_page_no_in_progress_courses": "You are currently creating no course. Start creating one now!",
+  "chapters": "chapters",
+  "sections": "sections",
+  "view_statistics": "View statistics",
+  "dismiss": "Dismiss"
 }
