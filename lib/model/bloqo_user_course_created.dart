@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../utils/bloqo_exception.dart';
+import '../utils/connectivity.dart';
+import 'courses/bloqo_course.dart';
 
 class BloqoUserCourseCreated {
-  final DocumentReference course;
+  final String courseId;
   final String courseName;
   int numSectionsCreated;
   int numChaptersCreated;
@@ -9,7 +14,7 @@ class BloqoUserCourseCreated {
   bool published;
 
   BloqoUserCourseCreated({
-    required this.course,
+    required this.courseId,
     required this.courseName,
     required this.numSectionsCreated,
     required this.numChaptersCreated,
@@ -23,7 +28,7 @@ class BloqoUserCourseCreated {
     final data = snapshot.data();
 
     return BloqoUserCourseCreated(
-      course: data!['course'],
+      courseId: data!['course_id'],
       courseName: data['course_name'],
       numSectionsCreated: data['num_sections_created'],
       numChaptersCreated: data['num_chapters_created'],
@@ -34,7 +39,7 @@ class BloqoUserCourseCreated {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'course': course,
+      'course_id': courseId,
       'course_name': courseName,
       'num_sections_created': numSectionsCreated,
       'num_chapters_created': numChaptersCreated,
@@ -49,5 +54,29 @@ class BloqoUserCourseCreated {
       fromFirestore: BloqoUserCourseCreated.fromFirestore,
       toFirestore: (BloqoUserCourseCreated userCourse, _) => userCourse.toFirestore(),
     );
+  }
+}
+
+Future<BloqoUserCourseCreated> saveNewUserCourseCreated({required var localizedText, required BloqoCourse course}) async {
+  try {
+    BloqoUserCourseCreated userCourseCreated = BloqoUserCourseCreated(
+        courseId: course.id,
+        courseName: course.name,
+        numSectionsCreated: 0,
+        numChaptersCreated: 0,
+        authorId: course.authorId,
+        published: false
+    );
+    var ref = BloqoUserCourseCreated.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    await ref.doc().set(userCourseCreated);
+    return userCourseCreated;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

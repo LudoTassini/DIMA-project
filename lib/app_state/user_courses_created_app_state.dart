@@ -11,6 +11,18 @@ class UserCoursesCreatedAppState with ChangeNotifier{
 
   void set(List<BloqoUserCourseCreated> userCourses){
     _userCourses = userCourses;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
+  void addUserCourseCreated(BloqoUserCourseCreated userCourseCreated){
+    if (_userCourses != null) {
+      _userCourses!.add(userCourseCreated);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
 }

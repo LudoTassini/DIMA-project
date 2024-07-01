@@ -1,16 +1,22 @@
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
+import '../from_editor/edit_course_page.dart';
 
 class EditorPage extends StatefulWidget {
   const EditorPage({
@@ -222,7 +228,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                 padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: BloqoFilledButton(
                   color: BloqoColors.russianViolet,
-                  onPressed: () {} /* TODO */,
+                  onPressed: () async {
+                    await _createNewCourse(context: context, localizedText: localizedText);
+                  },
                   text: localizedText.new_course,
                   icon: Icons.add,
                 ),
@@ -236,4 +244,41 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _createNewCourse({required BuildContext context, required var localizedText}) async {
+    context.loaderOverlay.show();
+    try {
+
+      BloqoCourse course = await saveNewCourse(
+          localizedText: localizedText,
+          authorId: Provider.of<UserAppState>(context, listen: false).get()!
+              .id
+      );
+
+      BloqoUserCourseCreated userCourseCreated = await saveNewUserCourseCreated(
+        localizedText: localizedText,
+        course: course
+      );
+
+      if(!context.mounted) return;
+
+      final userCoursesCreatedAppState = Provider.of<UserCoursesCreatedAppState>(context, listen: false);
+      userCoursesCreatedAppState.addUserCourseCreated(userCourseCreated);
+
+      context.loaderOverlay.hide();
+
+      widget.onPush(EditCoursePage(onPush: widget.onPush));
+
+    } on BloqoException catch (e){
+
+      context.loaderOverlay.hide();
+
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+
+    }
+  }
 }

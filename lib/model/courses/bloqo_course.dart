@@ -1,16 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../utils/bloqo_exception.dart';
+import '../../utils/connectivity.dart';
+import '../../utils/uuid.dart';
 import '../bloqo_review.dart';
 import 'bloqo_chapter.dart';
 
 class BloqoCourse{
 
+  final String id;
   final String name;
-  final String author;
+  final String authorId;
+  final bool published;
 
   DateTime? creationDate;
   DateTime? publicationDate;
-  bool? isPublic;
+  bool? public;
 
   List<BloqoChapter>? chapters;
 
@@ -20,11 +26,13 @@ class BloqoCourse{
   int numberOfCompletions = 0;
 
   BloqoCourse({
+    required this.id,
     required this.name,
-    required this.author,
+    required this.authorId,
+    this.published = false,
     this.creationDate,
     this.publicationDate,
-    this.isPublic,
+    this.public,
     this.chapters,
     this.reviews,
     this.numberOfEnrollments = 0,
@@ -37,11 +45,13 @@ class BloqoCourse{
       ){
     final data = snapshot.data();
     return BloqoCourse(
-        name: data!["name"],
-        author: data["author_username"],
+        id: data!["id"],
+        name: data["name"],
+        authorId: data["author_id"],
+        published: data["published"],
         creationDate: data["creation_date"],
         publicationDate: data["publication_date"],
-        isPublic: data["is_public"],
+        public: data["is_public"],
         chapters: data["chapters"],
         reviews: data["reviews"],
         numberOfEnrollments: data["number_of_enrollments"],
@@ -51,11 +61,13 @@ class BloqoCourse{
 
   Map<String, dynamic> toFirestore() {
     return {
+      "id": id,
       "name": name,
-      "author_username": author,
+      "author_id": authorId,
+      "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
-      "is_public": isPublic,
+      "is_public": public,
       "chapters": chapters,
       "reviews": reviews,
       "number_of_enrollments": numberOfEnrollments,
@@ -71,4 +83,25 @@ class BloqoCourse{
     );
   }
 
+}
+
+Future<BloqoCourse> saveNewCourse({required var localizedText, required String authorId}) async {
+  try {
+    BloqoCourse course = BloqoCourse(
+      id: uuid(),
+      name: DateTime.now().toString(),
+      authorId: authorId
+    );
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    await ref.doc().set(course);
+    return course;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
 }

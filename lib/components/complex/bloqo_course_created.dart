@@ -19,6 +19,7 @@ class BloqoCourseCreated extends StatelessWidget {
   final bool showPublishedOptions;
 
   @override
+  @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
     return BloqoSeasaltContainer(
@@ -33,39 +34,44 @@ class BloqoCourseCreated extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(right: 5),
-                          child: Icon(
-                            Icons.menu_book_rounded,
-                            color: BloqoColors.russianViolet,
-                            size: 24,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(right: 5),
+                            child: Icon(
+                              Icons.menu_book_rounded,
+                              color: BloqoColors.russianViolet,
+                              size: 24,
+                            ),
                           ),
-                        ),
-                        Text(
-                          course!.courseName,
+                          Flexible(
+                            child: Text(
+                              course!.courseName,
+                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontSize: 16,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          "${course!.numChaptersCreated} ${localizedText.chapters}, ${course!.numSectionsCreated} ${localizedText.sections}",
                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            fontSize: 16,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            fontStyle: FontStyle.italic,
                           ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(
-                        "${course!.numChaptersCreated} ${localizedText.chapters}, ${course!.numSectionsCreated} ${localizedText.sections}",
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
-                          fontStyle: FontStyle.italic,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Icon(
                   showEditOptions ? Icons.edit_square : Icons.play_circle,
@@ -74,10 +80,10 @@ class BloqoCourseCreated extends StatelessWidget {
                 ),
               ],
             ),
-            showEditOptions ?
-              Align(
-                alignment: AlignmentDirectional.bottomEnd,
-                child: Padding(
+            showEditOptions
+                ? Align(
+              alignment: AlignmentDirectional.bottomEnd,
+              child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: BloqoFilledButton(
                     color: BloqoColors.success,
@@ -85,15 +91,15 @@ class BloqoCourseCreated extends StatelessWidget {
                     text: localizedText.publish,
                     fontSize: 16,
                     height: 32,
-                  )
-                )
-            ) : Container(),
-            showPublishedOptions ?
-            Align(
-                alignment: AlignmentDirectional.bottomEnd,
-                child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                    child: Wrap(
+                  )),
+            )
+                : Container(),
+            showPublishedOptions
+                ? Align(
+              alignment: AlignmentDirectional.bottomEnd,
+              child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  child: Wrap(
                       spacing: 10,
                       runSpacing: 10,
                       children: [
@@ -111,10 +117,9 @@ class BloqoCourseCreated extends StatelessWidget {
                           fontSize: 16,
                           height: 32,
                         )
-                      ]
-                    )
-                )
-            ) : Container(),
+                      ])),
+            )
+                : Container(),
           ],
         ),
       ),
