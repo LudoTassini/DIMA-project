@@ -309,12 +309,14 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              localizedText.full_name_visible,
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            Flexible(
+                              child: Text(
+                                localizedText.full_name_visible,
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
                             ),
                             BloqoSwitch(value: fullNameVisible),
                           ],

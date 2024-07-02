@@ -8,10 +8,8 @@ import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
@@ -199,18 +197,16 @@ class _WelcomePageState extends State<WelcomePage> {
         password: password
       );
 
-      List<BloqoUserCourseEnrolled> userCoursesEnrolled = await _getUserCoursesEnrolled(
+      List<BloqoUserCourseEnrolled> userCoursesEnrolled = await getUserCoursesEnrolled(
           localizedText: localizedText, user: user);
-      List<BloqoUserCourseCreated> userCoursesCreated = await _getUserCoursesCreated(
+      List<BloqoUserCourseCreated> userCoursesCreated = await getUserCoursesCreated(
           localizedText: localizedText, user: user);
 
       if (!context.mounted) return;
 
       saveUserToAppState(context: context, user: user);
-      saveUserCoursesToAppState(
-          context: context,
-          userCoursesEnrolled: userCoursesEnrolled,
-          userCoursesCreated: userCoursesCreated);
+      saveUserCoursesEnrolledToAppState(context: context, courses: userCoursesEnrolled);
+      saveUserCoursesCreatedToAppState(context: context, courses: userCoursesCreated);
 
       context.loaderOverlay.hide();
 
@@ -229,50 +225,4 @@ class _WelcomePageState extends State<WelcomePage> {
     }
   }
 
-}
-
-// FIXME: limitare a tre corsi
-Future<List<BloqoUserCourseEnrolled>> _getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
-  try {
-    var ref = BloqoUserCourseEnrolled.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
-    List<BloqoUserCourseEnrolled> userCourses = [];
-    for(var doc in querySnapshot.docs) {
-        userCourses.add(doc.data());
-      }
-    return userCourses;
-  } on FirebaseAuthException catch(e){
-    switch(e.code){
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-}
-
-// FIXME: limitare a tre corsi
-Future<List<BloqoUserCourseCreated>> _getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
-  try {
-    var ref = BloqoUserCourseCreated.getRef();
-    var querySnapshot = await ref.where("user_email", isEqualTo: user.email).orderBy("last_updated", descending: true).get();
-    List<BloqoUserCourseCreated> userCourses = [];
-    for(var doc in querySnapshot.docs) {
-      userCourses.add(doc.data());
-    }
-    return userCourses;
-  } on FirebaseAuthException catch(e){
-    switch(e.code){
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-}
-
-void saveUserCoursesToAppState({required BuildContext context, required List<BloqoUserCourseEnrolled> userCoursesEnrolled,
-  required List<BloqoUserCourseCreated> userCoursesCreated}){
-  Provider.of<UserCoursesEnrolledAppState>(context, listen: false).set(userCoursesEnrolled);
-  Provider.of<UserCoursesCreatedAppState>(context, listen: false).set(userCoursesCreated);
 }

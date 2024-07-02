@@ -526,7 +526,6 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       color: BloqoColors.chineseViolet,
                       icon: Icons.qr_code,
                       text: localizedText.scan_qr_code,
-                      fontSize: 16
                     ),
                   ),
                 ),

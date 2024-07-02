@@ -31,7 +31,7 @@ class BloqoErrorAlert extends StatelessWidget{
       actions: [
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
           ),
           onPressed: () => Navigator.pop(context, "OK"),
           child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(

@@ -33,7 +33,7 @@ class BloqoConfirmationAlert extends StatelessWidget{
       actions: [
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
           ),
           onPressed: () => Navigator.pop(context, 'Cancel'),
           child: Text(localizedText.cancel, style: Theme.of(context).textTheme.displayMedium?.copyWith(
@@ -43,7 +43,7 @@ class BloqoConfirmationAlert extends StatelessWidget{
         ),
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
           ),
           onPressed: () {
             confirmationFunction();

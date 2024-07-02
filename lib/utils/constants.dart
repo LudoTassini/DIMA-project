@@ -9,4 +9,7 @@ class Constants{
 
   static const int maxCourseNameLength = 100;
 
+  static const int coursesToShowAtFirst = 3;
+  static const int coursesToFurtherLoadAtRequest = 3;
+
 }
