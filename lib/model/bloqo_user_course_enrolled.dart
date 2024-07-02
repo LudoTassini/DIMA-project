@@ -6,7 +6,7 @@ import '../utils/connectivity.dart';
 import 'bloqo_user.dart';
 
 class BloqoUserCourseEnrolled {
-  final DocumentReference course;
+  final String courseId;
   final String courseAuthor;
   final String courseName;
   int numSectionsCompleted;
@@ -17,7 +17,7 @@ class BloqoUserCourseEnrolled {
   Timestamp lastUpdated;
 
   BloqoUserCourseEnrolled({
-    required this.course,
+    required this.courseId,
     required this.courseAuthor,
     required this.courseName,
     required this.numSectionsCompleted,
@@ -34,7 +34,7 @@ class BloqoUserCourseEnrolled {
     final data = snapshot.data();
 
     return BloqoUserCourseEnrolled(
-      course: data!['course'],
+      courseId: data!['course_id'],
       courseAuthor: data['course_author'],
       courseName: data['course_name'],
       numSectionsCompleted: data['num_sections_completed'],
@@ -48,7 +48,7 @@ class BloqoUserCourseEnrolled {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'course': course,
+      'course_id': courseId,
       'course_author': courseAuthor,
       'course_name': courseName,
       'num_sections_completed': numSectionsCompleted,

@@ -21,139 +21,139 @@ class BloqoCourseEnrolled extends StatelessWidget{
       borderRadius: 10,
       padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
       child:
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Align(
-                    alignment: const AlignmentDirectional(-1, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding:const EdgeInsetsDirectional
-                              .fromSTEB(10, 10, 10, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Padding(
-                                padding:EdgeInsetsDirectional
-                                    .fromSTEB(0,0,5,0),
-                                child: Icon(
-                                  Icons.menu_book_rounded,
-                                  color: BloqoColors.russianViolet,
-                                  size: 24,
-                                ),
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Align(
+                  alignment: const AlignmentDirectional(-1, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:const EdgeInsetsDirectional
+                            .fromSTEB(10, 10, 10, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Padding(
+                              padding:EdgeInsetsDirectional
+                                  .fromSTEB(0,0,5,0),
+                              child: Icon(
+                                Icons.menu_book_rounded,
+                                color: BloqoColors.russianViolet,
+                                size: 24,
                               ),
-                              Flexible(
-                                child: Align(
-                                  alignment:const AlignmentDirectional(-1, 0),
-                                  child: Text(
-                                    course!.courseName,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      fontSize: 16, ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                          const EdgeInsetsDirectional
-                              .fromSTEB(10, 0, 10, 5),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsetsDirectional
-                                    .fromSTEB(0,0,5,0),
-                                child: Icon(
-                                  Icons.person,
-                                  color: BloqoColors.russianViolet,
-                                  size: 24,
-                                ),
-                              ),
-                              Flexible(
+                            ),
+                            Flexible(
+                              child: Align(
+                                alignment:const AlignmentDirectional(-1, 0),
                                 child: Text(
-                                  course!.courseAuthor,
+                                  course!.courseName,
                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontSize: 14,
-                                  ),
+                                    fontSize: 16, ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding:
-                          const EdgeInsetsDirectional
-                              .fromSTEB(10, 0, 10, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsetsDirectional
-                                    .fromSTEB(0,0,5,0),
-                                child: Icon(
-                                  Icons.bookmark_outlined,
-                                  color: BloqoColors.russianViolet,
-                                  size: 24,
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsetsDirectional
+                            .fromSTEB(10, 0, 10, 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsetsDirectional
+                                  .fromSTEB(0,0,5,0),
+                              child: Icon(
+                                Icons.person,
+                                color: BloqoColors.russianViolet,
+                                size: 24,
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                course!.courseAuthor,
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  fontSize: 14,
                                 ),
                               ),
-                              Flexible(
-                                child: Text(
-                                  course!.sectionName,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsetsDirectional
+                            .fromSTEB(10, 0, 10, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsetsDirectional
+                                  .fromSTEB(0,0,5,0),
+                              child: Icon(
+                                Icons.bookmark_outlined,
+                                color: BloqoColors.russianViolet,
+                                size: 24,
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                course!.sectionName,
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional
-                          .fromSTEB(0, 0, 10, 0),
-                      child: Icon(
-                        Icons.play_circle,
-                        color: BloqoColors.russianViolet,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Flexible(
-              child: Row(
+              ),
+              const Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
+                    padding: EdgeInsetsDirectional
+                        .fromSTEB(0, 0, 10, 0),
+                    child: Icon(
+                      Icons.play_circle,
+                      color: BloqoColors.russianViolet,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                     child: BloqoProgressBar(
                       percentage: course!.numSectionsCompleted/course!.totNumSections,
                     )
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
 }

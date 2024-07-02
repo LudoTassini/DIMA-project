@@ -36,7 +36,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
-  int _coursesDisplayed = Constants.coursesToShowAtFirst;
+  int _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirst;
+  int _coursesCreatedDisplayed = Constants.coursesToShowAtFirst;
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
     userCoursesCreated = userCoursesCreated.where((course) => !course.published).toList();
 
-    void loadMoreCourses() {
+    void loadMoreEnrolledCourses() {
       setState(() {
-        _coursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        _coursesEnrolledInDisplayed += Constants.coursesToFurtherLoadAtRequest;
+      });
+    }
+
+    void loadMoreCreatedCourses() {
+      setState(() {
+        _coursesCreatedDisplayed += Constants.coursesToFurtherLoadAtRequest;
       });
     }
 
@@ -101,19 +108,20 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        _coursesDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
+                        _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                         (index) {
                           BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
                           return BloqoCourseEnrolled(course: course);
                         },
                       ),
                     ),
-                  if (_coursesDisplayed < userCoursesEnrolled.length)
+                  if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
                     BloqoTextButton(
-                      onPressed: loadMoreCourses,
+                      onPressed: loadMoreEnrolledCourses,
                       text: localizedText.load_more_courses,
                       color: BloqoColors.russianViolet
                     ),
+
                   if (userCoursesEnrolled.isEmpty)
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -183,6 +191,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ],
                       ),
                     ),
+
                   if (userCoursesCreated.isNotEmpty)
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -196,16 +205,29 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           );
                         },
                       ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            localizedText.homepage_no_created_courses,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    ),
+
+                    if (_coursesCreatedDisplayed < userCoursesCreated.length)
+                      TextButton(
+                        onPressed: loadMoreCreatedCourses,
+                        child: Text(
+                          localizedText.load_more_courses,
+                          style: const TextStyle(
+                          color: BloqoColors.primaryText,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+
+                    if (userCoursesCreated.isEmpty)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              localizedText.homepage_no_created_courses,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
                               color: BloqoColors.primaryText,
                               fontSize: 14,
                             ),

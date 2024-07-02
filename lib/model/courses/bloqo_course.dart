@@ -14,8 +14,8 @@ class BloqoCourse{
   final String authorId;
   final bool published;
 
-  DateTime? creationDate;
-  DateTime? publicationDate;
+  Timestamp? creationDate;
+  Timestamp? publicationDate;
   bool? public;
 
   List<BloqoChapter>? chapters;
