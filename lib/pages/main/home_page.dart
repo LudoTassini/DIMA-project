@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
+                        _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                         (index) {
                           BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
                           return BloqoCourseEnrolled(course: course);
@@ -191,6 +191,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ],
                       ),
                     ),
+
                   if (userCoursesCreated.isNotEmpty)
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -204,6 +205,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           );
                         },
                       ),
+                    ),
 
                     if (_coursesCreatedDisplayed < userCoursesCreated.length)
                       TextButton(
