@@ -111,7 +111,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                         (index) {
                           BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
-                          return BloqoCourseEnrolled(course: course);
+                          return BloqoCourseEnrolled(
+                              course: course,
+                              onPressed: () {}/* TODO */
+                          );
                         },
                       ),
                     ),
