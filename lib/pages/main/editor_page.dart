@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
@@ -36,6 +37,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
 
+  bool _hasExecutedPostBuild = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,12 +49,29 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     )..addListener(() => setState(() {}));
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(!_hasExecutedPostBuild) {
+        _hasExecutedPostBuild = true;
+        _executePostBuild(context);
+      }
+    });
   }
 
   @override
   void dispose() {
     tabController.dispose();
     super.dispose();
+  }
+
+  void _executePostBuild(BuildContext context) {
+    if (getComingFromHomeEditorPrivilege(context: context)) {
+      useComingFromHomeEditorPrivilege(context: context);
+      BloqoCourse? course = getEditorCourseFromAppState(context: context);
+      if (course != null) {
+        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+      }
+    }
   }
 
   @override
@@ -117,7 +137,35 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
                                       (index) {
                                     BloqoUserCourseCreated course = inProgressCourses[index];
-                                    return course.published ? Container() : BloqoCourseCreated(course: course, showEditOptions: true);
+                                    if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
+                                      return course.published
+                                          ? Container()
+                                          : BloqoCourseCreated(
+                                          course: course,
+                                          onPressed: () async {
+                                            await _goToCoursePage(
+                                                context: context,
+                                                localizedText: localizedText,
+                                                userCourseCreated: course);
+                                          },
+                                          showEditOptions: true
+                                      );
+                                    }
+                                    else{
+                                      return course.published
+                                          ? Container()
+                                          : BloqoCourseCreated(
+                                          course: course,
+                                          padding: const EdgeInsetsDirectional.all(15),
+                                          onPressed: () async {
+                                            await _goToCoursePage(
+                                                context: context,
+                                                localizedText: localizedText,
+                                                userCourseCreated: course);
+                                          },
+                                          showEditOptions: true
+                                      );
+                                    }
                                   },
                                 ),
                               ),
@@ -181,7 +229,35 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         publishedCoursesDisplayed > publishedCourses.length ? publishedCourses.length : publishedCoursesDisplayed,
                                             (index) {
                                           BloqoUserCourseCreated course = publishedCourses[index];
-                                          return course.published ? BloqoCourseCreated(course: course, showPublishedOptions: true) : Container();
+                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
+                                            return course.published
+                                                ? BloqoCourseCreated(
+                                                course: course,
+                                                onPressed: () async {
+                                                  _goToCoursePage(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      userCourseCreated: course);
+                                                },
+                                                showPublishedOptions: true
+                                            )
+                                                : Container();
+                                          }
+                                          else{
+                                            return course.published
+                                                ? BloqoCourseCreated(
+                                                course: course,
+                                                padding: const EdgeInsetsDirectional.all(15),
+                                                onPressed: () async {
+                                                  _goToCoursePage(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      userCourseCreated: course);
+                                                },
+                                                showPublishedOptions: true
+                                            )
+                                                : Container();
+                                          }
                                         },
                                       ),
                                     ),
@@ -267,7 +343,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       context.loaderOverlay.hide();
 
-      widget.onPush(EditCoursePage(onPush: widget.onPush));
+      saveEditorCourseToAppState(context: context, course: course);
+
+      widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
 
     } on BloqoException catch (e){
 
@@ -281,4 +359,31 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
     }
   }
+
+  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoCourse? editorCourse = Provider.of<EditorCourseAppState>(
+          context, listen: false).get();
+      if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
+        widget.onPush(EditCoursePage(onPush: widget.onPush, course: editorCourse));
+      } else {
+        BloqoCourse course = await getCourseFromId(
+            localizedText: localizedText, courseId: userCourseCreated.courseId);
+        if(!context.mounted) return;
+        saveEditorCourseToAppState(context: context, course: course);
+        context.loaderOverlay.hide();
+        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+      }
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
 }

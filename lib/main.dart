@@ -15,6 +15,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'app_state/editor_course_app_state.dart';
 import 'app_state/user_app_state.dart';
 import 'app_state/user_courses_created_app_state.dart';
 import 'app_state/user_courses_enrolled_app_state.dart';
@@ -46,6 +47,7 @@ Future<void> main() async {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => UserAppState()),
+          ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
           ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
           ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
         ],

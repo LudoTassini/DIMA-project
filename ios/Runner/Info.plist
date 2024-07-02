@@ -12,7 +12,7 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>bloQo needs access to the photo library to upload your profile picture.</string>
 	<key>FLTEnableImpeller</key>
-	<false/>
+    <true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

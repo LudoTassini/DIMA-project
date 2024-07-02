@@ -89,9 +89,9 @@ class BloqoTheme{
         ),
         headerBackgroundColor: BloqoColors.russianViolet,
         headerForegroundColor: BloqoColors.seasalt,
-        dayBackgroundColor: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.selected)) {
+        dayBackgroundColor: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.selected)) {
               return BloqoColors.russianViolet;
             }
             else {
@@ -99,9 +99,9 @@ class BloqoTheme{
             }
           }
         ),
-        dayForegroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.selected)) {
+        dayForegroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.selected)) {
               return BloqoColors.seasalt;
             }
             else {
@@ -109,9 +109,9 @@ class BloqoTheme{
             }
           }
         ),
-        yearBackgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
+        yearBackgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.selected)) {
                 return BloqoColors.russianViolet;
               }
               else {
@@ -119,9 +119,9 @@ class BloqoTheme{
               }
             }
         ),
-        yearForegroundColor: MaterialStateProperty.resolveWith<Color>(
-                (Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
+        yearForegroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.selected)) {
                 return BloqoColors.seasalt;
               }
               else {
@@ -132,24 +132,24 @@ class BloqoTheme{
         todayBorder: BorderSide.none,
         dividerColor: BloqoColors.russianViolet,
         cancelButtonStyle: filledButtonThemeData.style?.copyWith(
-          textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
+          textStyle: WidgetStateProperty.resolveWith((states) => const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           )),
-          foregroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt),
-          backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.error),
-          fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
-          padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
+          foregroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt),
+          backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.error),
+          fixedSize: WidgetStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
+          padding: WidgetStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
         ),
         confirmButtonStyle: filledButtonThemeData.style?.copyWith(
-          textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
+          textStyle: WidgetStateProperty.resolveWith((states) => const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
           )),
-          foregroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.seasalt),
-          backgroundColor: MaterialStateProperty.resolveWith((_) => BloqoColors.russianViolet),
-          fixedSize: MaterialStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
-          padding: MaterialStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
+          foregroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt),
+          backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.russianViolet),
+          fixedSize: WidgetStateProperty.resolveWith((_) => const Size(double.infinity, double.infinity)),
+          padding: WidgetStateProperty.resolveWith((_) => const EdgeInsetsDirectional.fromSTEB(15, 8, 15, 8)),
         ),
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder: OutlineInputBorder(
@@ -180,12 +180,12 @@ class BloqoTheme{
           floatingLabelBehavior: FloatingLabelBehavior.always,
         ),
         menuStyle: MenuStyle(
-          surfaceTintColor: MaterialStateProperty.resolveWith((states) => Colors.transparent),
+          surfaceTintColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
         )
       ),
       navigationBarTheme: NavigationBarThemeData(
-        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-              (Set<MaterialState> states) => states.contains(MaterialState.selected)
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+              (Set<WidgetState> states) => states.contains(WidgetState.selected)
               ? const TextStyle(
               color: BloqoColors.russianViolet,
               fontWeight: FontWeight.w500,

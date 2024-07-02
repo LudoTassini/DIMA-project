@@ -1,5 +1,7 @@
 import 'package:bloqo/model/bloqo_user_course_created.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserCoursesCreatedAppState with ChangeNotifier{
 
@@ -25,4 +27,8 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
+}
+
+void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreated> courses}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false).set(courses);
 }

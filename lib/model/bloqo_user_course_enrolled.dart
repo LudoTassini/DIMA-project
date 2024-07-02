@@ -1,4 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../utils/bloqo_exception.dart';
+import '../utils/connectivity.dart';
+import 'bloqo_user.dart';
 
 class BloqoUserCourseEnrolled {
   final DocumentReference course;
@@ -61,5 +66,26 @@ class BloqoUserCourseEnrolled {
       fromFirestore: BloqoUserCourseEnrolled.fromFirestore,
       toFirestore: (BloqoUserCourseEnrolled userCourse, _) => userCourse.toFirestore(),
     );
+  }
+}
+
+// FIXME: limitare a tre corsi
+Future<List<BloqoUserCourseEnrolled>> getUserCoursesEnrolled({required var localizedText, required BloqoUser user}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
+    List<BloqoUserCourseEnrolled> userCourses = [];
+    for(var doc in querySnapshot.docs) {
+      userCourses.add(doc.data());
+    }
+    return userCourses;
+  } on FirebaseAuthException catch(e){
+    switch(e.code){
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

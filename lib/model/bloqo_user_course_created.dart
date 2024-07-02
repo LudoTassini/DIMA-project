@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/bloqo_exception.dart';
 import '../utils/connectivity.dart';
+import 'bloqo_user.dart';
 import 'courses/bloqo_course.dart';
 
 class BloqoUserCourseCreated {
@@ -11,6 +12,7 @@ class BloqoUserCourseCreated {
   int numSectionsCreated;
   int numChaptersCreated;
   final String authorId;
+  final Timestamp lastUpdated;
   bool published;
 
   BloqoUserCourseCreated({
@@ -19,7 +21,8 @@ class BloqoUserCourseCreated {
     required this.numSectionsCreated,
     required this.numChaptersCreated,
     required this.authorId,
-    required this.published
+    required this.published,
+    required this.lastUpdated
   });
 
   factory BloqoUserCourseCreated.fromFirestore(
@@ -33,7 +36,8 @@ class BloqoUserCourseCreated {
       numSectionsCreated: data['num_sections_created'],
       numChaptersCreated: data['num_chapters_created'],
       authorId: data['author_id'],
-      published: data['published']
+      published: data['published'],
+      lastUpdated: data['last_updated']
     );
   }
 
@@ -44,7 +48,8 @@ class BloqoUserCourseCreated {
       'num_sections_created': numSectionsCreated,
       'num_chapters_created': numChaptersCreated,
       'author_id': authorId,
-      'published': published
+      'published': published,
+      'last_updated': lastUpdated
     };
   }
 
@@ -60,12 +65,13 @@ class BloqoUserCourseCreated {
 Future<BloqoUserCourseCreated> saveNewUserCourseCreated({required var localizedText, required BloqoCourse course}) async {
   try {
     BloqoUserCourseCreated userCourseCreated = BloqoUserCourseCreated(
-        courseId: course.id,
-        courseName: course.name,
-        numSectionsCreated: 0,
-        numChaptersCreated: 0,
-        authorId: course.authorId,
-        published: false
+      courseId: course.id,
+      courseName: course.name,
+      numSectionsCreated: 0,
+      numChaptersCreated: 0,
+      authorId: course.authorId,
+      published: false,
+      lastUpdated: Timestamp.now()
     );
     var ref = BloqoUserCourseCreated.getRef();
     await checkConnectivity(localizedText: localizedText);
@@ -73,6 +79,27 @@ Future<BloqoUserCourseCreated> saveNewUserCourseCreated({required var localizedT
     return userCourseCreated;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+// FIXME: limitare a tre corsi
+Future<List<BloqoUserCourseCreated>> getUserCoursesCreated({required var localizedText, required BloqoUser user}) async {
+  try {
+    var ref = BloqoUserCourseCreated.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
+    List<BloqoUserCourseCreated> userCourses = [];
+    for(var doc in querySnapshot.docs) {
+      userCourses.add(doc.data());
+    }
+    return userCourses;
+  } on FirebaseAuthException catch(e){
+    switch(e.code){
       case "network-request-failed":
         throw BloqoException(message: localizedText.network_error);
       default:
