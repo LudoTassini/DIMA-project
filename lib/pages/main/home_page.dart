@@ -3,13 +3,20 @@ import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import '../../app_state/editor_course_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/courses/bloqo_course.dart';
+import '../../utils/bloqo_exception.dart';
+import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,7 +36,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
 
-  int _coursesDisplayed = 3;
+  int _coursesDisplayed = Constants.coursesToShowAtFirst;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +45,16 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
     List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
 
+    userCoursesCreated = userCoursesCreated.where((course) => !course.published).toList();
+
     void loadMoreCourses() {
       setState(() {
-        _coursesDisplayed += 3;
+        _coursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
       });
     }
 
     return BloqoMainContainer(
+      alignment: const AlignmentDirectional(-1.0, -1.0),
       child: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -87,27 +97,22 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ],
                       ),
                     ),
-                    if (userCoursesEnrolled.isNotEmpty)
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          _coursesDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
-                          (index) {
-                            BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
-                            return BloqoCourseEnrolled(course: course);
-                          },
-                        ),
+                  if (userCoursesEnrolled.isNotEmpty)
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        _coursesDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesDisplayed,
+                        (index) {
+                          BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
+                          return BloqoCourseEnrolled(course: course);
+                        },
                       ),
-                    if (_coursesDisplayed < userCoursesEnrolled.length)
-                      TextButton(
-                        onPressed: loadMoreCourses,
-                        child: Text(
-                        localizedText.load_more_courses,
-                        style: const TextStyle(
-                        color: BloqoColors.primaryText,
-                        decoration: TextDecoration.underline,
-                        ),
-                      ),
+                    ),
+                  if (_coursesDisplayed < userCoursesEnrolled.length)
+                    BloqoTextButton(
+                      onPressed: loadMoreCourses,
+                      text: localizedText.load_more_courses,
+                      color: BloqoColors.russianViolet
                     ),
                   if (userCoursesEnrolled.isEmpty)
                     Padding(
@@ -123,7 +128,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
                             child: BloqoFilledButton(
                               onPressed: () => widget.onNavigateToPage(2),
                               color: BloqoColors.russianViolet,
@@ -185,7 +190,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         userCoursesCreated.length,
                             (index) {
                           BloqoUserCourseCreated? course = userCoursesCreated[index];
-                          return BloqoCourseCreated(course: course);
+                          return BloqoCourseCreated(
+                            course: course,
+                            onPressed: () async { await _goToEditorCoursePage(context: context, localizedText: localizedText, userCourseCreated: course); },
+                          );
                         },
                       ),
                     )
@@ -203,7 +211,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
                             child: BloqoFilledButton(
                               onPressed: () => widget.onNavigateToPage(3),
                               color: BloqoColors.russianViolet,
@@ -226,5 +234,33 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _goToEditorCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoCourse? editorCourse = Provider.of<EditorCourseAppState>(
+          context, listen: false).get();
+      if (editorCourse != null &&
+          editorCourse.id == userCourseCreated.courseId) {
+        setComingFromHomeEditorPrivilege(context: context);
+        widget.onNavigateToPage(3);
+      } else {
+        BloqoCourse course = await getCourseFromId(
+            localizedText: localizedText, courseId: userCourseCreated.courseId);
+        if (!context.mounted) return;
+        saveEditorCourseToAppState(context: context, course: course, comingFromHome: true);
+        context.loaderOverlay.hide();
+        widget.onNavigateToPage(3);
+      }
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
 
 }

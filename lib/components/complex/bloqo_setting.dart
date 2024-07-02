@@ -22,9 +22,9 @@ class BloqoSetting extends StatelessWidget{
         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
         child: ElevatedButton(
           style: ButtonStyle(
-            padding: MaterialStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: MaterialStateProperty.resolveWith((states) => BloqoColors.seasalt),
-            shape: MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+            padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+            shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           ),
           onPressed: onPressed,
           child: Row(

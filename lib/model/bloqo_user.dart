@@ -1,3 +1,4 @@
+import 'package:bloqo/utils/connectivity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -65,9 +66,28 @@ class BloqoUser{
 
 }
 
+Future<void> registerNewUser({required var localizedText, required BloqoUser user, required String password}) async {
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: user.email, password: password);
+    var ref = BloqoUser.getRef();
+    await ref.doc().set(user);
+  } on FirebaseAuthException catch (e) {
+    switch(e.code){
+      case "email-already-in-use":
+        throw BloqoException(message: localizedText.register_email_already_taken);
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.register_network_error);
+      default:
+        throw BloqoException(message: localizedText.register_error);
+    }
+  }
+}
+
 Future<BloqoUser> getUserFromEmail({required var localizedText, required String email}) async {
   try {
     var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("email", isEqualTo: email).get();
     BloqoUser user = querySnapshot.docs.first.data();
     return user;
@@ -88,6 +108,7 @@ Future<void> saveUserPictureUrl({
 }) async {
   try {
     var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: userId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -110,6 +131,7 @@ Future<void> saveUserPictureUrl({
 Future<bool> isUsernameAlreadyTaken({required var localizedText, required String username}) async {
   try {
     var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("username", isEqualTo: username).get();
     if (querySnapshot.docs.length != 0) {
       return true;

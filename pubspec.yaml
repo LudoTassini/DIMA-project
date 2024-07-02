@@ -36,9 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.4.0
-  firebase_core: ^2.27.2
-  firebase_auth: ^4.18.0
-  cloud_firestore: ^4.15.10
+  firebase_core: ^3.1.1
+  firebase_auth: ^5.1.1
+  cloud_firestore: ^5.0.2
   provider: ^6.1.2
   intl: any
   shared_preferences: ^2.2.3
@@ -53,7 +53,7 @@ dependencies:
   qr_flutter: ^4.1.0
   qr_code_scanner: ^1.0.1
   permission_handler: ^11.3.1
-  firebase_storage: ^11.7.7
+  firebase_storage: ^12.1.0
   image_picker: ^1.1.1
 
 flutter_launcher_icons:
@@ -75,7 +75,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

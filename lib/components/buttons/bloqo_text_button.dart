@@ -16,7 +16,7 @@ class BloqoTextButton extends StatelessWidget{
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
-        textStyle: MaterialStateProperty.resolveWith((states) => const TextStyle(
+        textStyle: WidgetStateProperty.resolveWith((states) => const TextStyle(
           fontWeight: FontWeight.bold,
           decoration: TextDecoration.underline
         )),

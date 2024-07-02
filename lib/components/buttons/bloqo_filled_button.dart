@@ -23,23 +23,24 @@ class BloqoFilledButton extends StatelessWidget{
   Widget build(BuildContext context) {
     return FilledButton(
       style: Theme.of(context).filledButtonTheme.style?.copyWith(
-        textStyle: MaterialStateProperty.resolveWith((states) => TextStyle(
+        textStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
         )),
-        backgroundColor: MaterialStateProperty.resolveWith((_) => color),
-        fixedSize: MaterialStateProperty.resolveWith((_) => Size(double.infinity, height)),
-        padding: MaterialStateProperty.resolveWith((_) => EdgeInsetsDirectional.fromSTEB(22 * fontSize/20, 12 * fontSize/20, 22 * fontSize/20, 12 * fontSize/20)),
+        backgroundColor: WidgetStateProperty.resolveWith((_) => color),
+        fixedSize: WidgetStateProperty.resolveWith((_) => Size(double.infinity, height)),
+        padding: WidgetStateProperty.resolveWith((_) => EdgeInsetsDirectional.fromSTEB(22 * fontSize/20, 12 * fontSize/20, 22 * fontSize/20, 12 * fontSize/20)),
       ),
       onPressed: onPressed,
       child: icon == null ? Text(text) : Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
             child: Icon(icon),
           ),
-          Text(text)
+          Flexible(child: Text(text))
         ],
       ),
     );

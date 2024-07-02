@@ -7,7 +7,6 @@ import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/toggle.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -216,41 +215,35 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-}
 
-Future<void> _tryRegister({required BuildContext context, required var localizedText, required String email, required String password, required String username,
+  Future<void> _tryRegister({required BuildContext context, required var localizedText, required String email, required String password, required String username,
     required String fullName, required bool isFullNameVisible}) async {
 
-  context.loaderOverlay.show();
+    context.loaderOverlay.show();
 
-  try {
+    try {
 
-    final user = BloqoUser(
-        id: uuid(),
-        email: email,
-        username: username,
-        fullName: fullName,
-        isFullNameVisible: isFullNameVisible,
-        followers: 0,
-        following: 0,
-        pictureUrl: "none"
-    );
+      final user = BloqoUser(
+          id: uuid(),
+          email: email,
+          username: username,
+          fullName: fullName,
+          isFullNameVisible: isFullNameVisible,
+          followers: 0,
+          following: 0,
+          pictureUrl: "none"
+      );
 
-    if(emailValidator(email: user.email, localizedText: localizedText) == null &&
-        passwordValidator(password: password, localizedText: localizedText) == null &&
-        usernameValidator(username: user.username, localizedText: localizedText) == null &&
-        fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
+      if(emailValidator(email: user.email, localizedText: localizedText) == null &&
+          passwordValidator(password: password, localizedText: localizedText) == null &&
+          usernameValidator(username: user.username, localizedText: localizedText) == null &&
+          fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
 
-      if(await isUsernameAlreadyTaken(localizedText: localizedText, username: user.username)){
-        throw BloqoException(message: localizedText.username_already_taken);
-      }
+        if(await isUsernameAlreadyTaken(localizedText: localizedText, username: user.username)){
+          throw BloqoException(message: localizedText.username_already_taken);
+        }
 
-      try {
-
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email, password: password);
-        var ref = BloqoUser.getRef();
-        await ref.doc().set(user);
+        await registerNewUser(localizedText: localizedText, user: user, password: password);
 
         if(!context.mounted) return;
         saveUserToAppState(context: context, user: user);
@@ -263,31 +256,23 @@ Future<void> _tryRegister({required BuildContext context, required var localized
             builder: (context) => const MainPage(),
           ),
         );
-      } on FirebaseAuthException catch (e) {
-          switch(e.code){
-            case "email-already-in-use":
-              throw BloqoException(message: localizedText.register_email_already_taken);
-            case "network-request-failed":
-              throw BloqoException(message: localizedText.register_network_error);
-            default:
-              throw BloqoException(message: localizedText.register_error);
-          }
       }
+      else{
+        throw BloqoException(message: localizedText.register_incomplete_error);
+      }
+    } on BloqoException catch(e){
+
+      if(!context.mounted) return;
+
+      context.loaderOverlay.hide();
+
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
     }
-    else{
-      throw BloqoException(message: localizedText.register_incomplete_error);
-    }
-  } on BloqoException catch(e){
-
-    if(!context.mounted) return;
-
-    context.loaderOverlay.hide();
-
-    showBloqoErrorAlert(
-      context: context,
-      title: localizedText.error_title,
-      description: e.message,
-    );
   }
+
 }
 
