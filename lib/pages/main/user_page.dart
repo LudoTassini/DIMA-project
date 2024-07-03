@@ -8,6 +8,7 @@ import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/utils/bloqo_qr_code_type.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
+import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
       child: SingleChildScrollView(
         child: Consumer<UserAppState>(
           builder: (context, userAppState, _) {
-            final user = userAppState.get()!;
+            final user = getUserFromAppState(context: context)!;
             if(user.pictureUrl != "none"){
               url = user.pictureUrl;
             }
@@ -135,8 +136,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                       );
                                       if(newUrl != null) {
                                         if(!context.mounted) return;
-                                        final userAppState = Provider.of<UserAppState>(context, listen: false);
-                                        userAppState.updatePictureUrl(newUrl);
+                                        updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
                                       }
                                     },
                                   ),
@@ -348,15 +348,16 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                 BloqoSetting(
                   onPressed: () {
                     showBloqoConfirmationAlert(
-                        context: context,
-                        title: localizedText.warning,
-                        description: localizedText.logout_confirmation,
-                        confirmationFunction: () async {
-                          _confirmationFunction(
-                              context: context,
-                              localizedText: localizedText
-                          );
-                        }
+                      context: context,
+                      title: localizedText.warning,
+                      description: localizedText.logout_confirmation,
+                      confirmationFunction: () async {
+                        await _confirmationFunction(
+                            context: context,
+                            localizedText: localizedText
+                        );
+                      },
+                      backgroundColor: BloqoColors.russianViolet
                     );
                   },
                   settingTitle: localizedText.sign_out_title,
@@ -377,6 +378,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Future<void> _confirmationFunction({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
+      await checkConnectivity(localizedText: localizedText);
       await logout(localizedText: localizedText);
       await deleteSharedPreferences();
       if(!context.mounted) return;

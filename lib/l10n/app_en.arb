@@ -185,5 +185,6 @@
   "view_statistics": "View statistics",
   "dismiss": "Dismiss",
   "editor_page_no_published_courses": "You have published no course for the community yet. Go create one now and publish it!",
-  "delete": "Delete"
+  "delete": "Delete",
+  "delete_course_confirmation": "By confirming, this course will be permanently deleted and cannot be restored in any way. Do you wish to proceed?"
 }

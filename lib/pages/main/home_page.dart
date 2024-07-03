@@ -260,11 +260,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Future<void> _goToEditorCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? editorCourse = Provider.of<EditorCourseAppState>(
-          context, listen: false).get();
+      BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null &&
           editorCourse.id == userCourseCreated.courseId) {
-        setComingFromHomeEditorPrivilege(context: context);
+        setComingFromHomeEditorPrivilegeToAppState(context: context);
         widget.onNavigateToPage(3);
       } else {
         BloqoCourse course = await getCourseFromId(

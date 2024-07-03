@@ -1,6 +1,7 @@
 import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class UserCoursesCreatedAppState with ChangeNotifier{
@@ -27,8 +28,25 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
+  void deleteUserCourseCreated(BloqoUserCourseCreated userCourseCreated){
+    if (_userCourses != null) {
+      _userCourses!.remove(userCourseCreated);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
 }
 
 void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreated> courses}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false).set(courses);
+}
+
+void addUserCourseCreatedToAppState({required BuildContext context, required BloqoUserCourseCreated userCourseCreated}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false).addUserCourseCreated(userCourseCreated);
+}
+
+void deleteUserCourseCreatedFromAppState({required BuildContext context, required BloqoUserCourseCreated userCourseCreated}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false).deleteUserCourseCreated(userCourseCreated);
 }

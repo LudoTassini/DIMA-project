@@ -60,8 +60,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   }
 
   void _checkHomePrivilege(BuildContext context) {
-    if (getComingFromHomeEditorPrivilege(context: context)) {
-      useComingFromHomeEditorPrivilege(context: context);
+    if (getComingFromHomeEditorPrivilegeFromAppState(context: context)) {
+      useComingFromHomeEditorPrivilegeFromAppState(context: context);
       BloqoCourse? course = getEditorCourseFromAppState(context: context);
       if (course != null) {
         widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
@@ -133,9 +133,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                             (index) {
                                           BloqoUserCourseCreated course = inProgressCourses[index];
                                           if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                            return course.published
-                                                ? Container()
-                                                : BloqoCourseCreated(
+                                            return BloqoCourseCreated(
                                                 course: course,
                                                 onPressed: () async {
                                                   await _goToCoursePage(
@@ -147,9 +145,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                             );
                                           }
                                           else{
-                                            return course.published
-                                                ? Container()
-                                                : BloqoCourseCreated(
+                                            return BloqoCourseCreated(
                                                 course: course,
                                                 padding: const EdgeInsetsDirectional.all(15),
                                                 onPressed: () async {
@@ -224,9 +220,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         publishedCoursesDisplayed > publishedCourses.length ? publishedCourses.length : publishedCoursesDisplayed,
                                             (index) {
                                           BloqoUserCourseCreated course = publishedCourses[index];
-                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                            return course.published
-                                                ? BloqoCourseCreated(
+                                          if(index != (publishedCoursesDisplayed > publishedCourses.length ? publishedCourses.length : publishedCoursesDisplayed) - 1) {
+                                            return BloqoCourseCreated(
                                                 course: course,
                                                 onPressed: () async {
                                                   _goToCoursePage(
@@ -235,12 +230,10 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       userCourseCreated: course);
                                                 },
                                                 showPublishedOptions: true
-                                            )
-                                                : Container();
+                                            );
                                           }
                                           else{
-                                            return course.published
-                                                ? BloqoCourseCreated(
+                                            return BloqoCourseCreated(
                                                 course: course,
                                                 padding: const EdgeInsetsDirectional.all(15),
                                                 onPressed: () async {
@@ -250,8 +243,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       userCourseCreated: course);
                                                 },
                                                 showPublishedOptions: true
-                                            )
-                                                : Container();
+                                            );
                                           }
                                         },
                                       ),
@@ -322,8 +314,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       BloqoCourse course = await saveNewCourse(
           localizedText: localizedText,
-          authorId: Provider.of<UserAppState>(context, listen: false).get()!
-              .id
+          authorId: getUserFromAppState(context: context)!.id
       );
 
       BloqoUserCourseCreated userCourseCreated = await saveNewUserCourseCreated(
@@ -333,8 +324,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       if(!context.mounted) return;
 
-      final userCoursesCreatedAppState = Provider.of<UserCoursesCreatedAppState>(context, listen: false);
-      userCoursesCreatedAppState.addUserCourseCreated(userCourseCreated);
+      addUserCourseCreatedToAppState(context: context, userCourseCreated: userCourseCreated);
 
       context.loaderOverlay.hide();
 
@@ -358,8 +348,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? editorCourse = Provider.of<EditorCourseAppState>(
-          context, listen: false).get();
+      BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
         widget.onPush(EditCoursePage(onPush: widget.onPush, course: editorCourse));
       } else {
