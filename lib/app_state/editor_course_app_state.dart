@@ -8,46 +8,46 @@ class EditorCourseAppState with ChangeNotifier{
   BloqoCourse? _course;
   bool _fromHome = false;
 
-  BloqoCourse? get() {
+  BloqoCourse? _get() {
     return _course;
   }
 
-  void set(BloqoCourse course){
+  void _set(BloqoCourse course){
     _course = course;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  bool getComingFromHomePrivilege(){
+  bool _getComingFromHomePrivilege(){
     return _fromHome;
   }
 
-  void updateComingFromHomePrivilege(bool newValue){
+  void _updateComingFromHomePrivilege(bool newValue){
     _fromHome = newValue;
   }
 
 }
 
 BloqoCourse? getEditorCourseFromAppState({required BuildContext context}){
-  return Provider.of<EditorCourseAppState>(context, listen: false).get();
+  return Provider.of<EditorCourseAppState>(context, listen: false)._get();
 }
 
 void saveEditorCourseToAppState({required BuildContext context, required BloqoCourse course, bool comingFromHome = false}){
-  Provider.of<EditorCourseAppState>(context, listen: false).set(course);
+  Provider.of<EditorCourseAppState>(context, listen: false)._set(course);
   if(comingFromHome) {
-    Provider.of<EditorCourseAppState>(context, listen: false).updateComingFromHomePrivilege(true);
+    Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
 }
 
-bool getComingFromHomeEditorPrivilege({required BuildContext context}){
-  return Provider.of<EditorCourseAppState>(context, listen: false).getComingFromHomePrivilege();
+bool getComingFromHomeEditorPrivilegeFromAppState({required BuildContext context}){
+  return Provider.of<EditorCourseAppState>(context, listen: false)._getComingFromHomePrivilege();
 }
 
-void setComingFromHomeEditorPrivilege({required BuildContext context}){
-  Provider.of<EditorCourseAppState>(context, listen: false).updateComingFromHomePrivilege(true);
+void setComingFromHomeEditorPrivilegeToAppState({required BuildContext context}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
 }
 
-void useComingFromHomeEditorPrivilege({required BuildContext context}){
-  Provider.of<EditorCourseAppState>(context, listen: false).updateComingFromHomePrivilege(false);
+void useComingFromHomeEditorPrivilegeFromAppState({required BuildContext context}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(false);
 }
