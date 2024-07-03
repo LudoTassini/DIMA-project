@@ -6,16 +6,20 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
 
   List<BloqoUserCourseEnrolled>? _userCourses;
 
-  List<BloqoUserCourseEnrolled>? get() {
+  List<BloqoUserCourseEnrolled>? _get() {
     return _userCourses;
   }
 
-  void set(List<BloqoUserCourseEnrolled> userCourses){
+  void _set(List<BloqoUserCourseEnrolled> userCourses){
     _userCourses = userCourses;
   }
 
 }
 
 void saveUserCoursesEnrolledToAppState({required BuildContext context, required List<BloqoUserCourseEnrolled> courses}){
-  Provider.of<UserCoursesEnrolledAppState>(context, listen: false).set(courses);
+  Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._set(courses);
+}
+
+List<BloqoUserCourseEnrolled>? getUserCoursesEnrolledFromAppState({required BuildContext context}){
+  return Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._get();
 }

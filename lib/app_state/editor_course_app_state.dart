@@ -12,7 +12,7 @@ class EditorCourseAppState with ChangeNotifier{
     return _course;
   }
 
-  void _set(BloqoCourse course){
+  void _set(BloqoCourse? course){
     _course = course;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
@@ -38,6 +38,10 @@ void saveEditorCourseToAppState({required BuildContext context, required BloqoCo
   if(comingFromHome) {
     Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
+}
+
+void deleteEditorCourseFromAppState({required BuildContext context}) {
+  Provider.of<EditorCourseAppState>(context, listen: false)._set(null);
 }
 
 bool getComingFromHomeEditorPrivilegeFromAppState({required BuildContext context}){

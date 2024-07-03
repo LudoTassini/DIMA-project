@@ -74,11 +74,6 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
 
-    List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
-
-    List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
-    List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
-
     void loadMoreInProgressCourses() {
       setState(() {
         inProgressCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
@@ -95,6 +90,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesCreatedAppState>(
         builder: (context, userCoursesCreatedAppState, _) {
+          List<BloqoUserCourseCreated> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
+          List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
+          List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
           return Column(
             children: [
               TabBar(
@@ -182,7 +180,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
-                                              onPressed: () {} /* TODO */,
+                                              onPressed: () async {
+                                                await _createNewCourse(context: context, localizedText: localizedText);
+                                              },
                                               color: BloqoColors.russianViolet,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
@@ -350,6 +350,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     try {
       BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
+        context.loaderOverlay.hide();
         widget.onPush(EditCoursePage(onPush: widget.onPush, course: editorCourse));
       } else {
         BloqoCourse course = await getCourseFromId(
