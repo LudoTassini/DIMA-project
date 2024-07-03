@@ -26,7 +26,14 @@ class BloqoBreadcrumbs extends StatelessWidget {
             Navigator.of(context).pop();
           }
         },
-      ) : Text(breadcrumbs[i]));
+      ) : Text(
+            breadcrumbs[i],
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+              color: BloqoColors.seasalt,
+              fontWeight: FontWeight.w500
+            )
+          )
+      );
 
       if (i < breadcrumbs.length - 1) {
         breadcrumbWidgets.add(const Icon(
@@ -36,10 +43,16 @@ class BloqoBreadcrumbs extends StatelessWidget {
       }
     }
 
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: breadcrumbWidgets,
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+      child: Align(
+        alignment: const AlignmentDirectional(-1, -1),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: breadcrumbWidgets,
+        )
+      )
     );
   }
 }

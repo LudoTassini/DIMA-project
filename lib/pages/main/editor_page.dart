@@ -64,7 +64,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       useComingFromHomeEditorPrivilegeFromAppState(context: context);
       BloqoCourse? course = getEditorCourseFromAppState(context: context);
       if (course != null) {
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
     }
   }
@@ -330,7 +330,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       saveEditorCourseToAppState(context: context, course: course);
 
-      widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+      widget.onPush(EditCoursePage(onPush: widget.onPush));
 
     } on BloqoException catch (e){
 
@@ -351,14 +351,14 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
         context.loaderOverlay.hide();
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: editorCourse));
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
         if(!context.mounted) return;
         saveEditorCourseToAppState(context: context, course: course);
         context.loaderOverlay.hide();
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
     } on BloqoException catch (e) {
       if(!context.mounted) return;
