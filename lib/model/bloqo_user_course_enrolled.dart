@@ -15,6 +15,7 @@ class BloqoUserCourseEnrolled {
   DocumentReference sectionToComplete;
   final String authorId;
   Timestamp lastUpdated;
+  bool isRated;
 
   BloqoUserCourseEnrolled({
     required this.courseId,
@@ -26,6 +27,7 @@ class BloqoUserCourseEnrolled {
     required this.sectionToComplete,
     required this.authorId,
     required this.lastUpdated,
+    required this.isRated,
   });
 
   factory BloqoUserCourseEnrolled.fromFirestore(
@@ -43,6 +45,7 @@ class BloqoUserCourseEnrolled {
       sectionToComplete: data['section_to_complete'],
       authorId: data['author_id'],
       lastUpdated: data['last_updated'],
+      isRated: data['is_rated'],
     );
   }
 
@@ -57,6 +60,7 @@ class BloqoUserCourseEnrolled {
       'section_to_complete': sectionToComplete,
       'author_id': authorId,
       'last_updated': FieldValue.serverTimestamp(),
+      'is_rated': isRated,
     };
   }
 

@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/learn_course_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
@@ -48,6 +49,7 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => UserAppState()),
           ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
+          ChangeNotifierProvider(create: (_) => LearnCourseAppState()),
           ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
           ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
         ],

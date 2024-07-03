@@ -1,3 +1,4 @@
+import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
 import 'package:flutter/material.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
@@ -6,6 +7,8 @@ import '../../style/bloqo_colors.dart';
 class BloqoCourseEnrolled extends StatelessWidget{
   final BloqoUserCourseEnrolled? course;
   final EdgeInsetsDirectional padding;
+  final bool showCompleted;
+  final bool showInProgress;
   final Function() onPressed;
 
   const BloqoCourseEnrolled({
@@ -13,6 +16,8 @@ class BloqoCourseEnrolled extends StatelessWidget{
     required this.course,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
     required this.onPressed,
+    this.showCompleted = false,
+    this.showInProgress = false,
   });
 
   @override
@@ -102,32 +107,33 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               ],
                             ),
                           ),
-                          Padding(
-                            padding:
-                            const EdgeInsetsDirectional
-                                .fromSTEB(10, 0, 10, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional
-                                      .fromSTEB(0,0,5,0),
-                                  child: Icon(
-                                    Icons.bookmark_outlined,
-                                    color: BloqoColors.russianViolet,
-                                    size: 24,
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    course!.sectionName,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      fontSize: 20,
+                          if(showInProgress)
+                            Padding(
+                              padding:
+                              const EdgeInsetsDirectional
+                                  .fromSTEB(10, 0, 10, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional
+                                        .fromSTEB(0,0,5,0),
+                                    child: Icon(
+                                      Icons.bookmark_outlined,
+                                      color: BloqoColors.russianViolet,
+                                      size: 24,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Flexible(
+                                    child: Text(
+                                      course!.sectionName,
+                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ),
                         ],
                       ),
@@ -150,19 +156,57 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 ),
               ],
             ),
-            Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                      child: BloqoProgressBar(
-                        percentage: course!.numSectionsCompleted/course!.totNumSections,
-                      )
-                  ),
-                ],
+            if(showInProgress)
+              Flexible(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                        child: BloqoProgressBar(
+                          percentage: course!.numSectionsCompleted/course!.totNumSections,
+                        )
+                    ),
+                  ],
+                ),
               ),
-            ),
+
+              if(showCompleted)
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
+                        child:
+                          course!.isRated ? BloqoFilledButton(
+                            color: BloqoColors.inactiveTracker,
+                            onPressed: () {
+                              //TODO:
+                            },
+                            text: 'Rated',
+                          )
+                          :  BloqoFilledButton(
+                            color: BloqoColors.rate,
+                            onPressed: () {
+                            //TODO:
+                            },
+                            text: 'Rate',
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: BloqoFilledButton(
+                          color: BloqoColors.success,
+                          onPressed: () {
+                            //TODO:
+                          },
+                          text: 'Get Certificate',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
           ],
         ),
       ),

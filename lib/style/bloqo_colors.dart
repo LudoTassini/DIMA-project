@@ -15,6 +15,8 @@ class BloqoColors {
   static const Color warning = Color(0xFFF9CF58);
   static const Color success = Color(0xFF249689);
 
+  static const Color rate = Color(0xFFC5A600);
+
   // used for navbar workaround to delete overlay when a navigation destination is selected
   static const Color newDarkFuchsia = Color(0x00712C45);
 

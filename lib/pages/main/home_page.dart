@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/editor_course_app_state.dart';
+import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -113,6 +114,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
                           return BloqoCourseEnrolled(
                               course: course,
+                              showInProgress: true,
                               onPressed: () {}/* TODO */
                           );
                         },
@@ -276,6 +278,34 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         saveEditorCourseToAppState(context: context, course: course, comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
+      }
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
+  Future<void> _goToLearnCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoCourse? learnCourse = Provider.of<LearnCourseAppState>(
+          context, listen: false).get();
+      if (learnCourse != null &&
+          learnCourse.id == userCourseEnrolled.courseId) {
+        setComingFromHomeLearnPrivilege(context: context);
+        widget.onNavigateToPage(1);
+      } else {
+        BloqoCourse course = await getCourseFromId(
+            localizedText: localizedText, courseId: userCourseEnrolled.courseId);
+        if (!context.mounted) return;
+        saveLearnCourseToAppState(context: context, course: course, comingFromHome: true);
+        context.loaderOverlay.hide();
+        widget.onNavigateToPage(1);
       }
     } on BloqoException catch (e) {
       if (!context.mounted) return;

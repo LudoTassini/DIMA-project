@@ -174,7 +174,6 @@
   "warning": "Warning!",
   "logout_confirmation": "Are you sure you want to log out of the application? If you confirm, the next time you open bloQo you will have to log in.",
   "in_progress": "In progress",
-  "published": "Published",
   "editor_page_header_1": "These are the courses you are creating.",
   "editor_page_header_2": "These are the courses you published.",
   "publish": "Publish",
@@ -183,5 +182,12 @@
   "chapters": "chapters",
   "sections": "sections",
   "view_statistics": "View statistics",
-  "dismiss": "Dismiss"
+  "dismiss": "Dismiss",
+  "published": "Published",
+  "enrollings": "Enrollings",
+  "completed": "Completed",
+  "learn_page_header_1": "These are the courses you are enrolled in.",
+  "learn_page_header_2": "These are the courses you completed.",
+  "learn_page_no_in_progress_courses": "You are not enrolled in any courses. Start learning now!",
+  "learn_page_no_completed_courses": "You have no completed courses."
 }
