@@ -8,12 +8,14 @@ class BloqoConfirmationAlert extends StatelessWidget{
     super.key,
     required this.title,
     required this.description,
-    required this.confirmationFunction
+    required this.confirmationFunction,
+    required this.backgroundColor
   });
 
   final String title;
   final String description;
   final Function() confirmationFunction;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class BloqoConfirmationAlert extends StatelessWidget{
     return AlertDialog(
       title: Text(title),
       content: Text(description),
-      backgroundColor: BloqoColors.russianViolet,
+      backgroundColor: backgroundColor,
       titleTextStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
           color: BloqoColors.seasalt,
           fontSize: 24
@@ -60,14 +62,20 @@ class BloqoConfirmationAlert extends StatelessWidget{
 
 }
 
-showBloqoConfirmationAlert({required BuildContext context, required String title, required String description, required Function() confirmationFunction}){
+showBloqoConfirmationAlert({
+  required BuildContext context,
+  required String title,
+  required String description,
+  required Function() confirmationFunction,
+  required Color backgroundColor}){
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return BloqoConfirmationAlert(
-          title: title,
-          description: description,
-          confirmationFunction: confirmationFunction,
+        title: title,
+        description: description,
+        confirmationFunction: confirmationFunction,
+        backgroundColor: backgroundColor
       );
     },
   );

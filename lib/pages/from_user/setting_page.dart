@@ -6,7 +6,6 @@ import 'package:bloqo/utils/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
@@ -159,8 +158,7 @@ Future<void> _updateSettings({
       case BloqoSettingType.account:
         final String newFullName = controllers[0].text;
         final bool newFullNameVisible = controllers[1].get();
-        final userAppState = Provider.of<UserAppState>(context, listen: false);
-        final BloqoUser? user = userAppState.get();
+        final BloqoUser? user = getUserFromAppState(context: context);
 
         if (user == null) {
           throw BloqoException(message: localizedText!.generic_error);
@@ -185,8 +183,11 @@ Future<void> _updateSettings({
             }
 
             await ref.doc(documentId).update(updates);
-            userAppState.updateFullName(newFullName);
-            userAppState.updateIsFullNameVisible(newFullNameVisible);
+
+            if(!context.mounted) return;
+            updateUserFullNameInAppState(context: context, newFullName: newFullName);
+            updateUserFullNameVisibilityInAppState(context: context, newFullNameVisible: newFullNameVisible);
+
           } else {
             throw BloqoException(message: localizedText!.generic_error);
           }

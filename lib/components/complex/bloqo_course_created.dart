@@ -1,8 +1,14 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../../app_state/user_courses_created_app_state.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
+import '../popups/bloqo_confirmation_alert.dart';
+import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseCreated extends StatelessWidget {
   const BloqoCourseCreated({
@@ -14,7 +20,7 @@ class BloqoCourseCreated extends StatelessWidget {
     this.showPublishedOptions = false,
   });
 
-  final BloqoUserCourseCreated? course;
+  final BloqoUserCourseCreated course;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
   final bool showEditOptions;
@@ -63,7 +69,7 @@ class BloqoCourseCreated extends StatelessWidget {
                             ),
                             Flexible(
                               child: Text(
-                                course!.courseName,
+                                course.courseName,
                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                   fontSize: 16,
                                 ),
@@ -74,7 +80,7 @@ class BloqoCourseCreated extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
-                            "${course!.numChaptersCreated} ${localizedText.chapters}, ${course!.numSectionsCreated} ${localizedText.sections}",
+                            "${course.numChaptersCreated} ${localizedText.chapters}, ${course.numSectionsCreated} ${localizedText.sections}",
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
@@ -97,12 +103,38 @@ class BloqoCourseCreated extends StatelessWidget {
                 alignment: AlignmentDirectional.bottomEnd,
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                  child: BloqoFilledButton(
-                    color: BloqoColors.success,
-                    onPressed: () {} /* TODO */,
-                    text: localizedText.publish,
-                    fontSize: 16,
-                    height: 32,
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      BloqoFilledButton(
+                        color: BloqoColors.error,
+                        onPressed: () {
+                          showBloqoConfirmationAlert(
+                              context: context,
+                              title: localizedText.warning,
+                              description: localizedText.delete_course_confirmation,
+                              confirmationFunction: () async {
+                                await _tryDeleteCourse(
+                                    context: context,
+                                    localizedText: localizedText
+                                );
+                              },
+                              backgroundColor: BloqoColors.error
+                          );
+                        },
+                        text: localizedText.delete,
+                        fontSize: 16,
+                        height: 32,
+                      ),
+                      BloqoFilledButton(
+                        color: BloqoColors.success,
+                        onPressed: () {} /* TODO */,
+                        text: localizedText.publish,
+                        fontSize: 16,
+                        height: 32,
+                      )
+                    ]
                   ),
                 ),
               )
@@ -141,4 +173,26 @@ class BloqoCourseCreated extends StatelessWidget {
       )
     );
   }
+
+  Future<void> _tryDeleteCourse({required BuildContext context, required var localizedText}) async {
+    context.loaderOverlay.show();
+    try{
+      // TODO: deleteUserCourseCreated
+      await deleteCourse(localizedText: localizedText, courseId: course.courseId);
+      if (!context.mounted) return;
+      // TODO: deleteCourseFromAppState if the course is in app state
+      deleteUserCourseCreatedFromAppState(context: context, userCourseCreated: course);
+      context.loaderOverlay.hide();
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
+      );
+    }
+  }
+
 }

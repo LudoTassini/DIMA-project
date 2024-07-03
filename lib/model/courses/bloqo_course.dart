@@ -127,3 +127,19 @@ Future<BloqoCourse> getCourseFromId({required var localizedText, required String
     }
   }
 }
+
+Future<void> deleteCourse({required var localizedText, required String courseId}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: courseId).get();
+    await querySnapshot.docs[0].reference.delete();
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
