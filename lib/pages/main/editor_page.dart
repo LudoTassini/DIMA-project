@@ -37,8 +37,6 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
 
-  bool _hasExecutedPostBuild = false;
-
   @override
   void initState() {
     super.initState();
@@ -50,11 +48,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(!_hasExecutedPostBuild) {
-        _hasExecutedPostBuild = true;
-        _executePostBuild(context);
-      }
+    WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      _checkHomePrivilege(context);
     });
   }
 
@@ -64,7 +59,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  void _executePostBuild(BuildContext context) {
+  void _checkHomePrivilege(BuildContext context) {
     if (getComingFromHomeEditorPrivilege(context: context)) {
       useComingFromHomeEditorPrivilege(context: context);
       BloqoCourse? course = getEditorCourseFromAppState(context: context);
@@ -128,80 +123,80 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           ),
                         ),
                         BloqoSeasaltContainer(
-                          child: Column(
-                            children: [
-                            if (inProgressCourses.isNotEmpty)
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
-                                  inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
-                                      (index) {
-                                    BloqoUserCourseCreated course = inProgressCourses[index];
-                                    if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                      return course.published
-                                          ? Container()
-                                          : BloqoCourseCreated(
-                                          course: course,
-                                          onPressed: () async {
-                                            await _goToCoursePage(
-                                                context: context,
-                                                localizedText: localizedText,
-                                                userCourseCreated: course);
-                                          },
-                                          showEditOptions: true
-                                      );
-                                    }
-                                    else{
-                                      return course.published
-                                          ? Container()
-                                          : BloqoCourseCreated(
-                                          course: course,
-                                          padding: const EdgeInsetsDirectional.all(15),
-                                          onPressed: () async {
-                                            await _goToCoursePage(
-                                                context: context,
-                                                localizedText: localizedText,
-                                                userCourseCreated: course);
-                                          },
-                                          showEditOptions: true
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            if (inProgressCoursesDisplayed < inProgressCourses.length)
-                              BloqoTextButton(
-                                onPressed: loadMoreInProgressCourses,
-                                text: localizedText.load_more_courses,
-                                color: BloqoColors.russianViolet
-                              ),
-                            if (inProgressCourses.isEmpty)
-                               Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        localizedText.editor_page_no_in_progress_courses,
-                                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                          color: BloqoColors.primaryText,
-                                          fontSize: 14,
-                                        ),
+                            child: Column(
+                                children: [
+                                  if (inProgressCourses.isNotEmpty)
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: List.generate(
+                                        inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
+                                            (index) {
+                                          BloqoUserCourseCreated course = inProgressCourses[index];
+                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
+                                            return course.published
+                                                ? Container()
+                                                : BloqoCourseCreated(
+                                                course: course,
+                                                onPressed: () async {
+                                                  await _goToCoursePage(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      userCourseCreated: course);
+                                                },
+                                                showEditOptions: true
+                                            );
+                                          }
+                                          else{
+                                            return course.published
+                                                ? Container()
+                                                : BloqoCourseCreated(
+                                                course: course,
+                                                padding: const EdgeInsetsDirectional.all(15),
+                                                onPressed: () async {
+                                                  await _goToCoursePage(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      userCourseCreated: course);
+                                                },
+                                                showEditOptions: true
+                                            );
+                                          }
+                                        },
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                        child: BloqoFilledButton(
-                                          onPressed: () {} /* TODO */,
-                                          color: BloqoColors.russianViolet,
-                                          text: localizedText.take_me_there_button,
-                                          fontSize: 16,
-                                        ),
+                                    ),
+                                  if (inProgressCoursesDisplayed < inProgressCourses.length)
+                                    BloqoTextButton(
+                                        onPressed: loadMoreInProgressCourses,
+                                        text: localizedText.load_more_courses,
+                                        color: BloqoColors.russianViolet
+                                    ),
+                                  if (inProgressCourses.isEmpty)
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            localizedText.editor_page_no_in_progress_courses,
+                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              color: BloqoColors.primaryText,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                            child: BloqoFilledButton(
+                                              onPressed: () {} /* TODO */,
+                                              color: BloqoColors.russianViolet,
+                                              text: localizedText.take_me_there_button,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                              )
-                            ]
-                          )
+                                    )
+                                ]
+                            )
                         )
                       ],
                     ),
@@ -332,8 +327,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       );
 
       BloqoUserCourseCreated userCourseCreated = await saveNewUserCourseCreated(
-        localizedText: localizedText,
-        course: course
+          localizedText: localizedText,
+          course: course
       );
 
       if(!context.mounted) return;
