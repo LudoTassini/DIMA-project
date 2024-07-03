@@ -183,5 +183,7 @@
   "chapters": "chapters",
   "sections": "sections",
   "view_statistics": "View statistics",
-  "dismiss": "Dismiss"
+  "dismiss": "Dismiss",
+  "editor_page_no_published_courses": "You have published no course for the community yet. Go create one now and publish it!",
+  "delete": "Delete"
 }

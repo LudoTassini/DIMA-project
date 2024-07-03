@@ -97,12 +97,25 @@ class BloqoCourseCreated extends StatelessWidget {
                 alignment: AlignmentDirectional.bottomEnd,
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                  child: BloqoFilledButton(
-                    color: BloqoColors.success,
-                    onPressed: () {} /* TODO */,
-                    text: localizedText.publish,
-                    fontSize: 16,
-                    height: 32,
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      BloqoFilledButton(
+                        color: BloqoColors.error,
+                        onPressed: () {} /* TODO */,
+                        text: localizedText.delete,
+                        fontSize: 16,
+                        height: 32,
+                      ),
+                      BloqoFilledButton(
+                        color: BloqoColors.success,
+                        onPressed: () {} /* TODO */,
+                        text: localizedText.publish,
+                        fontSize: 16,
+                        height: 32,
+                      )
+                    ]
                   ),
                 ),
               )

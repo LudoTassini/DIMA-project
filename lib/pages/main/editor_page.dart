@@ -269,7 +269,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            localizedText.editor_page_no_in_progress_courses,
+                                            localizedText.editor_page_no_published_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                               color: BloqoColors.primaryText,
                                               fontSize: 14,
@@ -278,7 +278,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
-                                              onPressed: () {} /* TODO */,
+                                              onPressed: () { tabController.animateTo(0); },
                                               color: BloqoColors.russianViolet,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,

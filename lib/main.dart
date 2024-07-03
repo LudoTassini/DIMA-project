@@ -44,17 +44,28 @@ Future<void> main() async {
   // Run app
   runApp(
     Phoenix(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => UserAppState()),
-          ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
-          ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
-          ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
-        ],
-        child: MyApp(
-          userIsLoggedIn: userIsLoggedIn,
+      child: GlobalLoaderOverlay(
+        useDefaultLoading: false,
+        overlayWidgetBuilder: (_) {
+          return Center(
+            child: LoadingAnimationWidget.prograssiveDots(
+              color: BloqoColors.russianViolet,
+              size: 100,
+            ),
+          );
+        },
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => UserAppState()),
+            ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
+            ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
+            ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
+          ],
+          child: MyApp(
+            userIsLoggedIn: userIsLoggedIn,
+          ),
         ),
-      ),
+      )
     ),
   );
 }
@@ -75,35 +86,24 @@ class MyApp extends StatelessWidget {
       theme: BloqoTheme.get(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: LoaderOverlay(
-        useDefaultLoading: false,
-        overlayWidgetBuilder: (_) {
-          return Center(
-            child: LoadingAnimationWidget.prograssiveDots(
-              color: BloqoColors.russianViolet,
-              size: 100,
-            ),
-          );
+      home: FutureBuilder<bool>(
+        future: _checkIfUserIsLoggedIn(localizedText: localizedText),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return BloqoMainContainer(child:
+              Center(
+                child: LoadingAnimationWidget.prograssiveDots(
+                  color: BloqoColors.seasalt,
+                  size: 100,
+                ),
+              )
+            );
+          } else if (snapshot.hasData && snapshot.data == true) {
+            return const MainPage();
+          } else {
+            return const WelcomePage();
+          }
         },
-        child: FutureBuilder<bool>(
-          future: _checkIfUserIsLoggedIn(localizedText: localizedText),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return BloqoMainContainer(child:
-                Center(
-                  child: LoadingAnimationWidget.prograssiveDots(
-                    color: BloqoColors.seasalt,
-                    size: 100,
-                  ),
-                )
-              );
-            } else if (snapshot.hasData && snapshot.data == true) {
-              return const MainPage();
-            } else {
-              return const WelcomePage();
-            }
-          },
-        ),
       ),
     );
   }
