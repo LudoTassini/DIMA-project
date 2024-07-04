@@ -40,8 +40,6 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   late int inProgressCoursesDisplayed;
   late int completedCoursesDisplayed;
 
-  bool _hasExecutedPostBuild = false;
-
   @override
   void initState() {
     super.initState();
@@ -53,11 +51,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     completedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(!_hasExecutedPostBuild) {
-        _hasExecutedPostBuild = true;
-        _executePostBuild(context);
-      }
+    WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      _checkHomePrivilege(context);
     });
   }
 
@@ -67,9 +62,9 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-  void _executePostBuild(BuildContext context) {
-    if (getComingFromHomeLearnPrivilege(context: context)) {
-      useComingFromHomeLearnPrivilege(context: context);
+  void _checkHomePrivilege(BuildContext context) {
+    if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
+      useComingFromHomeLearnPrivilegeFromAppState(context: context);
       BloqoCourse? course = getLearnCourseFromAppState(context: context);
       if (course != null) {
         widget.onPush(LearnCoursePage(onPush: widget.onPush, course: course));
@@ -84,10 +79,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
 
     List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
 
-    List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) =>
-      !(course.numSectionsCompleted/course.totNumSections == 1)).toList();
-    List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) =>
-      course.numSectionsCompleted/course.totNumSections == 1).toList();
+    List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
+    List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -133,66 +126,69 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                           ),
                         ),
                         BloqoSeasaltContainer(
-                            child: Column(
-                                children: [
-                                  if (inProgressCourses.isNotEmpty)
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
-                                            (index) {
-                                          BloqoUserCourseEnrolled course = inProgressCourses[index];
-                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showInProgress: true,
-                                                onPressed: () {}/* TODO */
-                                            );
-                                          }
-                                          else{
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showInProgress: true,
-                                                onPressed: () {}/* TODO */
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  if (inProgressCoursesDisplayed < inProgressCourses.length)
-                                    BloqoTextButton(
-                                        onPressed: loadMoreInProgressCourses,
-                                        text: localizedText.load_more_courses,
-                                        color: BloqoColors.russianViolet
-                                    ),
-                                  if (inProgressCourses.isEmpty)
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                      child: Column(
+                          child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                              child: Column(
+                                  children: [
+                                    if (inProgressCourses.isNotEmpty)
+                                      Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            localizedText.learn_page_no_in_progress_courses,
-                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                            child: BloqoFilledButton(
-                                              onPressed: () => widget.onNavigateToPage(2),
-                                              color: BloqoColors.russianViolet,
-                                              text: localizedText.take_me_there_button,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
+                                        children: List.generate(
+                                          inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
+                                              (index) {
+                                            BloqoUserCourseEnrolled course = inProgressCourses[index];
+                                            if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
+                                              return BloqoCourseEnrolled(
+                                                  course: course,
+                                                  showInProgress: true,
+                                                  onPressed: () {}/* TODO */
+                                              );
+                                            }
+                                            else{
+                                              return BloqoCourseEnrolled(
+                                                  course: course,
+                                                  showInProgress: true,
+                                                  onPressed: () {}/* TODO */
+                                              );
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    )
-                                ]
-                            )
-                        )
+                                    if (inProgressCoursesDisplayed < inProgressCourses.length)
+                                      BloqoTextButton(
+                                          onPressed: loadMoreInProgressCourses,
+                                          text: localizedText.load_more_courses,
+                                          color: BloqoColors.russianViolet
+                                      ),
+                                    if (inProgressCourses.isEmpty)
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              localizedText.learn_page_no_in_progress_courses,
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: BloqoColors.primaryText,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                              child: BloqoFilledButton(
+                                                onPressed: () => widget.onNavigateToPage(2),
+                                                color: BloqoColors.russianViolet,
+                                                text: localizedText.take_me_there_button,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                              ),
+                          ),
+                        ),
                       ],
                     ),
                     ListView(
@@ -210,6 +206,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                           ),
                         ),
                         BloqoSeasaltContainer(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                             child: Column(
                                 children: [
                                   if (completedCourses.isNotEmpty)
@@ -285,12 +283,22 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                               fontSize: 14,
                                             ),
                                           ),
+                                          Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                            child: BloqoFilledButton(
+                                              onPressed: () { tabController.animateTo(0); },
+                                              color: BloqoColors.russianViolet,
+                                              text: localizedText.take_me_there_button,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                    )
-                                ]
-                            )
-                        )
+                                    ),
+                                ],
+                              ),
+                            ),
+                        ),
                       ],
                     ),
                   ],
@@ -310,8 +318,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? learnCourse = Provider.of<LearnCourseAppState>(
-          context, listen: false).get();
+      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
         widget.onPush(LearnCoursePage(onPush: widget.onPush, course: learnCourse));
       } else {

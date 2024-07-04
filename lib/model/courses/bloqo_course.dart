@@ -25,8 +25,6 @@ class BloqoCourse{
   int numberOfEnrollments = 0;
   int numberOfCompletions = 0;
 
-  bool? isRated;
-
   BloqoCourse({
     required this.id,
     required this.name,
@@ -39,7 +37,6 @@ class BloqoCourse{
     this.reviews,
     this.numberOfEnrollments = 0,
     this.numberOfCompletions = 0,
-    this.isRated = false,
   });
 
   factory BloqoCourse.fromFirestore(
@@ -59,7 +56,6 @@ class BloqoCourse{
         reviews: data["reviews"],
         numberOfEnrollments: data["number_of_enrollments"],
         numberOfCompletions: data["number_of_completions"],
-        isRated: data["is_rated"],
     );
   }
 
@@ -76,7 +72,6 @@ class BloqoCourse{
       "reviews": reviews,
       "number_of_enrollments": numberOfEnrollments,
       "number_of_completions": numberOfCompletions,
-      "is_rated": isRated,
     };
   }
 

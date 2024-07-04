@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
     List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
 
+    userCoursesEnrolled = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
     userCoursesCreated = userCoursesCreated.where((course) => !course.published).toList();
 
     void loadMoreEnrolledCourses() {
@@ -121,12 +122,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                       ),
                     ),
                   if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
-                    BloqoTextButton(
-                      onPressed: loadMoreEnrolledCourses,
-                      text: localizedText.load_more_courses,
-                      color: BloqoColors.russianViolet
+                    Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                        child: BloqoTextButton(
+                          onPressed: loadMoreEnrolledCourses,
+                          text: localizedText.load_more_courses,
+                          color: BloqoColors.russianViolet,
+                        ),
                     ),
-
                   if (userCoursesEnrolled.isEmpty)
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -156,7 +159,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               ),
             ),
           ),
-
           Flexible(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
@@ -196,7 +198,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ],
                       ),
                     ),
-
                   if (userCoursesCreated.isNotEmpty)
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -213,17 +214,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     ),
 
                     if (_coursesCreatedDisplayed < userCoursesCreated.length)
-                      TextButton(
-                        onPressed: loadMoreCreatedCourses,
-                        child: Text(
-                          localizedText.load_more_courses,
-                          style: const TextStyle(
-                          color: BloqoColors.primaryText,
-                          decoration: TextDecoration.underline,
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                        child: BloqoTextButton(
+                            onPressed: loadMoreCreatedCourses,
+                            text: localizedText.load_more_courses,
+                            color: BloqoColors.russianViolet
                         ),
                       ),
-                    ),
-
                     if (userCoursesCreated.isEmpty)
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -269,6 +267,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       if (editorCourse != null &&
           editorCourse.id == userCourseCreated.courseId) {
         setComingFromHomeEditorPrivilegeToAppState(context: context);
+        context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
       } else {
         BloqoCourse course = await getCourseFromId(
@@ -292,11 +291,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Future<void> _goToLearnCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? learnCourse = Provider.of<LearnCourseAppState>(
-          context, listen: false).get();
+      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
       if (learnCourse != null &&
           learnCourse.id == userCourseEnrolled.courseId) {
-        setComingFromHomeLearnPrivilege(context: context);
+        setComingFromHomeLearnPrivilegeToAppState(context: context);
+        context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
       } else {
         BloqoCourse course = await getCourseFromId(

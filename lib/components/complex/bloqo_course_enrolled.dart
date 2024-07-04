@@ -126,13 +126,13 @@ class BloqoCourseEnrolled extends StatelessWidget{
                                   ),
                                   Flexible(
                                     child: Text(
-                                      course!.sectionName,
+                                      course?.sectionName ?? '', // this is because completed courses do not have a section name, but text can't be of type String?
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         fontSize: 20,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
                               ),
                           ),
                         ],
@@ -180,11 +180,13 @@ class BloqoCourseEnrolled extends StatelessWidget{
                         padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
                         child:
                           course!.isRated ? BloqoFilledButton(
-                            color: BloqoColors.inactiveTracker,
+                            color: BloqoColors.rated,
                             onPressed: () {
                               //TODO:
                             },
                             text: 'Rated',
+                            fontSize: 16,
+                            height: 32,
                           )
                           :  BloqoFilledButton(
                             color: BloqoColors.rate,
@@ -192,6 +194,8 @@ class BloqoCourseEnrolled extends StatelessWidget{
                             //TODO:
                             },
                             text: 'Rate',
+                            fontSize: 16,
+                            height: 32,
                           ),
                         ),
                       Padding(
@@ -202,6 +206,8 @@ class BloqoCourseEnrolled extends StatelessWidget{
                             //TODO:
                           },
                           text: 'Get Certificate',
+                          fontSize: 16,
+                          height: 32,
                         ),
                       ),
                     ],

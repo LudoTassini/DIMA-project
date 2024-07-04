@@ -11,11 +11,12 @@ class BloqoUserCourseEnrolled {
   final String courseName;
   int numSectionsCompleted;
   final int totNumSections;
-  String sectionName;
-  DocumentReference sectionToComplete;
+  String? sectionName;
+  DocumentReference? sectionToComplete;
   final String authorId;
   Timestamp lastUpdated;
   bool isRated;
+  bool isCompleted;
 
   BloqoUserCourseEnrolled({
     required this.courseId,
@@ -23,11 +24,12 @@ class BloqoUserCourseEnrolled {
     required this.courseName,
     required this.numSectionsCompleted,
     required this.totNumSections,
-    required this.sectionName,
-    required this.sectionToComplete,
+    this.sectionName,
+    this.sectionToComplete,
     required this.authorId,
     required this.lastUpdated,
     required this.isRated,
+    required this.isCompleted,
   });
 
   factory BloqoUserCourseEnrolled.fromFirestore(
@@ -37,15 +39,16 @@ class BloqoUserCourseEnrolled {
 
     return BloqoUserCourseEnrolled(
       courseId: data!['course_id'],
-      courseAuthor: data['course_author'],
+      courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
       numSectionsCompleted: data['num_sections_completed'],
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
-      authorId: data['author_id'],
+      authorId: data['course_author_id'],
       lastUpdated: data['last_updated'],
       isRated: data['is_rated'],
+      isCompleted: data['is_completed'],
     );
   }
 
@@ -61,6 +64,7 @@ class BloqoUserCourseEnrolled {
       'author_id': authorId,
       'last_updated': FieldValue.serverTimestamp(),
       'is_rated': isRated,
+      'is_completed': isCompleted,
     };
   }
 
@@ -71,6 +75,7 @@ class BloqoUserCourseEnrolled {
       toFirestore: (BloqoUserCourseEnrolled userCourse, _) => userCourse.toFirestore(),
     );
   }
+
 }
 
 // FIXME: limitare a tre corsi
@@ -78,7 +83,7 @@ Future<List<BloqoUserCourseEnrolled>> getUserCoursesEnrolled({required var local
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
     await checkConnectivity(localizedText: localizedText);
-    var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
+    var querySnapshot = await ref.where("enrolled_user_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseEnrolled> userCourses = [];
     for(var doc in querySnapshot.docs) {
       userCourses.add(doc.data());

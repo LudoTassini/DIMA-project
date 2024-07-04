@@ -8,46 +8,46 @@ class LearnCourseAppState with ChangeNotifier{
   BloqoCourse? _course;
   bool _fromHome = false;
 
-  BloqoCourse? get() {
+  BloqoCourse? _get() {
     return _course;
   }
 
-  void set(BloqoCourse course){
+  void _set(BloqoCourse course){
     _course = course;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  bool getComingFromHomePrivilege(){
+  bool _getComingFromHomePrivilege(){
     return _fromHome;
   }
 
-  void updateComingFromHomePrivilege(bool newValue){
+  void _updateComingFromHomePrivilege(bool newValue){
     _fromHome = newValue;
   }
 
 }
 
 BloqoCourse? getLearnCourseFromAppState({required BuildContext context}){
-  return Provider.of<LearnCourseAppState>(context, listen: false).get();
+  return Provider.of<LearnCourseAppState>(context, listen: false)._get();
 }
 
 void saveLearnCourseToAppState({required BuildContext context, required BloqoCourse course, bool comingFromHome = false}){
-  Provider.of<LearnCourseAppState>(context, listen: false).set(course);
+  Provider.of<LearnCourseAppState>(context, listen: false)._set(course);
   if(comingFromHome) {
-    Provider.of<LearnCourseAppState>(context, listen: false).updateComingFromHomePrivilege(true);
+    Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
 }
 
-bool getComingFromHomeLearnPrivilege({required BuildContext context}){
-  return Provider.of<LearnCourseAppState>(context, listen: false).getComingFromHomePrivilege();
+bool getComingFromHomeLearnPrivilegeFromAppState({required BuildContext context}){
+  return Provider.of<LearnCourseAppState>(context, listen: false)._getComingFromHomePrivilege();
 }
 
-void setComingFromHomeLearnPrivilege({required BuildContext context}){
-  Provider.of<LearnCourseAppState>(context, listen: false).updateComingFromHomePrivilege(true);
+void setComingFromHomeLearnPrivilegeToAppState({required BuildContext context}){
+  Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
 }
 
-void useComingFromHomeLearnPrivilege({required BuildContext context}){
-  Provider.of<LearnCourseAppState>(context, listen: false).updateComingFromHomePrivilege(false);
+void useComingFromHomeLearnPrivilegeFromAppState({required BuildContext context}){
+  Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(false);
 }
