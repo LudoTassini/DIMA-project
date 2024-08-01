@@ -121,7 +121,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           ),
                         ),
                         BloqoSeasaltContainer(
-                            child: Column(
+                          child: Consumer<EditorCourseAppState>(
+                            builder: (context, editorCourseAppState, _){
+                              return Column(
                                 children: [
                                   if (inProgressCourses.isNotEmpty)
                                     Column(
@@ -192,7 +194,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       ),
                                     )
                                 ]
-                            )
+                              );
+                            }
+                          )
                         )
                       ],
                     ),

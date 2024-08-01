@@ -63,6 +63,7 @@ class BloqoCourse{
       "id": id,
       "name": name,
       "author_id": authorId,
+      "description": description,
       "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
@@ -150,7 +151,7 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
       throw BloqoException(message: localizedText.course_not_found);
     }
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
-    await ref.doc(docSnapshot.id).update(updatedCourse);
+    await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":

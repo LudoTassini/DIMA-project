@@ -1,4 +1,6 @@
+import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
+import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -149,8 +151,8 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                           WidgetsBinding.instance.addPostFrameCallback((_) async {
                             try {
                               await _saveChanges(
-                                localizedText: localizedText,
-                                courseToUpdate: course,
+                                context: context,
+                                course: course,
                               );
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -182,13 +184,28 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _saveChanges({required var localizedText, required BloqoCourse courseToUpdate}) async {
-    courseToUpdate.name = courseNameController.text;
-    courseToUpdate.description = courseDescriptionController.text;
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course}) async {
+    var localizedText = getAppLocalizations(context);
+    course.name = courseNameController.text;
+    course.description = courseDescriptionController.text;
+
+    BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
+        !.firstWhere((userCourse) => userCourse.courseId == course.id);
+
+    updatedUserCourseCreated.courseName = course.name;
+
     await saveCourseChanges(
         localizedText: localizedText,
-        updatedCourse: courseToUpdate
+        updatedCourse: course
     );
+
+    await saveUserCourseCreatedChanges(
+        localizedText: localizedText,
+        updatedUserCourseCreated: updatedUserCourseCreated
+    );
+
+    if(!context.mounted) return;
+    saveEditorCourseToAppState(context: context, course: course);
   }
 
 }
