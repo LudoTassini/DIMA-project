@@ -1,14 +1,18 @@
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/editor_course_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
@@ -93,7 +97,7 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                                       )
                                   ),
                                   Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                                     child: Text(
                                       localizedText.chapters_header,
                                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -141,7 +145,28 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                       child: BloqoFilledButton(
                         color: BloqoColors.russianViolet,
                         onPressed: () async {
-                          // TODO
+                          context.loaderOverlay.show();
+                          WidgetsBinding.instance.addPostFrameCallback((_) async {
+                            try {
+                              await _saveChanges(
+                                localizedText: localizedText,
+                                courseToUpdate: course,
+                              );
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                BloqoSnackBar.get(child: Text(localizedText.done)),
+                              );
+                              context.loaderOverlay.hide();
+                            } on BloqoException catch (e) {
+                              if (!context.mounted) return;
+                              context.loaderOverlay.hide();
+                              showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: e.message,
+                              );
+                            }
+                          });
                         },
                         text: localizedText.save_changes,
                         icon: Icons.edit,
@@ -156,4 +181,14 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _saveChanges({required var localizedText, required BloqoCourse courseToUpdate}) async {
+    courseToUpdate.name = courseNameController.text;
+    courseToUpdate.description = courseDescriptionController.text;
+    await saveCourseChanges(
+        localizedText: localizedText,
+        updatedCourse: courseToUpdate
+    );
+  }
+
 }

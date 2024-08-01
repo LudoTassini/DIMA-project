@@ -1,5 +1,5 @@
 {
-  "generic_error": "We were unable to complete the action due to an unknown error. Please try again.",
+  "generic_error": "We are unable to complete the action due to an unknown error. Please try again.",
   "welcome": "Welcome!",
   "email": "Email",
   "email_hint": "e.g. bloqo@domain.com",

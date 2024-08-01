@@ -8,7 +8,7 @@ import '../../utils/uuid.dart';
 class BloqoCourse{
 
   final String id;
-  final String name;
+  String name;
   final String authorId;
   final bool published;
   final Timestamp creationDate;
@@ -138,5 +138,27 @@ Future<void> deleteCourse({required var localizedText, required String courseId}
       default:
         throw BloqoException(message: localizedText.generic_error);
     }
+  }
+}
+
+Future<void> saveCourseChanges({required var localizedText, required BloqoCourse updatedCourse}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
+    if (querySnapshot.docs.isEmpty) {
+      throw BloqoException(message: localizedText.course_not_found);
+    }
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedCourse);
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
