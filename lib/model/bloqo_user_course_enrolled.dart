@@ -10,7 +10,6 @@ class BloqoUserCourseEnrolled {
   final String courseAuthor;
   final String courseName;
   final String authorId;
-  final String? description;
 
   int numSectionsCompleted;
   final int totNumSections;
@@ -28,7 +27,6 @@ class BloqoUserCourseEnrolled {
     required this.courseId,
     required this.courseAuthor,
     required this.courseName,
-    this.description,
     required this.numSectionsCompleted,
     required this.totNumSections,
     this.sectionName,
@@ -49,7 +47,6 @@ class BloqoUserCourseEnrolled {
       courseId: data!['course_id'],
       courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
-      description: data["description"],
       numSectionsCompleted: data['num_sections_completed'],
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
@@ -67,7 +64,6 @@ class BloqoUserCourseEnrolled {
       'course_id': courseId,
       'course_author': courseAuthor,
       'course_name': courseName,
-      "description": description,
       'num_sections_completed': numSectionsCompleted,
       'tot_num_sections': totNumSections,
       'section_name': sectionName,

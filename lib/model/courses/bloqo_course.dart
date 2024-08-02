@@ -43,18 +43,18 @@ class BloqoCourse{
       ){
     final data = snapshot.data();
     return BloqoCourse(
-        id: data!["id"],
-        name: data["name"],
-        authorId: data["author_id"],
-        description: data["description"],
-        published: data["published"],
-        creationDate: data["creation_date"],
-        publicationDate: data["publication_date"],
-        public: data["is_public"],
-        chapters: data["chapters"],
-        reviews: data["reviews"],
-        numberOfEnrollments: data["number_of_enrollments"],
-        numberOfCompletions: data["number_of_completions"],
+      id: data!["id"],
+      name: data["name"],
+      authorId: data["author_id"],
+      description: data["description"],
+      published: data["published"],
+      creationDate: data["creation_date"],
+      publicationDate: data["publication_date"],
+      public: data["is_public"],
+      chapters: data["chapters"],
+      reviews: data["reviews"],
+      numberOfEnrollments: data["number_of_enrollments"],
+      numberOfCompletions: data["number_of_completions"],
     );
   }
 
@@ -71,7 +71,7 @@ class BloqoCourse{
       "chapters": chapters,
       "reviews": reviews,
       "number_of_enrollments": numberOfEnrollments,
-      "number_of_completions": numberOfCompletions,
+      "number_of_completions": numberOfCompletions
     };
   }
 
@@ -88,12 +88,12 @@ class BloqoCourse{
 Future<BloqoCourse> saveNewCourse({required var localizedText, required String authorId}) async {
   try {
     BloqoCourse course = BloqoCourse(
-      id: uuid(),
-      name: DateTime.now().toString(),
-      authorId: authorId,
-      creationDate: Timestamp.now(),
-      chapters: [],
-      reviews: []
+        id: uuid(),
+        name: DateTime.now().toString(),
+        authorId: authorId,
+        creationDate: Timestamp.now(),
+        chapters: [],
+        reviews: []
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);

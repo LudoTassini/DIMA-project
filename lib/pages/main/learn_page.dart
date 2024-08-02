@@ -13,7 +13,9 @@ import '../../components/complex/bloqo_course_enrolled.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_course.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -65,9 +67,9 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   void _checkHomePrivilege(BuildContext context) {
     if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
-      BloqoUserCourseEnrolled? course = getLearnCourseFromAppState(context: context);
+      BloqoCourse? course = getLearnCourseFromAppState(context: context);
       if (course != null) {
-        widget.onPush(LearnCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(LearnCoursePage(onPush: widget.onPush));
       }
     }
   }
@@ -76,11 +78,6 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-
-    List<BloqoUserCourseEnrolled> userCoursesEnrolled = Provider.of<UserCoursesEnrolledAppState>(context, listen: false).get() ?? [];
-
-    List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
-    List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -98,6 +95,9 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesCreatedAppState>(
         builder: (context, userCoursesCreatedAppState, _) {
+          List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
+          List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
+          List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
           return Column(
             children: [
               TabBar(
@@ -318,16 +318,32 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoUserCourseEnrolled? learnCourse = getLearnCourseFromAppState(context: context);
-      if (learnCourse != null && learnCourse.courseId == userCourseEnrolled.courseId) {
-        widget.onPush(LearnCoursePage(onPush: widget.onPush, course: learnCourse));
+      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
+      if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
+        widget.onPush(LearnCoursePage(onPush: widget.onPush));
       } else {
-        BloqoUserCourseEnrolled course = await getUserCourseEnrolledFromId(
+        BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in course.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
         if(!context.mounted) return;
-        saveLearnCourseToAppState(context: context, course: course);
+        saveLearnCourseToAppState(
+            context: context,
+            course: course,
+            chapters: chapters,
+            sections: sections,
+            enrollmentDate: userCourseEnrolled.enrollmentDate,
+            numSectionsCompleted: userCourseEnrolled.numSectionsCompleted,
+            totNumSections: userCourseEnrolled.totNumSections,
+            comingFromHome: true);
         context.loaderOverlay.hide();
-        widget.onPush(LearnCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(LearnCoursePage(onPush: widget.onPush));
       }
     } on BloqoException catch (e) {
       if(!context.mounted) return;
@@ -340,4 +356,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     }
   }
 
+}
+
+class BloqoUserCourse {
 }

@@ -1,10 +1,6 @@
-import 'package:bloqo/app_state/user_courses_created_app_state.dart';
-import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
-import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:flutter/material.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/editor_course_app_state.dart';
@@ -12,13 +8,10 @@ import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_editable_section.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
-import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
-import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
-import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 

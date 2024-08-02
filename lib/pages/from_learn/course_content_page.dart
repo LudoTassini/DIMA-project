@@ -1,12 +1,13 @@
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
+import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
@@ -30,8 +31,11 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
 
-    BloqoUserCourseEnrolled? course = getLearnCourseFromAppState(context: context);
-    List<BloqoChapter>? chapters = course?.chapters;
+    BloqoCourse? course = getLearnCourseFromAppState(context: context);
+    List<BloqoChapter>? chapters = course?.chapters.cast<BloqoChapter>();
+    Timestamp? enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context);
+    int? numSectionsCompleted = getLearnCourseNumSectionsCompletedFromAppState(context: context);
+    int? totNumSections = getLearnCourseTotNumSectionsFromAppState(context: context);
 
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -76,7 +80,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ...List.generate(
-                            chapters.length,
+                            chapters!.length,
                                 (index) {
                               var chapter = chapters[index];
 
@@ -102,11 +106,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                     ),
                                   ),
 
-                                  // Spread the list of BloqoCourseSection widgets
                                   ...List.generate(
-                                    chapter.sections!.length,
+                                    chapter.sections.length,
                                         (index) {
-                                          var section = chapter.sections![index];
+                                          var section = chapter.sections[index];
                                           return BloqoCourseSection(
                                             section: section,
                                             index: index,
@@ -130,7 +133,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                           children: [
                             Flexible(
                               child: Text(
-                                course?.enrollmentDate as String,
+                                enrollmentDate as String,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   color: BloqoColors.seasalt,
                                   ),
@@ -192,7 +195,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(40, 0, 40, 0),
               child: BloqoProgressBar(
-                percentage: course!.numSectionsCompleted/course.totNumSections,
+                percentage: numSectionsCompleted!/totNumSections!,
                 ),
               ),
 
@@ -208,7 +211,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                 ),
               ],
             ),
-
       ],
     ),
     );

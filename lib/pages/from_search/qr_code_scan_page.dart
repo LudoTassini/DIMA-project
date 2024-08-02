@@ -47,7 +47,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
             child: Center(
               child: (result != null)
                   ? Text('ID Utente: ${result!.code}') //TODO
-                  : Text('Scansiona un QR code'),
+                  : const Text('Scansiona un QR code'),
             ),
           )
         ],

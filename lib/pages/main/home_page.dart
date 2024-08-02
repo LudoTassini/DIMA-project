@@ -114,7 +114,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                             (index) {
                               BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
-                              return BloqoCourseEnrolled(course: course);
+                              return BloqoCourseEnrolled(
+                                  course: course,
+                                  showInProgress: true,
+                                  onPressed: () {
+                                    // await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                  }/* TODO */
+                              );
                             },
                           ),
                         ),
@@ -340,17 +346,33 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Future<void> _goToLearnCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoUserCourseEnrolled? learnCourse = getLearnCourseFromAppState(context: context);
+      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
       if (learnCourse != null &&
-          learnCourse.courseId == userCourseEnrolled.courseId) {
+          learnCourse.id == userCourseEnrolled.courseId) {
         setComingFromHomeLearnPrivilegeToAppState(context: context);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
       } else {
-        BloqoUserCourseEnrolled course = await getUserCourseEnrolledFromId(
+        BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in course.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
         if (!context.mounted) return;
-        saveLearnCourseToAppState(context: context, course: course, comingFromHome: true);
+        saveLearnCourseToAppState(
+            context: context,
+            course: course,
+            chapters: chapters,
+            sections: sections,
+            enrollmentDate: userCourseEnrolled.enrollmentDate,
+            numSectionsCompleted: userCourseEnrolled.numSectionsCompleted,
+            totNumSections: userCourseEnrolled.totNumSections,
+            comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
       }
