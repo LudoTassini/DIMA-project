@@ -40,7 +40,6 @@ dependencies:
   firebase_auth: ^5.1.1
   cloud_firestore: ^5.0.2
   provider: ^6.1.2
-  intl: any
   shared_preferences: ^2.2.3
   loader_overlay: ^4.0.0
   loading_animation_widget: ^1.2.1
@@ -56,7 +55,6 @@ dependencies:
   firebase_storage: ^12.1.0
   image_picker: ^1.1.1
 
-  flutter_gen: any
 flutter_launcher_icons:
   image_path: assets/images/bloqo_logo.png
   android: true

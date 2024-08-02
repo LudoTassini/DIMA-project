@@ -13,8 +13,8 @@ class BloqoCourse{
   final bool published;
   final Timestamp creationDate;
   final List<dynamic> chapters;
-  final List<dynamic> reviews;
 
+  List<dynamic>? reviews;
   String? description;
   Timestamp? publicationDate;
   bool? public;
@@ -28,7 +28,7 @@ class BloqoCourse{
     required this.authorId,
     required this.creationDate,
     required this.chapters,
-    required this.reviews,
+    this.reviews,
     this.description,
     this.published = false,
     this.publicationDate,

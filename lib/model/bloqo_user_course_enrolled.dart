@@ -18,7 +18,7 @@ class BloqoUserCourseEnrolled {
   DocumentReference? sectionToComplete;
 
   Timestamp lastUpdated;
-  Timestamp enrollmentDate;
+  final Timestamp enrollmentDate;
 
   bool isRated;
   bool isCompleted;

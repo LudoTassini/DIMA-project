@@ -1,11 +1,11 @@
 import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/pages/from_learn/course_content_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/learn_course_app_state.dart';
-import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/buttons/bloqo_text_button.dart';
@@ -19,7 +19,6 @@ import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
-import '../from_learn/learn_course_page.dart';
 
 class LearnPage extends StatefulWidget {
 
@@ -69,7 +68,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
       BloqoCourse? course = getLearnCourseFromAppState(context: context);
       if (course != null) {
-        widget.onPush(LearnCoursePage(onPush: widget.onPush));
+        widget.onPush(CourseContentPage(onPush: widget.onPush));
       }
     }
   }
@@ -93,8 +92,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Consumer<UserCoursesCreatedAppState>(
-        builder: (context, userCoursesCreatedAppState, _) {
+      child: Consumer<UserCoursesEnrolledAppState>(
+        builder: (context, userCoursesEnrolledAppState, _) {
           List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
           List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
           List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
@@ -141,14 +140,18 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                               return BloqoCourseEnrolled(
                                                   course: course,
                                                   showInProgress: true,
-                                                  onPressed: () {}/* TODO */
+                                                  onPressed: () async {
+                                                    await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                                  }
                                               );
                                             }
                                             else{
                                               return BloqoCourseEnrolled(
                                                   course: course,
                                                   showInProgress: true,
-                                                  onPressed: () {}/* TODO */
+                                                  onPressed: () async {
+                                                    await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                                  }
                                               );
                                             }
                                           },
@@ -222,7 +225,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                                 course: course,
                                                 showCompleted: true,
                                                 onPressed: () async {
-                                                  //TODO
+                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
                                                 },
                                             );
                                           }
@@ -232,7 +235,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                                 showCompleted: true,
                                                 padding: const EdgeInsetsDirectional.all(15),
                                                 onPressed: () async {
-                                                  //TODO
+                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
                                                 },
                                             );
                                           }
@@ -320,7 +323,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     try {
       BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
-        widget.onPush(LearnCoursePage(onPush: widget.onPush));
+        widget.onPush(CourseContentPage(onPush: widget.onPush));
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
@@ -343,7 +346,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
             totNumSections: userCourseEnrolled.totNumSections,
             comingFromHome: true);
         context.loaderOverlay.hide();
-        widget.onPush(LearnCoursePage(onPush: widget.onPush));
+        widget.onPush(CourseContentPage(onPush: widget.onPush));
       }
     } on BloqoException catch (e) {
       if(!context.mounted) return;

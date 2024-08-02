@@ -71,3 +71,20 @@ Future<List<BloqoSection>> getSectionsFromIds({required var localizedText, requi
     }
   }
 }
+
+Future<BloqoSection> getSectionFromId({required var localizedText, required String sectionId}) async {
+  try {
+    var ref = BloqoSection.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
+    BloqoSection section = querySnapshot.docs.first.data();
+    return section;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}

@@ -81,6 +81,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           Consumer<UserCoursesEnrolledAppState>(
             builder: (context, userCoursesEnrolledAppState, _) {
               List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
+              userCoursesEnrolled = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
               return BloqoSeasaltContainer(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
@@ -117,9 +118,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               return BloqoCourseEnrolled(
                                   course: course,
                                   showInProgress: true,
-                                  onPressed: () {
-                                    // await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
-                                  }/* TODO */
+                                  onPressed: () async {
+                                    await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                  },
                               );
                             },
                           ),
