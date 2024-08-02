@@ -37,6 +37,24 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
+  void _updateUserCourseCreatedChaptersNumber(String courseId, int newChaptersNum){
+    if(_userCourses != null) {
+      _userCourses!.where((userCourse) => userCourse.courseId == courseId).first.numChaptersCreated = newChaptersNum;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void _updateUserCourseCreatedName(String courseId, String newName){
+    if(_userCourses != null) {
+      _userCourses!.where((userCourse) => userCourse.courseId == courseId).first.courseName = newName;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
 }
 
 void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreated> courses}){
@@ -59,4 +77,12 @@ void addUserCourseCreatedToAppState({required BuildContext context, required Blo
 
 void deleteUserCourseCreatedFromAppState({required BuildContext context, required BloqoUserCourseCreated userCourseCreated}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false)._deleteUserCourseCreated(userCourseCreated);
+}
+
+void updateUserCourseCreatedNameInAppState({required BuildContext context, required String courseId, required String newName}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedName(courseId, newName);
+}
+
+void updateUserCourseCreatedChaptersNumberInAppState({required BuildContext context, required String courseId, required int newChaptersNum}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedChaptersNumber(courseId, newChaptersNum);
 }

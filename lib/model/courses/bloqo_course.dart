@@ -142,6 +142,25 @@ Future<void> deleteCourse({required var localizedText, required String courseId}
   }
 }
 
+Future<void> deleteChapterFromCourse({required var localizedText, required String courseId, required String chapterId}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoCourse course = docSnapshot.data();
+    course.chapters.remove(chapterId);
+    await ref.doc(docSnapshot.id).update(course.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
 Future<void> saveCourseChanges({required var localizedText, required BloqoCourse updatedCourse}) async {
   try {
     var ref = BloqoCourse.getRef();

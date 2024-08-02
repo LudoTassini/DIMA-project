@@ -1,6 +1,7 @@
 import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -282,7 +283,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       addUserCourseCreatedToAppState(
           context: context, userCourseCreated: userCourseCreated);
 
-      saveEditorCourseToAppState(context: context, course: course, comingFromHome: true);
+      saveEditorCourseToAppState(context: context, course: course, chapters: [], comingFromHome: true);
 
       context.loaderOverlay.hide();
 
@@ -310,8 +311,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
         if (!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course, comingFromHome: true);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
       }

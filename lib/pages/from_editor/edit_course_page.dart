@@ -1,6 +1,8 @@
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
+import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/bloqo_user_course_created.dart';
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -61,6 +63,7 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
         child: Consumer<EditorCourseAppState>(
             builder: (context, editorCourseAppState, _){
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
+              List<BloqoChapter> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
               courseNameController.text = course.name;
               if(course.description != null) {
                 courseDescriptionController.text = course.description!;
@@ -98,22 +101,25 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                                         isTextArea: true,
                                       )
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                                    child: Text(
-                                      localizedText.chapters_header,
-                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                        color: BloqoColors.seasalt,
-                                        fontSize: 30,
-                                      ),
-                                    ),
-                                  ),
                                   BloqoSeasaltContainer(
                                       child: Column(
                                           children: [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  localizedText.chapters_header,
+                                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                    color: BloqoColors.russianViolet,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              )
+                                            ),
                                             if(course.chapters.isEmpty)
                                               Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 15),
                                                 child: Text(
                                                   localizedText.edit_course_page_no_chapters,
                                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -123,13 +129,62 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                                                 ),
                                               ),
                                             if(course.chapters.isNotEmpty)
-                                              Container(),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: List.generate(
+                                                  course.chapters.length,
+                                                  (index) {
+                                                    BloqoChapter chapter = chapters[index];
+                                                    if (index < course.chapters.length - 1) {
+                                                      return BloqoEditableChapter(
+                                                          course: course,
+                                                          chapter: chapter,
+                                                          onPressed: () async {
+                                                            // TODO
+                                                          }
+                                                      );
+                                                    }
+                                                    else{
+                                                      return BloqoEditableChapter(
+                                                        course: course,
+                                                        chapter: chapter,
+                                                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                                                        onPressed: () async {
+                                                          // TODO
+                                                        }
+                                                      );
+                                                    }
+                                                  }
+                                                ),
+                                              ),
                                             Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                               child: BloqoFilledButton(
                                                 color: BloqoColors.russianViolet,
                                                 onPressed: () async {
-                                                  // TODO
+                                                  context.loaderOverlay.show();
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                                                    try {
+                                                      await _addChapter(
+                                                        context: context,
+                                                        course: course,
+                                                        chapters: chapters
+                                                      );
+                                                      if (!context.mounted) return;
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        BloqoSnackBar.get(child: Text(localizedText.done)),
+                                                      );
+                                                      context.loaderOverlay.hide();
+                                                    } on BloqoException catch (e) {
+                                                      if (!context.mounted) return;
+                                                      context.loaderOverlay.hide();
+                                                      showBloqoErrorAlert(
+                                                        context: context,
+                                                        title: localizedText.error_title,
+                                                        description: e.message,
+                                                      );
+                                                    }
+                                                  });
                                                 },
                                                 text: localizedText.add_chapter,
                                                 icon: Icons.add,
@@ -153,6 +208,7 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
                               await _saveChanges(
                                 context: context,
                                 course: course,
+                                chapters: chapters
                               );
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -184,7 +240,20 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course}) async {
+  Future<void> _addChapter({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
+    var localizedText = getAppLocalizations(context)!;
+
+    BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
+
+    course.chapters.add(chapter.id);
+    chapters.add(chapter);
+
+    if(!context.mounted) return;
+    updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
+    _saveChanges(context: context, course: course, chapters: chapters);
+  }
+
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
     var localizedText = getAppLocalizations(context);
     course.name = courseNameController.text;
     course.description = courseDescriptionController.text;
@@ -205,7 +274,8 @@ class _EditorPageState extends State<EditCoursePage> with AutomaticKeepAliveClie
     );
 
     if(!context.mounted) return;
-    saveEditorCourseToAppState(context: context, course: course);
+    updateUserCourseCreatedNameInAppState(context: context, courseId: course.id, newName: course.name);
+    saveEditorCourseToAppState(context: context, course: course, chapters: chapters);
   }
 
 }

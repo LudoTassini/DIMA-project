@@ -194,5 +194,6 @@
   "add_chapter": "Add Chapter",
   "save_changes": "Save Changes",
   "chapters_header": "Chapters",
-  "edit_course_page_no_chapters": "This course has no chapters yet. Create one now!"
+  "edit_course_page_no_chapters": "This course has no chapters yet. Create one now!",
+  "chapter": "Chapter"
 }

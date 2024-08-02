@@ -14,6 +14,7 @@ import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/courses/bloqo_chapter.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -332,7 +333,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       context.loaderOverlay.hide();
 
-      saveEditorCourseToAppState(context: context, course: course);
+      saveEditorCourseToAppState(context: context, course: course, chapters: []);
 
       widget.onPush(EditCoursePage(onPush: widget.onPush));
 
@@ -359,8 +360,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
         if(!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters);
         context.loaderOverlay.hide();
         widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
