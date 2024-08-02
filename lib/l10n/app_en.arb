@@ -1,5 +1,5 @@
 {
-  "generic_error": "We were unable to complete the action due to an unknown error. Please try again.",
+  "generic_error": "We are unable to complete the action due to an unknown error. Please try again.",
   "welcome": "Welcome!",
   "email": "Email",
   "email_hint": "e.g. bloqo@domain.com",
@@ -186,5 +186,20 @@
   "dismiss": "Dismiss",
   "editor_page_no_published_courses": "You have published no course for the community yet. Go create one now and publish it!",
   "delete": "Delete",
-  "delete_course_confirmation": "By confirming, this course will be permanently deleted and cannot be restored in any way. Do you wish to proceed?"
+  "delete_course_confirmation": "By confirming, this course will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
+  "name": "Name",
+  "description": "Description",
+  "editor_course_name_hint": "Enter the course name here",
+  "editor_course_description_hint": "Enter the course description here",
+  "editor_chapter_name_hint": "Enter the chapter name here",
+  "editor_chapter_description_hint": "Enter the chapter description here",
+  "add_chapter": "Add Chapter",
+  "add_section": "Add Section",
+  "save_changes": "Save Changes",
+  "chapters_header": "Chapters",
+  "sections_header": "Sections",
+  "edit_course_page_no_chapters": "This course has no chapters yet. Create one now!",
+  "edit_chapter_page_no_sections": "This chapter has no sections yet. Create one now!",
+  "chapter": "Chapter",
+  "section": "Section"
 }

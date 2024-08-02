@@ -4,23 +4,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
-import '../bloqo_review.dart';
-import 'bloqo_chapter.dart';
 
 class BloqoCourse{
 
   final String id;
-  final String name;
+  String name;
   final String authorId;
   final bool published;
+  final Timestamp creationDate;
+  final List<dynamic> chapters;
+  final List<dynamic> reviews;
 
-  Timestamp? creationDate;
+  String? description;
   Timestamp? publicationDate;
   bool? public;
-
-  List<BloqoChapter>? chapters;
-
-  List<BloqoReview>? reviews;
 
   int numberOfEnrollments = 0;
   int numberOfCompletions = 0;
@@ -29,12 +26,13 @@ class BloqoCourse{
     required this.id,
     required this.name,
     required this.authorId,
+    required this.creationDate,
+    required this.chapters,
+    required this.reviews,
+    this.description,
     this.published = false,
-    this.creationDate,
     this.publicationDate,
     this.public,
-    this.chapters,
-    this.reviews,
     this.numberOfEnrollments = 0,
     this.numberOfCompletions = 0,
   });
@@ -48,6 +46,7 @@ class BloqoCourse{
         id: data!["id"],
         name: data["name"],
         authorId: data["author_id"],
+        description: data["description"],
         published: data["published"],
         creationDate: data["creation_date"],
         publicationDate: data["publication_date"],
@@ -64,6 +63,7 @@ class BloqoCourse{
       "id": id,
       "name": name,
       "author_id": authorId,
+      "description": description,
       "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
@@ -90,7 +90,10 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
     BloqoCourse course = BloqoCourse(
       id: uuid(),
       name: DateTime.now().toString(),
-      authorId: authorId
+      authorId: authorId,
+      creationDate: Timestamp.now(),
+      chapters: [],
+      reviews: []
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
@@ -136,5 +139,46 @@ Future<void> deleteCourse({required var localizedText, required String courseId}
       default:
         throw BloqoException(message: localizedText.generic_error);
     }
+  }
+}
+
+Future<void> deleteChapterFromCourse({required var localizedText, required String courseId, required String chapterId}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoCourse course = docSnapshot.data();
+    course.chapters.remove(chapterId);
+    await ref.doc(docSnapshot.id).update(course.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> saveCourseChanges({required var localizedText, required BloqoCourse updatedCourse}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
+    if (querySnapshot.docs.isEmpty) {
+      throw BloqoException(message: localizedText.course_not_found);
+    }
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

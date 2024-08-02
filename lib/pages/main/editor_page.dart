@@ -14,6 +14,8 @@ import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/courses/bloqo_chapter.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -64,7 +66,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       useComingFromHomeEditorPrivilegeFromAppState(context: context);
       BloqoCourse? course = getEditorCourseFromAppState(context: context);
       if (course != null) {
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
     }
   }
@@ -73,11 +75,6 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-
-    List<BloqoUserCourseCreated> userCoursesCreated = Provider.of<UserCoursesCreatedAppState>(context, listen: false).get() ?? [];
-
-    List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
-    List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -95,6 +92,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesCreatedAppState>(
         builder: (context, userCoursesCreatedAppState, _) {
+          List<BloqoUserCourseCreated> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
+          List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
+          List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
           return Column(
             children: [
               TabBar(
@@ -123,7 +123,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           ),
                         ),
                         BloqoSeasaltContainer(
-                            child: Column(
+                          child: Consumer<EditorCourseAppState>(
+                            builder: (context, editorCourseAppState, _){
+                              return Column(
                                 children: [
                                   if (inProgressCourses.isNotEmpty)
                                     Column(
@@ -182,7 +184,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
-                                              onPressed: () {} /* TODO */,
+                                              onPressed: () async {
+                                                await _createNewCourse(context: context, localizedText: localizedText);
+                                              },
                                               color: BloqoColors.russianViolet,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
@@ -192,7 +196,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       ),
                                     )
                                 ]
-                            )
+                              );
+                            }
+                          )
                         )
                       ],
                     ),
@@ -328,9 +334,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       context.loaderOverlay.hide();
 
-      saveEditorCourseToAppState(context: context, course: course);
+      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {});
 
-      widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+      widget.onPush(EditCoursePage(onPush: widget.onPush));
 
     } on BloqoException catch (e){
 
@@ -350,14 +356,23 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     try {
       BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: editorCourse));
+        context.loaderOverlay.hide();
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in course.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
         if(!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections);
         context.loaderOverlay.hide();
-        widget.onPush(EditCoursePage(onPush: widget.onPush, course: course));
+        widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
     } on BloqoException catch (e) {
       if(!context.mounted) return;
