@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
+import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class LearnCoursePage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoCourse course;
+  final BloqoUserCourseEnrolled course;
 
   @override
   State<LearnCoursePage> createState() => _LearnPageState();
@@ -35,11 +36,11 @@ class _LearnPageState extends State<LearnCoursePage> with AutomaticKeepAliveClie
               return Column(
                   children: [
                     BloqoBreadcrumbs(breadcrumbs: [
-                      widget.course.name
+                      widget.course.courseName
                     ]),
                     Expanded(
                         child: Text(
-                            widget.course.name
+                            widget.course.courseName
                         )
                     )
                   ]

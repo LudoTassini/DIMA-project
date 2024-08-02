@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/bloqo_user_course_enrolled.dart';
 import '../model/courses/bloqo_course.dart';
 
 class LearnCourseAppState with ChangeNotifier{
 
-  BloqoCourse? _course;
+  BloqoUserCourseEnrolled? _course;
   bool _fromHome = false;
 
-  BloqoCourse? _get() {
+  BloqoUserCourseEnrolled? _get() {
     return _course;
   }
 
-  void _set(BloqoCourse course){
+  void _set(BloqoUserCourseEnrolled course){
     _course = course;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
@@ -29,11 +30,11 @@ class LearnCourseAppState with ChangeNotifier{
 
 }
 
-BloqoCourse? getLearnCourseFromAppState({required BuildContext context}){
+BloqoUserCourseEnrolled? getLearnCourseFromAppState({required BuildContext context}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._get();
 }
 
-void saveLearnCourseToAppState({required BuildContext context, required BloqoCourse course, bool comingFromHome = false}){
+void saveLearnCourseToAppState({required BuildContext context, required BloqoUserCourseEnrolled course, bool comingFromHome = false}){
   Provider.of<LearnCourseAppState>(context, listen: false)._set(course);
   if(comingFromHome) {
     Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);

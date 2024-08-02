@@ -90,7 +90,7 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
     BloqoCourse course = BloqoCourse(
       id: uuid(),
       name: DateTime.now().toString(),
-      authorId: authorId
+      authorId: authorId,
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);

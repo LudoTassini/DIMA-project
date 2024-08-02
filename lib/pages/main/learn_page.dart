@@ -65,7 +65,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   void _checkHomePrivilege(BuildContext context) {
     if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
-      BloqoCourse? course = getLearnCourseFromAppState(context: context);
+      BloqoUserCourseEnrolled? course = getLearnCourseFromAppState(context: context);
       if (course != null) {
         widget.onPush(LearnCoursePage(onPush: widget.onPush, course: course));
       }
@@ -318,11 +318,11 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
-      if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
+      BloqoUserCourseEnrolled? learnCourse = getLearnCourseFromAppState(context: context);
+      if (learnCourse != null && learnCourse.courseId == userCourseEnrolled.courseId) {
         widget.onPush(LearnCoursePage(onPush: widget.onPush, course: learnCourse));
       } else {
-        BloqoCourse course = await getCourseFromId(
+        BloqoUserCourseEnrolled course = await getUserCourseEnrolledFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
         if(!context.mounted) return;
         saveLearnCourseToAppState(context: context, course: course);

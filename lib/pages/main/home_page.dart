@@ -116,7 +116,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           return BloqoCourseEnrolled(
                               course: course,
                               showInProgress: true,
-                              onPressed: () {}/* TODO */
+                              onPressed: () {
+                                // await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                              }/* TODO */
                           );
                         },
                       ),
@@ -291,14 +293,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Future<void> _goToLearnCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
+      BloqoUserCourseEnrolled? learnCourse = getLearnCourseFromAppState(context: context);
       if (learnCourse != null &&
-          learnCourse.id == userCourseEnrolled.courseId) {
+          learnCourse.courseId == userCourseEnrolled.courseId) {
         setComingFromHomeLearnPrivilegeToAppState(context: context);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
       } else {
-        BloqoCourse course = await getCourseFromId(
+        BloqoUserCourseEnrolled course = await getUserCourseEnrolledFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
         if (!context.mounted) return;
         saveLearnCourseToAppState(context: context, course: course, comingFromHome: true);

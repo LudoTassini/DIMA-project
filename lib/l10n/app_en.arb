@@ -192,5 +192,8 @@
   "learn_page_no_completed_courses": "You have no completed courses.",
   "editor_page_no_published_courses": "You have published no course for the community yet. Go create one now and publish it!",
   "delete": "Delete",
-  "delete_course_confirmation": "By confirming, this course will be permanently deleted and cannot be restored in any way. Do you wish to proceed?"
+  "delete_course_confirmation": "By confirming, this course will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
+  "description": "Description",
+  "content": "Content",
+  "continue_learning": "Continue learning!"
 }

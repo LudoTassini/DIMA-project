@@ -9,12 +9,18 @@ class BloqoUserCourseEnrolled {
   final String courseId;
   final String courseAuthor;
   final String courseName;
+  final String authorId;
+  final String? description;
+
   int numSectionsCompleted;
   final int totNumSections;
+
   String? sectionName;
   DocumentReference? sectionToComplete;
-  final String authorId;
+
   Timestamp lastUpdated;
+  Timestamp enrollmentDate;
+
   bool isRated;
   bool isCompleted;
 
@@ -22,12 +28,14 @@ class BloqoUserCourseEnrolled {
     required this.courseId,
     required this.courseAuthor,
     required this.courseName,
+    this.description,
     required this.numSectionsCompleted,
     required this.totNumSections,
     this.sectionName,
     this.sectionToComplete,
     required this.authorId,
     required this.lastUpdated,
+    required this.enrollmentDate,
     required this.isRated,
     required this.isCompleted,
   });
@@ -41,12 +49,14 @@ class BloqoUserCourseEnrolled {
       courseId: data!['course_id'],
       courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
+      description: data["description"],
       numSectionsCompleted: data['num_sections_completed'],
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
       authorId: data['course_author_id'],
       lastUpdated: data['last_updated'],
+      enrollmentDate: data['enrollment_date'],
       isRated: data['is_rated'],
       isCompleted: data['is_completed'],
     );
@@ -57,12 +67,14 @@ class BloqoUserCourseEnrolled {
       'course_id': courseId,
       'course_author': courseAuthor,
       'course_name': courseName,
+      "description": description,
       'num_sections_completed': numSectionsCompleted,
       'tot_num_sections': totNumSections,
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,
       'author_id': authorId,
       'last_updated': FieldValue.serverTimestamp(),
+      'enrollment_date': enrollmentDate,
       'is_rated': isRated,
       'is_completed': isCompleted,
     };
@@ -91,6 +103,23 @@ Future<List<BloqoUserCourseEnrolled>> getUserCoursesEnrolled({required var local
     return userCourses;
   } on FirebaseAuthException catch(e){
     switch(e.code){
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<BloqoUserCourseEnrolled> getUserCourseEnrolledFromId({required var localizedText, required String courseId}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
+    BloqoUserCourseEnrolled course = querySnapshot.docs.first.data();
+    return course;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
       case "network-request-failed":
         throw BloqoException(message: localizedText.network_error);
       default:
