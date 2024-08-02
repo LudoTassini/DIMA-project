@@ -15,6 +15,7 @@ import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/courses/bloqo_chapter.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -333,7 +334,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       context.loaderOverlay.hide();
 
-      saveEditorCourseToAppState(context: context, course: course, chapters: []);
+      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {});
 
       widget.onPush(EditCoursePage(onPush: widget.onPush));
 
@@ -361,8 +362,15 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
         List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in course.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
         if(!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course, chapters: chapters);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections);
         context.loaderOverlay.hide();
         widget.onPush(EditCoursePage(onPush: widget.onPush));
       }

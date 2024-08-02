@@ -20,6 +20,7 @@ class BloqoBreadcrumbs extends StatelessWidget {
           i < breadcrumbs.length - 1 ? BloqoTextButton(
         text: breadcrumbs[i],
         color: BloqoColors.seasalt,
+        fontSize: 20,
         onPressed: () {
           int popCount = breadcrumbs.length - i - 1;
           for (int j = 0; j < popCount; j++) {
@@ -48,12 +49,11 @@ class BloqoBreadcrumbs extends StatelessWidget {
       child: Align(
         alignment: const AlignmentDirectional(-1, -1),
         child: Wrap(
-          spacing: 10,
-          runSpacing: 10,
+          spacing: 5,
+          runSpacing: 5,
           children: breadcrumbWidgets,
         )
       )
     );
   }
 }
-

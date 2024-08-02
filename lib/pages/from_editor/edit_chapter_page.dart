@@ -9,49 +9,52 @@ import 'package:provider/provider.dart';
 
 import '../../app_state/editor_course_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/complex/bloqo_editable_section.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_course.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
-import 'edit_chapter_page.dart';
 
-class EditCoursePage extends StatefulWidget {
-  const EditCoursePage({
+class EditChapterPage extends StatefulWidget {
+  const EditChapterPage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.chapterId
   });
 
   final void Function(Widget) onPush;
+  final String chapterId;
 
   @override
-  State<EditCoursePage> createState() => _EditCoursePageState();
+  State<EditChapterPage> createState() => _EditChapterPageState();
 }
 
-class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAliveClientMixin<EditCoursePage> {
+class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAliveClientMixin<EditChapterPage> {
 
-  final formKeyCourseName = GlobalKey<FormState>();
-  final formKeyCourseDescription = GlobalKey<FormState>();
+  final formKeyChapterName = GlobalKey<FormState>();
+  final formKeyChapterDescription = GlobalKey<FormState>();
 
-  late TextEditingController courseNameController;
-  late TextEditingController courseDescriptionController;
+  late TextEditingController chapterNameController;
+  late TextEditingController chapterDescriptionController;
 
   @override
   void initState() {
     super.initState();
-    courseNameController = TextEditingController();
-    courseDescriptionController = TextEditingController();
+    chapterNameController = TextEditingController();
+    chapterDescriptionController = TextEditingController();
   }
 
   @override
   void dispose() {
-    courseNameController.dispose();
-    courseDescriptionController.dispose();
+    chapterNameController.dispose();
+    chapterDescriptionController.dispose();
     super.dispose();
   }
 
@@ -64,40 +67,42 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
         child: Consumer<EditorCourseAppState>(
             builder: (context, editorCourseAppState, _){
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
-              List<BloqoChapter> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
-              courseNameController.text = course.name;
-              if(course.description != null) {
-                courseDescriptionController.text = course.description!;
+              BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
+              List<BloqoSection> sections = getEditorCourseChapterSectionsFromAppState(context: context, chapterId: widget.chapterId) ?? [];
+              chapterNameController.text = chapter.name;
+              if(chapter.description != null) {
+                chapterDescriptionController.text = chapter.description!;
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BloqoBreadcrumbs(breadcrumbs: [
-                      course.name
+                      course.name,
+                      chapter.name
                     ]),
                     Expanded(
                         child: SingleChildScrollView(
                             child: Column(
                                 children: [
                                   Form(
-                                      key: formKeyCourseName,
+                                      key: formKeyChapterName,
                                       child: BloqoTextField(
-                                        formKey: formKeyCourseName,
-                                        controller: courseNameController,
+                                        formKey: formKeyChapterName,
+                                        controller: chapterNameController,
                                         labelText: localizedText.name,
-                                        hintText: localizedText.editor_course_name_hint,
-                                        maxInputLength: Constants.maxCourseNameLength,
+                                        hintText: localizedText.editor_chapter_name_hint,
+                                        maxInputLength: Constants.maxChapterNameLength,
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                                       )
                                   ),
                                   Form(
-                                      key: formKeyCourseDescription,
+                                      key: formKeyChapterDescription,
                                       child: BloqoTextField(
-                                        formKey: formKeyCourseDescription,
-                                        controller: courseDescriptionController,
+                                        formKey: formKeyChapterDescription,
+                                        controller: chapterDescriptionController,
                                         labelText: localizedText.description,
-                                        hintText: localizedText.editor_course_description_hint,
-                                        maxInputLength: Constants.maxCourseDescriptionLength,
+                                        hintText: localizedText.editor_chapter_description_hint,
+                                        maxInputLength: Constants.maxChapterDescriptionLength,
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                         isTextArea: true,
                                       )
@@ -106,56 +111,56 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                       child: Column(
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                              child: Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  localizedText.chapters_header,
-                                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                    color: BloqoColors.russianViolet,
-                                                    fontSize: 30,
+                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                                child: Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Text(
+                                                    localizedText.sections_header,
+                                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                      color: BloqoColors.russianViolet,
+                                                      fontSize: 30,
+                                                    ),
                                                   ),
-                                                ),
-                                              )
+                                                )
                                             ),
-                                            if(course.chapters.isEmpty)
+                                            if(sections.isEmpty)
                                               Padding(
                                                 padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 15),
                                                 child: Text(
-                                                  localizedText.edit_course_page_no_chapters,
+                                                  localizedText.edit_chapter_page_no_sections,
                                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                     color: BloqoColors.primaryText,
                                                     fontSize: 14,
                                                   ),
                                                 ),
                                               ),
-                                            if(course.chapters.isNotEmpty)
+                                            if(sections.isNotEmpty)
                                               Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: List.generate(
-                                                  course.chapters.length,
-                                                  (index) {
-                                                    BloqoChapter chapter = chapters[index];
-                                                    if (index < course.chapters.length - 1) {
-                                                      return BloqoEditableChapter(
-                                                          course: course,
-                                                          chapter: chapter,
-                                                          onPressed: () {
-                                                            widget.onPush(EditChapterPage(onPush: widget.onPush, chapterId: chapter.id,));
-                                                          }
-                                                      );
+                                                    sections.length,
+                                                        (index) {
+                                                      BloqoSection section = sections[index];
+                                                      if (index < sections.length - 1) {
+                                                        return BloqoEditableSection(
+                                                            course: course,
+                                                            section: section,
+                                                            onPressed: () async {
+                                                              // TODO
+                                                            }
+                                                        );
+                                                      }
+                                                      else{
+                                                        return BloqoEditableSection(
+                                                            course: course,
+                                                            section: section,
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                                                            onPressed: () async {
+                                                              // TODO
+                                                            }
+                                                        );
+                                                      }
                                                     }
-                                                    else{
-                                                      return BloqoEditableChapter(
-                                                        course: course,
-                                                        chapter: chapter,
-                                                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                                        onPressed: () {
-                                                          widget.onPush(EditChapterPage(onPush: widget.onPush, chapterId: chapter.id,));
-                                                        }
-                                                      );
-                                                    }
-                                                  }
                                                 ),
                                               ),
                                             Padding(
@@ -163,13 +168,13 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                               child: BloqoFilledButton(
                                                 color: BloqoColors.russianViolet,
                                                 onPressed: () async {
-                                                  context.loaderOverlay.show();
+                                                  /*context.loaderOverlay.show();
                                                   WidgetsBinding.instance.addPostFrameCallback((_) async {
                                                     try {
                                                       await _addChapter(
-                                                        context: context,
-                                                        course: course,
-                                                        chapters: chapters
+                                                          context: context,
+                                                          course: course,
+                                                          chapters: chapters
                                                       );
                                                       if (!context.mounted) return;
                                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -185,9 +190,9 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                         description: e.message,
                                                       );
                                                     }
-                                                  });
+                                                  });*/
                                                 },
-                                                text: localizedText.add_chapter,
+                                                text: localizedText.add_section,
                                                 icon: Icons.add,
                                               ),
                                             )
@@ -203,27 +208,29 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                       child: BloqoFilledButton(
                         color: BloqoColors.russianViolet,
                         onPressed: () async {
-                          context.loaderOverlay.show();
-                          try {
-                            await _saveChanges(
-                              context: context,
-                              course: course,
-                              chapters: chapters
-                            );
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(child: Text(localizedText.done)),
-                            );
-                            context.loaderOverlay.hide();
-                          } on BloqoException catch (e) {
-                            if (!context.mounted) return;
-                            context.loaderOverlay.hide();
-                            showBloqoErrorAlert(
-                              context: context,
-                              title: localizedText.error_title,
-                              description: e.message,
-                            );
-                          }
+                          /*context.loaderOverlay.show();
+                          WidgetsBinding.instance.addPostFrameCallback((_) async {
+                            try {
+                              await _saveChanges(
+                                  context: context,
+                                  course: course,
+                                  chapters: chapters
+                              );
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                BloqoSnackBar.get(child: Text(localizedText.done)),
+                              );
+                              context.loaderOverlay.hide();
+                            } on BloqoException catch (e) {
+                              if (!context.mounted) return;
+                              context.loaderOverlay.hide();
+                              showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: e.message,
+                              );
+                            }
+                          });*/
                         },
                         text: localizedText.save_changes,
                         icon: Icons.edit,
@@ -239,7 +246,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _addChapter({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
+  /*Future<void> _addChapter({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
     var localizedText = getAppLocalizations(context)!;
 
     BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
@@ -254,11 +261,11 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
   Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
     var localizedText = getAppLocalizations(context);
-    course.name = courseNameController.text;
-    course.description = courseDescriptionController.text;
+    course.name = chapterNameController.text;
+    course.description = chapterDescriptionController.text;
 
     BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
-        !.firstWhere((userCourse) => userCourse.courseId == course.id);
+    !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     updatedUserCourseCreated.courseName = course.name;
 
@@ -274,7 +281,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     if(!context.mounted) return;
     updateUserCourseCreatedNameInAppState(context: context, courseId: course.id, newName: course.name);
-    saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: getEditorCourseSectionsFromAppState(context: context) ?? {});
-  }
+    saveEditorCourseToAppState(context: context, course: course, chapters: chapters);
+  }*/
 
 }

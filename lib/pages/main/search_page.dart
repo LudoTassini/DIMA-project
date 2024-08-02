@@ -133,7 +133,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       controller: courseNameController,
                       labelText: localizedText.course_name,
                       hintText: localizedText.course_name_hint,
-                      maxInputLength: Constants.maxCourseTitleLength,
+                      maxInputLength: Constants.maxCourseNameLength,
                     )
                   ),
                 ),

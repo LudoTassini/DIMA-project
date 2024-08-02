@@ -191,9 +191,15 @@
   "description": "Description",
   "editor_course_name_hint": "Enter the course name here",
   "editor_course_description_hint": "Enter the course description here",
+  "editor_chapter_name_hint": "Enter the chapter name here",
+  "editor_chapter_description_hint": "Enter the chapter description here",
   "add_chapter": "Add Chapter",
+  "add_section": "Add Section",
   "save_changes": "Save Changes",
   "chapters_header": "Chapters",
+  "sections_header": "Sections",
   "edit_course_page_no_chapters": "This course has no chapters yet. Create one now!",
-  "chapter": "Chapter"
+  "edit_chapter_page_no_sections": "This chapter has no sections yet. Create one now!",
+  "chapter": "Chapter",
+  "section": "Section"
 }

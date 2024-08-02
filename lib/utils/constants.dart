@@ -7,8 +7,11 @@ class Constants{
   static const int maxUsernameLength = 32;
   static const int maxFullNameLength = 64;
 
-  static const int maxCourseTitleLength = 50;
+  static const int maxCourseNameLength = 50;
   static const int maxCourseDescriptionLength = 500;
+
+  static const int maxChapterNameLength = 50;
+  static const int maxChapterDescriptionLength = 500;
 
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
