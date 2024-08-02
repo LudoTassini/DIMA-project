@@ -142,3 +142,44 @@ Future<void> reorderChapters({required var localizedText, required List<dynamic>
     await ref.doc(documentId).update({'number': chapter.number});
   }
 }
+
+Future<void> saveChapterChanges({required var localizedText, required BloqoChapter updatedChapter}) async {
+  try {
+    var ref = BloqoChapter.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedChapter.id).get();
+    if (querySnapshot.docs.isEmpty) {
+      throw BloqoException(message: localizedText.course_not_found);
+    }
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedChapter.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> deleteSectionFromChapter({required var localizedText, required String chapterId, required String sectionId}) async {
+  try {
+    var ref = BloqoChapter.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoChapter chapter = docSnapshot.data();
+    chapter.sections.remove(sectionId);
+    await ref.doc(docSnapshot.id).update(chapter.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}

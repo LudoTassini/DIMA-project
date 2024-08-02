@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../model/courses/bloqo_chapter.dart';
@@ -41,6 +43,16 @@ class EditorCourseAppState with ChangeNotifier{
     });
   }
 
+  void _addSection(String chapterId, BloqoSection section){
+    if(_chapters != null && _sections != null){
+      _chapters!.where((chapter) => chapter.id == chapterId).first.sections.add(section.id);
+      _sections![chapterId]!.add(section);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
   void _removeChapter(String chapterId) {
     if (_course != null && _chapters != null) {
       _course!.chapters.removeWhere((id) => id == chapterId);
@@ -52,6 +64,33 @@ class EditorCourseAppState with ChangeNotifier{
         _chapters![i].number = i + 1;
       }
 
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void _removeSection(String chapterId, String sectionId) {
+    if (_chapters != null && _sections != null) {
+      _chapters!.where((chapter) => chapter.id == chapterId).first.sections.removeWhere((id) => id == sectionId);
+      _sections![chapterId]!.removeWhere((section) => section.id == sectionId);
+
+      _chapters!.sort((a, b) => a.number.compareTo(b.number));
+
+      for (int i = 0; i < _sections![chapterId]!.length; i++) {
+        var section = _sections![chapterId]![i];
+        section.number = i + 1;
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void _updateChapterName(String chapterId, String newName){
+    if(_chapters != null){
+      _chapters!.where((chapter) => chapter.id == chapterId).first.name = newName;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -95,12 +134,24 @@ void saveEditorCourseToAppState({required BuildContext context, required BloqoCo
   }
 }
 
+void addSectionToEditorCourseAppState({required BuildContext context, required String chapterId, required BloqoSection section}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._addSection(chapterId, section);
+}
+
+void updateEditorCourseChapterNameInAppState({required BuildContext context, required String chapterId, required String newName}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._updateChapterName(chapterId, newName);
+}
+
 void deleteEditorCourseFromAppState({required BuildContext context}) {
   Provider.of<EditorCourseAppState>(context, listen: false)._set(null, null, null);
 }
 
 void deleteChapterFromEditorCourseAppState({required BuildContext context, required String chapterId}) {
   Provider.of<EditorCourseAppState>(context, listen: false)._removeChapter(chapterId);
+}
+
+void deleteSectionFromEditorCourseAppState({required BuildContext context, required String chapterId, required String sectionId}) {
+  Provider.of<EditorCourseAppState>(context, listen: false)._removeSection(chapterId, sectionId);
 }
 
 bool getComingFromHomeEditorPrivilegeFromAppState({required BuildContext context}){

@@ -1,5 +1,4 @@
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
-import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
@@ -144,6 +143,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                       if (index < sections.length - 1) {
                                                         return BloqoEditableSection(
                                                             course: course,
+                                                            chapter: chapter,
                                                             section: section,
                                                             onPressed: () async {
                                                               // TODO
@@ -153,6 +153,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                       else{
                                                         return BloqoEditableSection(
                                                             course: course,
+                                                            chapter: chapter,
                                                             section: section,
                                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
                                                             onPressed: () async {
@@ -168,29 +169,28 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                               child: BloqoFilledButton(
                                                 color: BloqoColors.russianViolet,
                                                 onPressed: () async {
-                                                  /*context.loaderOverlay.show();
-                                                  WidgetsBinding.instance.addPostFrameCallback((_) async {
-                                                    try {
-                                                      await _addChapter(
-                                                          context: context,
-                                                          course: course,
-                                                          chapters: chapters
-                                                      );
-                                                      if (!context.mounted) return;
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        BloqoSnackBar.get(child: Text(localizedText.done)),
-                                                      );
-                                                      context.loaderOverlay.hide();
-                                                    } on BloqoException catch (e) {
-                                                      if (!context.mounted) return;
-                                                      context.loaderOverlay.hide();
-                                                      showBloqoErrorAlert(
-                                                        context: context,
-                                                        title: localizedText.error_title,
-                                                        description: e.message,
-                                                      );
-                                                    }
-                                                  });*/
+                                                context.loaderOverlay.show();
+                                                  try {
+                                                    await _addSection(
+                                                      context: context,
+                                                      course: course,
+                                                      chapter: chapter,
+                                                      sections: sections
+                                                    );
+                                                    if (!context.mounted) return;
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      BloqoSnackBar.get(child: Text(localizedText.done)),
+                                                    );
+                                                    context.loaderOverlay.hide();
+                                                  } on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
                                                 },
                                                 text: localizedText.add_section,
                                                 icon: Icons.add,
@@ -208,29 +208,28 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                       child: BloqoFilledButton(
                         color: BloqoColors.russianViolet,
                         onPressed: () async {
-                          /*context.loaderOverlay.show();
-                          WidgetsBinding.instance.addPostFrameCallback((_) async {
-                            try {
-                              await _saveChanges(
-                                  context: context,
-                                  course: course,
-                                  chapters: chapters
-                              );
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                BloqoSnackBar.get(child: Text(localizedText.done)),
-                              );
-                              context.loaderOverlay.hide();
-                            } on BloqoException catch (e) {
-                              if (!context.mounted) return;
-                              context.loaderOverlay.hide();
-                              showBloqoErrorAlert(
-                                context: context,
-                                title: localizedText.error_title,
-                                description: e.message,
-                              );
-                            }
-                          });*/
+                          context.loaderOverlay.show();
+                          try {
+                            await _saveChanges(
+                              context: context,
+                              course: course,
+                              chapter: chapter,
+                              sections: sections
+                            );
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              BloqoSnackBar.get(child: Text(localizedText.done)),
+                            );
+                            context.loaderOverlay.hide();
+                          } on BloqoException catch (e) {
+                            if (!context.mounted) return;
+                            context.loaderOverlay.hide();
+                            showBloqoErrorAlert(
+                              context: context,
+                              title: localizedText.error_title,
+                              description: e.message,
+                            );
+                          }
                         },
                         text: localizedText.save_changes,
                         icon: Icons.edit,
@@ -246,33 +245,17 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   @override
   bool get wantKeepAlive => true;
 
-  /*Future<void> _addChapter({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
+  Future<void> _addSection({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required List<BloqoSection> sections}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
-
-    course.chapters.add(chapter.id);
-    chapters.add(chapter);
+    BloqoSection section = await saveNewSection(localizedText: localizedText, sectionNumber: chapter.sections.length + 1);
 
     if(!context.mounted) return;
-    updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
-    _saveChanges(context: context, course: course, chapters: chapters);
-  }
+    addSectionToEditorCourseAppState(context: context, chapterId: chapter.id, section: section);
 
-  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
-    var localizedText = getAppLocalizations(context);
-    course.name = chapterNameController.text;
-    course.description = chapterDescriptionController.text;
-
+    updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, newSectionsNum: chapter.sections.length);
     BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
-
-    updatedUserCourseCreated.courseName = course.name;
-
-    await saveCourseChanges(
-        localizedText: localizedText,
-        updatedCourse: course
-    );
 
     await saveUserCourseCreatedChanges(
         localizedText: localizedText,
@@ -280,8 +263,21 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     );
 
     if(!context.mounted) return;
-    updateUserCourseCreatedNameInAppState(context: context, courseId: course.id, newName: course.name);
-    saveEditorCourseToAppState(context: context, course: course, chapters: chapters);
-  }*/
+    _saveChanges(context: context, course: course, chapter: chapter, sections: sections);
+  }
+
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required List<BloqoSection> sections}) async {
+    var localizedText = getAppLocalizations(context);
+    chapter.name = chapterNameController.text;
+    chapter.description = chapterDescriptionController.text;
+
+    await saveChapterChanges(
+        localizedText: localizedText,
+        updatedChapter: chapter
+    );
+
+    if(!context.mounted) return;
+    updateEditorCourseChapterNameInAppState(context: context, chapterId: chapter.id, newName: chapter.name);
+  }
 
 }

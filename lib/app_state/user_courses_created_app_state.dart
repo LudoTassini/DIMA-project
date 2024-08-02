@@ -46,6 +46,15 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
+  void _updateUserCourseCreatedSectionsNumber(String courseId, int newSectionsNum){
+    if(_userCourses != null) {
+      _userCourses!.where((userCourse) => userCourse.courseId == courseId).first.numSectionsCreated = newSectionsNum;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
   void _updateUserCourseCreatedName(String courseId, String newName){
     if(_userCourses != null) {
       _userCourses!.where((userCourse) => userCourse.courseId == courseId).first.courseName = newName;
@@ -85,4 +94,8 @@ void updateUserCourseCreatedNameInAppState({required BuildContext context, requi
 
 void updateUserCourseCreatedChaptersNumberInAppState({required BuildContext context, required String courseId, required int newChaptersNum}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedChaptersNumber(courseId, newChaptersNum);
+}
+
+void updateUserCourseCreatedSectionsNumberInAppState({required BuildContext context, required String courseId, required int newSectionsNum}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedSectionsNumber(courseId, newSectionsNum);
 }
