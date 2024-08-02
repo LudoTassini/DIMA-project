@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../style/bloqo_colors.dart';
+import '../../utils/constants.dart';
 
 class BloqoTextField extends StatefulWidget {
   const BloqoTextField({
@@ -16,6 +17,7 @@ class BloqoTextField extends StatefulWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.padding = const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 0),
+    this.isTextArea = false,
 
     this.initialValue,
     this.validator,
@@ -31,6 +33,7 @@ class BloqoTextField extends StatefulWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final EdgeInsetsDirectional padding;
+  final bool isTextArea;
 
   final String? initialValue;
   final FormFieldValidator<String>? validator;
@@ -65,6 +68,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
     return Padding(
         padding: widget.padding,
         child: Container(
+          height: widget.isTextArea ? Constants.textAreaContainerHeight : null,
           decoration: BoxDecoration(
             color: BloqoColors.seasalt,
             borderRadius: BorderRadius.circular(15),
@@ -106,6 +110,8 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
                 widget.formKey.currentState!.validate();
               },
               onTap: widget.onTap,
+              maxLines: widget.isTextArea ? null : 1,
+              expands: widget.isTextArea ? true : false,
             )
           )
         )

@@ -169,7 +169,7 @@ Future<void> _updateSettings({
 
         if (newFullName != oldFullName || newFullNameVisible != oldFullNameVisible) {
           var ref = BloqoUser.getRef();
-          var querySnapshot = await ref.where("email", isEqualTo: user.email).get();
+          var querySnapshot = await ref.where("id", isEqualTo: user.id).get();
 
           if (querySnapshot.docs.isNotEmpty) {
             var documentId = querySnapshot.docs[0].id;
