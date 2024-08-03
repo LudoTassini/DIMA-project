@@ -209,5 +209,6 @@
   "edit_course_page_no_chapters": "This course has no chapters yet. Create one now!",
   "edit_chapter_page_no_sections": "This chapter has no sections yet. Create one now!",
   "chapter": "Chapter",
-  "section": "Section"
+  "section": "Section",
+  "enrolled_on": "Enrolled on: "
 }
