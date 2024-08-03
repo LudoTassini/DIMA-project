@@ -173,7 +173,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                       );
                                                       if (!context.mounted) return;
                                                       ScaffoldMessenger.of(context).showSnackBar(
-                                                        BloqoSnackBar.get(child: Text(localizedText.done)),
+                                                        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                                       );
                                                       context.loaderOverlay.hide();
                                                     } on BloqoException catch (e) {
@@ -212,7 +212,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                             );
                             if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(child: Text(localizedText.done)),
+                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                             );
                             context.loaderOverlay.hide();
                           } on BloqoException catch (e) {
@@ -244,10 +244,8 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
 
-    course.chapters.add(chapter.id);
-    chapters.add(chapter);
-
     if(!context.mounted) return;
+    addChapterToEditorCourseAppState(context: context, chapter: chapter);
     updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
     _saveChanges(context: context, course: course, chapters: chapters);
   }

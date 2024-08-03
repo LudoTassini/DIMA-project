@@ -1,3 +1,4 @@
+import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -99,12 +100,15 @@ Future<List<BloqoChapter>> getChaptersFromIds({required var localizedText, requi
   }
 }
 
-Future<void> deleteChapter({required var localizedText, required String chapterId}) async {
+Future<void> deleteChapter({required var localizedText, required BloqoChapter chapter}) async {
   try {
     var ref = BloqoChapter.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapter.id).get();
     await querySnapshot.docs[0].reference.delete();
+    for(String sectionId in chapter.sections){
+      await deleteSection(localizedText: localizedText, sectionId: sectionId);
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":

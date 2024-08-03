@@ -179,7 +179,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                     );
                                                     if (!context.mounted) return;
                                                     ScaffoldMessenger.of(context).showSnackBar(
-                                                      BloqoSnackBar.get(child: Text(localizedText.done)),
+                                                      BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                                     );
                                                     context.loaderOverlay.hide();
                                                   } on BloqoException catch (e) {
@@ -218,7 +218,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                             );
                             if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(child: Text(localizedText.done)),
+                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                             );
                             context.loaderOverlay.hide();
                           } on BloqoException catch (e) {
@@ -253,7 +253,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     if(!context.mounted) return;
     addSectionToEditorCourseAppState(context: context, chapterId: chapter.id, section: section);
 
-    updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, newSectionsNum: chapter.sections.length);
+    updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: 1);
     BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
 

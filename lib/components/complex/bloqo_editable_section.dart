@@ -10,6 +10,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../custom/bloqo_snack_bar.dart';
+import '../popups/bloqo_confirmation_alert.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoEditableSection extends StatelessWidget {
@@ -90,9 +91,20 @@ class BloqoEditableSection extends StatelessWidget {
                                 color: BloqoColors.error,
                                 size: 24,
                               ),
-                              onPressed: () async {
-                                _tryDeleteSection(context: context, localizedText: localizedText);
-                              }
+                              onPressed: () {
+                                showBloqoConfirmationAlert(
+                                  context: context,
+                                  title: localizedText.warning,
+                                  description: localizedText.delete_section_confirmation,
+                                  confirmationFunction: () async {
+                                    await _tryDeleteSection(
+                                        context: context,
+                                        localizedText: localizedText
+                                    );
+                                  },
+                                  backgroundColor: BloqoColors.error
+                              );
+                            },
                           ),
                           const Icon(
                             Icons.navigate_next,
@@ -121,10 +133,10 @@ class BloqoEditableSection extends StatelessWidget {
       }
       if (!context.mounted) return;
       deleteSectionFromEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id);
-      updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, newSectionsNum: chapter.sections.length);
+      updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: -1);
       context.loaderOverlay.hide();
       ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(child: Text(localizedText.done)),
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
       );
     }
     on BloqoException catch (e) {

@@ -116,7 +116,7 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
                           );
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
-                            BloqoSnackBar.get(child: Text(localizedText.done)),
+                            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                           );
                           context.loaderOverlay.hide();
                         } on BloqoException catch (e) {

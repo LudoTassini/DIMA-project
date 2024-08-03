@@ -18,4 +18,6 @@ class Constants{
 
   static const double textAreaContainerHeight = 200.0;
 
+  static const int snackBarDuration = 2;
+
 }

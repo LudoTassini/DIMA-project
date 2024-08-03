@@ -43,10 +43,27 @@ class EditorCourseAppState with ChangeNotifier{
     });
   }
 
-  void _addSection(String chapterId, BloqoSection section){
-    if(_chapters != null && _sections != null){
+  void _addChapter(BloqoChapter chapter) {
+    if (_chapters != null) {
+      _chapters!.add(chapter);
+      _course!.chapters.add(chapter.id);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void _addSection(String chapterId, BloqoSection section) {
+    if (_chapters != null && _sections != null) {
       _chapters!.where((chapter) => chapter.id == chapterId).first.sections.add(section.id);
-      _sections![chapterId]!.add(section);
+
+      if (_sections!.containsKey(chapterId)) {
+        _sections![chapterId]!.add(section);
+      } else {
+        _sections![chapterId] = [section];
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -132,6 +149,10 @@ void saveEditorCourseToAppState({required BuildContext context, required BloqoCo
   if(comingFromHome) {
     Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
+}
+
+void addChapterToEditorCourseAppState({required BuildContext context, required BloqoChapter chapter}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._addChapter(chapter);
 }
 
 void addSectionToEditorCourseAppState({required BuildContext context, required String chapterId, required BloqoSection section}){

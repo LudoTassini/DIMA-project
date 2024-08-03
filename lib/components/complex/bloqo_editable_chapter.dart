@@ -9,6 +9,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../custom/bloqo_snack_bar.dart';
+import '../popups/bloqo_confirmation_alert.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoEditableChapter extends StatelessWidget {
@@ -87,9 +88,20 @@ class BloqoEditableChapter extends StatelessWidget {
                             color: BloqoColors.error,
                             size: 24,
                           ),
-                          onPressed: () async {
-                            _tryDeleteChapter(context: context, localizedText: localizedText);
-                          }
+                          onPressed: () {
+                            showBloqoConfirmationAlert(
+                              context: context,
+                              title: localizedText.warning,
+                              description: localizedText.delete_chapter_confirmation,
+                              confirmationFunction: () async {
+                                await _tryDeleteChapter(
+                                    context: context,
+                                    localizedText: localizedText
+                                );
+                              },
+                              backgroundColor: BloqoColors.error
+                            );
+                          },
                         ),
                         const Icon(
                           Icons.navigate_next,
@@ -110,7 +122,7 @@ class BloqoEditableChapter extends StatelessWidget {
   Future<void> _tryDeleteChapter({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteChapter(localizedText: localizedText, chapterId: chapter.id);
+      await deleteChapter(localizedText: localizedText, chapter: chapter);
       await deleteChapterFromCourse(localizedText: localizedText, courseId: course.id, chapterId: chapter.id);
       await deleteChapterFromUserCourseCreated(localizedText: localizedText, courseId: course.id);
       if(chapter.number < course.chapters.length){
@@ -119,9 +131,10 @@ class BloqoEditableChapter extends StatelessWidget {
       if (!context.mounted) return;
       deleteChapterFromEditorCourseAppState(context: context, chapterId: chapter.id);
       updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
+      updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: -chapter.sections.length);
       context.loaderOverlay.hide();
       ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(child: Text(localizedText.done)),
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
       );
     }
     on BloqoException catch (e) {
