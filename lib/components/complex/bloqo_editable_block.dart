@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../model/courses/bloqo_section.dart';
@@ -13,12 +14,13 @@ import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_confirmation_alert.dart';
 import '../popups/bloqo_error_alert.dart';
 
-class BloqoEditableSection extends StatelessWidget {
-  const BloqoEditableSection({
+class BloqoEditableBlock extends StatelessWidget {
+  const BloqoEditableBlock({
     super.key,
     required this.course,
     required this.chapter,
     required this.section,
+    required this.block,
     required this.onPressed,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
@@ -26,6 +28,7 @@ class BloqoEditableSection extends StatelessWidget {
   final BloqoCourse course;
   final BloqoChapter chapter;
   final BloqoSection section;
+  final BloqoBlock block;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
 
@@ -60,7 +63,7 @@ class BloqoEditableSection extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${localizedText.section} ${section.number}",
+                            "${localizedText.block} ${block.number}",
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
@@ -72,7 +75,7 @@ class BloqoEditableSection extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  section.name,
+                                  block.name,
                                   style: Theme.of(context).textTheme.displayMedium,
                                 ),
                               )
@@ -84,20 +87,20 @@ class BloqoEditableSection extends StatelessWidget {
                     Row(
                         children: [
                           IconButton(
-                              padding: const EdgeInsets.only(right: 5.0),
-                              visualDensity: VisualDensity.compact,
-                              icon: const Icon(
-                                Icons.delete_forever,
-                                color: BloqoColors.error,
-                                size: 24,
-                              ),
-                              onPressed: () {
-                                showBloqoConfirmationAlert(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            visualDensity: VisualDensity.compact,
+                            icon: const Icon(
+                              Icons.delete_forever,
+                              color: BloqoColors.error,
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              showBloqoConfirmationAlert(
                                   context: context,
                                   title: localizedText.warning,
-                                  description: localizedText.delete_section_confirmation,
+                                  description: localizedText.delete_block_confirmation,
                                   confirmationFunction: () async {
-                                    await _tryDeleteSection(
+                                    await _tryDeleteBlock(
                                         context: context,
                                         localizedText: localizedText
                                     );
@@ -122,18 +125,19 @@ class BloqoEditableSection extends StatelessWidget {
     );
   }
 
-  Future<void> _tryDeleteSection({required BuildContext context, required var localizedText}) async {
+  Future<void> _tryDeleteBlock({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteSection(localizedText: localizedText, section: section);
-      await deleteSectionFromChapter(localizedText: localizedText, chapterId: chapter.id, sectionId: section.id);
-      await deleteSectionFromUserCourseCreated(localizedText: localizedText, courseId: course.id);
-      if(section.number < chapter.sections.length){
-        await reorderSections(localizedText: localizedText, sectionIds: chapter.sections);
+      await deleteBlock(localizedText: localizedText, blockId: block.id);
+      await deleteBlockFromSection(localizedText: localizedText, sectionId: section.id, blockId: block.id);
+      if (!context.mounted) return;
+      BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((c) => c.courseId == course.id).first;
+      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: updatedUserCourseCreated);
+      if(block.number < section.blocks.length){
+        await reorderBlocks(localizedText: localizedText, blockIds: section.blocks);
       }
       if (!context.mounted) return;
-      deleteSectionFromEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id);
-      updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: -1);
+      deleteBlockFromEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id, blockId: block.id);
       context.loaderOverlay.hide();
       ScaffoldMessenger.of(context).showSnackBar(
         BloqoSnackBar.get(context: context, child: Text(localizedText.done)),

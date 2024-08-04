@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
+import 'bloqo_block.dart';
 
 class BloqoSection{
 
@@ -11,13 +12,13 @@ class BloqoSection{
   int number;
   String name;
 
-  List<dynamic>? blocks;
+  List<dynamic> blocks;
 
   BloqoSection({
     required this.id,
     required this.number,
     required this.name,
-    this.blocks
+    required this.blocks
   });
 
   factory BloqoSection.fromFirestore(
@@ -95,12 +96,15 @@ Future<BloqoSection> saveNewSection({required var localizedText, required int se
   }
 }
 
-Future<void> deleteSection({required var localizedText, required String sectionId}) async {
+Future<void> deleteSection({required var localizedText, required BloqoSection section}) async {
   try {
     var ref = BloqoSection.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: section.id).get();
     await querySnapshot.docs[0].reference.delete();
+    for(String blockId in section.blocks){
+      await deleteBlock(localizedText: localizedText, blockId: blockId);
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
@@ -126,15 +130,53 @@ Future<void> reorderSections({required var localizedText, required List<dynamic>
     }
   }
 
-  var sortedChapters = sections.entries.toList()
+  var sortedSections = sections.entries.toList()
     ..sort((a, b) => a.value.number.compareTo(b.value.number));
 
-  for (int i = 0; i < sortedChapters.length; i++) {
-    var documentId = sortedChapters[i].key;
-    var section = sortedChapters[i].value;
+  for (int i = 0; i < sortedSections.length; i++) {
+    var documentId = sortedSections[i].key;
+    var section = sortedSections[i].value;
 
     section.number = i + 1;
     await checkConnectivity(localizedText: localizedText);
     await ref.doc(documentId).update({'number': section.number});
+  }
+}
+
+Future<void> saveSectionChanges({required var localizedText, required BloqoSection updatedSection}) async {
+  try {
+    var ref = BloqoSection.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedSection.id).get();
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedSection.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> deleteBlockFromSection({required var localizedText, required String sectionId, required String blockId}) async {
+  try {
+    var ref = BloqoSection.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoSection section = docSnapshot.data();
+    section.blocks.remove(blockId);
+    await ref.doc(docSnapshot.id).update(section.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

@@ -272,7 +272,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     if(!context.mounted) return;
     updateUserCourseCreatedNameInAppState(context: context, courseId: course.id, newName: course.name);
-    saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: getEditorCourseSectionsFromAppState(context: context) ?? {});
+    saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: getEditorCourseSectionsFromAppState(context: context) ?? {}, blocks: getEditorCourseBlocksFromAppState(context: context) ?? {});
   }
 
 }

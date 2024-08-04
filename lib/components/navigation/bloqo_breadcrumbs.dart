@@ -59,7 +59,7 @@ class BloqoBreadcrumbs extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Wrap(
               spacing: 5,
-              runSpacing: 5,
+              runSpacing: 0,
               children: breadcrumbWidgets,
             )));
   }

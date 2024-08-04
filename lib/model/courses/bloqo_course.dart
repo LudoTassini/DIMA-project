@@ -171,9 +171,6 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
-    if (querySnapshot.docs.isEmpty) {
-      throw BloqoException(message: localizedText.course_not_found);
-    }
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
   } on FirebaseAuthException catch (e) {

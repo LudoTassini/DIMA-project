@@ -14,6 +14,7 @@ import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
@@ -334,7 +335,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
       context.loaderOverlay.hide();
 
-      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {});
+      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {}, blocks: {});
 
       widget.onPush(EditCoursePage(onPush: widget.onPush));
 
@@ -363,14 +364,22 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
             localizedText: localizedText, courseId: userCourseCreated.courseId);
         List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
         Map<String, List<BloqoSection>> sections = {};
+        Map<String, List<BloqoBlock>> blocks = {};
         for(String chapterId in course.chapters) {
           List<BloqoSection> chapterSections = await getSectionsFromIds(
               localizedText: localizedText,
               sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
           sections[chapterId] = chapterSections;
+          for(BloqoSection section in chapterSections){
+            List<BloqoBlock> sectionBlocks = await getBlocksFromIds(
+                localizedText: localizedText,
+                blockIds: section.blocks
+            );
+            blocks[section.id] = sectionBlocks;
+          }
         }
         if(!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections, blocks: blocks);
         context.loaderOverlay.hide();
         widget.onPush(EditCoursePage(onPush: widget.onPush));
       }

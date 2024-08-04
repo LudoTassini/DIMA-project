@@ -20,6 +20,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
+import 'edit_section_page.dart';
 
 class EditChapterPage extends StatefulWidget {
   const EditChapterPage({
@@ -145,8 +146,8 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                             course: course,
                                                             chapter: chapter,
                                                             section: section,
-                                                            onPressed: () async {
-                                                              // TODO
+                                                            onPressed: () {
+                                                              widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
                                                             }
                                                         );
                                                       }
@@ -156,8 +157,8 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                             chapter: chapter,
                                                             section: section,
                                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                                            onPressed: () async {
-                                                              // TODO
+                                                            onPressed: () {
+                                                              widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
                                                             }
                                                         );
                                                       }

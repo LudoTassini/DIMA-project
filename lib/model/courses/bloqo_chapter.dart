@@ -106,8 +106,9 @@ Future<void> deleteChapter({required var localizedText, required BloqoChapter ch
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapter.id).get();
     await querySnapshot.docs[0].reference.delete();
-    for(String sectionId in chapter.sections){
-      await deleteSection(localizedText: localizedText, sectionId: sectionId);
+    List<BloqoSection> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
+    for(BloqoSection section in sections){
+      await deleteSection(localizedText: localizedText, section: section);
     }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -152,9 +153,6 @@ Future<void> saveChapterChanges({required var localizedText, required BloqoChapt
     var ref = BloqoChapter.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedChapter.id).get();
-    if (querySnapshot.docs.isEmpty) {
-      throw BloqoException(message: localizedText.course_not_found);
-    }
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedChapter.toFirestore());
   } on FirebaseAuthException catch (e) {

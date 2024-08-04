@@ -12,7 +12,7 @@ class BloqoUserCourseCreated {
   int numSectionsCreated;
   int numChaptersCreated;
   final String authorId;
-  final Timestamp lastUpdated;
+  Timestamp lastUpdated;
   bool published;
 
   BloqoUserCourseCreated({
@@ -162,6 +162,7 @@ Future<void> deleteSectionFromUserCourseCreated({required var localizedText, req
 
 Future<void> saveUserCourseCreatedChanges({required var localizedText, required BloqoUserCourseCreated updatedUserCourseCreated}) async {
   try {
+    updatedUserCourseCreated.lastUpdated = Timestamp.now();
     var ref = BloqoUserCourseCreated.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: updatedUserCourseCreated.courseId).get();
