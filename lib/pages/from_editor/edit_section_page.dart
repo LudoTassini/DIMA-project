@@ -88,9 +88,9 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                         formKey: formKeyChapterName,
                                         controller: sectionNameController,
                                         labelText: localizedText.name,
-                                        hintText: localizedText.editor_chapter_name_hint,
+                                        hintText: localizedText.editor_section_name_hint,
                                         maxInputLength: Constants.maxChapterNameLength,
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                       )
                                   ),
                                   BloqoSeasaltContainer(
@@ -166,6 +166,11 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                   localizedText.text_block,
                                                   localizedText.multimedia_block,
                                                   localizedText.quiz_block
+                                                ],
+                                                icons: const [
+                                                  Icons.text_fields,
+                                                  Icons.perm_media,
+                                                  Icons.quiz
                                                 ],
                                                 onPressedList: [
                                                   () async {
@@ -318,8 +323,12 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
   }
 
   Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required BloqoSection section}) async {
-    var localizedText = getAppLocalizations(context);
+    var localizedText = getAppLocalizations(context)!;
+
     section.name = sectionNameController.text;
+    if(section.name == ""){
+      section.name = "${localizedText.section} ${section.number}";
+    }
 
     await saveSectionChanges(
         localizedText: localizedText,

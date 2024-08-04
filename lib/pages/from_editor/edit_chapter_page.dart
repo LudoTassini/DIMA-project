@@ -268,8 +268,11 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   }
 
   Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required List<BloqoSection> sections}) async {
-    var localizedText = getAppLocalizations(context);
+    var localizedText = getAppLocalizations(context)!;
     chapter.name = chapterNameController.text;
+    if(chapter.name == ""){
+      chapter.name = "${localizedText.chapter} ${chapter.number}";
+    }
     chapter.description = chapterDescriptionController.text;
 
     await saveChapterChanges(

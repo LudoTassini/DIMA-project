@@ -90,7 +90,7 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
   try {
     BloqoCourse course = BloqoCourse(
       id: uuid(),
-      name: DateTime.now().toString(),
+      name: localizedText.course,
       authorId: authorId,
       creationDate: Timestamp.now(),
       chapters: [],

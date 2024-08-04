@@ -251,8 +251,11 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   }
 
   Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
-    var localizedText = getAppLocalizations(context);
+    var localizedText = getAppLocalizations(context)!;
     course.name = courseNameController.text;
+    if(course.name == ""){
+      course.name = localizedText.course;
+    }
     course.description = courseDescriptionController.text;
 
     BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)

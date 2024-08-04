@@ -28,19 +28,42 @@ class BloqoPopupMenuFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey mainButtonKey = GlobalKey();
+
     return BloqoFilledButton(
+      key: mainButtonKey,
       color: mainColor,
       text: mainText,
+      icon: mainIcon,
+      fontSize: fontSize,
+      height: height,
       onPressed: () {
+        final RenderBox button = mainButtonKey.currentContext!.findRenderObject() as RenderBox;
+        final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+        // Calculate the position and size of the button
+        final buttonSize = button.size;
+        final buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+
+        // Show the menu at the calculated position
         showMenu(
           context: context,
-          position: const RelativeRect.fromLTRB(0, 0, 0, 0),
+          position: RelativeRect.fromLTRB(
+            buttonPosition.dx,
+            buttonPosition.dy + buttonSize.height,
+            overlay.size.width - (buttonPosition.dx + buttonSize.width),
+            0,
+          ),
           items: List<PopupMenuEntry<String>>.generate(onPressedList.length, (int index) {
             return PopupMenuItem<String>(
-              child: BloqoFilledButton(
-                color: colors[index],
-                text: texts[index],
-                onPressed: onPressedList[index],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: BloqoFilledButton(
+                  color: colors[index],
+                  text: texts[index],
+                  onPressed: onPressedList[index],
+                  icon: icons?[index],
+                ),
               ),
             );
           }),
