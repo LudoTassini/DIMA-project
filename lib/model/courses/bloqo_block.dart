@@ -9,7 +9,7 @@ class BloqoBlock{
 
   final String id;
   final String superType;
-  final String? type;
+  String? type;
   String name;
   int number;
   String? content;
@@ -72,6 +72,18 @@ enum BloqoBlockSuperType{
   text,
   multimedia,
   quiz
+}
+
+extension BloqoBlockSuperTypeExtension on BloqoBlockSuperType {
+  static BloqoBlockSuperType? fromString(String value) {
+    return _enumMap[value];
+  }
+
+  static final Map<String, BloqoBlockSuperType> _enumMap = {
+    'BloqoBlockSuperType.text': BloqoBlockSuperType.text,
+    'BloqoBlockSuperType.multimedia': BloqoBlockSuperType.multimedia,
+    'BloqoBlockSuperType.quiz': BloqoBlockSuperType.quiz,
+  };
 }
 
 String getNameBasedOnBlockType({required var localizedText, required BloqoBlockType type}){
@@ -187,5 +199,24 @@ Future<void> reorderBlocks({required var localizedText, required List<dynamic> b
     block.number = i + 1;
     await checkConnectivity(localizedText: localizedText);
     await ref.doc(documentId).update({'number': block.number});
+  }
+}
+
+Future<void> saveBlockChanges({required var localizedText, required BloqoBlock updatedBlock}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedBlock.id).get();
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedBlock.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

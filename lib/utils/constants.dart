@@ -13,6 +13,10 @@ class Constants{
   static const int maxChapterNameLength = 50;
   static const int maxChapterDescriptionLength = 500;
 
+  static const int maxBlockTextLength = 10000;
+
+  static const double markdownBaseFontSize = 16.0;
+
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
 

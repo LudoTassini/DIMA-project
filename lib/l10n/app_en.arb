@@ -221,5 +221,7 @@
   "multimedia_image": "Multimedia: Image",
   "multimedia_audio": "Multimedia: Audio",
   "quiz_multiple_choice": "Quiz: Multiple choice",
-  "quiz_open_question": "Quiz: Open question"
+  "quiz_open_question": "Quiz: Open question",
+  "write_text_here": "Write your text here",
+  "preview": "Preview"
 }

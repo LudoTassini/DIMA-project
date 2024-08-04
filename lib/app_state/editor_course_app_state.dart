@@ -28,6 +28,10 @@ class EditorCourseAppState with ChangeNotifier{
     return _sections?[chapterId]?.where((section) => section.id == sectionId).first;
   }
 
+  BloqoBlock? _getBlockFromId(String sectionId, String blockId){
+    return _blocks?[sectionId]?.where((block) => block.id == blockId).first;
+  }
+
   List<BloqoChapter>? _getChapters(){
     return _chapters;
   }
@@ -172,6 +176,19 @@ class EditorCourseAppState with ChangeNotifier{
     }
   }
 
+  void _updateBlock(String sectionId, BloqoBlock block) {
+    if (_blocks != null && _blocks!.containsKey(sectionId)) {
+      final sectionBlocks = _blocks![sectionId];
+      final index = sectionBlocks!.indexWhere((blck) => blck.id == block.id);
+      if (index != -1) {
+        sectionBlocks[index] = block;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
+      }
+    }
+  }
+
   bool _getComingFromHomePrivilege(){
     return _fromHome;
   }
@@ -192,6 +209,10 @@ BloqoChapter? getEditorCourseChapterFromAppState({required BuildContext context,
 
 BloqoSection? getEditorCourseSectionFromAppState({required BuildContext context, required String chapterId, required String sectionId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getSectionFromId(chapterId, sectionId);
+}
+
+BloqoBlock? getEditorCourseBlockFromAppState({required BuildContext context, required String sectionId, required String blockId}){
+  return Provider.of<EditorCourseAppState>(context, listen: false)._getBlockFromId(sectionId, blockId);
 }
 
 List<BloqoChapter>? getEditorCourseChaptersFromAppState({required BuildContext context}){
@@ -239,6 +260,10 @@ void updateEditorCourseChapterNameInAppState({required BuildContext context, req
 
 void updateEditorCourseSectionNameInAppState({required BuildContext context, required String chapterId, required String sectionId, required String newName}){
   Provider.of<EditorCourseAppState>(context, listen: false)._updateSectionName(chapterId, sectionId, newName);
+}
+
+void updateEditorCourseBlockInAppState({required BuildContext context, required String sectionId, required BloqoBlock block}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._updateBlock(sectionId, block);
 }
 
 void deleteEditorCourseFromAppState({required BuildContext context}) {

@@ -22,6 +22,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
+import 'edit_text_block_page.dart';
 
 class EditSectionPage extends StatefulWidget {
   const EditSectionPage({
@@ -133,8 +134,13 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                             chapter: chapter,
                                                             section: section,
                                                             block: block,
-                                                            onPressed: () async {
-                                                              // TODO
+                                                            onPressed: () {
+                                                              _goToEditBlockPage(
+                                                                  blockSuperType: BloqoBlockSuperTypeExtension.fromString(block.superType)!,
+                                                                  chapterId: chapter.id,
+                                                                  sectionId: section.id,
+                                                                  block: block
+                                                              );
                                                             }
                                                         );
                                                       }
@@ -145,8 +151,13 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                             section: section,
                                                             block: block,
                                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                                            onPressed: () async {
-                                                              // TODO
+                                                            onPressed: () {
+                                                              _goToEditBlockPage(
+                                                                blockSuperType: BloqoBlockSuperTypeExtension.fromString(block.superType)!,
+                                                                chapterId: chapter.id,
+                                                                sectionId: section.id,
+                                                                block: block
+                                                              );
                                                             }
                                                         );
                                                       }
@@ -337,6 +348,20 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
 
     if(!context.mounted) return;
     updateEditorCourseSectionNameInAppState(context: context, chapterId: chapter.id, sectionId: section.id, newName: section.name);
+  }
+
+  void _goToEditBlockPage({required BloqoBlockSuperType blockSuperType, required String chapterId, required String sectionId, required BloqoBlock block}){
+    switch(blockSuperType){
+      case BloqoBlockSuperType.text:
+        widget.onPush(EditTextBlockPage(onPush: widget.onPush, chapterId: chapterId, sectionId: sectionId, block: block));
+        break;
+      case BloqoBlockSuperType.multimedia:
+        // TODO
+        break;
+      case BloqoBlockSuperType.quiz:
+        // TODO
+        break;
+    }
   }
 
 }
