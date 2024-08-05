@@ -99,7 +99,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           labelText: localizedText.email,
                           hintText: localizedText.email_hint,
                           maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) {return emailValidator(email: value, localizedText: localizedText);},
+                          validator: (String? value) { return emailValidator(email: value, localizedText: localizedText);},
                           keyboardType: TextInputType.emailAddress,
                         ),
                       ),

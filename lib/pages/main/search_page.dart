@@ -19,7 +19,6 @@ import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/toggle.dart';
-import '../../model/bloqo_published_course.dart';
 import '../from_search/search_results_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -603,7 +602,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   Future<void> _goToSearchResultsPage({required localizedText}) async {
     final query = _buildQuery();
     List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(localizedText: localizedText, query: query);
-    widget.onPush(SearchResultsPage(onPush: widget.onPush));
+    widget.onPush(SearchResultsPage(onPush: widget.onPush, publishedCourses: coursesFromSearch, onNavigateToPage: (int ) {  }, ));
+    //FIXME: onNavigate
   }
 
   Query<Map<String, dynamic>>? _buildQuery() {

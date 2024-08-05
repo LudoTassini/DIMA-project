@@ -213,5 +213,10 @@
   "enrolled_on": "Enrolled on: ",
   "not_completed": "Not completed",
   "view_more": "View more",
-  "collapse": "Collapse"
+  "collapse": "Collapse",
+  "search_results_header": "These are the courses that match your search:",
+  "no_search_results": "It seems there are no corresponding courses. Search for a new one!",
+  "uploaded_on": "Uploaded on: ",
+  "public": "Public",
+  "private": "Private"
 }
