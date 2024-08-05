@@ -14,7 +14,7 @@ class BloqoBlock{
   String? type;
   String name;
   int number;
-  String? content;
+  String content;
 
   BloqoBlock({
     required this.id,
@@ -22,7 +22,7 @@ class BloqoBlock{
     this.type,
     required this.name,
     required this.number,
-    this.content
+    required this.content
   });
 
   factory BloqoBlock.fromFirestore(
@@ -241,8 +241,10 @@ Future<void> deleteBlock({required var localizedText, required String courseId, 
             filePath: 'images/courses/$courseId/$blockId');
       }
       else if(type == BloqoBlockType.multimediaVideo.toString()) {
-        await deleteFile(localizedText: localizedText,
-            filePath: 'videos/courses/$courseId/$blockId');
+        if(!blockToDelete.content.startsWith("yt")) {
+          await deleteFile(localizedText: localizedText,
+              filePath: 'videos/courses/$courseId/$blockId');
+        }
       }
     }
   } on FirebaseAuthException catch (e) {

@@ -95,11 +95,13 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           List<DropdownMenuEntry<String>> multimediaTypes = buildMultimediaTypesList(localizedText: localizedText);
           if(firstBuild && block.type != null) {
             multimediaTypeController.text = multimediaTypes.where((entry) => entry.label ==
-                BloqoBlockType.multimediaVideo.multimediaShortText(
+                BloqoBlockTypeExtension.fromString(block.type!)!.multimediaShortText(
                     localizedText: localizedText)!).first.label;
             firstBuild = false;
-            multimediaTypeController.addListener(_onMultimediaTypeChanged);
           }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            multimediaTypeController.addListener(_onMultimediaTypeChanged);
+          });
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -162,7 +164,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                         child: Column(
                           children: [
-                            if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && (block.type == null || block.type != BloqoBlockType.multimediaImage.toString()))
+                            if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaImage.toString()))
                               Column(
                                 children: [
                                   Padding(
@@ -203,7 +205,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   ),
                                 ]
                               ),
-                            if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && (block.type == null || block.type != BloqoBlockType.multimediaVideo.toString()))
+                            if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaVideo.toString()))
                               Column(
                                   children: [
                                     Padding(
@@ -334,7 +336,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(20),
-                                    child: Image.network(widget.block.content!),
+                                    child: Image.network(widget.block.content),
                                   ),
                                   Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
@@ -384,9 +386,9 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   ),
                                 ),
                               ),
-                              !widget.block.content!.startsWith("yt:") ? BloqoVideoPlayer(
-                                url: widget.block.content!
-                              ) : BloqoYouTubePlayer(url: widget.block.content!.substring(3)),
+                              !widget.block.content.startsWith("yt:") ? BloqoVideoPlayer(
+                                url: widget.block.content
+                              ) : BloqoYouTubePlayer(url: widget.block.content.substring(3)),
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                                 child: BloqoFilledButton(
@@ -397,7 +399,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       title: localizedText.warning,
                                       description: localizedText.delete_file_confirmation,
                                       confirmationFunction: () async {
-                                        !widget.block.content!.startsWith("yt:") ?
+                                        !widget.block.content.startsWith("yt:") ?
                                         await _tryDeleteFile(
                                             context: context,
                                             localizedText: localizedText,
