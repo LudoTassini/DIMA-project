@@ -212,5 +212,6 @@
   "section": "Section",
   "enrolled_on": "Enrolled on: ",
   "not_completed": "Not completed",
-  "view_more": "View more"
+  "view_more": "View more",
+  "collapse": "Collapse"
 }

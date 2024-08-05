@@ -31,32 +31,41 @@ class CourseContentPage extends StatefulWidget {
 
 class _CourseContentPageState extends State<CourseContentPage> with AutomaticKeepAliveClientMixin<CourseContentPage> {
 
-  final Map<String, bool> _showCompletedSectionsMap = {};
+  final Map<String, bool> _showSectionsMap = {};
+  bool isInitializedSectionMap = false;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
 
-    void loadCompletedSections(String chapterId) {
-      setState(() {
-        _showCompletedSectionsMap[chapterId] = true;
-        print("Chapter $chapterId to show: ${_showCompletedSectionsMap[chapterId]}");
-      });
-    }
-
     // FIXME
-    void initializeShowCompletedSectionsMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
+    void initializeSectionsToShowMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
         if (!chaptersCompleted.contains(chapter.id)) {
-          _showCompletedSectionsMap[chapter.id] = true;
+          _showSectionsMap[chapter.id] = true;
           break;
         }
       }
+      isInitializedSectionMap = true;
     }
 
-    initializeShowCompletedSectionsMap(getLearnCourseChaptersFromAppState(context: context)?? [],
-        getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
+    void loadCompletedSections(String chapterId) {
+      setState(() {
+        _showSectionsMap[chapterId] = true;
+      });
+    }
+
+    void hideSections(String chapterId) {
+      setState(() {
+        _showSectionsMap.remove(chapterId);
+      });
+    }
+
+    if(!isInitializedSectionMap) {
+      initializeSectionsToShowMap(getLearnCourseChaptersFromAppState(context: context)?? [],
+          getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
+    }
 
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -262,24 +271,23 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                           : const SizedBox.shrink(), // This will take up no space
                                           ),
 
-                                          ... (_showCompletedSectionsMap[chapter.id] == true
-                                              ? List.generate(
-                                            sections[chapter.id]!.length,
-                                                (sectionIndex) {
-                                              var section = sections[chapter.id]![sectionIndex];
-                                              print("I am here!");
-                                              return BloqoCourseSection(
-                                                section: section,
-                                                index: sectionIndex,
-                                                onPressed: () async {
-                                                  // TODO
-                                                },
-                                              );
-                                            },
-                                          )
-                                              : [
+                                          ... (_showSectionsMap[chapter.id] == true
+                                              ? [
+                                                ...List.generate(
+                                                  sections[chapter.id]!.length,
+                                                      (sectionIndex) {
+                                                    var section = sections[chapter.id]![sectionIndex];
+                                                    return BloqoCourseSection(
+                                                      section: section,
+                                                      index: sectionIndex,
+                                                      onPressed: () async {
+                                                        // TODO
+                                                      },
+                                                    );
+                                                  },
+                                                ),
                                             Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 15),
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
                                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -290,35 +298,79 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       alignment: const AlignmentDirectional(1, 0),
                                                       child: TextButton(
                                                         onPressed: () {
-                                                          print("View more button pressed for chapter ${chapter.id}");
-                                                          loadCompletedSections(chapter.id);
+                                                          hideSections(chapter.id);
                                                         },
-                                                        child: Text(
-                                                          localizedText.view_more,
-                                                          style: const TextStyle(
-                                                            color: BloqoColors.secondaryText,
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
-                                                          ),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              localizedText.collapse,
+                                                              style: const TextStyle(
+                                                                color: BloqoColors.secondaryText,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                            const Icon(
+                                                              Icons.keyboard_arrow_up_sharp,
+                                                              color: BloqoColors.secondaryText,
+                                                              size: 25,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                  const Icon(
-                                                    Icons.keyboard_arrow_right_sharp,
-                                                    color: BloqoColors.secondaryText,
-                                                    size: 25,
+                                                ],
+                                              ),
+                                            ),
+
+                                          ]
+
+                                              : [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Opacity(
+                                                    opacity: 0.9,
+                                                    child: Align(
+                                                      alignment: const AlignmentDirectional(1, 0),
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          loadCompletedSections(chapter.id);
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              localizedText.view_more,
+                                                              style: const TextStyle(
+                                                                color: BloqoColors.secondaryText,
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                            const Icon(
+                                                              Icons.keyboard_arrow_right_sharp,
+                                                              color: BloqoColors.secondaryText,
+                                                              size: 25,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          ]),
-
-                                        ],
+                                          ]
                                         ),
-                                      );
-                                    },
-                                  ),
+                                      ],
+                                      ),
+                                    );
+                                  },
+                                ),
 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
