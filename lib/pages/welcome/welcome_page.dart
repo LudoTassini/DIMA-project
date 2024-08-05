@@ -84,7 +84,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: Column(
                     children: [
                       Text(
-                          localizedText.welcome,
+                        localizedText.welcome,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: BloqoColors.russianViolet,

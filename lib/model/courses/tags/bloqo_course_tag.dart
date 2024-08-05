@@ -31,7 +31,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
     case BloqoCourseTagType.language:
       for (var entry in BloqoLanguageTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(
-          value: entry.name,
+          value: entry.toString(),
           label: entry.text(localizedText: localizedText),
           labelWidget: Text(
             entry.text(localizedText: localizedText),
@@ -46,7 +46,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
     case BloqoCourseTagType.subject:
       for (var entry in BloqoSubjectTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(
-            value: entry.name,
+            value: entry.toString(),
             label: entry.text(localizedText: localizedText),
             labelWidget: Text(
               entry.text(localizedText: localizedText),
@@ -61,7 +61,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
     case BloqoCourseTagType.difficulty:
       for (var entry in BloqoDifficultyTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(
-            value: entry.name,
+            value: entry.toString(),
             label: entry.text(localizedText: localizedText),
             labelWidget: Text(
               entry.text(localizedText: localizedText),
@@ -75,7 +75,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
     case BloqoCourseTagType.modality:
       for (var entry in BloqoModalityTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(
-            value: entry.name,
+            value: entry.toString(),
             label: entry.text(localizedText: localizedText),
             labelWidget: Text(
               entry.text(localizedText: localizedText),
@@ -89,7 +89,7 @@ List<DropdownMenuEntry<String>> buildTagList({required BloqoCourseTagType type, 
     case BloqoCourseTagType.duration:
       for (var entry in BloqoDurationTagValue.values){
         dropdownMenuEntries.add(DropdownMenuEntry<String>(
-            value: entry.name,
+            value: entry.toString(),
             label: entry.text(localizedText: localizedText),
             labelWidget: Text(
                 entry.text(localizedText: localizedText),
