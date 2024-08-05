@@ -210,5 +210,7 @@
   "edit_chapter_page_no_sections": "This chapter has no sections yet. Create one now!",
   "chapter": "Chapter",
   "section": "Section",
-  "enrolled_on": "Enrolled on: "
+  "enrolled_on": "Enrolled on: ",
+  "not_completed": "Not completed",
+  "view_more": "View more"
 }

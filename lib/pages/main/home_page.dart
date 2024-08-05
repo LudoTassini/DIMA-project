@@ -216,7 +216,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               BloqoUserCourseCreated? course = userCoursesCreated[index];
                               return BloqoCourseCreated(
                                 course: course,
-                                onPressed: () async { await _goToEditorCoursePage(context: context, localizedText: localizedText, userCourseCreated: course); },
+                                onPressed: () async {
+                                  await _goToEditorCoursePage(context: context, localizedText: localizedText,
+                                      userCourseCreated: course); },
                               );
                             },
                           ),
@@ -371,8 +373,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
             chapters: chapters,
             sections: sections,
             enrollmentDate: userCourseEnrolled.enrollmentDate,
-            numSectionsCompleted: userCourseEnrolled.numSectionsCompleted,
+            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
             totNumSections: userCourseEnrolled.totNumSections,
+            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
             comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);

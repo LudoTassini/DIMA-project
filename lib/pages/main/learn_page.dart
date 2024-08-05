@@ -342,7 +342,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
             chapters: chapters,
             sections: sections,
             enrollmentDate: userCourseEnrolled.enrollmentDate,
-            numSectionsCompleted: userCourseEnrolled.numSectionsCompleted,
+            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
+            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
             totNumSections: userCourseEnrolled.totNumSections,
             comingFromHome: true);
         context.loaderOverlay.hide();

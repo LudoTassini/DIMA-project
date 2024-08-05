@@ -11,11 +11,12 @@ class BloqoUserCourseEnrolled {
   final String courseName;
   final String authorId;
 
-  int numSectionsCompleted;
+  List<dynamic> sectionsCompleted;
+  List<dynamic> chaptersCompleted;
   final int totNumSections;
 
   String? sectionName;
-  DocumentReference? sectionToComplete;
+  String? sectionToComplete;
 
   Timestamp lastUpdated;
   final Timestamp enrollmentDate;
@@ -27,7 +28,8 @@ class BloqoUserCourseEnrolled {
     required this.courseId,
     required this.courseAuthor,
     required this.courseName,
-    required this.numSectionsCompleted,
+    required this.sectionsCompleted,
+    required this.chaptersCompleted,
     required this.totNumSections,
     this.sectionName,
     this.sectionToComplete,
@@ -47,7 +49,8 @@ class BloqoUserCourseEnrolled {
       courseId: data!['course_id'],
       courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
-      numSectionsCompleted: data['num_sections_completed'],
+      sectionsCompleted: data['sections_completed'], //FIXME
+      chaptersCompleted: data['chapters_completed'],
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
@@ -64,7 +67,7 @@ class BloqoUserCourseEnrolled {
       'course_id': courseId,
       'course_author': courseAuthor,
       'course_name': courseName,
-      'num_sections_completed': numSectionsCompleted,
+      'sections_completed': sectionsCompleted,
       'tot_num_sections': totNumSections,
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,

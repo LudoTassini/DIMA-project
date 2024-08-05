@@ -161,58 +161,76 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+    Flexible(
+    child:
+                    Column(
+                    children: [
+
                     Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                        child: BloqoProgressBar(
-                          percentage: course!.numSectionsCompleted/course!.totNumSections,
-                        )
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                      child:
+
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Get the maximum available width
+                          double maxWidth = constraints.maxWidth-20;
+
+                          return BloqoProgressBar(
+                            percentage: course!.sectionsCompleted.length / course!.totNumSections,
+                            width: maxWidth, // Pass the maximum width to the progress bar
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
               ),
+              ],
+            ),
+          ),
 
-              if(showCompleted)
-                Flexible(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
-                        child:
-                          course!.isRated ? BloqoFilledButton(
-                            color: BloqoColors.rated,
-                            onPressed: () {
-                              //TODO:
-                            },
-                            text: 'Rated',
-                            fontSize: 16,
-                            height: 32,
-                          )
-                          :  BloqoFilledButton(
-                            color: BloqoColors.rate,
-                            onPressed: () {
-                            //TODO:
-                            },
-                            text: 'Rate',
-                            fontSize: 16,
-                            height: 32,
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: BloqoFilledButton(
-                          color: BloqoColors.success,
-                          onPressed: () {
-                            //TODO:
-                          },
-                          text: 'Get Certificate',
-                          fontSize: 16,
-                          height: 32,
-                        ),
+          if(showCompleted)
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
+                    child:
+                      course!.isRated ? BloqoFilledButton(
+                        color: BloqoColors.rated,
+                        onPressed: () {
+                          //TODO:
+                        },
+                        text: 'Rated',
+                        fontSize: 16,
+                        height: 32,
+                      )
+                      :  BloqoFilledButton(
+                        color: BloqoColors.rate,
+                        onPressed: () {
+                        //TODO:
+                        },
+                        text: 'Rate',
+                        fontSize: 16,
+                        height: 32,
                       ),
-                    ],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: BloqoFilledButton(
+                      color: BloqoColors.success,
+                      onPressed: () {
+                        //TODO:
+                      },
+                      text: 'Get Certificate',
+                      fontSize: 16,
+                      height: 32,
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

@@ -31,20 +31,44 @@ class CourseContentPage extends StatefulWidget {
 
 class _CourseContentPageState extends State<CourseContentPage> with AutomaticKeepAliveClientMixin<CourseContentPage> {
 
+  final Map<String, bool> _showCompletedSectionsMap = {};
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
 
+    void loadCompletedSections(String chapterId) {
+      setState(() {
+        _showCompletedSectionsMap[chapterId] = true;
+        print("Chapter $chapterId to show: ${_showCompletedSectionsMap[chapterId]}");
+      });
+    }
+
+    // FIXME
+    void initializeShowCompletedSectionsMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
+      for (var chapter in chapters) {
+        if (!chaptersCompleted.contains(chapter.id)) {
+          _showCompletedSectionsMap[chapter.id] = true;
+          break;
+        }
+      }
+    }
+
+    initializeShowCompletedSectionsMap(getLearnCourseChaptersFromAppState(context: context)?? [],
+        getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
+
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<UserCoursesEnrolledAppState>(
             builder: (context, userCoursesEnrolledAppState, _) {
+
               BloqoCourse course = getLearnCourseFromAppState(context: context)!;
               List<BloqoChapter> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
               Map<String, List<BloqoSection>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
               Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
-              int numSectionsCompleted = getLearnCourseNumSectionsCompletedFromAppState(context: context)?? 0;
+              List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
+              List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
               int totNumSections = getLearnCourseTotNumSectionsFromAppState(context: context)!;
 
               return Column(
@@ -77,23 +101,19 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         ),
                         Flexible(
                           child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 4, 20, 12),
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
                             child: Align(
                               alignment: Alignment.topLeft,
-                              child: Text(
-                                course.description ?? '',
-                                //FIXME: forse sarebbe meglio rendere description required
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .displaySmall
-                                    ?.copyWith(
+                              child: course.description != ''
+                                  ? Text(
+                                course.description!,
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   fontWeight: FontWeight.w400,
                                   color: BloqoColors.seasalt,
-                                  fontSize: 14,
+                                  fontSize: 16,
                                 ),
-                              ),
+                              )
+                                  : const SizedBox.shrink(), // This will take up no space
                             ),
                           ),
                         ),
@@ -132,11 +152,77 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                           Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                             child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '${localizedText.chapter} ${chapterIndex+1}',
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .displayMedium
+                                                      ?.copyWith(
+                                                    color: BloqoColors.russianViolet,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+
+                                                chaptersCompleted.contains(chapter.id) ?
+                                                  Row(
+                                                    children: [
+                                                      Align(
+                                                        alignment: Alignment.topRight,
+                                                        child: Text(
+                                                          localizedText.completed,
+                                                          textAlign: TextAlign.start,
+                                                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                            fontSize: 14,
+                                                            color: BloqoColors.success,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                                                        child: Icon(
+                                                          Icons.check,
+                                                          color: BloqoColors.success,
+                                                          size: 24,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+
+                                                : Row(
+                                                  children: [
+                                                    Align(
+                                                      alignment: Alignment.topRight,
+                                                      child: Text(
+                                                        localizedText.not_completed,
+                                                        textAlign: TextAlign.start,
+                                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                          fontSize: 14,
+                                                          color: BloqoColors.secondaryText,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                              ],
+                                            ),
+
+                                          ),
+
+                                          Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
+                                            child: Row(
                                               children: [
                                                 Align(
                                                   alignment: Alignment.topLeft,
                                                   child: Text(
-                                                    '${localizedText.chapter} ${chapterIndex+1}',
+                                                    chapter.name,
                                                     style: Theme
                                                         .of(context)
                                                         .textTheme
@@ -147,39 +233,41 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     ),
                                                   ),
                                                 ),
-                                                //FIXME: aggiungere segnale se il capitolo è completato
                                               ],
                                             ),
                                           ),
+
                                           Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 20),
-                                            child: Row(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                                            child: chapter.description != ''
+                                            ? Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 20),
+                                              child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Flexible(
-                                                child: Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Text(
-                                                    chapter.description ?? '',
-                                                    //FIXME: forse sarebbe meglio rendere description required
-                                                    style: Theme
-                                                        .of(context)
-                                                        .textTheme
-                                                        .displaySmall
-                                                        ?.copyWith(
-                                                      color: BloqoColors.russianViolet,
+                                                  child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      chapter.description!,
+                                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                        color: BloqoColors.russianViolet,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
+                                          )
+                                          : const SizedBox.shrink(), // This will take up no space
                                           ),
-                                        ),
 
-                                          ...List.generate(
+                                          ... (_showCompletedSectionsMap[chapter.id] == true
+                                              ? List.generate(
                                             sections[chapter.id]!.length,
                                                 (sectionIndex) {
                                               var section = sections[chapter.id]![sectionIndex];
+                                              print("I am here!");
                                               return BloqoCourseSection(
                                                 section: section,
                                                 index: sectionIndex,
@@ -188,18 +276,55 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 },
                                               );
                                             },
-                                          ),
+                                          )
+                                              : [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 15),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Opacity(
+                                                    opacity: 0.9,
+                                                    child: Align(
+                                                      alignment: const AlignmentDirectional(1, 0),
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          print("View more button pressed for chapter ${chapter.id}");
+                                                          loadCompletedSections(chapter.id);
+                                                        },
+                                                        child: Text(
+                                                          localizedText.view_more,
+                                                          style: const TextStyle(
+                                                            color: BloqoColors.secondaryText,
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.keyboard_arrow_right_sharp,
+                                                    color: BloqoColors.secondaryText,
+                                                    size: 25,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ]),
+
                                         ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        ),
+                                      );
+                                    },
+                                  ),
 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       20, 0, 20, 10),
                                   child: Row(
-                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Flexible(
@@ -212,59 +337,25 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                               .displaySmall
                                               ?.copyWith(
                                             color: BloqoColors.seasalt,
-                                            fontSize: 14,
+                                            fontSize: 16,
                                           ),
                                         ),
                                       ),
+
                                       Flexible(
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            padding: WidgetStateProperty
-                                                .resolveWith((states) =>
-                                            const EdgeInsetsDirectional.fromSTEB(
-                                                24, 0, 24, 0)),
-                                            backgroundColor: WidgetStateProperty
-                                                .resolveWith((
-                                                states) => BloqoColors.error),
-                                            shape: WidgetStateProperty
-                                                .resolveWith((states) =>
-                                                RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius
-                                                      .circular(15))),
-                                          ),
-                                          onPressed: () async {
-                                            // TODO
-                                          },
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .spaceBetween,
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              const Icon(
-                                                Icons.close_sharp,
-                                                size: 16,
-                                                color: BloqoColors.seasalt,
-                                              ),
-                                              Flexible(
-                                                child: Text(
-                                                  localizedText.delete,
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displayLarge
-                                                      ?.copyWith(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: BloqoColors.seasalt,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0), //24, 0, 24, 0
+                                          child: BloqoFilledButton(
+                                            color: BloqoColors.error,
+                                            onPressed: () async {
+                                            //TODO
+                                            },
+                                          text: localizedText.delete,
+                                          icon: Icons.close_sharp,
                                           ),
                                         ),
                                       ),
+
                                     ],
                                   ),
                                 ),
@@ -286,23 +377,34 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                   runAlignment: WrapAlignment.start,
                   verticalDirection: VerticalDirection.down,
                   children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          40, 0, 40, 0),
-                      child: BloqoProgressBar(
-                        percentage: numSectionsCompleted/totNumSections,
-                      ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              double maxWidth = constraints.maxWidth-20;
+                              return BloqoProgressBar(
+                                percentage: sectionsCompleted.length / totNumSections,
+                                width: maxWidth,
+                                fontSize: 12,// Pass the maximum width to the progress bar
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
 
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 0, 20, 0),
+                          20, 0, 20, 20),
                       child: BloqoFilledButton(
                         onPressed: () =>
                             () async {
                           // TODO
                           //widget.onNavigateToPage(3),
                         },
+                        height: 60,
                         color: BloqoColors.success,
                         text: localizedText.continue_learning,
                         fontSize: 24,
