@@ -237,5 +237,6 @@
   "delete_file": "Delete file",
   "youtube_link": "YouTube link",
   "enter_youtube_link": "Enter your YouTube link here",
-  "embed": "Embed"
+  "embed": "Embed",
+  "invalid_link": "Oops, we are not able to find that YouTube video. Please try again with another link."
 }

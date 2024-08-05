@@ -1,5 +1,8 @@
+import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../../style/bloqo_colors.dart';
 
 class BloqoYouTubePlayer extends StatefulWidget {
   const BloqoYouTubePlayer({
@@ -16,40 +19,55 @@ class BloqoYouTubePlayer extends StatefulWidget {
 }
 
 class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
+
   bool shouldPlay = false;
+  bool shouldShowError = false;
   late YoutubePlayerController youTubePlayerController;
 
   @override
   void initState() {
     super.initState();
-    youTubePlayerController = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(widget.url)!,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-        showLiveFullscreenButton: false
-      ),
-    );
+    String? initialVideoId = YoutubePlayer.convertUrlToId(widget.url);
+    if(initialVideoId != null) {
+      youTubePlayerController = YoutubePlayerController(
+        initialVideoId: YoutubePlayer.convertUrlToId(initialVideoId)!,
+        flags: const YoutubePlayerFlags(
+            autoPlay: false,
+            mute: false,
+            showLiveFullscreenButton: false
+        ),
+      );
+    }
+    else{
+      shouldShowError = true;
+    }
   }
 
   @override
   void dispose() {
-    youTubePlayerController.dispose();
+    if(!shouldShowError) {
+      youTubePlayerController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var localizationText = getAppLocalizations(context)!;
     return Padding(
       padding: widget.padding,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           double aspectRatio = 16 / 9;
 
-          shouldPlay ? youTubePlayerController.play() : youTubePlayerController.pause();
+          if (!shouldShowError) {
+            shouldPlay
+                ? youTubePlayerController.play()
+                : youTubePlayerController.pause();
+          }
 
           return Center(
-            child: AspectRatio(
+            child: !shouldShowError ? AspectRatio(
               aspectRatio: aspectRatio,
               child: ElevatedButton(
                 onPressed: () {
@@ -77,11 +95,19 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
                         ),
                       ),
                   ],
-                ),
-              ),
+                )
+              )
+          ) : Center(
+                child: Text(
+                    localizationText.invalid_link,
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        color: BloqoColors.error,
+                        fontWeight: FontWeight.w500
+                    )
+                )
             ),
           );
-        },
+        }
       ),
     );
   }

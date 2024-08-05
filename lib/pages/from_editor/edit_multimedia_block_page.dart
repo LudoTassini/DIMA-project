@@ -194,7 +194,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                       ),
                       BloqoSeasaltContainer(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                        child: widget.block.content == "" && showVideoOptions ? Column(
+                        child: widget.block.content == "" ? Column(
                           children: [
                             if(showVideoOptions)
                               Column(
