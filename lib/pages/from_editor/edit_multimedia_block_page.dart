@@ -52,42 +52,24 @@ class EditMultimediaBlockPage extends StatefulWidget {
 
 class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with AutomaticKeepAliveClientMixin<EditMultimediaBlockPage> {
 
+  bool firstBuild = true;
+
   final formKeyYouTube = GlobalKey<FormState>();
 
   late TextEditingController multimediaTypeController;
   late TextEditingController youTubeLinkController;
 
-  bool firstBuild = true;
-
-  bool showAudioOptions = false;
-  bool showImageOptions = false;
-  bool showVideoOptions = false;
   bool showEmbedFromYouTube = false;
 
   @override
   void initState() {
     super.initState();
     multimediaTypeController = TextEditingController();
-    multimediaTypeController.addListener(_onMultimediaTypeChanged);
-    if(widget.block.type == BloqoBlockType.multimediaAudio.toString()){
-      showAudioOptions = true;
-    }
-    else if(widget.block.type == BloqoBlockType.multimediaImage.toString()){
-      showImageOptions = true;
-    }
-    else if(widget.block.type == BloqoBlockType.multimediaVideo.toString()){
-      showVideoOptions = true;
-    }
     youTubeLinkController = TextEditingController();
   }
 
   void _onMultimediaTypeChanged() {
-    if(!firstBuild) {
-      setState(() {});
-    }
-    else{
-      firstBuild = false;
-    }
+    setState(() {});
   }
 
   @override
@@ -96,12 +78,6 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     multimediaTypeController.dispose();
     youTubeLinkController.dispose();
     super.dispose();
-  }
-
-  void resetShowOptions(){
-    showAudioOptions = false;
-    showImageOptions = false;
-    showVideoOptions = false;
   }
 
   @override
@@ -117,22 +93,12 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           BloqoSection section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
           BloqoBlock block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
           List<DropdownMenuEntry<String>> multimediaTypes = buildMultimediaTypesList(localizedText: localizedText);
-          if(!firstBuild){
-            if(multimediaTypeController.text == BloqoBlockType.multimediaAudio.multimediaShortText(localizedText: localizedText)){
-              resetShowOptions();
-              showAudioOptions = true;
-            }
-            else if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText)){
-              resetShowOptions();
-              showImageOptions = true;
-            }
-            else if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText)){
-              resetShowOptions();
-              showVideoOptions = true;
-            }
-            else{
-              resetShowOptions();
-            }
+          if(firstBuild && block.type != null) {
+            multimediaTypeController.text = multimediaTypes.where((entry) => entry.label ==
+                BloqoBlockType.multimediaVideo.multimediaShortText(
+                    localizedText: localizedText)!).first.label;
+            firstBuild = false;
+            multimediaTypeController.addListener(_onMultimediaTypeChanged);
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +144,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                                       BloqoDropdown(
                                                           controller: multimediaTypeController,
                                                           dropdownMenuEntries: multimediaTypes,
-                                                          initialSelection: widget.block.type != null ? widget.block.type.toString() : multimediaTypes[0].value,
+                                                          initialSelection: multimediaTypeController.text == "" ? multimediaTypes[0].value : multimediaTypeController.text,
                                                           width: availableWidth
                                                       )
                                                     ]
@@ -194,9 +160,50 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                       ),
                       BloqoSeasaltContainer(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                        child: widget.block.content == "" ? Column(
+                        child: Column(
                           children: [
-                            if(showVideoOptions)
+                            if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && (block.type == null || block.type != BloqoBlockType.multimediaImage.toString()))
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        localizedText.upload_image,
+                                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                          color: BloqoColors.russianViolet,
+                                          fontSize: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                    child: BloqoFilledButton(
+                                      color: BloqoColors.russianViolet,
+                                      onPressed: () async {
+                                        final newUrl = await _askUserForAnImage(
+                                            context: context,
+                                            localizedText: localizedText,
+                                            courseId: widget.courseId,
+                                            blockId: widget.block.id
+                                        );
+                                        if(newUrl != null) {
+                                          if(!context.mounted) return;
+                                          block.content = newUrl;
+                                          await _saveChanges(context: context, courseId: widget.courseId, sectionId: widget.sectionId, block: block, blockType: BloqoBlockType.multimediaImage);
+                                          if(!context.mounted) return;
+                                          updateEditorCourseBlockInAppState(context: context, sectionId: section.id, block: block);
+                                        }
+                                      },
+                                      text: localizedText.upload_from_device,
+                                      icon: Icons.upload
+                                      )
+                                  ),
+                                ]
+                              ),
+                            if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && (block.type == null || block.type != BloqoBlockType.multimediaVideo.toString()))
                               Column(
                                   children: [
                                     Padding(
@@ -251,14 +258,13 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   ]
                               )
                           ],
-                        ) : Container(),
+                        )
                       ),
-                      if(showEmbedFromYouTube)
+                      if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && showEmbedFromYouTube)
                         BloqoSeasaltContainer(
                           padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                          child:  widget.block.content == "" && showVideoOptions ? Column(
+                          child: Column(
                             children: [
-                              if(showVideoOptions)
                                 Column(
                                     children: [
                                       Padding(
@@ -306,65 +312,118 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     ]
                                 )
                             ],
-                          ) : Container(),
+                          )
                         ),
-                      BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                        child: widget.block.content != "" && showVideoOptions ? Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  localizedText.multimedia_video_short,
-                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: BloqoColors.russianViolet,
-                                    fontSize: 30,
+                      if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaImage.toString())
+                        BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                            child: widget.block.content != "" ? Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        localizedText.multimedia_image_short,
+                                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                          color: BloqoColors.russianViolet,
+                                          fontSize: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Image.network(widget.block.content!),
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                      child: BloqoFilledButton(
+                                          color: BloqoColors.error,
+                                          onPressed: () {
+                                            showBloqoConfirmationAlert(
+                                                context: context,
+                                                title: localizedText.warning,
+                                                description: localizedText.delete_file_confirmation,
+                                                confirmationFunction: () async {
+                                                  await _tryDeleteFile(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      filePath: 'images/courses/${course
+                                                          .id}/${block.id}',
+                                                      courseId: course.id,
+                                                      sectionId: section.id,
+                                                      block: block
+                                                  );
+                                                },
+                                                backgroundColor: BloqoColors.error
+                                            );
+                                          },
+                                          text: localizedText.delete_file,
+                                          icon: Icons.delete_forever
+                                      )
+                                  )
+                                ]
+                            ) : Container()
+                        ),
+                      if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaVideo.toString())
+                        BloqoSeasaltContainer(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                          child: widget.block.content != "" ? Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    localizedText.multimedia_video_short,
+                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                      color: BloqoColors.russianViolet,
+                                      fontSize: 30,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            !widget.block.content!.startsWith("yt:") ? BloqoVideoPlayer(
-                              url: widget.block.content!
-                            ) : BloqoYouTubePlayer(url: widget.block.content!.substring(3)),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                              child: BloqoFilledButton(
-                                color: BloqoColors.error,
-                                onPressed: () {
-                                  showBloqoConfirmationAlert(
-                                    context: context,
-                                    title: localizedText.warning,
-                                    description: localizedText.delete_file_confirmation,
-                                    confirmationFunction: () async {
-                                      !widget.block.content!.startsWith("yt:") ?
-                                      await _tryDeleteFile(
+                              !widget.block.content!.startsWith("yt:") ? BloqoVideoPlayer(
+                                url: widget.block.content!
+                              ) : BloqoYouTubePlayer(url: widget.block.content!.substring(3)),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                child: BloqoFilledButton(
+                                  color: BloqoColors.error,
+                                  onPressed: () {
+                                    showBloqoConfirmationAlert(
+                                      context: context,
+                                      title: localizedText.warning,
+                                      description: localizedText.delete_file_confirmation,
+                                      confirmationFunction: () async {
+                                        !widget.block.content!.startsWith("yt:") ?
+                                        await _tryDeleteFile(
+                                            context: context,
+                                            localizedText: localizedText,
+                                            filePath: 'videos/courses/${course
+                                                .id}/${block.id}',
+                                            courseId: course.id,
+                                            sectionId: section.id,
+                                            block: block
+                                        ) : await _tryDeleteYouTubeLink(
                                           context: context,
                                           localizedText: localizedText,
-                                          filePath: 'videos/courses/${course
-                                              .id}/${block.id}',
                                           courseId: course.id,
                                           sectionId: section.id,
                                           block: block
-                                      ) : await _tryDeleteYouTubeLink(
-                                        context: context,
-                                        localizedText: localizedText,
-                                        courseId: course.id,
-                                        sectionId: section.id,
-                                        block: block
-                                      );
-                                    },
-                                    backgroundColor: BloqoColors.error
-                                  );
-                                },
-                                text: localizedText.delete_file,
-                                icon: Icons.delete_forever
+                                        );
+                                      },
+                                      backgroundColor: BloqoColors.error
+                                    );
+                                  },
+                                  text: localizedText.delete_file,
+                                  icon: Icons.delete_forever
+                                )
                               )
-                            )
-                          ]
-                        ) : Container()
-                      ),
+                            ]
+                          ) : Container()
+                        ),
                     ],
                   ),
                 ),
@@ -470,6 +529,47 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
   }
 
+  Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String courseId, required String blockId}) async {
+    PermissionStatus permissionStatus = await Permission.photos.request();
+
+    if (permissionStatus.isGranted) {
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
+
+      if (pickedFile != null) {
+        if (!context.mounted) return null;
+        context.loaderOverlay.show();
+
+        try {
+          final image = File(pickedFile.path);
+          final url = await uploadBlockImage(
+              localizedText: localizedText,
+              image: image,
+              courseId: courseId,
+              blockId: blockId
+          );
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+          );
+          return url;
+        } on BloqoException catch (e) {
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+          showBloqoErrorAlert(
+            context: context,
+            title: localizedText.error_title,
+            description: e.message,
+          );
+        }
+      }
+    }
+    return null;
+  }
+
   Future<String?> _askUserForAVideo({required BuildContext context, required var localizedText, required String courseId, required String blockId}) async {
     PermissionStatus permissionStatus = await Permission.photos.request();
 
@@ -484,7 +584,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
 
         try {
           final video = File(pickedFile.path);
-          final url = await uploadVideo(
+          final url = await uploadBlockVideo(
             localizedText: localizedText,
             video: video,
             courseId: courseId,
@@ -517,7 +617,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     
     try {
         
-      await saveVideoUrl(localizedText: localizedText, videoUrl: "yt:$videoUrl", blockId: block.id);
+      await saveBlockVideoUrl(localizedText: localizedText, videoUrl: "yt:$videoUrl", blockId: block.id);
 
       block.content = videoUrl;
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaVideo);

@@ -229,11 +229,21 @@ Future<void> deleteBlock({required var localizedText, required String courseId, 
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     BloqoBlock blockToDelete = querySnapshot.docs[0].data();
-    bool shouldDeleteFile = blockToDelete.superType == BloqoBlockSuperType.multimedia.toString();
+    String? type = blockToDelete.type;
     await querySnapshot.docs[0].reference.delete();
-    if(shouldDeleteFile) {
-      await deleteFile(localizedText: localizedText,
-          filePath: 'videos/courses/$courseId/$blockId');
+    if(type != null) {
+      if(type == BloqoBlockType.multimediaAudio.toString()){
+        await deleteFile(localizedText: localizedText,
+            filePath: 'audios/courses/$courseId/$blockId');
+      }
+      else if(type == BloqoBlockType.multimediaImage.toString()){
+        await deleteFile(localizedText: localizedText,
+            filePath: 'images/courses/$courseId/$blockId');
+      }
+      else if(type == BloqoBlockType.multimediaVideo.toString()) {
+        await deleteFile(localizedText: localizedText,
+            filePath: 'videos/courses/$courseId/$blockId');
+      }
     }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -292,7 +302,35 @@ Future<void> saveBlockChanges({required var localizedText, required BloqoBlock u
   }
 }
 
-Future<void> saveVideoUrl({
+Future<void> saveBlockImageUrl({
+  required var localizedText,
+  required String blockId,
+  required String imageUrl
+}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "content": imageUrl,
+        "type": BloqoBlockType.multimediaImage.toString(),
+        "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaImage)
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> saveBlockVideoUrl({
   required var localizedText,
   required String blockId,
   required String videoUrl

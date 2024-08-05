@@ -415,7 +415,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
         context.loaderOverlay.show();
         try {
           final image = File(pickedFile.path);
-          final url = await uploadImage(
+          final url = await uploadProfilePicture(
               localizedText: localizedText,
               image: image,
               userId: userId

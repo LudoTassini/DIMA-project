@@ -101,7 +101,7 @@ Future<BloqoUser> getUserFromEmail({required var localizedText, required String 
   }
 }
 
-Future<void> saveUserPictureUrl({
+Future<void> saveProfilePictureUrl({
   required var localizedText,
   required String userId,
   required String pictureUrl,
