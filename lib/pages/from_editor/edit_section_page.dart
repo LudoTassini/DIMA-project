@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/pages/from_editor/edit_multimedia_block_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -137,6 +138,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                             onPressed: () {
                                                               _goToEditBlockPage(
                                                                   blockSuperType: BloqoBlockSuperTypeExtension.fromString(block.superType)!,
+                                                                  courseId: course.id,
                                                                   chapterId: chapter.id,
                                                                   sectionId: section.id,
                                                                   block: block
@@ -154,6 +156,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                             onPressed: () {
                                                               _goToEditBlockPage(
                                                                 blockSuperType: BloqoBlockSuperTypeExtension.fromString(block.superType)!,
+                                                                courseId: course.id,
                                                                 chapterId: chapter.id,
                                                                 sectionId: section.id,
                                                                 block: block
@@ -350,13 +353,13 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
     updateEditorCourseSectionNameInAppState(context: context, chapterId: chapter.id, sectionId: section.id, newName: section.name);
   }
 
-  void _goToEditBlockPage({required BloqoBlockSuperType blockSuperType, required String chapterId, required String sectionId, required BloqoBlock block}){
+  void _goToEditBlockPage({required BloqoBlockSuperType blockSuperType, required String courseId, required String chapterId, required String sectionId, required BloqoBlock block}){
     switch(blockSuperType){
       case BloqoBlockSuperType.text:
         widget.onPush(EditTextBlockPage(onPush: widget.onPush, chapterId: chapterId, sectionId: sectionId, block: block));
         break;
       case BloqoBlockSuperType.multimedia:
-        // TODO
+        widget.onPush(EditMultimediaBlockPage(onPush: widget.onPush, courseId: courseId, chapterId: chapterId, sectionId: sectionId, block: block));
         break;
       case BloqoBlockSuperType.quiz:
         // TODO

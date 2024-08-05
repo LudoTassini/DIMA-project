@@ -1,4 +1,6 @@
+import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
+import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/style/bloqo_style_sheet.dart';
 import 'package:flutter/material.dart';
@@ -153,6 +155,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                     try {
                       await _saveChanges(
                         context: context,
+                        courseId: course.id,
                         sectionId: section.id,
                         block: block,
                       );
@@ -185,7 +188,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _saveChanges({required BuildContext context, required String sectionId, required BloqoBlock block}) async {
+  Future<void> _saveChanges({required BuildContext context, required String courseId, required String sectionId, required BloqoBlock block}) async {
     var localizedText = getAppLocalizations(context)!;
 
     block.content = textController.text;
@@ -197,6 +200,9 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
     );
 
     if (!context.mounted) return;
+    BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
     updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
+
+    await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
   }
 }

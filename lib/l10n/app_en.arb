@@ -220,8 +220,17 @@
   "multimedia_video": "Multimedia: Video",
   "multimedia_image": "Multimedia: Image",
   "multimedia_audio": "Multimedia: Audio",
+  "multimedia_video_short": "Video",
+  "multimedia_image_short": "Image",
+  "multimedia_audio_short": "Audio",
   "quiz_multiple_choice": "Quiz: Multiple choice",
   "quiz_open_question": "Quiz: Open question",
   "write_text_here": "Write your text here",
-  "preview": "Preview"
+  "preview": "Preview",
+  "choose_multimedia_type": "Choose the multimedia type",
+  "upload_audio": "Upload an audio",
+  "upload_image": "Upload an image",
+  "upload_video": "Upload a video",
+  "upload_from_device": "Upload from device",
+  "embed_from_youtube": "Embed from YouTube"
 }

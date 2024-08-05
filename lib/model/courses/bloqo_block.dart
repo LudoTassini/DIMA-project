@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
@@ -68,6 +69,21 @@ enum BloqoBlockType{
   quizOpenQuestion
 }
 
+extension BloqoBlockTypeExtension on BloqoBlockType {
+  String? multimediaShortText({required var localizedText}) {
+    switch (this) {
+      case BloqoBlockType.multimediaVideo:
+        return localizedText.multimedia_video_short;
+      case BloqoBlockType.multimediaImage:
+        return localizedText.multimedia_image_short;
+      case BloqoBlockType.multimediaAudio:
+        return localizedText.multimedia_audio_short;
+      default:
+        return null;
+    }
+  }
+}
+
 enum BloqoBlockSuperType{
   text,
   multimedia,
@@ -112,6 +128,40 @@ String getNameBasedOnBlockSuperType({required var localizedText, required BloqoB
     case BloqoBlockSuperType.quiz:
       return localizedText.quiz;
   }
+}
+
+List<DropdownMenuEntry<String>> buildMultimediaTypesList({required var localizedText, bool withNone = true}) {
+  final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
+  for (var entry in BloqoBlockType.values) {
+    String? text = entry.multimediaShortText(localizedText: localizedText);
+    if(text != null) {
+      dropdownMenuEntries.add(DropdownMenuEntry<String>(
+        value: entry.toString(),
+        label: text,
+        labelWidget: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2, // Adjust the maxLines as needed
+        ),
+      ));
+    }
+  }
+  dropdownMenuEntries.sort((a, b) => a.label.compareTo(b.label)); // sorts the list alphabetically
+
+
+  if(withNone) {
+    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(
+      value: "None",
+      label: localizedText.none,
+      labelWidget: Text(
+        localizedText.none,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2, // Adjust the maxLines as needed
+      ),
+    ));
+  }
+
+  return dropdownMenuEntries;
 }
 
 Future<List<BloqoBlock>> getBlocksFromIds({required var localizedText, required List<dynamic> blockIds}) async {
@@ -218,5 +268,33 @@ Future<void> saveBlockChanges({required var localizedText, required BloqoBlock u
     }
   } catch (e) {
     throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> saveVideoUrl({
+  required var localizedText,
+  required String blockId,
+  required String videoUrl
+}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "content": videoUrl,
+        "type": BloqoBlockType.multimediaVideo.toString(),
+        "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaVideo)
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

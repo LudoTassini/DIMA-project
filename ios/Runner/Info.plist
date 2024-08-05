@@ -10,7 +10,7 @@
 	<key>NSCameraUsageDescription</key>
     <string>bloQo needs access to the camera to scan QR codes.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>bloQo needs access to the photo library to upload your profile picture.</string>
+    <string>bloQo needs access to the photo library to upload pictures and videos.</string>
 	<key>FLTEnableImpeller</key>
     <true/>
 	<key>CFBundleDevelopmentRegion</key>
