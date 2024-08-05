@@ -43,6 +43,8 @@ class EditSectionPage extends StatefulWidget {
 
 class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAliveClientMixin<EditSectionPage> {
 
+  bool firstBuild = true;
+
   final formKeyChapterName = GlobalKey<FormState>();
 
   late TextEditingController sectionNameController;
@@ -70,8 +72,11 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
               BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
               BloqoSection section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
-              List<BloqoBlock> blocks = getEditorCourseSectionBlocksFromAppState(context: context, sectionId: widget.sectionId)!;
-              sectionNameController.text = section.name;
+              List<BloqoBlock> blocks = getEditorCourseSectionBlocksFromAppState(context: context, sectionId: widget.sectionId) ?? [];
+              if(firstBuild) {
+                sectionNameController.text = section.name;
+                firstBuild = false;
+              }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

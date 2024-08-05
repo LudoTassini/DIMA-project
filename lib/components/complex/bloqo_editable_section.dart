@@ -125,7 +125,7 @@ class BloqoEditableSection extends StatelessWidget {
   Future<void> _tryDeleteSection({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteSection(localizedText: localizedText, section: section);
+      await deleteSection(localizedText: localizedText, section: section, courseId: course.id);
       await deleteSectionFromChapter(localizedText: localizedText, chapterId: chapter.id, sectionId: section.id);
       await deleteSectionFromUserCourseCreated(localizedText: localizedText, courseId: course.id);
       if(section.number < chapter.sections.length){

@@ -35,6 +35,8 @@ class EditCoursePage extends StatefulWidget {
 
 class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAliveClientMixin<EditCoursePage> {
 
+  bool firstBuild = true;
+
   final formKeyCourseName = GlobalKey<FormState>();
   final formKeyCourseDescription = GlobalKey<FormState>();
 
@@ -65,9 +67,12 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
             builder: (context, editorCourseAppState, _){
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
               List<BloqoChapter> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
-              courseNameController.text = course.name;
-              if(course.description != null) {
-                courseDescriptionController.text = course.description!;
+              if(firstBuild) {
+                courseNameController.text = course.name;
+                if (course.description != null) {
+                  courseDescriptionController.text = course.description!;
+                }
+                firstBuild = false;
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

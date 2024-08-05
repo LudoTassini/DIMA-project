@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/bloqo_exception.dart';
@@ -82,6 +83,20 @@ extension BloqoBlockTypeExtension on BloqoBlockType {
         return null;
     }
   }
+
+  static BloqoBlockType? fromString(String value) {
+    return _enumMap[value];
+  }
+
+  static final Map<String, BloqoBlockType> _enumMap = {
+    'BloqoBlockType.text': BloqoBlockType.text,
+    'BloqoBlockType.multimediaAudio': BloqoBlockType.multimediaAudio,
+    'BloqoBlockType.multimediaImage': BloqoBlockType.multimediaImage,
+    'BloqoBlockType.multimediaVideo': BloqoBlockType.multimediaVideo,
+    'BloqoBlockType.quizMultipleChoice': BloqoBlockType.quizMultipleChoice,
+    'BloqoBlockType.quizOpenQuestion': BloqoBlockType.quizOpenQuestion,
+  };
+
 }
 
 enum BloqoBlockSuperType{
@@ -208,12 +223,18 @@ Future<BloqoBlock> saveNewBlock({required var localizedText, required BloqoBlock
   }
 }
 
-Future<void> deleteBlock({required var localizedText, required String blockId}) async {
+Future<void> deleteBlock({required var localizedText, required String courseId, required String blockId}) async {
   try {
     var ref = BloqoBlock.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    BloqoBlock blockToDelete = querySnapshot.docs[0].data();
+    bool shouldDeleteFile = blockToDelete.superType == BloqoBlockSuperType.multimedia.toString();
     await querySnapshot.docs[0].reference.delete();
+    if(shouldDeleteFile) {
+      await deleteFile(localizedText: localizedText,
+          filePath: 'videos/courses/$courseId/$blockId');
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
@@ -290,6 +311,20 @@ Future<void> saveVideoUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> deleteFile({required var localizedText, required String filePath}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    final ref = FirebaseStorage.instance.ref().child(filePath);
+    await ref.delete();
   } on FirebaseException catch (e) {
     if (e.code == "unavailable" || e.code == "network-request-failed") {
       throw BloqoException(message: localizedText.network_error);

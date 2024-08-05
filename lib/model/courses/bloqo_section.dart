@@ -96,14 +96,14 @@ Future<BloqoSection> saveNewSection({required var localizedText, required int se
   }
 }
 
-Future<void> deleteSection({required var localizedText, required BloqoSection section}) async {
+Future<void> deleteSection({required var localizedText, required BloqoSection section, required String courseId}) async {
   try {
     var ref = BloqoSection.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: section.id).get();
     await querySnapshot.docs[0].reference.delete();
     for(String blockId in section.blocks){
-      await deleteBlock(localizedText: localizedText, blockId: blockId);
+      await deleteBlock(localizedText: localizedText, courseId: courseId, blockId: blockId);
     }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {

@@ -100,7 +100,7 @@ Future<List<BloqoChapter>> getChaptersFromIds({required var localizedText, requi
   }
 }
 
-Future<void> deleteChapter({required var localizedText, required BloqoChapter chapter}) async {
+Future<void> deleteChapter({required var localizedText, required BloqoChapter chapter, required String courseId}) async {
   try {
     var ref = BloqoChapter.getRef();
     await checkConnectivity(localizedText: localizedText);
@@ -108,7 +108,7 @@ Future<void> deleteChapter({required var localizedText, required BloqoChapter ch
     await querySnapshot.docs[0].reference.delete();
     List<BloqoSection> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
     for(BloqoSection section in sections){
-      await deleteSection(localizedText: localizedText, section: section);
+      await deleteSection(localizedText: localizedText, section: section, courseId: courseId);
     }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {

@@ -190,6 +190,7 @@
   "delete_chapter_confirmation": "By confirming, this chapter will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
   "delete_section_confirmation": "By confirming, this section will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
   "delete_block_confirmation": "By confirming, this block will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
+  "delete_file_confirmation": "By confirming, this file will be permanently deleted and cannot be restored in any way. Do you wish to proceed?",
   "name": "Name",
   "description": "Description",
   "editor_course_name_hint": "Enter the course name here",
@@ -232,5 +233,9 @@
   "upload_image": "Upload an image",
   "upload_video": "Upload a video",
   "upload_from_device": "Upload from device",
-  "embed_from_youtube": "Embed from YouTube"
+  "embed_from_youtube": "Embed from YouTube",
+  "delete_file": "Delete file",
+  "youtube_link": "YouTube link",
+  "enter_youtube_link": "Enter your YouTube link here",
+  "embed": "Embed"
 }

@@ -122,7 +122,7 @@ class BloqoEditableChapter extends StatelessWidget {
   Future<void> _tryDeleteChapter({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteChapter(localizedText: localizedText, chapter: chapter);
+      await deleteChapter(localizedText: localizedText, chapter: chapter, courseId: course.id);
       await deleteChapterFromCourse(localizedText: localizedText, courseId: course.id, chapterId: chapter.id);
       await deleteChapterFromUserCourseCreated(localizedText: localizedText, courseId: course.id);
       if(chapter.number < course.chapters.length){

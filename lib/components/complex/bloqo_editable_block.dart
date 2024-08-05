@@ -128,7 +128,7 @@ class BloqoEditableBlock extends StatelessWidget {
   Future<void> _tryDeleteBlock({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteBlock(localizedText: localizedText, blockId: block.id);
+      await deleteBlock(localizedText: localizedText, blockId: block.id, courseId: course.id);
       await deleteBlockFromSection(localizedText: localizedText, sectionId: section.id, blockId: block.id);
       if (!context.mounted) return;
       BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((c) => c.courseId == course.id).first;

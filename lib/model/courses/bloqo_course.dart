@@ -135,7 +135,7 @@ Future<void> deleteCourse({required var localizedText, required BloqoCourse cour
     await querySnapshot.docs[0].reference.delete();
     List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
     for(BloqoChapter chapter in chapters){
-      await deleteChapter(localizedText: localizedText, chapter: chapter);
+      await deleteChapter(localizedText: localizedText, chapter: chapter, courseId: course.id);
     }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {

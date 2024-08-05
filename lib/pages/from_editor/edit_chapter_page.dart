@@ -38,6 +38,8 @@ class EditChapterPage extends StatefulWidget {
 
 class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAliveClientMixin<EditChapterPage> {
 
+  bool firstBuild = true;
+
   final formKeyChapterName = GlobalKey<FormState>();
   final formKeyChapterDescription = GlobalKey<FormState>();
 
@@ -69,9 +71,12 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
               BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
               List<BloqoSection> sections = getEditorCourseChapterSectionsFromAppState(context: context, chapterId: widget.chapterId) ?? [];
-              chapterNameController.text = chapter.name;
-              if(chapter.description != null) {
-                chapterDescriptionController.text = chapter.description!;
+              if(firstBuild) {
+                chapterNameController.text = chapter.name;
+                if (chapter.description != null) {
+                  chapterDescriptionController.text = chapter.description!;
+                }
+                firstBuild = false;
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

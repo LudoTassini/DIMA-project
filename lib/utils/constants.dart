@@ -15,6 +15,8 @@ class Constants{
 
   static const int maxBlockTextLength = 10000;
 
+  static const int maxYouTubeLinkLength = 500;
+
   static const double markdownBaseFontSize = 16.0;
 
   static const int coursesToShowAtFirst = 3;
