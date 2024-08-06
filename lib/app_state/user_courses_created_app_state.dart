@@ -64,6 +64,15 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
+  void _updateUserCourseCreatedPublishedStatusName(String courseId, bool newStatus){
+    if(_userCourses != null) {
+      _userCourses!.where((userCourse) => userCourse.courseId == courseId).first.published = newStatus;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
 }
 
 void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreated> courses}){
@@ -98,4 +107,8 @@ void updateUserCourseCreatedChaptersNumberInAppState({required BuildContext cont
 
 void updateUserCourseCreatedSectionsNumberInAppState({required BuildContext context, required String courseId, required int of}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedSectionsNumber(courseId, of);
+}
+
+void updateUserCourseCreatedPublishedStatusInAppState({required BuildContext context, required String courseId, required bool published}){
+  Provider.of<UserCoursesCreatedAppState>(context, listen: false)._updateUserCourseCreatedPublishedStatusName(courseId, published);
 }

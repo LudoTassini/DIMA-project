@@ -18,6 +18,9 @@ class BloqoPublishedCourse{
   final String difficulty;
   final double? rating;
 
+  int numberOfEnrollments;
+  int numberOfCompletions;
+
   BloqoPublishedCourse({
     required this.publishedCourseId,
     required this.originalCourseId,
@@ -30,7 +33,9 @@ class BloqoPublishedCourse{
     required this.subject,
     required this.difficulty,
     required this.duration,
-    this.rating
+    this.rating,
+    this.numberOfEnrollments = 0,
+    this.numberOfCompletions = 0,
   });
 
   factory BloqoPublishedCourse.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -50,6 +55,8 @@ class BloqoPublishedCourse{
       difficulty: data["difficulty"],
       duration: data["duration"],
       rating: (data["rating"] is int) ? (data["rating"] as int).toDouble() : data["rating"],
+      numberOfEnrollments: data["number_of_enrollments"],
+      numberOfCompletions: data["number_of_completions"]
     );
   }
 
@@ -78,6 +85,22 @@ class BloqoPublishedCourse{
     );
   }
 
+}
+
+Future<void> publishCourse({required var localizedText, required BloqoPublishedCourse publishedCourse}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    await ref.doc().set(publishedCourse);
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
 }
 
 Future<List<BloqoPublishedCourse>> getCoursesFromSearch({

@@ -146,7 +146,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       userCourseCreated: course);
                                                 },
                                                 showEditOptions: true,
-                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush)),
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId)),
                                             );
                                           }
                                           else{
@@ -161,7 +161,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                   );
                                                 },
                                                 showEditOptions: true,
-                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush)),
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId,)),
                                             );
                                           }
                                         },

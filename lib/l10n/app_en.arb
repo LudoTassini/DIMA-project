@@ -291,5 +291,6 @@
   "publish_course_page_tag_header": "Choose the best tags for your course",
   "publish_course_page_public_private_header": "Choose whether your course will be public or private",
   "publish_course_page_public_private_question": "Should your course be freely accessible by anyone?",
-  "missing_tag_error": "You need to select a tag for every kind of tag to be able to publish a course!"
+  "missing_tag_error": "You need to select a tag for every kind of tag to be able to publish a course!",
+  "course_publish_confirmation": "By confirming, this course will be published. Do you wish to continue?"
 }
