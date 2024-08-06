@@ -1,6 +1,7 @@
 import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
 
@@ -47,6 +49,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   final Map<String, bool> _showSectionsMap = {};
   bool isInitializedSectionMap = false;
 
+  int _reviewsDisplayed = Constants.reviewsToShowAtFirst;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -71,6 +75,12 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
     if(!isInitializedSectionMap) {
       initializeSectionsToShowMap(widget.chapters);
+    }
+
+    void loadMorePublishedCourses() {
+      setState(() {
+        _reviewsDisplayed += Constants.reviewsToFurtherLoadAtRequest;
+      });
     }
 
     return BloqoMainContainer(
@@ -404,30 +414,36 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         ),
                                       ),
                                     ),
-                                    Spacer(), // This will create space between the first Text and the rest of the Row
+                                    const Spacer(), // This will create space between the first Text and the rest of the Row
                                     Row(
                                       children: [
                                         Text(
                                           widget.rating.toDouble().toString(),
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                             color: BloqoColors.seasalt,
+                                            fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           ),
                                         ),
-                                        RatingBarIndicator(
-                                          rating: widget.rating,
-                                          itemBuilder: (context, index) => const Icon(
-                                            Icons.star,
-                                            color: BloqoColors.tertiary,
+
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+                                          child: RatingBarIndicator(
+                                            rating: widget.rating,
+                                            itemBuilder: (context, index) => const Icon(
+                                              Icons.star,
+                                              color: BloqoColors.tertiary,
+                                            ),
+                                            itemCount: 5,
+                                            itemSize: 24,
+                                            direction: Axis.horizontal,
                                           ),
-                                          itemCount: 5,
-                                          itemSize: 24,
-                                          direction: Axis.horizontal,
                                         ),
                                         Text(
-                                          widget.course.reviews?.length.toString() ?? '0',
+                                          '(${widget.course.reviews?.length.toString() ?? '0'})',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                             color: BloqoColors.seasalt,
+                                            fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           ),
                                         ),
@@ -435,6 +451,32 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                     ),
                                   ],
                                 ),
+                              ),
+
+                              BloqoSeasaltContainer(
+                                  child:
+                                    widget.course.reviews == null ?
+                                    Text(
+                                      localizedText.no_reviews_yet,
+                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        color: BloqoColors.russianViolet,
+                                        fontSize: 15,
+                                      ),
+                                    )
+                                  : Column(
+                                      children: List.generate(
+                                      _reviewsDisplayed > widget.course.reviews!.length ?
+                                      widget.course.reviews!.length : _reviewsDisplayed,
+                                          (index) {
+
+                                        BloqoReview review = widget.publishedCourses[index];
+                                        return BloqoSearchResultCourse(
+                                          review: review,
+                                        );
+                                      },
+                                    ),
+                              ),
+
                               ),
 
                               Padding(

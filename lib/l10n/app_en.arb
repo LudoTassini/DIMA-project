@@ -223,5 +223,6 @@
   "enroll_in": "Enroll in Course",
   "unenroll": "Unenroll",
   "by": "by ",
-  "reviews": "Reviews"
+  "reviews": "Reviews",
+  "no_reviews_yet": "There are no reviews yet."
 }

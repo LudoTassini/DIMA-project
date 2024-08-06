@@ -15,6 +15,8 @@ class Constants{
 
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
+  static const int reviewsToShowAtFirst = 3;
+  static const int reviewsToFurtherLoadAtRequest = 3;
 
   static const int maxCoursesToFetch = 50;
 
