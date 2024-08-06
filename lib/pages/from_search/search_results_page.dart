@@ -7,6 +7,7 @@ import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_published_course.dart';
@@ -73,31 +74,44 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                   ),
                 ),
 
-                widget.publishedCourses.isNotEmpty?
-                  BloqoSeasaltContainer(
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                        const Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0)
-                        ),
-                        ...List.generate(
-                          _publishedCoursesDisplayed > widget.publishedCourses.length ?
-                          widget.publishedCourses.length : _publishedCoursesDisplayed,
-                              (index) {
-                            BloqoPublishedCourse course = widget.publishedCourses[index];
-                            return BloqoSearchResultCourse(
-                              course: course,
-                              onPressed: () async {
-                                _goToCourseSearchPage(context: context, localizedText: localizedText,
-                                    course: course);
-                              },
-                            );
-                          },
-                        ),
-                      ],
+                widget.publishedCourses.isNotEmpty
+                    ? BloqoSeasaltContainer(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                       ),
-                  )
+                      ...List.generate(
+                        _publishedCoursesDisplayed > widget.publishedCourses.length
+                            ? widget.publishedCourses.length
+                            : _publishedCoursesDisplayed,
+                            (index) {
+                          BloqoPublishedCourse course = widget.publishedCourses[index];
+                          return BloqoSearchResultCourse(
+                            course: course,
+                            onPressed: () async {
+                              _goToCourseSearchPage(
+                                context: context,
+                                localizedText: localizedText,
+                                course: course,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      if (_publishedCoursesDisplayed < widget.publishedCourses.length)
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                          child: BloqoTextButton(
+                            onPressed: loadMorePublishedCourses,
+                            text: localizedText.load_more_courses,
+                            color: BloqoColors.russianViolet,
+                          ),
+                        ),
+                    ],
+                  ),
+                )
 
                   : BloqoSeasaltContainer(
                     child: Padding(
@@ -126,17 +140,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                     ),
 
                   ),
-
-                if (_publishedCoursesDisplayed < widget.publishedCourses.length)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-                    child: BloqoFilledButton(
-                      onPressed: loadMorePublishedCourses,
-                      text: localizedText.load_more_courses,
-                      color: BloqoColors.russianViolet
-                    ),
-                  ),
-
                 ],
               ),
             ),
@@ -172,6 +175,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
         context.loaderOverlay.hide();
         widget.onPush(CourseSearchPage(
           onPush: widget.onPush,
+          onNavigateToPage: widget.onNavigateToPage,
           course: courseSelected,
           chapters: chapters,
           sections: sections,
