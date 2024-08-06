@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
+import '../../components/complex/bloqo_review_component.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
@@ -27,7 +28,8 @@ class CourseSearchPage extends StatefulWidget {
     required this.chapters,
     required this.sections,
     required this.courseAuthor,
-    required this.rating
+    this.rating,
+    this.reviews
   });
 
   final void Function(Widget) onPush;
@@ -35,7 +37,9 @@ class CourseSearchPage extends StatefulWidget {
   final List<BloqoChapter> chapters;
   final Map<String, List<BloqoSection>> sections;
   final BloqoUser courseAuthor;
-  final double rating;
+
+  final double? rating;
+  final List<BloqoReview>? reviews;
 
   @override
   State<CourseSearchPage> createState() => _CourseSearchPageState();
@@ -61,7 +65,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       isInitializedSectionMap = true;
     }
 
-    void loadCompletedSections(String chapterId) {
+    void showSections(String chapterId) {
       setState(() {
         _showSectionsMap[chapterId] = true;
       });
@@ -77,7 +81,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       initializeSectionsToShowMap(widget.chapters);
     }
 
-    void loadMorePublishedCourses() {
+    void loadMoreReviews() {
       setState(() {
         _reviewsDisplayed += Constants.reviewsToFurtherLoadAtRequest;
       });
@@ -147,7 +151,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       ),
                     ),
                     RatingBarIndicator(
-                      rating: widget.rating,
+                      rating: widget.rating?? 0,
                       itemBuilder: (context, index) => const Icon(
                         Icons.star,
                         color: BloqoColors.tertiary,
@@ -365,7 +369,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                     alignment: const AlignmentDirectional(1, 0),
                                                     child: TextButton(
                                                       onPressed: () {
-                                                        loadCompletedSections(chapter.id);
+                                                        showSections(chapter.id);
                                                       },
                                                       child: Row(
                                                         children: [
@@ -417,8 +421,18 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                     const Spacer(), // This will create space between the first Text and the rest of the Row
                                     Row(
                                       children: [
-                                        Text(
-                                          widget.rating.toDouble().toString(),
+
+                                        widget.rating != null ?
+                                          Text(
+                                            widget.rating!.toDouble().toString(),
+                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              color: BloqoColors.seasalt,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            ),
+                                          )
+                                        : Text(
+                                          '0',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                             color: BloqoColors.seasalt,
                                             fontWeight: FontWeight.w500,
@@ -429,7 +443,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         Padding(
                                           padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                                           child: RatingBarIndicator(
-                                            rating: widget.rating,
+                                            rating: widget.rating?? 0,
                                             itemBuilder: (context, index) => const Icon(
                                               Icons.star,
                                               color: BloqoColors.tertiary,
@@ -455,27 +469,67 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                               BloqoSeasaltContainer(
                                   child:
-                                    widget.course.reviews == null ?
-                                    Text(
-                                      localizedText.no_reviews_yet,
-                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                        color: BloqoColors.russianViolet,
-                                        fontSize: 15,
+                                (widget.course.reviews == null || widget.reviews!.isEmpty) ?
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                localizedText.no_reviews_yet,
+                                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                  color: BloqoColors.russianViolet,
+                                                  fontSize: 15,
+                                                  ),
+                                                ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     )
-                                  : Column(
-                                      children: List.generate(
-                                      _reviewsDisplayed > widget.course.reviews!.length ?
-                                      widget.course.reviews!.length : _reviewsDisplayed,
-                                          (index) {
-
-                                        BloqoReview review = widget.publishedCourses[index];
-                                        return BloqoSearchResultCourse(
-                                          review: review,
-                                        );
-                                      },
+                                  : _reviewsDisplayed >= widget.course.reviews!.length ?
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                                      child: Column(
+                                        children:
+                                          List.generate(
+                                        _reviewsDisplayed > widget.course.reviews!.length ?
+                                        widget.course.reviews!.length : _reviewsDisplayed,
+                                            (index) {
+                                          BloqoReview review = widget.reviews![index];
+                                          return BloqoReviewComponent(
+                                            review: review,
+                                          );
+                                        },
+                                      ),
                                     ),
-                              ),
+                                  )
+
+                                    : Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
+                                        child: Column(
+                                          children: [
+                                            ...List.generate(
+                                              _reviewsDisplayed > widget.course.reviews!.length ?
+                                              widget.course.reviews!.length : _reviewsDisplayed,
+                                                  (index) {
+                                                BloqoReview review = widget.reviews![index];
+                                                return BloqoReviewComponent(
+                                                  review: review,
+                                                );
+                                              },
+                                            ),
+
+                                            BloqoFilledButton(
+                                                onPressed: loadMoreReviews,
+                                                text: localizedText.load_more_reviews,
+                                                color: BloqoColors.russianViolet
+                                            ),
+                                        ],
+                                      ),
+                                    ),
 
                               ),
 
@@ -515,21 +569,6 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                       )
 
                                     ),
-
-                                    if(isEnrolled)
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0), //24, 0, 24, 0
-                                          child: BloqoFilledButton(
-                                            color: BloqoColors.error,
-                                            onPressed: () async {
-                                              //TODO
-                                            },
-                                            text: localizedText.delete,
-                                            icon: Icons.close_sharp,
-                                          ),
-                                        ),
-                                      ),
 
                                   ],
                                 ),

@@ -90,7 +90,6 @@ Future<List<BloqoPublishedCourse>> getCoursesFromSearch({
         courses.add(BloqoPublishedCourse.fromFirestore(doc, null));
       }
 
-      print("Course ids to debug: ${courses.map((course) => course.originalCourseId).toList()}"); // For debugging: prints the list of course IDs
       return courses;
     } else {
       // Handle the case where no filters are applied or the query is null

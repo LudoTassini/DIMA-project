@@ -1,6 +1,7 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:flutter/material.dart';
@@ -162,6 +163,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           sections[chapterId] = chapterSections;
         }
         BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
+        List<BloqoReview> reviews = [];
+        if(courseSelected.reviews != null) {
+          reviews = await getReviewsFromIds(
+              localizedText: localizedText, reviewsIds: courseSelected.reviews);
+        }
         if(!context.mounted) return;
         context.loaderOverlay.hide();
         widget.onPush(CourseSearchPage(
@@ -170,6 +176,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           chapters: chapters,
           sections: sections,
           courseAuthor: courseAuthor,
+          reviews:reviews,
           rating: course.rating!,
         )
       );
