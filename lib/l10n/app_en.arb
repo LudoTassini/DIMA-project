@@ -285,5 +285,11 @@
   "trim_extra_whitespaces": "Trim extra whitespaces at the beginning and at the end?",
   "comparison_ignore_case": "Should comparison ignore case?",
   "play_audio": "Play Audio",
-  "pause_audio": "Pause Audio"
+  "pause_audio": "Pause Audio",
+  "publish_course_page_header_1": "Publish your course for the bloQo community!",
+  "publish_course_page_header_2": "You cannot modify the course once it is published, so check it carefully before continuing.",
+  "publish_course_page_tag_header": "Choose the best tags for your course",
+  "publish_course_page_public_private_header": "Choose whether your course will be public or private",
+  "publish_course_page_public_private_question": "Should your course be freely accessible by anyone?",
+  "missing_tag_error": "You need to select a tag for every kind of tag to be able to publish a course!"
 }

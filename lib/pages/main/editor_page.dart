@@ -3,6 +3,7 @@ import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -144,7 +145,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showEditOptions: true
+                                                showEditOptions: true,
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush)),
                                             );
                                           }
                                           else{
@@ -155,9 +157,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                   await _goToCoursePage(
                                                       context: context,
                                                       localizedText: localizedText,
-                                                      userCourseCreated: course);
+                                                      userCourseCreated: course
+                                                  );
                                                 },
-                                                showEditOptions: true
+                                                showEditOptions: true,
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush)),
                                             );
                                           }
                                         },

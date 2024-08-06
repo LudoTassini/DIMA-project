@@ -102,7 +102,6 @@ Future<List<BloqoPublishedCourse>> getCoursesFromSearch({
       case "network-request-failed":
         throw BloqoException(message: localizedText.network_error);
       default:
-        print(e.message);
         throw BloqoException(message: localizedText.generic_error);
     }
   }

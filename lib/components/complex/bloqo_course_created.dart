@@ -16,6 +16,7 @@ class BloqoCourseCreated extends StatelessWidget {
     super.key,
     required this.course,
     required this.onPressed,
+    this.onPublish,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
     this.showEditOptions = false,
     this.showPublishedOptions = false,
@@ -23,6 +24,7 @@ class BloqoCourseCreated extends StatelessWidget {
 
   final BloqoUserCourseCreated course;
   final Function() onPressed;
+  final Function()? onPublish;
   final EdgeInsetsDirectional padding;
   final bool showEditOptions;
   final bool showPublishedOptions;
@@ -130,7 +132,7 @@ class BloqoCourseCreated extends StatelessWidget {
                       ),
                       BloqoFilledButton(
                         color: BloqoColors.success,
-                        onPressed: () {} /* TODO */,
+                        onPressed: onPublish ?? () {},
                         text: localizedText.publish,
                         fontSize: 16,
                         height: 32,
