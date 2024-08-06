@@ -7,15 +7,19 @@ import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
 import '../../components/complex/bloqo_review_component.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
@@ -24,6 +28,7 @@ class CourseSearchPage extends StatefulWidget {
   const CourseSearchPage({
     super.key,
     required this.onPush,
+    required this.onNavigateToPage,
     required this.course,
     required this.chapters,
     required this.sections,
@@ -33,6 +38,7 @@ class CourseSearchPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
   final BloqoCourse course;
   final List<BloqoChapter> chapters;
   final Map<String, List<BloqoSection>> sections;
@@ -244,7 +250,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                     .textTheme
                                                     .displayMedium
                                                     ?.copyWith(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: BloqoColors.secondaryText,
                                                   fontSize: 18,
                                                 ),
                                               ),
@@ -289,7 +295,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                     child: Text(
                                                       chapter.description!,
                                                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                        color: BloqoColors.russianViolet,
+                                                        color: BloqoColors.primaryText,
                                                       ),
                                                     ),
                                                   ),
@@ -522,7 +528,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               },
                                             ),
 
-                                            BloqoFilledButton(
+                                            BloqoTextButton(
                                                 onPressed: loadMoreReviews,
                                                 text: localizedText.load_more_reviews,
                                                 color: BloqoColors.russianViolet
@@ -596,10 +602,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           20, 10, 20, 10),
                       child: BloqoFilledButton(
-                        onPressed: () =>
-                            () async {
-                          // TODO
-                          //widget.onNavigateToPage(3),
+                        onPressed: () async {
+                          _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
+                          chapters: widget.chapters, sections: widget.sections);
                         },
                         height: 60,
                         color: BloqoColors.russianViolet,
@@ -635,4 +640,42 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _goToLearnPage({required BuildContext context, required var localizedText, required BloqoCourse course,
+    required List<BloqoChapter> chapters, required Map<String, List<BloqoSection>> sections}) async {
+    context.loaderOverlay.show();
+    try {
+        BloqoUserCourseEnrolled userCourseEnrolled = await saveNewUserCourseEnrolled(localizedText: localizedText,
+        course: course);
+        if(!context.mounted) return;
+        saveLearnCourseToAppState(
+            context: context,
+            course: course,
+            chapters: chapters,
+            sections: sections,
+            enrollmentDate: userCourseEnrolled.enrollmentDate,
+            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
+            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
+            totNumSections: userCourseEnrolled.totNumSections,
+            comingFromHome: true);
+        List<BloqoUserCourseEnrolled>? enrolledCourses = getUserCoursesEnrolledFromAppState(context: context);
+        if (enrolledCourses != null) {
+          enrolledCourses.add(userCourseEnrolled);
+        } else {
+          enrolledCourses = [userCourseEnrolled];
+        }
+        saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses!);
+        context.loaderOverlay.hide();
+        widget.onNavigateToPage(1);
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
 }
