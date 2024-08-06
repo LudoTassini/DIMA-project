@@ -1,4 +1,3 @@
-import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_courses_created_app_state.dart';
@@ -7,7 +6,6 @@ import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
-import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_confirmation_alert.dart';

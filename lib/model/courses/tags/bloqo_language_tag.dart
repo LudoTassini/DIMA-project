@@ -13,6 +13,19 @@ enum BloqoLanguageTagValue {
   other
 }
 
+BloqoLanguageTagValue getLanguageTagFromString({required String tag}){
+  Map<int, BloqoLanguageTagValue> languageTagMap = {};
+  Map<String, int> languageTagStringMap = {};
+  int index = 0;
+  for(BloqoLanguageTagValue tagValue in BloqoLanguageTagValue.values){
+    languageTagMap[index] = tagValue;
+    languageTagStringMap[tagValue.toString()] = index;
+    index++;
+  }
+  int tagIndex = languageTagStringMap[tag]!;
+  return languageTagMap[tagIndex]!;
+}
+
 extension BloqoLanguageTagValueExtension on BloqoLanguageTagValue {
   String text({required var localizedText}) {
     switch (this) {

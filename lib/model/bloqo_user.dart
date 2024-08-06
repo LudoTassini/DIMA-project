@@ -148,3 +148,20 @@ Future<bool> isUsernameAlreadyTaken({required var localizedText, required String
     }
   }
 }
+
+Future<BloqoUser> getUserFromId({required var localizedText, required String id}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: id).get();
+    BloqoUser user = querySnapshot.docs.first.data();
+    return user;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}

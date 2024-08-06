@@ -1,3 +1,4 @@
+import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/bloqo_user_course_enrolled.dart';

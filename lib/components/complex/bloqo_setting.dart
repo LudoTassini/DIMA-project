@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../style/bloqo_colors.dart';
 
 class BloqoSetting extends StatelessWidget{
@@ -73,7 +72,7 @@ class BloqoSetting extends StatelessWidget{
               ),
             ],
           ),
-        )
+        ),
     );
   }
 }
