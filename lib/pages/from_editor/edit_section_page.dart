@@ -23,6 +23,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
+import 'edit_quiz_block_page.dart';
 import 'edit_text_block_page.dart';
 
 class EditSectionPage extends StatefulWidget {
@@ -367,7 +368,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
         widget.onPush(EditMultimediaBlockPage(onPush: widget.onPush, courseId: courseId, chapterId: chapterId, sectionId: sectionId, block: block));
         break;
       case BloqoBlockSuperType.quiz:
-        // TODO
+        widget.onPush(EditQuizBlockPage(onPush: widget.onPush, courseId: courseId, chapterId: chapterId, sectionId: sectionId, block: block));
         break;
     }
   }

@@ -50,7 +50,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
   void initState() {
     super.initState();
     textController = TextEditingController();
-    textController.text = widget.block.content ?? "";
+    textController.text = widget.block.content;
   }
 
   @override

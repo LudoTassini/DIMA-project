@@ -17,6 +17,9 @@ class Constants{
 
   static const int maxYouTubeLinkLength = 500;
 
+  static const int maxQuizQuestionLength = 1000;
+  static const int maxQuizAnswerLength = 500;
+
   static const double markdownBaseFontSize = 16.0;
 
   static const int coursesToShowAtFirst = 3;

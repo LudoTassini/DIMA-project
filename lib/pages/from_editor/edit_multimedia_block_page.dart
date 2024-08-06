@@ -7,6 +7,7 @@ import 'package:bloqo/components/multimedia/bloqo_youtube_player.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -18,6 +19,7 @@ import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
+import '../../components/multimedia/bloqo_audio_player.dart';
 import '../../components/multimedia/bloqo_video_player.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
@@ -164,6 +166,47 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                         child: Column(
                           children: [
+                            if(multimediaTypeController.text == BloqoBlockType.multimediaAudio.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaAudio.toString()))
+                              Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                      child: Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          localizedText.upload_audio,
+                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                            color: BloqoColors.russianViolet,
+                                            fontSize: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                        child: BloqoFilledButton(
+                                            color: BloqoColors.russianViolet,
+                                            onPressed: () async {
+                                              final newUrl = await _askUserForAnAudio(
+                                                  context: context,
+                                                  localizedText: localizedText,
+                                                  courseId: widget.courseId,
+                                                  blockId: widget.block.id
+                                              );
+                                              if(newUrl != null) {
+                                                if(!context.mounted) return;
+                                                block.content = newUrl;
+                                                await _saveChanges(context: context, courseId: widget.courseId, sectionId: widget.sectionId, block: block, blockType: BloqoBlockType.multimediaAudio);
+                                                if(!context.mounted) return;
+                                                updateEditorCourseBlockInAppState(context: context, sectionId: section.id, block: block);
+                                              }
+                                            },
+                                            text: localizedText.upload_from_device,
+                                            icon: Icons.upload
+                                        )
+                                    ),
+                                  ]
+                              ),
                             if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaImage.toString()))
                               Column(
                                 children: [
@@ -316,10 +359,64 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                             ],
                           )
                         ),
+                      if(multimediaTypeController.text == BloqoBlockType.multimediaAudio.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaAudio.toString())
+                        BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                            child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        localizedText.multimedia_audio_short,
+                                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                          color: BloqoColors.russianViolet,
+                                          fontSize: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: BloqoAudioPlayer(
+                                      url: widget.block.content
+                                    )
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                      child: BloqoFilledButton(
+                                          color: BloqoColors.error,
+                                          onPressed: () {
+                                            showBloqoConfirmationAlert(
+                                                context: context,
+                                                title: localizedText.warning,
+                                                description: localizedText.delete_file_confirmation,
+                                                confirmationFunction: () async {
+                                                  await _tryDeleteFile(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      filePath: 'audios/courses/${course
+                                                          .id}/${block.id}',
+                                                      courseId: course.id,
+                                                      sectionId: section.id,
+                                                      block: block
+                                                  );
+                                                },
+                                                backgroundColor: BloqoColors.error
+                                            );
+                                          },
+                                          text: localizedText.delete_file,
+                                          icon: Icons.delete_forever
+                                      )
+                                  )
+                                ]
+                            )
+                        ),
                       if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaImage.toString())
                         BloqoSeasaltContainer(
                             padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                            child: widget.block.content != "" ? Column(
+                            child: Column(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
@@ -366,7 +463,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       )
                                   )
                                 ]
-                            ) : Container()
+                            )
                         ),
                       if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaVideo.toString())
                         BloqoSeasaltContainer(
@@ -445,6 +542,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     try {
       await deleteFile(localizedText: localizedText, filePath: filePath);
 
+      block.type = null;
       block.name = getNameBasedOnBlockSuperType(localizedText: localizedText,
           superType: BloqoBlockSuperType.multimedia);
       block.content = "";
@@ -529,6 +627,55 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
     await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+  }
+
+  Future<String?> _askUserForAnAudio({
+    required BuildContext context,
+    required var localizedText,
+    required String courseId,
+    required String blockId,
+  }) async {
+    final pickedFileResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'm4a'],
+    );
+
+    if (pickedFileResult != null && pickedFileResult.files.isNotEmpty) {
+      final pickedFile = pickedFileResult.files.first;
+      if (pickedFile.path != null) {
+        if (!context.mounted) return null;
+        context.loaderOverlay.show();
+
+        try {
+          final audio = File(pickedFile.path!);
+          final url = await uploadBlockAudio(
+            localizedText: localizedText,
+            audio: audio,
+            courseId: courseId,
+            blockId: blockId,
+          );
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            BloqoSnackBar.get(
+              context: context,
+              child: Text(localizedText.done),
+            ),
+          );
+          return url;
+        } on BloqoException catch (e) {
+          if (!context.mounted) return null;
+          context.loaderOverlay.hide();
+          showBloqoErrorAlert(
+            context: context,
+            title: localizedText.error_title,
+            description: e.message,
+          );
+        }
+      }
+    }
+    return null;
   }
 
   Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String courseId, required String blockId}) async {

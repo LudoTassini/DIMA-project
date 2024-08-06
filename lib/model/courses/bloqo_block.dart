@@ -84,6 +84,17 @@ extension BloqoBlockTypeExtension on BloqoBlockType {
     }
   }
 
+  String? quizShortText({required var localizedText}) {
+    switch (this) {
+      case BloqoBlockType.quizMultipleChoice:
+        return localizedText.quiz_multiple_choice_short;
+      case BloqoBlockType.quizOpenQuestion:
+        return localizedText.quiz_open_question_short;
+      default:
+        return null;
+    }
+  }
+
   static BloqoBlockType? fromString(String value) {
     return _enumMap[value];
   }
@@ -163,6 +174,38 @@ List<DropdownMenuEntry<String>> buildMultimediaTypesList({required var localized
   }
   dropdownMenuEntries.sort((a, b) => a.label.compareTo(b.label)); // sorts the list alphabetically
 
+  if(withNone) {
+    dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(
+      value: "None",
+      label: localizedText.none,
+      labelWidget: Text(
+        localizedText.none,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2, // Adjust the maxLines as needed
+      ),
+    ));
+  }
+
+  return dropdownMenuEntries;
+}
+
+List<DropdownMenuEntry<String>> buildQuizTypesList({required var localizedText, bool withNone = true}) {
+  final List<DropdownMenuEntry<String>> dropdownMenuEntries = [];
+  for (var entry in BloqoBlockType.values) {
+    String? text = entry.quizShortText(localizedText: localizedText);
+    if(text != null) {
+      dropdownMenuEntries.add(DropdownMenuEntry<String>(
+        value: entry.toString(),
+        label: text,
+        labelWidget: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2, // Adjust the maxLines as needed
+        ),
+      ));
+    }
+  }
+  dropdownMenuEntries.sort((a, b) => a.label.compareTo(b.label)); // sorts the list alphabetically
 
   if(withNone) {
     dropdownMenuEntries.insert(0, DropdownMenuEntry<String>(
@@ -304,6 +347,34 @@ Future<void> saveBlockChanges({required var localizedText, required BloqoBlock u
   }
 }
 
+Future<void> saveBlockAudioUrl({
+  required var localizedText,
+  required String blockId,
+  required String audioUrl
+}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "content": audioUrl,
+        "type": BloqoBlockType.multimediaAudio.toString(),
+        "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaAudio)
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
 Future<void> saveBlockImageUrl({
   required var localizedText,
   required String blockId,
@@ -347,6 +418,62 @@ Future<void> saveBlockVideoUrl({
         "content": videoUrl,
         "type": BloqoBlockType.multimediaVideo.toString(),
         "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaVideo)
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> saveBlockMultipleChoiceQuiz({
+  required var localizedText,
+  required String blockId,
+  required String content
+}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "content": content,
+        "type": BloqoBlockType.quizMultipleChoice.toString(),
+        "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizMultipleChoice)
+      });
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  } on FirebaseException catch (e) {
+    if (e.code == "unavailable" || e.code == "network-request-failed") {
+      throw BloqoException(message: localizedText.network_error);
+    } else {
+      throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> saveBlockOpenQuestionQuiz({
+  required var localizedText,
+  required String blockId,
+  required String content
+}) async {
+  try {
+    var ref = BloqoBlock.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var documentId = querySnapshot.docs[0].id;
+      await ref.doc(documentId).update({
+        "content": content,
+        "type": BloqoBlockType.quizOpenQuestion.toString(),
+        "name": getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizOpenQuestion)
       });
     } else {
       throw BloqoException(message: localizedText.generic_error);
