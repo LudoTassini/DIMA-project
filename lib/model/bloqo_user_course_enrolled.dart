@@ -6,15 +6,18 @@ import '../utils/bloqo_exception.dart';
 import '../utils/connectivity.dart';
 import 'bloqo_user.dart';
 import 'courses/bloqo_course.dart';
+import 'courses/bloqo_section.dart';
 
 class BloqoUserCourseEnrolled {
   final String courseId;
+  final String publishedCourseId;
   final String courseAuthor;
   final String courseName;
   final String authorId;
+  final String enrolledUserId;
 
-  List<dynamic> sectionsCompleted;
-  List<dynamic> chaptersCompleted;
+  List<dynamic>? sectionsCompleted;
+  List<dynamic>? chaptersCompleted;
   final int totNumSections;
 
   String? sectionName;
@@ -28,7 +31,9 @@ class BloqoUserCourseEnrolled {
 
   BloqoUserCourseEnrolled({
     required this.courseId,
+    required this.publishedCourseId,
     required this.courseAuthor,
+    required this.enrolledUserId,
     required this.courseName,
     required this.sectionsCompleted,
     required this.chaptersCompleted,
@@ -49,10 +54,12 @@ class BloqoUserCourseEnrolled {
 
     return BloqoUserCourseEnrolled(
       courseId: data!['course_id'],
+      publishedCourseId: data['published_course_id'],
+      enrolledUserId: data['enrolled_user_id'],
       courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
       sectionsCompleted: data['sections_completed'], //FIXME
-      chaptersCompleted: data['chapters_completed'],
+      chaptersCompleted: data['chapters_completed'], //FIXME
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],
@@ -67,13 +74,15 @@ class BloqoUserCourseEnrolled {
   Map<String, dynamic> toFirestore() {
     return {
       'course_id': courseId,
-      'course_author': courseAuthor,
+      'published_course_id': publishedCourseId,
+      'enrolled_user_id': enrolledUserId,
+      'course_author_username': courseAuthor,
       'course_name': courseName,
       'sections_completed': sectionsCompleted,
       'tot_num_sections': totNumSections,
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,
-      'author_id': authorId,
+      'course_author_id': authorId,
       'last_updated': FieldValue.serverTimestamp(),
       'enrollment_date': enrollmentDate,
       'is_rated': isRated,
@@ -129,23 +138,30 @@ Future<BloqoUserCourseEnrolled> getUserCourseEnrolledFromId({required var locali
   }
 }
 
-Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localizedText, required BloqoCourse course}) async {
+Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localizedText, required BloqoCourse course,
+  required String publishedCourseId, required String userId}) async {
   try {
     BloqoUser author = await getUserFromId(localizedText: localizedText, id: course.authorId);
     List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+    List<BloqoSection> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapters[0].sections);
     int totNumSections = 0;
     for (var chapter in chapters) {
       totNumSections = totNumSections + chapter.sections.length;
     }
+
     BloqoUserCourseEnrolled userCourseEnrolled =
       BloqoUserCourseEnrolled(
         courseId: course.id,
+        publishedCourseId: publishedCourseId,
+        enrolledUserId: userId,
         courseName: course.name,
         authorId: course.authorId,
         lastUpdated: Timestamp.now(),
         courseAuthor: author.username,
         sectionsCompleted: [],
         chaptersCompleted: [],
+        sectionName: sections[0].name,
+        sectionToComplete: sections[0].id,
         totNumSections: totNumSections,
         enrollmentDate: Timestamp.now(),
         isRated: false,

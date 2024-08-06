@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/learn_course_app_state.dart';
+import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
@@ -30,6 +31,7 @@ class CourseSearchPage extends StatefulWidget {
     required this.onPush,
     required this.onNavigateToPage,
     required this.course,
+    required this.publishedCourseId,
     required this.chapters,
     required this.sections,
     required this.courseAuthor,
@@ -40,6 +42,7 @@ class CourseSearchPage extends StatefulWidget {
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
   final BloqoCourse course;
+  final String publishedCourseId;
   final List<BloqoChapter> chapters;
   final Map<String, List<BloqoSection>> sections;
   final BloqoUser courseAuthor;
@@ -604,7 +607,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       child: BloqoFilledButton(
                         onPressed: () async {
                           _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
-                          chapters: widget.chapters, sections: widget.sections);
+                          chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourseId);
                         },
                         height: 60,
                         color: BloqoColors.russianViolet,
@@ -642,11 +645,13 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   bool get wantKeepAlive => true;
 
   Future<void> _goToLearnPage({required BuildContext context, required var localizedText, required BloqoCourse course,
-    required List<BloqoChapter> chapters, required Map<String, List<BloqoSection>> sections}) async {
+    required List<BloqoChapter> chapters, required Map<String, List<BloqoSection>> sections,
+    required String publishedCourseId}) async {
     context.loaderOverlay.show();
     try {
+      BloqoUser? user = getUserFromAppState(context: context);
         BloqoUserCourseEnrolled userCourseEnrolled = await saveNewUserCourseEnrolled(localizedText: localizedText,
-        course: course);
+            course: course, publishedCourseId: publishedCourseId, userId: user!.id);
         if(!context.mounted) return;
         saveLearnCourseToAppState(
             context: context,
@@ -654,17 +659,17 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
             chapters: chapters,
             sections: sections,
             enrollmentDate: userCourseEnrolled.enrollmentDate,
-            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
-            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
+            sectionsCompleted: [],
+            chaptersCompleted: [],
             totNumSections: userCourseEnrolled.totNumSections,
             comingFromHome: true);
         List<BloqoUserCourseEnrolled>? enrolledCourses = getUserCoursesEnrolledFromAppState(context: context);
         if (enrolledCourses != null) {
-          enrolledCourses.add(userCourseEnrolled);
+          enrolledCourses.insert(0, userCourseEnrolled);
         } else {
           enrolledCourses = [userCourseEnrolled];
         }
-        saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses!);
+        saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
     } on BloqoException catch (e) {

@@ -108,22 +108,20 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                             ),
                           ),
                         ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: course.description != ''
-                                  ? Text(
-                                course.description!,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: BloqoColors.seasalt,
-                                  fontSize: 16,
-                                ),
-                              )
-                                  : const SizedBox.shrink(), // This will take up no space
-                            ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: course.description != ''
+                                ? Text(
+                              course.description!,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: BloqoColors.seasalt,
+                                fontSize: 16,
+                              ),
+                            )
+                                : const SizedBox.shrink(), // This will take up no space
                           ),
                         ),
                         Padding(
@@ -250,7 +248,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                                             child: chapter.description != ''
                                             ? Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 20),
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
                                               child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -324,9 +322,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 ],
                                               ),
                                             ),
-
                                           ]
-
                                               : [
                                             Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
@@ -375,42 +371,62 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
-                                      20, 0, 20, 10),
+                                      25, 0, 25, 10),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                          localizedText.enrolled_on +
-                                          DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
-                                          style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.copyWith(
-                                            color: BloqoColors.seasalt,
-                                            fontSize: 16,
+                                      Column(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enrolled_on,
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.copyWith(
+                                                color: BloqoColors.seasalt,
+                                                fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child:
+                                              Text(
+                                                DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
+                                                style: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.copyWith(
+                                                  color: BloqoColors.seasalt,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                          ),
+                                        ],
                                       ),
-
-                                      Flexible(
+                                      const SizedBox(width: 20), // Add some space between the text and the button
+                                      Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0), //24, 0, 24, 0
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
                                           child: BloqoFilledButton(
                                             color: BloqoColors.error,
                                             onPressed: () async {
-                                            //TODO
+                                              //TODO
                                             },
-                                          text: localizedText.delete,
-                                          icon: Icons.close_sharp,
+                                            text: localizedText.unsubscribe,
+                                            icon: Icons.close_sharp,
                                           ),
                                         ),
                                       ),
-
                                     ],
                                   ),
+
+
                                 ),
                               ],
                             ),

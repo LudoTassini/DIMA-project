@@ -13,6 +13,9 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
 
   void _set(List<BloqoUserCourseEnrolled> userCourses){
     _userCourses = userCourses;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
 }
