@@ -1,3 +1,4 @@
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -88,12 +89,12 @@ class BloqoCourse{
 Future<BloqoCourse> saveNewCourse({required var localizedText, required String authorId}) async {
   try {
     BloqoCourse course = BloqoCourse(
-        id: uuid(),
-        name: DateTime.now().toString(),
-        authorId: authorId,
-        creationDate: Timestamp.now(),
-        chapters: [],
-        reviews: []
+      id: uuid(),
+      name: localizedText.course,
+      authorId: authorId,
+      creationDate: Timestamp.now(),
+      chapters: [],
+      reviews: []
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
@@ -126,12 +127,16 @@ Future<BloqoCourse> getCourseFromId({required var localizedText, required String
   }
 }
 
-Future<void> deleteCourse({required var localizedText, required String courseId}) async {
+Future<void> deleteCourse({required var localizedText, required BloqoCourse course}) async {
   try {
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: courseId).get();
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: course.id).get();
     await querySnapshot.docs[0].reference.delete();
+    List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+    for(BloqoChapter chapter in chapters){
+      await deleteChapter(localizedText: localizedText, chapter: chapter, courseId: course.id);
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
@@ -166,9 +171,6 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
-    if (querySnapshot.docs.isEmpty) {
-      throw BloqoException(message: localizedText.course_not_found);
-    }
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
   } on FirebaseAuthException catch (e) {

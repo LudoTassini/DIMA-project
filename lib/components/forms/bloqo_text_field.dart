@@ -26,7 +26,7 @@ class BloqoTextField extends StatefulWidget {
 
   final GlobalKey<FormState> formKey;
   final TextEditingController controller;
-  final String labelText;
+  final String? labelText;
   final String hintText;
   final int maxInputLength;
 

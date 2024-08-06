@@ -1,3 +1,4 @@
+import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -99,12 +100,16 @@ Future<List<BloqoChapter>> getChaptersFromIds({required var localizedText, requi
   }
 }
 
-Future<void> deleteChapter({required var localizedText, required String chapterId}) async {
+Future<void> deleteChapter({required var localizedText, required BloqoChapter chapter, required String courseId}) async {
   try {
     var ref = BloqoChapter.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapter.id).get();
     await querySnapshot.docs[0].reference.delete();
+    List<BloqoSection> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
+    for(BloqoSection section in sections){
+      await deleteSection(localizedText: localizedText, section: section, courseId: courseId);
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
@@ -140,5 +145,43 @@ Future<void> reorderChapters({required var localizedText, required List<dynamic>
     chapter.number = i + 1;
     await checkConnectivity(localizedText: localizedText);
     await ref.doc(documentId).update({'number': chapter.number});
+  }
+}
+
+Future<void> saveChapterChanges({required var localizedText, required BloqoChapter updatedChapter}) async {
+  try {
+    var ref = BloqoChapter.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedChapter.id).get();
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedChapter.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> deleteSectionFromChapter({required var localizedText, required String chapterId, required String sectionId}) async {
+  try {
+    var ref = BloqoChapter.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoChapter chapter = docSnapshot.data();
+    chapter.sections.remove(sectionId);
+    await ref.doc(docSnapshot.id).update(chapter.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }

@@ -1,2 +1,2 @@
 "NSCameraUsageDescription" = "bloQo needs access to the camera to scan QR codes.";
-"NSPhotoLibraryUsageDescription" = "bloQo needs access to the photo library to upload your profile picture.";
+"NSPhotoLibraryUsageDescription" = "bloQo needs access to the photo library to upload pictures and videos.";

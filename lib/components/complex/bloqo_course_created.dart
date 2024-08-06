@@ -1,6 +1,5 @@
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_courses_created_app_state.dart';
@@ -180,11 +179,8 @@ class BloqoCourseCreated extends StatelessWidget {
     context.loaderOverlay.show();
     try{
       BloqoCourse courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
-      for(String chapterId in courseToDelete.chapters){
-        await deleteChapter(localizedText: localizedText, chapterId: chapterId);
-      }
       await deleteUserCourseCreated(localizedText: localizedText, courseId: course.courseId);
-      await deleteCourse(localizedText: localizedText, courseId: course.courseId);
+      await deleteCourse(localizedText: localizedText, course: courseToDelete);
       if (!context.mounted) return;
       String? courseIdAppState = getEditorCourseFromAppState(context: context)?.id;
       if(courseIdAppState != null && course.courseId == courseIdAppState){

@@ -13,6 +13,15 @@ class Constants{
   static const int maxChapterNameLength = 50;
   static const int maxChapterDescriptionLength = 500;
 
+  static const int maxBlockTextLength = 10000;
+
+  static const int maxYouTubeLinkLength = 500;
+
+  static const int maxQuizQuestionLength = 1000;
+  static const int maxQuizAnswerLength = 500;
+
+  static const double markdownBaseFontSize = 16.0;
+
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
   static const int reviewsToShowAtFirst = 3;
@@ -21,5 +30,7 @@ class Constants{
   static const int maxCoursesToFetch = 50;
 
   static const double textAreaContainerHeight = 200.0;
+
+  static const int snackBarDuration = 2;
 
 }

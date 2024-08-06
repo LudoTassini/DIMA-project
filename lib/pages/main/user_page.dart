@@ -415,7 +415,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
         context.loaderOverlay.show();
         try {
           final image = File(pickedFile.path);
-          final url = await uploadImage(
+          final url = await uploadProfilePicture(
               localizedText: localizedText,
               image: image,
               userId: userId
@@ -423,7 +423,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
           if (!context.mounted) return null;
           context.loaderOverlay.hide();
           ScaffoldMessenger.of(context).showSnackBar(
-            BloqoSnackBar.get(child: Text(localizedText.done)),
+            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
           );
           return url;
         }

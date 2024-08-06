@@ -35,6 +35,8 @@ class EditCoursePage extends StatefulWidget {
 
 class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAliveClientMixin<EditCoursePage> {
 
+  bool firstBuild = true;
+
   final formKeyCourseName = GlobalKey<FormState>();
   final formKeyCourseDescription = GlobalKey<FormState>();
 
@@ -65,9 +67,12 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
             builder: (context, editorCourseAppState, _){
               BloqoCourse course = getEditorCourseFromAppState(context: context)!;
               List<BloqoChapter> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
-              courseNameController.text = course.name;
-              if(course.description != null) {
-                courseDescriptionController.text = course.description!;
+              if(firstBuild) {
+                courseNameController.text = course.name;
+                if (course.description != null) {
+                  courseDescriptionController.text = course.description!;
+                }
+                firstBuild = false;
               }
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +178,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                       );
                                                       if (!context.mounted) return;
                                                       ScaffoldMessenger.of(context).showSnackBar(
-                                                        BloqoSnackBar.get(child: Text(localizedText.done)),
+                                                        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                                       );
                                                       context.loaderOverlay.hide();
                                                     } on BloqoException catch (e) {
@@ -212,7 +217,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                             );
                             if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(child: Text(localizedText.done)),
+                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                             );
                             context.loaderOverlay.hide();
                           } on BloqoException catch (e) {
@@ -244,17 +249,18 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
 
-    course.chapters.add(chapter.id);
-    chapters.add(chapter);
-
     if(!context.mounted) return;
+    addChapterToEditorCourseAppState(context: context, chapter: chapter);
     updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
     _saveChanges(context: context, course: course, chapters: chapters);
   }
 
   Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
-    var localizedText = getAppLocalizations(context);
+    var localizedText = getAppLocalizations(context)!;
     course.name = courseNameController.text;
+    if(course.name == ""){
+      course.name = localizedText.course;
+    }
     course.description = courseDescriptionController.text;
 
     BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
@@ -274,7 +280,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     if(!context.mounted) return;
     updateUserCourseCreatedNameInAppState(context: context, courseId: course.id, newName: course.name);
-    saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: getEditorCourseSectionsFromAppState(context: context) ?? {});
+    saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: getEditorCourseSectionsFromAppState(context: context) ?? {}, blocks: getEditorCourseBlocksFromAppState(context: context) ?? {});
   }
 
 }

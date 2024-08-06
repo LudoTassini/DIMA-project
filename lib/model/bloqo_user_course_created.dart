@@ -11,8 +11,8 @@ class BloqoUserCourseCreated {
   String courseName;
   int numSectionsCreated;
   int numChaptersCreated;
-  final String authorId; // FIXME: forse meglio course_author_id
-  final Timestamp lastUpdated;
+  final String authorId;
+  Timestamp lastUpdated;
   bool published;
 
   BloqoUserCourseCreated({
@@ -143,8 +143,27 @@ Future<void> deleteChapterFromUserCourseCreated({required var localizedText, req
   }
 }
 
+Future<void> deleteSectionFromUserCourseCreated({required var localizedText, required String courseId}) async {
+  try {
+    var ref = BloqoUserCourseCreated.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
+    BloqoUserCourseCreated userCourseCreated = querySnapshot.docs[0].data();
+    userCourseCreated.numSectionsCreated--;
+    await querySnapshot.docs[0].reference.update(userCourseCreated.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
 Future<void> saveUserCourseCreatedChanges({required var localizedText, required BloqoUserCourseCreated updatedUserCourseCreated}) async {
   try {
+    updatedUserCourseCreated.lastUpdated = Timestamp.now();
     var ref = BloqoUserCourseCreated.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: updatedUserCourseCreated.courseId).get();

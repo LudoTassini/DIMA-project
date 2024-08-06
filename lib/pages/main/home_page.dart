@@ -17,6 +17,7 @@ import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../utils/bloqo_exception.dart';
@@ -294,7 +295,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       addUserCourseCreatedToAppState(
           context: context, userCourseCreated: userCourseCreated);
 
-      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {}, comingFromHome: true);
+      saveEditorCourseToAppState(context: context, course: course, chapters: [], sections: {}, blocks: {}, comingFromHome: true);
 
       context.loaderOverlay.hide();
 
@@ -324,14 +325,22 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
             localizedText: localizedText, courseId: userCourseCreated.courseId);
         List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
         Map<String, List<BloqoSection>> sections = {};
+        Map<String, List<BloqoBlock>> blocks = {};
         for(String chapterId in course.chapters) {
           List<BloqoSection> chapterSections = await getSectionsFromIds(
               localizedText: localizedText,
               sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
           sections[chapterId] = chapterSections;
+          for(BloqoSection section in chapterSections){
+            List<BloqoBlock> sectionBlocks = await getBlocksFromIds(
+                localizedText: localizedText,
+                blockIds: section.blocks
+            );
+            blocks[section.id] = sectionBlocks;
+          }
         }
         if (!context.mounted) return;
-        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections, comingFromHome: true);
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections, blocks: blocks, comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
       }

@@ -6,6 +6,7 @@ import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -17,7 +18,6 @@ import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
-import 'package:intl/intl.dart';
 
 class CourseSearchPage extends StatefulWidget {
 
@@ -619,7 +619,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       },
                       height: 60,
                       color: BloqoColors.error,
-                      text: localizedText.unenroll,
+                      text: localizedText.unsubscribe,
                       fontSize: 24,
                     ),
                   )

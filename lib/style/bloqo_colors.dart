@@ -19,6 +19,10 @@ class BloqoColors {
   static const Color rate = Color(0xFFC5A600);
   static const Color rated = Color(0xFF7E8A92);
 
+  static const Color textBlockButton = Color(0xFF092127);
+  static const Color multimediaBlockButton = Color(0xFF3792AF);
+  static const Color quizBlockButton = Color(0xFF095A30);
+
   // used for navbar workaround to delete overlay when a navigation destination is selected
   static const Color newDarkFuchsia = Color(0x00712C45);
 
