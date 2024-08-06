@@ -1,9 +1,11 @@
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/bloqo_exception.dart';
 import '../utils/connectivity.dart';
 import 'bloqo_user.dart';
+import 'courses/bloqo_course.dart';
 
 class BloqoUserCourseEnrolled {
   final String courseId;
@@ -117,6 +119,58 @@ Future<BloqoUserCourseEnrolled> getUserCourseEnrolledFromId({required var locali
     var querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
     BloqoUserCourseEnrolled course = querySnapshot.docs.first.data();
     return course;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localizedText, required BloqoCourse course}) async {
+  try {
+    BloqoUser author = await getUserFromId(localizedText: localizedText, id: course.authorId);
+    List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+    int totNumSections = 0;
+    for (var chapter in chapters) {
+      totNumSections = totNumSections + chapter.sections.length;
+    }
+    BloqoUserCourseEnrolled userCourseEnrolled =
+      BloqoUserCourseEnrolled(
+        courseId: course.id,
+        courseName: course.name,
+        authorId: course.authorId,
+        lastUpdated: Timestamp.now(),
+        courseAuthor: author.username,
+        sectionsCompleted: [],
+        chaptersCompleted: [],
+        totNumSections: totNumSections,
+        enrollmentDate: Timestamp.now(),
+        isRated: false,
+        isCompleted: false,
+    );
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    await ref.doc().set(userCourseEnrolled);
+    return userCourseEnrolled;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> deleteUserCourseEnrolled({required var localizedText, required String courseId}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
+    await querySnapshot.docs[0].reference.delete();
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":

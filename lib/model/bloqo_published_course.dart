@@ -5,6 +5,7 @@ import '../utils/connectivity.dart';
 
 class BloqoPublishedCourse{
 
+  final String publishedCourseId;
   final String originalCourseId;
   final String courseName;
   final String authorUsername;
@@ -18,6 +19,7 @@ class BloqoPublishedCourse{
   final double? rating;
 
   BloqoPublishedCourse({
+    required this.publishedCourseId,
     required this.originalCourseId,
     required this.courseName,
     required this.authorUsername,
@@ -36,7 +38,8 @@ class BloqoPublishedCourse{
       ){
     final data = snapshot.data();
     return BloqoPublishedCourse(
-      originalCourseId: data!["original_course_id"],
+      publishedCourseId: data!["published_course_id"],
+      originalCourseId: data["original_course_id"],
       courseName: data["course_name"],
       authorUsername: data["author_username"],
       isPublic: data["is_public"],
@@ -52,6 +55,7 @@ class BloqoPublishedCourse{
 
   Map<String, dynamic> toFirestore() {
     return {
+      "published_course_id": publishedCourseId,
       "original_course_id": originalCourseId,
       "course_name": courseName,
       "author_username": authorUsername,
