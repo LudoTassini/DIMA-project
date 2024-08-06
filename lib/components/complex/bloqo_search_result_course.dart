@@ -1,6 +1,10 @@
-import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
 import 'package:flutter/material.dart';
+import '../../model/courses/tags/bloqo_difficulty_tag.dart';
+import '../../model/courses/tags/bloqo_duration_tag.dart';
+import '../../model/courses/tags/bloqo_language_tag.dart';
+import '../../model/courses/tags/bloqo_modality_tag.dart';
 import '../../style/bloqo_colors.dart';
 import 'package:intl/intl.dart';
 
@@ -15,7 +19,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
   const BloqoSearchResultCourse({
     super.key,
     required this.course,
-    this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+    this.padding = const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 15),
     required this.onPressed,
   });
 
@@ -23,8 +27,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
 
-    return BloqoSeasaltContainer(
-      child:Padding(
+    return Padding(
         padding: padding,
         child: ElevatedButton(
           style: ButtonStyle(
@@ -80,7 +83,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -169,6 +172,31 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 5),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                            child: Icon(
+                                              Icons.label,
+                                              color: Color(0xFFFF00FF),
+                                              size: 24,
+                                            ),
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              getLanguageTagFromString(tag: course!.language).text(localizedText: localizedText),
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              fontSize: 14,
+                                            ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
                                       padding:
                                       const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 5),
                                       child: Row(
@@ -186,7 +214,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           ),
                                           Flexible(
                                             child: Text(
-                                              course!.subject, //FIXME: faccenda dei tags
+                                              getSubjectTagFromString(tag: course!.subject).text(localizedText: localizedText),
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
@@ -213,7 +241,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           ),
                                           Flexible(
                                             child: Text(
-                                              course!.duration, //FIXME: solito discorso dei tag
+                                              getDurationTagFromString(tag: course!.duration).text(localizedText: localizedText),
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
@@ -240,7 +268,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           ),
                                           Flexible(
                                             child: Text(
-                                              course!.modality, //FIXME: solito discorso dei tag
+                                              getModalityTagFromString(tag: course!.modality).text(localizedText: localizedText),
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
@@ -267,7 +295,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           ),
                                           Flexible(
                                             child: Text(
-                                              course!.difficulty, //FIXME: solito discorso tag
+                                              getDifficultyTagFromString(tag: course!.difficulty).text(localizedText: localizedText),
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
@@ -305,7 +333,6 @@ class BloqoSearchResultCourse extends StatelessWidget{
           )
 
         ),
-      ),
     );
   }
 

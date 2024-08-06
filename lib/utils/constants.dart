@@ -16,6 +16,8 @@ class Constants{
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
 
+  static const int maxCoursesToFetch = 50;
+
   static const double textAreaContainerHeight = 200.0;
 
 }

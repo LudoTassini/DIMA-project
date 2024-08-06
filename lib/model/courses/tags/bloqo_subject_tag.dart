@@ -37,6 +37,19 @@ enum BloqoSubjectTagValue{
   other
 }
 
+BloqoSubjectTagValue getSubjectTagFromString({required String tag}){
+  Map<int, BloqoSubjectTagValue> subjectTagMap = {};
+  Map<String, int> subjectTagStringMap = {};
+  int index = 0;
+  for(BloqoSubjectTagValue tagValue in BloqoSubjectTagValue.values){
+    subjectTagMap[index] = tagValue;
+    subjectTagStringMap[tagValue.toString()] = index;
+    index++;
+  }
+  int tagIndex = subjectTagStringMap[tag]!;
+  return subjectTagMap[tagIndex]!;
+}
+
 extension BloqoSubjectTagValueExtension on BloqoSubjectTagValue {
   String text({required var localizedText}) {
     switch (this) {

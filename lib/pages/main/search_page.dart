@@ -5,16 +5,19 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
 import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
+import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
 import '../../components/forms/bloqo_switch.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
@@ -25,10 +28,12 @@ class SearchPage extends StatefulWidget {
 
   const SearchPage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.onNavigateToPage,
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -536,7 +541,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
-                      onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText); },
+                      onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
                       color: BloqoColors.russianViolet,
                       text: localizedText.search,
                       icon: Icons.search
@@ -599,11 +604,26 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     }
   }
 
-  Future<void> _goToSearchResultsPage({required localizedText}) async {
-    final query = _buildQuery();
-    List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(localizedText: localizedText, query: query);
-    widget.onPush(SearchResultsPage(onPush: widget.onPush, publishedCourses: coursesFromSearch, onNavigateToPage: (int ) {  }, ));
-    //FIXME: onNavigate
+  Future<void> _goToSearchResultsPage({required var localizedText, required BuildContext context}) async {
+    context.loaderOverlay.show();
+    try {
+      final query = _buildQuery();
+      List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(
+          localizedText: localizedText, query: query);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(SearchResultsPage(onPush: widget.onPush,
+        publishedCourses: coursesFromSearch,
+        onNavigateToPage: widget.onNavigateToPage));
+    } on BloqoException catch(e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
   }
 
   Query<Map<String, dynamic>>? _buildQuery() {
@@ -715,7 +735,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
         //
       }
     }
-    return query;
+    return query.limit(Constants.maxCoursesToFetch);
   }
 
 }

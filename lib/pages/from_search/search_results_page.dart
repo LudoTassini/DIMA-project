@@ -1,5 +1,6 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
+import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
@@ -64,46 +65,47 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                   ),
                 ),
 
-                if (widget.publishedCourses.isNotEmpty)
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(
-                      _publishedCoursesDisplayed > widget.publishedCourses.length ?
-                      widget.publishedCourses.length : _publishedCoursesDisplayed,
-                          (index) {
-                        BloqoPublishedCourse course = widget.publishedCourses[index];
-                        return BloqoSearchResultCourse(
-                          course: course,
-                          onPressed: () async {
-                            //TODO
-                            //await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                if (_publishedCoursesDisplayed < widget.publishedCourses.length)
-                  BloqoFilledButton(
-                      onPressed: loadMorePublishedCourses,
-                      text: localizedText.load_more_courses,
-                      color: BloqoColors.russianViolet
-                  ),
-
-                if (widget.publishedCourses.isEmpty)
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                widget.publishedCourses.isNotEmpty?
+                  BloqoSeasaltContainer(
                     child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                        const Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0)
+                        ),
+                        ...List.generate(
+                          _publishedCoursesDisplayed > widget.publishedCourses.length ?
+                          widget.publishedCourses.length : _publishedCoursesDisplayed,
+                              (index) {
+                            BloqoPublishedCourse course = widget.publishedCourses[index];
+                            return BloqoSearchResultCourse(
+                              course: course,
+                              onPressed: () async {
+                                //TODO
+                                //await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                      ),
+                  )
+
+                  : BloqoSeasaltContainer(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+                      child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           localizedText.no_search_results,
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: BloqoColors.primaryText,
-                            fontSize: 14,
+                            color: BloqoColors.russianViolet,
+                            fontSize: 15,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
+                          padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 15),
                           child: BloqoFilledButton(
                             onPressed: () => widget.onNavigateToPage(2),
                             color: BloqoColors.russianViolet,
@@ -112,6 +114,18 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                           ),
                         ),
                       ],
+                    ),
+                    ),
+
+                  ),
+
+                if (_publishedCoursesDisplayed < widget.publishedCourses.length)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                    child: BloqoFilledButton(
+                      onPressed: loadMorePublishedCourses,
+                      text: localizedText.load_more_courses,
+                      color: BloqoColors.russianViolet
                     ),
                   ),
 

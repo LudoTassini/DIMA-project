@@ -46,7 +46,7 @@ class BloqoPublishedCourse{
       subject: data["subject"],
       difficulty: data["difficulty"],
       duration: data["duration"],
-      rating: data["rating"]
+      rating: (data["rating"] is int) ? (data["rating"] as int).toDouble() : data["rating"],
     );
   }
 
