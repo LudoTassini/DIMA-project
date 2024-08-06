@@ -12,6 +12,19 @@ enum BloqoDifficultyTagValue {
   forExperts
 }
 
+BloqoDifficultyTagValue getDifficultyTagFromString({required String tag}){
+  Map<int, BloqoDifficultyTagValue> difficultyTagMap = {};
+  Map<String, int> difficultyTagStringMap = {};
+  int index = 0;
+  for(BloqoDifficultyTagValue tagValue in BloqoDifficultyTagValue.values){
+    difficultyTagMap[index] = tagValue;
+    difficultyTagStringMap[tagValue.toString()] = index;
+    index++;
+  }
+  int tagIndex = difficultyTagStringMap[tag]!;
+  return difficultyTagMap[tagIndex]!;
+}
+
 extension BloqoDifficultyTagValueExtension on BloqoDifficultyTagValue {
   String text({required var localizedText}) {
     switch (this) {

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 enum BloqoSortingOption{
+  bestRated,
   publicationDateLatestFirst,
   publicationDateOldestFirst,
   courseNameAZ,
   courseNameZA,
   authorNameAZ,
-  authorNameZA,
-  bestRated
+  authorNameZA
 }
 
 extension BloqoSortingOptionExtension on BloqoSortingOption{
   String text({required var localizedText}) {
     switch (this) {
+      case BloqoSortingOption.bestRated:
+        return localizedText.best_rated;
       case BloqoSortingOption.publicationDateLatestFirst:
         return localizedText.publication_date_latest;
       case BloqoSortingOption.publicationDateOldestFirst:
@@ -25,8 +27,6 @@ extension BloqoSortingOptionExtension on BloqoSortingOption{
         return localizedText.author_username_az;
       case BloqoSortingOption.authorNameZA:
         return localizedText.author_username_za;
-      case BloqoSortingOption.bestRated:
-        return localizedText.best_rated;
       default:
         throw Exception("Unknown SortingOption");
     }
@@ -39,7 +39,7 @@ List<DropdownMenuEntry<String>> buildSortingOptionsList({required var localizedT
 
   for (var entry in BloqoSortingOption.values){
     dropdownMenuEntries.add(DropdownMenuEntry<String>(
-      value: entry.name,
+      value: entry.toString(),
       label: entry.text(localizedText: localizedText),
       labelWidget: Text(
         entry.text(localizedText: localizedText),

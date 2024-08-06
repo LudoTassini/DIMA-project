@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/editor_course_app_state.dart';
+import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
@@ -80,6 +81,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           Consumer<UserCoursesEnrolledAppState>(
             builder: (context, userCoursesEnrolledAppState, _) {
               List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
+              userCoursesEnrolled = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
               return BloqoSeasaltContainer(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
@@ -113,7 +115,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             _coursesEnrolledInDisplayed > userCoursesEnrolled.length ? userCoursesEnrolled.length : _coursesEnrolledInDisplayed,
                             (index) {
                               BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
-                              return BloqoCourseEnrolled(course: course);
+                              return BloqoCourseEnrolled(
+                                  course: course,
+                                  showInProgress: true,
+                                  onPressed: () async {
+                                    await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                  },
+                              );
                             },
                           ),
                         ),
@@ -208,7 +216,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               BloqoUserCourseCreated? course = userCoursesCreated[index];
                               return BloqoCourseCreated(
                                 course: course,
-                                onPressed: () async { await _goToEditorCoursePage(context: context, localizedText: localizedText, userCourseCreated: course); },
+                                onPressed: () async {
+                                  await _goToEditorCoursePage(context: context, localizedText: localizedText,
+                                      userCourseCreated: course); },
                               );
                             },
                           ),
@@ -324,6 +334,51 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections, comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
+      }
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
+  Future<void> _goToLearnCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
+      if (learnCourse != null &&
+          learnCourse.id == userCourseEnrolled.courseId) {
+        setComingFromHomeLearnPrivilegeToAppState(context: context);
+        context.loaderOverlay.hide();
+        widget.onNavigateToPage(1);
+      } else {
+        BloqoCourse course = await getCourseFromId(
+            localizedText: localizedText, courseId: userCourseEnrolled.courseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in course.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
+        if (!context.mounted) return;
+        saveLearnCourseToAppState(
+            context: context,
+            course: course,
+            chapters: chapters,
+            sections: sections,
+            enrollmentDate: userCourseEnrolled.enrollmentDate,
+            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
+            totNumSections: userCourseEnrolled.totNumSections,
+            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
+            comingFromHome: true);
+        context.loaderOverlay.hide();
+        widget.onNavigateToPage(1);
       }
     } on BloqoException catch (e) {
       if (!context.mounted) return;

@@ -10,10 +10,14 @@ class BloqoColors {
 
   static const Color primaryText = Color(0xFF14181B);
   static const Color secondaryText = Color(0xFF57636C);
+  static const Color tertiary = Color(0xFFEE8b60);
 
   static const Color error = Color(0xFFFA2B36);
   static const Color warning = Color(0xFFF9CF58);
   static const Color success = Color(0xFF249689);
+
+  static const Color rate = Color(0xFFC5A600);
+  static const Color rated = Color(0xFF7E8A92);
 
   // used for navbar workaround to delete overlay when a navigation destination is selected
   static const Color newDarkFuchsia = Color(0x00712C45);

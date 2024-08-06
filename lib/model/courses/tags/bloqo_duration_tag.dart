@@ -13,6 +13,19 @@ enum BloqoDurationTagValue{
   moreThanThreeHours
 }
 
+BloqoDurationTagValue getDurationTagFromString({required String tag}){
+  Map<int, BloqoDurationTagValue> durationTagMap = {};
+  Map<String, int> durationTagStringMap = {};
+  int index = 0;
+  for(BloqoDurationTagValue tagValue in BloqoDurationTagValue.values){
+    durationTagMap[index] = tagValue;
+    durationTagStringMap[tagValue.toString()] = index;
+    index++;
+  }
+  int tagIndex = durationTagStringMap[tag]!;
+  return durationTagMap[tagIndex]!;
+}
+
 extension BloqoDurationTagValueExtension on BloqoDurationTagValue{
   String text({required var localizedText}) {
     switch (this) {

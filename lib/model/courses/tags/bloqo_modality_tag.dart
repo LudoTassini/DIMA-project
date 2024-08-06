@@ -12,6 +12,19 @@ enum BloqoModalityTagValue{
   lessonsAndQuizzes
 }
 
+BloqoModalityTagValue getModalityTagFromString({required String tag}){
+  Map<int, BloqoModalityTagValue> modalityTagMap = {};
+  Map<String, int> modalityTagStringMap = {};
+  int index = 0;
+  for(BloqoModalityTagValue tagValue in BloqoModalityTagValue.values){
+    modalityTagMap[index] = tagValue;
+    modalityTagStringMap[tagValue.toString()] = index;
+    index++;
+  }
+  int tagIndex = modalityTagStringMap[tag]!;
+  return modalityTagMap[tagIndex]!;
+}
+
 extension BloqoModalityTagValueExtension on BloqoModalityTagValue{
   String text({required var localizedText}) {
     switch (this) {

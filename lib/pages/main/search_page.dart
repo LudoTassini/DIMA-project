@@ -2,17 +2,22 @@ import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
+import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
 import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
+import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
 import '../../components/forms/bloqo_switch.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
@@ -23,10 +28,12 @@ class SearchPage extends StatefulWidget {
 
   const SearchPage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.onNavigateToPage,
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -534,7 +541,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                     child: BloqoFilledButton(
-                      onPressed: () => widget.onPush(SearchResultsPage(onPush: widget.onPush)),
+                      onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
                       color: BloqoColors.russianViolet,
                       text: localizedText.search,
                       icon: Icons.search
@@ -595,6 +602,141 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
           onPush: widget.onPush,
       ));
     }
+  }
+
+  Future<void> _goToSearchResultsPage({required var localizedText, required BuildContext context}) async {
+    context.loaderOverlay.show();
+    try {
+      final query = _buildQuery();
+      List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(
+          localizedText: localizedText, query: query);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(SearchResultsPage(
+        onPush: widget.onPush,
+        publishedCourses: coursesFromSearch,
+        onNavigateToPage: widget.onNavigateToPage));
+    } on BloqoException catch(e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
+  Query<Map<String, dynamic>>? _buildQuery() {
+    final collection = FirebaseFirestore.instance.collection('published_courses');
+    final localizedText = getAppLocalizations(context)!;
+    Query<Map<String, dynamic>> query = collection;
+
+    final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList(localizedText: localizedText);
+
+    //FIXME: Implementing non-exact search for course_name
+    //FIXME: Funziona solo se DB lowercase
+    /*if (courseNameController.text.isNotEmpty) {
+      final String searchText = courseNameController.text.toLowerCase();
+      query = query
+          .where('course_name', isGreaterThanOrEqualTo: searchText)
+          .where('course_name', isLessThanOrEqualTo: '$searchText\uf8ff');
+    }
+
+    //FIXME: Implementing non-exact search for author_username
+    //FIXME: Funziona solo se DB lowercase
+    if (authorUsernameController.text.isNotEmpty) {
+      final String searchText = authorUsernameController.text.toLowerCase();
+      query = query
+          .where('author_username', isGreaterThanOrEqualTo: searchText)
+          .where('author_username', isLessThanOrEqualTo: '$searchText\uf8ff');
+    } */
+
+    //FIXME: per ora exact search
+    if (courseNameController.text.isNotEmpty) {
+      query = query.where('course_name', isEqualTo: courseNameController.text);
+    }
+    if (authorUsernameController.text.isNotEmpty) {
+      query = query.where('author_username', isEqualTo: authorUsernameController.text);
+    }
+
+    if (minimumPublicationDateController.text.isNotEmpty) {
+      DateTime minDate = DateFormat("yyyy/MM/dd").parse(minimumPublicationDateController.text);
+      query = query.where('publication_date', isGreaterThanOrEqualTo: minDate);
+    }
+    if (maximumPublicationDateController.text.isNotEmpty) {
+      DateTime maxDate = DateFormat("yyyy/MM/dd").parse(maximumPublicationDateController.text);
+      query = query.where('publication_date', isLessThanOrEqualTo: maxDate);
+    }
+
+    if(!(publicCoursesToggle.get() && privateCoursesToggle.get())) {
+      //FIXME: fare prove, se entrambi true, devo avere corsi sia public che private
+      if (publicCoursesToggle.get()) {
+        query = query.where('is_public', isEqualTo: true);
+      }
+      if (privateCoursesToggle.get()) {
+        query = query.where('is_public', isEqualTo: false);
+      }
+    }
+
+    if (languageTagController.text.isNotEmpty && languageTagController.text != localizedText.none) {
+      DropdownMenuEntry<String> languageEntry = languageTags.where((tag) => tag.label == languageTagController.text).first;
+      query = query.where('language', isEqualTo: languageEntry.value);
+    }
+    if (subjectTagController.text.isNotEmpty && subjectTagController.text != localizedText.none) {
+      DropdownMenuEntry<String> subjectEntry = subjectTags.where((tag) => tag.label == subjectTagController.text).first;
+      query = query.where('subject', isEqualTo: subjectEntry.value);
+    }
+    if (durationTagController.text.isNotEmpty && durationTagController.text != localizedText.none) {
+      DropdownMenuEntry<String> durationEntry = durationTags.where((tag) => tag.label == durationTagController.text).first;
+      query = query.where('duration', isEqualTo: durationEntry.value);
+    }
+    if (modalityTagController.text.isNotEmpty && modalityTagController.text != localizedText.none) {
+      DropdownMenuEntry<String> modalityEntry = modalityTags.where((tag) => tag.label == modalityTagController.text).first;
+      query = query.where('modality', isEqualTo: modalityEntry.value);
+    }
+    if (difficultyTagController.text.isNotEmpty && difficultyTagController.text != localizedText.none) {
+      DropdownMenuEntry<String> difficultyEntry = difficultyTags.where((tag) => tag.label == difficultyTagController.text).first;
+      query = query.where('difficulty', isEqualTo: difficultyEntry.value);
+    }
+
+    if (sortByController.text.isNotEmpty && sortByController.text != localizedText.none) {
+      DropdownMenuEntry<String> sortByEntry = sortingOptions
+          .where((tag) => tag.label == sortByController.text)
+          .first;
+
+      switch (sortByEntry.value) {
+        case BloqoSortingOption.bestRated:
+          query = query.orderBy('rating', descending: true);
+          break;
+        case BloqoSortingOption.publicationDateLatestFirst:
+          query = query.orderBy('publication_date', descending: true);
+          break;
+        case BloqoSortingOption.publicationDateOldestFirst:
+          query = query.orderBy('publication_date', descending: false);
+          break;
+        case BloqoSortingOption.courseNameAZ:
+          query = query.orderBy('course_name', descending: false);
+          break;
+        case BloqoSortingOption.courseNameZA:
+          query = query.orderBy('course_name', descending: true);
+          break;
+        case BloqoSortingOption.authorNameAZ:
+          query = query.orderBy('author_username', descending: false);
+          break;
+        case BloqoSortingOption.authorNameZA:
+          query = query.orderBy('author_username', descending: true);
+          break;
+        default:
+        //
+      }
+    }
+    return query.limit(Constants.maxCoursesToFetch);
   }
 
 }
