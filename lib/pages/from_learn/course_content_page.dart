@@ -280,6 +280,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     return BloqoCourseSection(
                                                       section: section,
                                                       index: sectionIndex,
+                                                      isInLearnPage: true,
                                                       onPressed: () async {
                                                         // TODO
                                                       },

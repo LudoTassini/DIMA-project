@@ -612,7 +612,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
           localizedText: localizedText, query: query);
       if(!context.mounted) return;
       context.loaderOverlay.hide();
-      widget.onPush(SearchResultsPage(onPush: widget.onPush,
+      widget.onPush(SearchResultsPage(
+        onPush: widget.onPush,
         publishedCourses: coursesFromSearch,
         onNavigateToPage: widget.onNavigateToPage));
     } on BloqoException catch(e) {

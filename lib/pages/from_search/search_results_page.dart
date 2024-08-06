@@ -1,12 +1,19 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
-import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_published_course.dart';
+import '../../model/bloqo_user.dart';
+import '../../model/courses/bloqo_chapter.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
@@ -81,8 +88,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                             return BloqoSearchResultCourse(
                               course: course,
                               onPressed: () async {
-                                //TODO
-                                //await _goToLearnCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                _goToCourseSearchPage(context: context, localizedText: localizedText,
+                                    course: course);
                               },
                             );
                           },
@@ -140,5 +147,42 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _goToCourseSearchPage({required var localizedText, required BuildContext context,
+    required BloqoPublishedCourse course}) async {
+    context.loaderOverlay.show();
+      try {
+        BloqoCourse courseSelected = await getCourseFromId(localizedText: localizedText, courseId: course.originalCourseId);
+        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
+        Map<String, List<BloqoSection>> sections = {};
+        for(String chapterId in courseSelected.chapters) {
+          List<BloqoSection> chapterSections = await getSectionsFromIds(
+              localizedText: localizedText,
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+          sections[chapterId] = chapterSections;
+        }
+        BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
+        if(!context.mounted) return;
+        context.loaderOverlay.hide();
+        widget.onPush(CourseSearchPage(
+          onPush: widget.onPush,
+          course: courseSelected,
+          chapters: chapters,
+          sections: sections,
+          courseAuthor: courseAuthor,
+          rating: course.rating!,
+        )
+      );
+
+      } on BloqoException catch(e) {
+        if(!context.mounted) return;
+          context.loaderOverlay.hide();
+          showBloqoErrorAlert(
+            context: context,
+            title: localizedText.error_title,
+            description: e.message,
+          );
+      }
+  }
 
 }
