@@ -518,6 +518,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     await updateCourseStatus(localizedText: localizedText, courseId: courseId, published: false);
 
     if(!context.mounted) return;
+
+    BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(context: context);
+    if(currentEditorCourse != null && currentEditorCourse.id == courseId) {
+      updateEditorCourseStatusInAppState(context: context, published: false);
+    }
     updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: courseId, published: false);
     BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((ucc) => ucc.courseId == courseId).first;
 

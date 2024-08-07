@@ -189,6 +189,15 @@ class EditorCourseAppState with ChangeNotifier{
     }
   }
 
+  void _updateStatus(bool published){
+    if(_course != null){
+      _course!.published = published;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
   bool _getComingFromHomePrivilege(){
     return _fromHome;
   }
@@ -264,6 +273,10 @@ void updateEditorCourseSectionNameInAppState({required BuildContext context, req
 
 void updateEditorCourseBlockInAppState({required BuildContext context, required String sectionId, required BloqoBlock block}){
   Provider.of<EditorCourseAppState>(context, listen: false)._updateBlock(sectionId, block);
+}
+
+void updateEditorCourseStatusInAppState({required BuildContext context, required bool published}){
+  Provider.of<EditorCourseAppState>(context, listen: false)._updateStatus(published);
 }
 
 void deleteEditorCourseFromAppState({required BuildContext context}) {
