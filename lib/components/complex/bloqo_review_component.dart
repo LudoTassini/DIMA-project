@@ -1,6 +1,4 @@
-import 'package:bloqo/app_state/learn_course_app_state.dart';
 import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../../style/bloqo_colors.dart';
@@ -16,7 +14,6 @@ class BloqoReviewComponent extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final localizedText = getAppLocalizations(context)!;
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
