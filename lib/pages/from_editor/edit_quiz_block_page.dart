@@ -202,6 +202,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
             callbackAdded = true;
           }
 
+          bool editable = !course.published;
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -215,51 +217,52 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  localizedText.choose_quiz_type,
-                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: BloqoColors.russianViolet,
-                                    fontSize: 30,
+                      if(editable)
+                        BloqoSeasaltContainer(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    localizedText.choose_quiz_type,
+                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                      color: BloqoColors.russianViolet,
+                                      fontSize: 30,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Row(
-                                children:[
-                                  Expanded(
-                                      child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                          child: LayoutBuilder(
-                                              builder: (BuildContext context, BoxConstraints constraints) {
-                                                double availableWidth = constraints.maxWidth;
-                                                return Column(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    children: [
-                                                      BloqoDropdown(
-                                                          controller: quizTypeController,
-                                                          dropdownMenuEntries: quizTypes,
-                                                          initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
-                                                          width: availableWidth
-                                                      )
-                                                    ]
-                                                );
-                                              }
-                                          )
-                                      )
-                                  )
-                                ]
-                            ),
-                          ],
+                              Row(
+                                  children:[
+                                    Expanded(
+                                        child: Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                            child: LayoutBuilder(
+                                                builder: (BuildContext context, BoxConstraints constraints) {
+                                                  double availableWidth = constraints.maxWidth;
+                                                  return Column(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      children: [
+                                                        BloqoDropdown(
+                                                            controller: quizTypeController,
+                                                            dropdownMenuEntries: quizTypes,
+                                                            initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
+                                                            width: availableWidth
+                                                        )
+                                                      ]
+                                                  );
+                                                }
+                                            )
+                                        )
+                                    )
+                                  ]
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                       BloqoSeasaltContainer(
                           child: Column(
                             children: [
@@ -327,37 +330,41 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     controller: controller,
                                                     toggle: toggle,
                                                     answerNumber: index + 1,
+                                                    editable: editable,
+                                                    padding: !editable && index == multipleChoiceControllers.length - 1 ? const EdgeInsetsDirectional.all(15) : const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                                     onDelete: () => _deleteAnswer(index: index)
                                                 );
                                               }
                                           ),
                                         ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 30),
-                                          child: BloqoFilledButton(
-                                              color: BloqoColors.russianViolet,
-                                              onPressed: () => _addAnswer(),
-                                              text: localizedText.add_answer,
-                                              icon: Icons.add
-                                          )
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: BloqoColors.russianViolet,
-                                              onPressed: () async {
-                                                await _trySaveMultipleChoiceQuizChanges(
-                                                    context: context,
-                                                    localizedText: localizedText,
-                                                    courseId: course.id,
-                                                    sectionId: section.id,
-                                                    block: widget.block
-                                                );
-                                              },
-                                              text: localizedText.save_quiz_changes,
-                                              icon: Icons.edit
-                                          )
-                                      ),
+                                      if(editable)
+                                        Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 30),
+                                            child: BloqoFilledButton(
+                                                color: BloqoColors.russianViolet,
+                                                onPressed: () => _addAnswer(),
+                                                text: localizedText.add_answer,
+                                                icon: Icons.add
+                                            )
+                                        ),
+                                      if(editable)
+                                        Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                            child: BloqoFilledButton(
+                                                color: BloqoColors.russianViolet,
+                                                onPressed: () async {
+                                                  await _trySaveMultipleChoiceQuizChanges(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      courseId: course.id,
+                                                      sectionId: section.id,
+                                                      block: widget.block
+                                                  );
+                                                },
+                                                text: localizedText.save_quiz_changes,
+                                                icon: Icons.edit
+                                            )
+                                        ),
                                     ]
                                 ),
                               if(quizTypeController.text == BloqoBlockType.quizOpenQuestion.quizShortText(localizedText: localizedText))
@@ -414,7 +421,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                         )
                                       ),
                                       Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                        padding: editable ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0) : const EdgeInsetsDirectional.all(20),
                                         child: Wrap(
                                           runSpacing: 10,
                                           children: [
@@ -455,23 +462,24 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           ]
                                         ),
                                       ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: BloqoColors.russianViolet,
-                                              onPressed: () async {
-                                                await _trySaveOpenQuestionQuizChanges(
-                                                    context: context,
-                                                    localizedText: localizedText,
-                                                    courseId: course.id,
-                                                    sectionId: section.id,
-                                                    block: widget.block
-                                                );
-                                              },
-                                              text: localizedText.save_quiz_changes,
-                                              icon: Icons.edit
-                                          )
-                                      ),
+                                      if(editable)
+                                        Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                            child: BloqoFilledButton(
+                                                color: BloqoColors.russianViolet,
+                                                onPressed: () async {
+                                                  await _trySaveOpenQuestionQuizChanges(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      courseId: course.id,
+                                                      sectionId: section.id,
+                                                      block: widget.block
+                                                  );
+                                                },
+                                                text: localizedText.save_quiz_changes,
+                                                icon: Icons.edit
+                                            )
+                                        ),
                                     ]
                                 ),
                             ]

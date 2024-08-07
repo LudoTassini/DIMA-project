@@ -19,6 +19,7 @@ class BloqoEditableSection extends StatelessWidget {
     required this.course,
     required this.chapter,
     required this.section,
+    required this.editable,
     required this.onPressed,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
@@ -26,6 +27,7 @@ class BloqoEditableSection extends StatelessWidget {
   final BloqoCourse course;
   final BloqoChapter chapter;
   final BloqoSection section;
+  final bool editable;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
 
@@ -83,29 +85,30 @@ class BloqoEditableSection extends StatelessWidget {
                     ),
                     Row(
                         children: [
-                          IconButton(
-                              padding: const EdgeInsets.only(right: 5.0),
-                              visualDensity: VisualDensity.compact,
-                              icon: const Icon(
-                                Icons.delete_forever,
-                                color: BloqoColors.error,
-                                size: 24,
-                              ),
-                              onPressed: () {
-                                showBloqoConfirmationAlert(
-                                  context: context,
-                                  title: localizedText.warning,
-                                  description: localizedText.delete_section_confirmation,
-                                  confirmationFunction: () async {
-                                    await _tryDeleteSection(
-                                        context: context,
-                                        localizedText: localizedText
-                                    );
-                                  },
-                                  backgroundColor: BloqoColors.error
-                              );
-                            },
-                          ),
+                          if(editable)
+                            IconButton(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(
+                                  Icons.delete_forever,
+                                  color: BloqoColors.error,
+                                  size: 24,
+                                ),
+                                onPressed: () {
+                                  showBloqoConfirmationAlert(
+                                    context: context,
+                                    title: localizedText.warning,
+                                    description: localizedText.delete_section_confirmation,
+                                    confirmationFunction: () async {
+                                      await _tryDeleteSection(
+                                          context: context,
+                                          localizedText: localizedText
+                                      );
+                                    },
+                                    backgroundColor: BloqoColors.error
+                                );
+                              },
+                            ),
                           const Icon(
                             Icons.navigate_next,
                             color: BloqoColors.russianViolet,

@@ -78,6 +78,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                 }
                 firstBuild = false;
               }
+              bool editable = !course.published;
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -151,6 +152,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                             course: course,
                                                             chapter: chapter,
                                                             section: section,
+                                                            editable: editable,
                                                             onPressed: () {
                                                               widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
                                                             }
@@ -161,6 +163,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                             course: course,
                                                             chapter: chapter,
                                                             section: section,
+                                                            editable: editable,
                                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
                                                             onPressed: () {
                                                               widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
@@ -170,38 +173,39 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                     }
                                                 ),
                                               ),
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                              child: BloqoFilledButton(
-                                                color: BloqoColors.russianViolet,
-                                                onPressed: () async {
-                                                context.loaderOverlay.show();
-                                                  try {
-                                                    await _addSection(
-                                                      context: context,
-                                                      course: course,
-                                                      chapter: chapter,
-                                                      sections: sections
-                                                    );
-                                                    if (!context.mounted) return;
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                                                    );
-                                                    context.loaderOverlay.hide();
-                                                  } on BloqoException catch (e) {
-                                                    if (!context.mounted) return;
-                                                    context.loaderOverlay.hide();
-                                                    showBloqoErrorAlert(
-                                                      context: context,
-                                                      title: localizedText.error_title,
-                                                      description: e.message,
-                                                    );
-                                                  }
-                                                },
-                                                text: localizedText.add_section,
-                                                icon: Icons.add,
-                                              ),
-                                            )
+                                            if(editable)
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                                child: BloqoFilledButton(
+                                                  color: BloqoColors.russianViolet,
+                                                  onPressed: () async {
+                                                  context.loaderOverlay.show();
+                                                    try {
+                                                      await _addSection(
+                                                        context: context,
+                                                        course: course,
+                                                        chapter: chapter,
+                                                        sections: sections
+                                                      );
+                                                      if (!context.mounted) return;
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                                                      );
+                                                      context.loaderOverlay.hide();
+                                                    } on BloqoException catch (e) {
+                                                      if (!context.mounted) return;
+                                                      context.loaderOverlay.hide();
+                                                      showBloqoErrorAlert(
+                                                        context: context,
+                                                        title: localizedText.error_title,
+                                                        description: e.message,
+                                                      );
+                                                    }
+                                                  },
+                                                  text: localizedText.add_section,
+                                                  icon: Icons.add,
+                                                ),
+                                              )
                                           ]
                                       )
                                   )
@@ -209,38 +213,39 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                             )
                         )
                     ),
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                      child: BloqoFilledButton(
-                        color: BloqoColors.russianViolet,
-                        onPressed: () async {
-                          context.loaderOverlay.show();
-                          try {
-                            await _saveChanges(
-                              context: context,
-                              course: course,
-                              chapter: chapter,
-                              sections: sections
-                            );
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                            );
-                            context.loaderOverlay.hide();
-                          } on BloqoException catch (e) {
-                            if (!context.mounted) return;
-                            context.loaderOverlay.hide();
-                            showBloqoErrorAlert(
-                              context: context,
-                              title: localizedText.error_title,
-                              description: e.message,
-                            );
-                          }
-                        },
-                        text: localizedText.save_changes,
-                        icon: Icons.edit,
+                    if(editable)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                        child: BloqoFilledButton(
+                          color: BloqoColors.russianViolet,
+                          onPressed: () async {
+                            context.loaderOverlay.show();
+                            try {
+                              await _saveChanges(
+                                context: context,
+                                course: course,
+                                chapter: chapter,
+                                sections: sections
+                              );
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                              );
+                              context.loaderOverlay.hide();
+                            } on BloqoException catch (e) {
+                              if (!context.mounted) return;
+                              context.loaderOverlay.hide();
+                              showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: e.message,
+                              );
+                            }
+                          },
+                          text: localizedText.save_changes,
+                          icon: Icons.edit,
+                        ),
                       ),
-                    ),
                   ]
               );
             }

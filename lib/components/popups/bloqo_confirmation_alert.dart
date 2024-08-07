@@ -9,13 +9,15 @@ class BloqoConfirmationAlert extends StatelessWidget{
     required this.title,
     required this.description,
     required this.confirmationFunction,
-    required this.backgroundColor
+    required this.backgroundColor,
+    required this.confirmationColor
   });
 
   final String title;
   final String description;
   final Function() confirmationFunction;
   final Color backgroundColor;
+  final Color confirmationColor;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class BloqoConfirmationAlert extends StatelessWidget{
             Navigator.pop(context, "OK");
           },
           child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              color: BloqoColors.error,
+              color: confirmationColor,
               fontWeight: FontWeight.bold
           )),
         )
@@ -67,7 +69,8 @@ showBloqoConfirmationAlert({
   required String title,
   required String description,
   required Function() confirmationFunction,
-  required Color backgroundColor}){
+  required Color backgroundColor,
+  Color confirmationColor = BloqoColors.error}){
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -75,7 +78,8 @@ showBloqoConfirmationAlert({
         title: title,
         description: description,
         confirmationFunction: confirmationFunction,
-        backgroundColor: backgroundColor
+        backgroundColor: backgroundColor,
+        confirmationColor: confirmationColor,
       );
     },
   );

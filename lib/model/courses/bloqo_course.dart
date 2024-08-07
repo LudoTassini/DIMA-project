@@ -11,17 +11,13 @@ class BloqoCourse{
   final String id;
   String name;
   final String authorId;
-  final bool published;
+  bool published;
   final Timestamp creationDate;
   final List<dynamic> chapters;
 
   List<dynamic>? reviews;
   String? description;
   Timestamp? publicationDate;
-  bool? public;
-
-  int numberOfEnrollments = 0;
-  int numberOfCompletions = 0;
 
   BloqoCourse({
     required this.id,
@@ -33,9 +29,6 @@ class BloqoCourse{
     this.description,
     this.published = false,
     this.publicationDate,
-    this.public,
-    this.numberOfEnrollments = 0,
-    this.numberOfCompletions = 0,
   });
 
   factory BloqoCourse.fromFirestore(
@@ -51,11 +44,8 @@ class BloqoCourse{
       published: data["published"],
       creationDate: data["creation_date"],
       publicationDate: data["publication_date"],
-      public: data["is_public"],
       chapters: data["chapters"],
       reviews: data["reviews"],
-      numberOfEnrollments: data["number_of_enrollments"],
-      numberOfCompletions: data["number_of_completions"],
     );
   }
 
@@ -68,11 +58,8 @@ class BloqoCourse{
       "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
-      "is_public": public,
       "chapters": chapters,
       "reviews": reviews,
-      "number_of_enrollments": numberOfEnrollments,
-      "number_of_completions": numberOfCompletions
     };
   }
 
@@ -173,6 +160,28 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> updateCourseStatus({required var localizedText, required String courseId}) async {
+  try {
+    var ref = BloqoCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoCourse course = docSnapshot.data();
+    course.published = true;
+    course.publicationDate = Timestamp.now();
+    await ref.doc(docSnapshot.id).update(course.toFirestore());
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":

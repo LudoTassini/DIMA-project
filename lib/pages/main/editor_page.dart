@@ -3,6 +3,7 @@ import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -13,6 +14,7 @@ import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_chapter.dart';
@@ -21,6 +23,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../from_editor/edit_course_page.dart';
+import '../from_editor/view_statistics_page.dart';
 
 class EditorPage extends StatefulWidget {
   const EditorPage({
@@ -144,7 +147,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showEditOptions: true
+                                                showEditOptions: true,
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId)),
                                             );
                                           }
                                           else{
@@ -155,9 +159,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                   await _goToCoursePage(
                                                       context: context,
                                                       localizedText: localizedText,
-                                                      userCourseCreated: course);
+                                                      userCourseCreated: course
+                                                  );
                                                 },
-                                                showEditOptions: true
+                                                showEditOptions: true,
+                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId,)),
                                             );
                                           }
                                         },
@@ -236,7 +242,25 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showPublishedOptions: true
+                                                showPublishedOptions: true,
+                                                onViewStatistics: () async {
+                                                  context.loaderOverlay.show();
+                                                  try {
+                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                  }
+                                                  on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                },
                                             );
                                           }
                                           else{
@@ -249,7 +273,25 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showPublishedOptions: true
+                                                showPublishedOptions: true,
+                                                onViewStatistics: () async {
+                                                  context.loaderOverlay.show();
+                                                  try {
+                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                  }
+                                                  on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                },
                                             );
                                           }
                                         },
