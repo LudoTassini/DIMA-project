@@ -373,7 +373,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                               context: context,
                               localizedText: localizedText,
                               userCourseCreated: userCourseCreated,
-                              myUsername: myself.username
+                              myself: myself
                             );
                             if (!context.mounted) return;
                             context.loaderOverlay.hide();
@@ -407,7 +407,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required String myUsername}) async {
+  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required BloqoUser myself}) async {
     if(languageTagController.text == localizedText.none || subjectTagController.text == localizedText.none || durationTagController.text == localizedText.none ||
       modalityTagController.text == localizedText.none || difficultyTagController.text == localizedText.none){
       throw BloqoException(message: localizedText.missing_tag_error);
@@ -429,7 +429,8 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
       publishedCourseId: uuid(),
       originalCourseId: userCourseCreated.courseId,
       courseName: userCourseCreated.courseName,
-      authorUsername: myUsername,
+      authorUsername: myself.username,
+      authorId: myself.id,
       isPublic: publicPrivateCoursesToggle.get(),
       publicationDate: Timestamp.now(),
       language: getLanguageTagFromString(tag: languageTag).toString(),
