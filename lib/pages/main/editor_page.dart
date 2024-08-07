@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
@@ -14,9 +15,11 @@ import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user_course_created.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_section.dart';
@@ -263,6 +266,41 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                     );
                                                   }
                                                 },
+                                                onDismiss: () async {
+                                                  await showBloqoConfirmationAlert(
+                                                      context: context,
+                                                      title: localizedText.warning,
+                                                      description: localizedText.course_dismiss_confirmation,
+                                                      backgroundColor: BloqoColors.error,
+                                                      confirmationFunction: () async {
+                                                        context.loaderOverlay.show();
+                                                        try {
+                                                          BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                          if(!context.mounted) return;
+                                                          await _tryDismissCourse(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            publishedCourseId: publishedCourse.publishedCourseId,
+                                                            courseId: course.courseId
+                                                          );
+                                                          if (!context.mounted) return;
+                                                          context.loaderOverlay.hide();
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                                                          );
+                                                        }
+                                                        on BloqoException catch (e) {
+                                                          if (!context.mounted) return;
+                                                          context.loaderOverlay.hide();
+                                                          showBloqoErrorAlert(
+                                                            context: context,
+                                                            title: localizedText.error_title,
+                                                            description: e.message,
+                                                          );
+                                                        }
+                                                      }
+                                                  );
+                                                }
                                             );
                                           }
                                           else{
@@ -295,6 +333,41 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                     );
                                                   }
                                                 },
+                                                onDismiss: () async {
+                                                  await showBloqoConfirmationAlert(
+                                                      context: context,
+                                                      title: localizedText.warning,
+                                                      description: localizedText.course_dismiss_confirmation,
+                                                      backgroundColor: BloqoColors.error,
+                                                      confirmationFunction: () async {
+                                                        context.loaderOverlay.show();
+                                                        try {
+                                                          BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                          if(!context.mounted) return;
+                                                          await _tryDismissCourse(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            publishedCourseId: publishedCourse.publishedCourseId,
+                                                            courseId: course.courseId
+                                                          );
+                                                          if (!context.mounted) return;
+                                                          context.loaderOverlay.hide();
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                                                          );
+                                                        }
+                                                        on BloqoException catch (e) {
+                                                          if (!context.mounted) return;
+                                                          context.loaderOverlay.hide();
+                                                          showBloqoErrorAlert(
+                                                            context: context,
+                                                            title: localizedText.error_title,
+                                                            description: e.message,
+                                                          );
+                                                        }
+                                                      }
+                                                  );
+                                                }
                                             );
                                           }
                                         },
@@ -437,6 +510,18 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
         description: e.message,
       );
     }
+  }
+
+  Future<void> _tryDismissCourse({required BuildContext context, required var localizedText, required String publishedCourseId, required String courseId}) async {
+    await deleteUserCoursesEnrolledForDismissedCourse(localizedText: localizedText, publishedCourseId: publishedCourseId);
+    await deletePublishedCourse(localizedText: localizedText, publishedCourseId: publishedCourseId);
+    await updateCourseStatus(localizedText: localizedText, courseId: courseId, published: false);
+
+    if(!context.mounted) return;
+    updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: courseId, published: false);
+    BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((ucc) => ucc.courseId == courseId).first;
+
+    await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
   }
 
 }

@@ -99,6 +99,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       });
     }
 
+    BloqoUser user = getUserFromAppState(context: context)!;
+
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesEnrolledAppState>(
@@ -649,9 +651,10 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 description: localizedText.unsubscribe_confirmation,
                                 confirmationFunction: () async {
                                   await _tryDeleteUserCourseEnrolled(
-                                      context: context,
-                                      localizedText: localizedText,
-                                      courseId: widget.course.id,
+                                    context: context,
+                                    localizedText: localizedText,
+                                    courseId: widget.course.id,
+                                    enrolledUserId: user.id
                                   );
                                 },
                                 backgroundColor: BloqoColors.error
@@ -716,12 +719,12 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   }
 
   Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
-    courseId}) async {
+    courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
+      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
       //FIXME

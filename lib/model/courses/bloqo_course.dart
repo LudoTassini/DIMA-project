@@ -167,14 +167,14 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
   }
 }
 
-Future<void> updateCourseStatus({required var localizedText, required String courseId}) async {
+Future<void> updateCourseStatus({required var localizedText, required String courseId, required bool published}) async {
   try {
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
     var docSnapshot = querySnapshot.docs.first;
     BloqoCourse course = docSnapshot.data();
-    course.published = true;
+    course.published = published;
     course.publicationDate = Timestamp.now();
     await ref.doc(docSnapshot.id).update(course.toFirestore());
   } on FirebaseAuthException catch (e) {

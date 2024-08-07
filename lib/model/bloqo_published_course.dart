@@ -178,3 +178,19 @@ Future<void> savePublishedCourseChanges({required var localizedText, required Bl
     throw BloqoException(message: localizedText.generic_error);
   }
 }
+
+Future<void> deletePublishedCourse({required var localizedText, required String publishedCourseId}) async {
+  try {
+    var ref = BloqoPublishedCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
+    await querySnapshot.docs[0].reference.delete();
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}

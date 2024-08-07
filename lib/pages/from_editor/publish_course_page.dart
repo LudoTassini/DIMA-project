@@ -443,7 +443,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
 
     await publishCourse(localizedText: localizedText, publishedCourse: publishedCourse);
 
-    await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId);
+    await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId, published: true);
 
     if(!context.mounted) return;
     updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: userCourseCreated.courseId, published: true);

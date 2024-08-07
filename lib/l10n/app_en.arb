@@ -298,5 +298,6 @@
   "start_learning": "Start learning!",
   "statistics": "Statistics",
   "users_enrolled": " users enrolled in this course",
-  "users_completed": " users completed this course"
+  "users_completed": " users completed this course",
+  "course_dismiss_confirmation": "By confirming, this course will be removed from the bloQo community. This means that everyone who enrolled in this course will no more be able to access its content, and no one will be able to enroll in this course until you publish it again. Do you wish to continue?"
 }

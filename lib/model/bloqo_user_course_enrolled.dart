@@ -188,12 +188,30 @@ Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localize
   }
 }
 
-Future<void> deleteUserCourseEnrolled({required var localizedText, required String courseId}) async {
+Future<void> deleteUserCourseEnrolled({required var localizedText, required String courseId, required String enrolledUserId}) async {
   try {
     var ref = BloqoUserCourseEnrolled.getRef();
     await checkConnectivity(localizedText: localizedText);
-    QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
+    QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: courseId).where("enrolled_user_id", isEqualTo: enrolledUserId).get();
     await querySnapshot.docs[0].reference.delete();
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> deleteUserCoursesEnrolledForDismissedCourse({required var localizedText, required String publishedCourseId}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
+    for(var doc in querySnapshot.docs) {
+      await doc.reference.delete();
+    }
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
