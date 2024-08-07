@@ -38,9 +38,29 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
   bool isProcessing = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Register the observer
+    Navigator.of(context).widget.observers.add(NavigationObserver(onPop: _onPop));
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     controller?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      controller?.resumeCamera();
+    }
+  }
+
+  Future<void> _onPop() async {
+    controller?.resumeCamera();
   }
 
   @override
@@ -162,5 +182,17 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     } finally {
       isProcessing = false;
     }
+  }
+}
+
+class NavigationObserver extends NavigatorObserver {
+  NavigationObserver({required this.onPop});
+
+  final Function onPop;
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    onPop();
+    super.didPop(route, previousRoute);
   }
 }
