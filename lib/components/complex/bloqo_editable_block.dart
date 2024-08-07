@@ -21,6 +21,7 @@ class BloqoEditableBlock extends StatelessWidget {
     required this.chapter,
     required this.section,
     required this.block,
+    required this.editable,
     required this.onPressed,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
@@ -29,6 +30,7 @@ class BloqoEditableBlock extends StatelessWidget {
   final BloqoChapter chapter;
   final BloqoSection section;
   final BloqoBlock block;
+  final bool editable;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
 
@@ -86,29 +88,30 @@ class BloqoEditableBlock extends StatelessWidget {
                     ),
                     Row(
                         children: [
-                          IconButton(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            visualDensity: VisualDensity.compact,
-                            icon: const Icon(
-                              Icons.delete_forever,
-                              color: BloqoColors.error,
-                              size: 24,
+                          if(editable)
+                            IconButton(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              visualDensity: VisualDensity.compact,
+                              icon: const Icon(
+                                Icons.delete_forever,
+                                color: BloqoColors.error,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                showBloqoConfirmationAlert(
+                                    context: context,
+                                    title: localizedText.warning,
+                                    description: localizedText.delete_block_confirmation,
+                                    confirmationFunction: () async {
+                                      await _tryDeleteBlock(
+                                          context: context,
+                                          localizedText: localizedText
+                                      );
+                                    },
+                                    backgroundColor: BloqoColors.error
+                                );
+                              },
                             ),
-                            onPressed: () {
-                              showBloqoConfirmationAlert(
-                                  context: context,
-                                  title: localizedText.warning,
-                                  description: localizedText.delete_block_confirmation,
-                                  confirmationFunction: () async {
-                                    await _tryDeleteBlock(
-                                        context: context,
-                                        localizedText: localizedText
-                                    );
-                                  },
-                                  backgroundColor: BloqoColors.error
-                              );
-                            },
-                          ),
                           const Icon(
                             Icons.navigate_next,
                             color: BloqoColors.russianViolet,

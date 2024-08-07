@@ -14,6 +14,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
     required this.controller,
     required this.toggle,
     required this.answerNumber,
+    required this.editable,
     required this.onDelete,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
@@ -21,6 +22,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
   final TextEditingController controller;
   final Toggle toggle;
   final int answerNumber;
+  final bool editable;
   final Function() onDelete;
   final EdgeInsetsDirectional padding;
 
@@ -58,24 +60,25 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                               fontWeight: FontWeight.w600
                             )
                           ),
-                          IconButton(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            visualDensity: VisualDensity.compact,
-                            icon: const Icon(
-                              Icons.delete_forever,
-                              color: BloqoColors.error,
-                              size: 24,
+                          if(editable)
+                            IconButton(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              visualDensity: VisualDensity.compact,
+                              icon: const Icon(
+                                Icons.delete_forever,
+                                color: BloqoColors.error,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                showBloqoConfirmationAlert(
+                                    context: context,
+                                    title: localizedText.warning,
+                                    description: localizedText.delete_answer_confirmation,
+                                    confirmationFunction: onDelete,
+                                    backgroundColor: BloqoColors.error
+                                );
+                              },
                             ),
-                            onPressed: () {
-                              showBloqoConfirmationAlert(
-                                  context: context,
-                                  title: localizedText.warning,
-                                  description: localizedText.delete_answer_confirmation,
-                                  confirmationFunction: onDelete,
-                                  backgroundColor: BloqoColors.error
-                              );
-                            },
-                          ),
                         ],
                       ),
                     ),

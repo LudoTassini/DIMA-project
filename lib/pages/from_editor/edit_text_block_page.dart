@@ -71,6 +71,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
           BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
           BloqoSection section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
           BloqoBlock block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
+          bool editable = !course.published;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -146,38 +147,39 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                child: BloqoFilledButton(
-                  color: BloqoColors.russianViolet,
-                  onPressed: () async {
-                    context.loaderOverlay.show();
-                    try {
-                      await _saveChanges(
-                        context: context,
-                        courseId: course.id,
-                        sectionId: section.id,
-                        block: block,
-                      );
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                      );
-                      context.loaderOverlay.hide();
-                    } on BloqoException catch (e) {
-                      if (!context.mounted) return;
-                      context.loaderOverlay.hide();
-                      showBloqoErrorAlert(
-                        context: context,
-                        title: localizedText.error_title,
-                        description: e.message,
-                      );
-                    }
-                  },
-                  text: localizedText.save_changes,
-                  icon: Icons.edit,
+              if(editable)
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                  child: BloqoFilledButton(
+                    color: BloqoColors.russianViolet,
+                    onPressed: () async {
+                      context.loaderOverlay.show();
+                      try {
+                        await _saveChanges(
+                          context: context,
+                          courseId: course.id,
+                          sectionId: section.id,
+                          block: block,
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                        );
+                        context.loaderOverlay.hide();
+                      } on BloqoException catch (e) {
+                        if (!context.mounted) return;
+                        context.loaderOverlay.hide();
+                        showBloqoErrorAlert(
+                          context: context,
+                          title: localizedText.error_title,
+                          description: e.message,
+                        );
+                      }
+                    },
+                    text: localizedText.save_changes,
+                    icon: Icons.edit,
+                  ),
                 ),
-              ),
             ],
           );
         },

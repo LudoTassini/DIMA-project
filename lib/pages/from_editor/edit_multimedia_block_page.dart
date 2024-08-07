@@ -99,11 +99,14 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
             multimediaTypeController.text = multimediaTypes.where((entry) => entry.label ==
                 BloqoBlockTypeExtension.fromString(block.type!)!.multimediaShortText(
                     localizedText: localizedText)!).first.label;
+          }
+          if(firstBuild) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              multimediaTypeController.addListener(_onMultimediaTypeChanged);
+            });
             firstBuild = false;
           }
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            multimediaTypeController.addListener(_onMultimediaTypeChanged);
-          });
+          bool editable = !course.published;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -117,51 +120,52 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  localizedText.choose_multimedia_type,
-                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: BloqoColors.russianViolet,
-                                    fontSize: 30,
+                      if(editable)
+                        BloqoSeasaltContainer(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    localizedText.choose_multimedia_type,
+                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                      color: BloqoColors.russianViolet,
+                                      fontSize: 30,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Row(
-                                children:[
-                                  Expanded(
-                                      child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                          child: LayoutBuilder(
-                                              builder: (BuildContext context, BoxConstraints constraints) {
-                                                double availableWidth = constraints.maxWidth;
-                                                return Column(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    children: [
-                                                      BloqoDropdown(
-                                                          controller: multimediaTypeController,
-                                                          dropdownMenuEntries: multimediaTypes,
-                                                          initialSelection: multimediaTypeController.text == "" ? multimediaTypes[0].value : multimediaTypeController.text,
-                                                          width: availableWidth
-                                                      )
-                                                    ]
-                                                );
-                                              }
-                                          )
-                                      )
-                                  )
-                                ]
-                            ),
-                          ],
+                              Row(
+                                  children:[
+                                    Expanded(
+                                        child: Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                            child: LayoutBuilder(
+                                                builder: (BuildContext context, BoxConstraints constraints) {
+                                                  double availableWidth = constraints.maxWidth;
+                                                  return Column(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      children: [
+                                                        BloqoDropdown(
+                                                            controller: multimediaTypeController,
+                                                            dropdownMenuEntries: multimediaTypes,
+                                                            initialSelection: multimediaTypeController.text == "" ? multimediaTypes[0].value : multimediaTypeController.text,
+                                                            width: availableWidth
+                                                        )
+                                                      ]
+                                                  );
+                                                }
+                                            )
+                                        )
+                                    )
+                                  ]
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                       BloqoSeasaltContainer(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                         child: Column(
@@ -383,33 +387,34 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       url: widget.block.content
                                     )
                                   ),
-                                  Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                      child: BloqoFilledButton(
-                                          color: BloqoColors.error,
-                                          onPressed: () {
-                                            showBloqoConfirmationAlert(
-                                                context: context,
-                                                title: localizedText.warning,
-                                                description: localizedText.delete_file_confirmation,
-                                                confirmationFunction: () async {
-                                                  await _tryDeleteFile(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      filePath: 'audios/courses/${course
-                                                          .id}/${block.id}',
-                                                      courseId: course.id,
-                                                      sectionId: section.id,
-                                                      block: block
-                                                  );
-                                                },
-                                                backgroundColor: BloqoColors.error
-                                            );
-                                          },
-                                          text: localizedText.delete_file,
-                                          icon: Icons.delete_forever
-                                      )
-                                  )
+                                  if(editable)
+                                    Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                        child: BloqoFilledButton(
+                                            color: BloqoColors.error,
+                                            onPressed: () {
+                                              showBloqoConfirmationAlert(
+                                                  context: context,
+                                                  title: localizedText.warning,
+                                                  description: localizedText.delete_file_confirmation,
+                                                  confirmationFunction: () async {
+                                                    await _tryDeleteFile(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        filePath: 'audios/courses/${course
+                                                            .id}/${block.id}',
+                                                        courseId: course.id,
+                                                        sectionId: section.id,
+                                                        block: block
+                                                    );
+                                                  },
+                                                  backgroundColor: BloqoColors.error
+                                              );
+                                            },
+                                            text: localizedText.delete_file,
+                                            icon: Icons.delete_forever
+                                        )
+                                    )
                                 ]
                             )
                         ),
@@ -435,33 +440,34 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     padding: const EdgeInsets.all(20),
                                     child: Image.network(widget.block.content),
                                   ),
-                                  Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                      child: BloqoFilledButton(
-                                          color: BloqoColors.error,
-                                          onPressed: () {
-                                            showBloqoConfirmationAlert(
-                                                context: context,
-                                                title: localizedText.warning,
-                                                description: localizedText.delete_file_confirmation,
-                                                confirmationFunction: () async {
-                                                  await _tryDeleteFile(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      filePath: 'images/courses/${course
-                                                          .id}/${block.id}',
-                                                      courseId: course.id,
-                                                      sectionId: section.id,
-                                                      block: block
-                                                  );
-                                                },
-                                                backgroundColor: BloqoColors.error
-                                            );
-                                          },
-                                          text: localizedText.delete_file,
-                                          icon: Icons.delete_forever
-                                      )
-                                  )
+                                  if(editable)
+                                    Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                        child: BloqoFilledButton(
+                                            color: BloqoColors.error,
+                                            onPressed: () {
+                                              showBloqoConfirmationAlert(
+                                                  context: context,
+                                                  title: localizedText.warning,
+                                                  description: localizedText.delete_file_confirmation,
+                                                  confirmationFunction: () async {
+                                                    await _tryDeleteFile(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        filePath: 'images/courses/${course
+                                                            .id}/${block.id}',
+                                                        courseId: course.id,
+                                                        sectionId: section.id,
+                                                        block: block
+                                                    );
+                                                  },
+                                                  backgroundColor: BloqoColors.error
+                                              );
+                                            },
+                                            text: localizedText.delete_file,
+                                            icon: Icons.delete_forever
+                                        )
+                                    )
                                 ]
                             )
                         ),
@@ -486,40 +492,41 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                               !widget.block.content.startsWith("yt:") ? BloqoVideoPlayer(
                                 url: widget.block.content
                               ) : BloqoYouTubePlayer(url: widget.block.content.substring(3)),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                child: BloqoFilledButton(
-                                  color: BloqoColors.error,
-                                  onPressed: () {
-                                    showBloqoConfirmationAlert(
-                                      context: context,
-                                      title: localizedText.warning,
-                                      description: localizedText.delete_file_confirmation,
-                                      confirmationFunction: () async {
-                                        !widget.block.content.startsWith("yt:") ?
-                                        await _tryDeleteFile(
+                              if(editable)
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                                  child: BloqoFilledButton(
+                                    color: BloqoColors.error,
+                                    onPressed: () {
+                                      showBloqoConfirmationAlert(
+                                        context: context,
+                                        title: localizedText.warning,
+                                        description: localizedText.delete_file_confirmation,
+                                        confirmationFunction: () async {
+                                          !widget.block.content.startsWith("yt:") ?
+                                          await _tryDeleteFile(
+                                              context: context,
+                                              localizedText: localizedText,
+                                              filePath: 'videos/courses/${course
+                                                  .id}/${block.id}',
+                                              courseId: course.id,
+                                              sectionId: section.id,
+                                              block: block
+                                          ) : await _tryDeleteYouTubeLink(
                                             context: context,
                                             localizedText: localizedText,
-                                            filePath: 'videos/courses/${course
-                                                .id}/${block.id}',
                                             courseId: course.id,
                                             sectionId: section.id,
                                             block: block
-                                        ) : await _tryDeleteYouTubeLink(
-                                          context: context,
-                                          localizedText: localizedText,
-                                          courseId: course.id,
-                                          sectionId: section.id,
-                                          block: block
-                                        );
-                                      },
-                                      backgroundColor: BloqoColors.error
-                                    );
-                                  },
-                                  text: localizedText.delete_file,
-                                  icon: Icons.delete_forever
+                                          );
+                                        },
+                                        backgroundColor: BloqoColors.error
+                                      );
+                                    },
+                                    text: localizedText.delete_file,
+                                    icon: Icons.delete_forever
+                                  )
                                 )
-                              )
                             ]
                           ) : Container()
                         ),

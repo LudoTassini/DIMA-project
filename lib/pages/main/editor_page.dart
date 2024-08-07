@@ -14,6 +14,7 @@ import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user_course_created.dart';
 import '../../model/courses/bloqo_block.dart';
 import '../../model/courses/bloqo_chapter.dart';
@@ -22,6 +23,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../from_editor/edit_course_page.dart';
+import '../from_editor/view_statistics_page.dart';
 
 class EditorPage extends StatefulWidget {
   const EditorPage({
@@ -240,7 +242,25 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showPublishedOptions: true
+                                                showPublishedOptions: true,
+                                                onViewStatistics: () async {
+                                                  context.loaderOverlay.show();
+                                                  try {
+                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                  }
+                                                  on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                },
                                             );
                                           }
                                           else{
@@ -253,7 +273,25 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       localizedText: localizedText,
                                                       userCourseCreated: course);
                                                 },
-                                                showPublishedOptions: true
+                                                showPublishedOptions: true,
+                                                onViewStatistics: () async {
+                                                  context.loaderOverlay.show();
+                                                  try {
+                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                  }
+                                                  on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                },
                                             );
                                           }
                                         },

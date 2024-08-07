@@ -17,12 +17,14 @@ class BloqoEditableChapter extends StatelessWidget {
     super.key,
     required this.course,
     required this.chapter,
+    required this.editable,
     required this.onPressed,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
 
   final BloqoCourse course;
   final BloqoChapter chapter;
+  final bool editable;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
 
@@ -80,29 +82,30 @@ class BloqoEditableChapter extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          padding: const EdgeInsets.only(right: 5.0),
-                          visualDensity: VisualDensity.compact,
-                          icon: const Icon(
-                            Icons.delete_forever,
-                            color: BloqoColors.error,
-                            size: 24,
+                        if(editable)
+                          IconButton(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            visualDensity: VisualDensity.compact,
+                            icon: const Icon(
+                              Icons.delete_forever,
+                              color: BloqoColors.error,
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              showBloqoConfirmationAlert(
+                                context: context,
+                                title: localizedText.warning,
+                                description: localizedText.delete_chapter_confirmation,
+                                confirmationFunction: () async {
+                                  await _tryDeleteChapter(
+                                      context: context,
+                                      localizedText: localizedText
+                                  );
+                                },
+                                backgroundColor: BloqoColors.error
+                              );
+                            },
                           ),
-                          onPressed: () {
-                            showBloqoConfirmationAlert(
-                              context: context,
-                              title: localizedText.warning,
-                              description: localizedText.delete_chapter_confirmation,
-                              confirmationFunction: () async {
-                                await _tryDeleteChapter(
-                                    context: context,
-                                    localizedText: localizedText
-                                );
-                              },
-                              backgroundColor: BloqoColors.error
-                            );
-                          },
-                        ),
                         const Icon(
                           Icons.navigate_next,
                           color: BloqoColors.russianViolet,

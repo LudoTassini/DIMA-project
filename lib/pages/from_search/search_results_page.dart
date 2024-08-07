@@ -181,7 +181,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           sections: sections,
           courseAuthor: courseAuthor,
           reviews:reviews,
-          rating: course.rating!,
+          rating: course.rating ?? 0,
         )
       );
 

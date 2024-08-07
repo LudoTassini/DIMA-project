@@ -73,7 +73,9 @@ class BloqoPublishedCourse{
       "subject": subject,
       "difficulty": difficulty,
       "duration": duration,
-      "rating": rating
+      "rating": rating,
+      "number_of_enrollments": numberOfEnrollments,
+      "number_of_completions": numberOfCompletions
     };
   }
 
@@ -87,11 +89,28 @@ class BloqoPublishedCourse{
 
 }
 
+Future<BloqoPublishedCourse> getPublishedCourseFromCourseId({required var localizedText, required String courseId}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourse.getRef();
+    var querySnapshot = await ref.where("original_course_id", isEqualTo: courseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoPublishedCourse publishedCourse = docSnapshot.data();
+    return publishedCourse;
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
 Future<void> publishCourse({required var localizedText, required BloqoPublishedCourse publishedCourse}) async {
   try {
     await checkConnectivity(localizedText: localizedText);
     var ref = BloqoPublishedCourse.getRef();
-    await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(publishedCourse);
   } on FirebaseException catch (e) {
     switch (e.code) {
