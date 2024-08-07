@@ -5,14 +5,20 @@ import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
+import '../../components/popups/bloqo_confirmation_alert.dart';
+import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
 
@@ -108,22 +114,20 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                             ),
                           ),
                         ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: course.description != ''
-                                  ? Text(
-                                course.description!,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: BloqoColors.seasalt,
-                                  fontSize: 16,
-                                ),
-                              )
-                                  : const SizedBox.shrink(), // This will take up no space
-                            ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: course.description != ''
+                                ? Text(
+                              course.description!,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: BloqoColors.seasalt,
+                                fontSize: 16,
+                              ),
+                            )
+                                : const SizedBox.shrink(), // This will take up no space
                           ),
                         ),
                         Padding(
@@ -250,7 +254,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                                             child: chapter.description != ''
                                             ? Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 20),
+                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
                                               child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -324,9 +328,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 ],
                                               ),
                                             ),
-
                                           ]
-
                                               : [
                                             Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
@@ -375,42 +377,74 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
-                                      20, 0, 20, 10),
+                                      25, 0, 25, 10),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                          localizedText.enrolled_on +
-                                          DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
-                                          style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.copyWith(
-                                            color: BloqoColors.seasalt,
-                                            fontSize: 16,
+                                      Column(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enrolled_on,
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .displaySmall
+                                                  ?.copyWith(
+                                                color: BloqoColors.seasalt,
+                                                fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child:
+                                              Text(
+                                                DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
+                                                style: Theme
+                                                    .of(context)
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.copyWith(
+                                                  color: BloqoColors.seasalt,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                          ),
+                                        ],
                                       ),
-
-                                      Flexible(
+                                      const SizedBox(width: 20), // Add some space between the text and the button
+                                      Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0), //24, 0, 24, 0
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
                                           child: BloqoFilledButton(
                                             color: BloqoColors.error,
-                                            onPressed: () async {
-                                            //TODO
+                                            onPressed: () {
+                                              showBloqoConfirmationAlert(
+                                                  context: context,
+                                                  title: localizedText.warning,
+                                                  description: localizedText.unsubscribe_confirmation,
+                                                  confirmationFunction: () async {
+                                                    await _tryDeleteUserCourseEnrolled(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      courseId: course.id,
+                                                    );
+                                                  },
+                                                  backgroundColor: BloqoColors.error
+                                              );
                                             },
-                                          text: localizedText.delete,
-                                          icon: Icons.close_sharp,
+                                            text: localizedText.unsubscribe,
+                                            icon: Icons.close_sharp,
                                           ),
                                         ),
                                       ),
-
                                     ],
                                   ),
+
+
                                 ),
                               ],
                             ),
@@ -448,7 +482,24 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                       ],
                     ),
 
-                    Padding(
+                    sectionsCompleted.isEmpty ?
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 0, 20, 20),
+                        child: BloqoFilledButton(
+                          onPressed: () =>
+                              () async {
+                            // TODO
+                            //widget.onNavigateToPage(3),
+                          },
+                          height: 60,
+                          color: BloqoColors.success,
+                          text: localizedText.start_learning,
+                          fontSize: 24,
+                          icon: Icons.lightbulb,
+                        ),
+                      )
+                      : Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           20, 0, 20, 20),
                       child: BloqoFilledButton(
@@ -463,7 +514,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         fontSize: 24,
                         icon: Icons.lightbulb,
                       ),
-                    ),
+                    )
+
                   ],
                 ),
               ],
@@ -475,5 +527,34 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
+  courseId}) async {
+    context.loaderOverlay.show();
+    try{
+      List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
+      if (!context.mounted) return;
+      deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
+      //FIXME
+      //updateNumEnrollments();
+      context.loaderOverlay.hide();
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      );
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
+      );
+    }
+  }
+
 }
 
