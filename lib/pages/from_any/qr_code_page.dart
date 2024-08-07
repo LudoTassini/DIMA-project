@@ -23,11 +23,15 @@ class QrCodePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            qrCodeTitle,
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-              color: BloqoColors.seasalt
-            ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+            child: Text(
+              qrCodeTitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                color: BloqoColors.seasalt
+              ),
+            )
           ),
           BloqoSeasaltContainer(
             child: Padding(

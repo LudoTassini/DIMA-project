@@ -5,6 +5,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ import '../../model/courses/bloqo_chapter.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/bloqo_qr_code_type.dart';
 import '../../utils/localization.dart';
 import '../from_editor/edit_course_page.dart';
 import '../from_editor/view_statistics_page.dart';
@@ -300,7 +302,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                         }
                                                       }
                                                   );
-                                                }
+                                                },
+                                                onGetQrCode: () => widget.onPush(QrCodePage(
+                                                    qrCodeTitle: course.courseName,
+                                                    qrCodeContent: "${BloqoQrCodeType.course.name}_${course.courseId}")
+                                                ),
                                             );
                                           }
                                           else{
@@ -367,7 +373,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                         }
                                                       }
                                                   );
-                                                }
+                                                },
+                                              onGetQrCode: () => widget.onPush(QrCodePage(
+                                                  qrCodeTitle: course.courseName,
+                                                  qrCodeContent: "${BloqoQrCodeType.course.name}_${course.courseId}")
+                                              ),
                                             );
                                           }
                                         },

@@ -531,7 +531,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         );
                       },
                       color: BloqoColors.chineseViolet,
-                      icon: Icons.qr_code,
+                      icon: Icons.qr_code_2,
                       text: localizedText.scan_qr_code,
                     ),
                   ),
