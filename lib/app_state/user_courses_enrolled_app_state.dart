@@ -18,6 +18,15 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
     });
   }
 
+  void _deleteUserCourseEnrolled(BloqoUserCourseEnrolled userCourseEnrolled){
+    if (_userCourses != null) {
+      _userCourses!.remove(userCourseEnrolled);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
 }
 
 void saveUserCoursesEnrolledToAppState({required BuildContext context, required List<BloqoUserCourseEnrolled> courses}){
@@ -26,4 +35,8 @@ void saveUserCoursesEnrolledToAppState({required BuildContext context, required 
 
 List<BloqoUserCourseEnrolled>? getUserCoursesEnrolledFromAppState({required BuildContext context}){
   return Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._get();
+}
+
+void deleteUserCourseEnrolledFromAppState({required BuildContext context, required BloqoUserCourseEnrolled userCourseEnrolled}){
+  Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._deleteUserCourseEnrolled(userCourseEnrolled);
 }

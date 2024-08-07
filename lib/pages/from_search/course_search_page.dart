@@ -15,6 +15,8 @@ import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
 import '../../components/complex/bloqo_review_component.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
+import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
@@ -601,29 +603,58 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                 verticalDirection: VerticalDirection.down,
                 children: [
                   !isEnrolled?
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 10, 20, 10),
-                      child: BloqoFilledButton(
-                        onPressed: () async {
-                          _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
-                          chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourseId);
-                        },
-                        height: 60,
-                        color: BloqoColors.russianViolet,
-                        text: localizedText.enroll_in,
-                        icon: Icons.add,
-                        fontSize: 24,
-                      ),
-                    )
+                      widget.course.authorId != getUserFromAppState(context: context)!.id?
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              20, 10, 20, 10),
+                          child: BloqoFilledButton(
+                            onPressed: () async {
+                              _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
+                              chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourseId);
+                            },
+                            height: 60,
+                            color: BloqoColors.russianViolet,
+                            text: localizedText.enroll_in,
+                            icon: Icons.add,
+                            fontSize: 24,
+                          ),
+                        )
+                      : Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 10, 20, 10),
+                        child: BloqoFilledButton(
+                          onPressed: () async {
+                            showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: localizedText.creator_cannot_subscribe);
+                          },
+                          height: 60,
+                          color: BloqoColors.secondaryText,
+                          text: localizedText.enroll_in,
+                          icon: Icons.add,
+                          fontSize: 24,
+                        ),
+                      )
+
                   : Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         20, 10, 20, 10),
                     child: BloqoFilledButton(
-                      onPressed: () =>
-                          () async {
-                        // TODO
-                        //widget.onNavigateToPage(3),
+                      onPressed: () {
+                            showBloqoConfirmationAlert(
+                                context: context,
+                                title: localizedText.warning,
+                                description: localizedText.unsubscribe_confirmation,
+                                confirmationFunction: () async {
+                                  await _tryDeleteUserCourseEnrolled(
+                                      context: context,
+                                      localizedText: localizedText,
+                                      courseId: widget.course.id,
+                                  );
+                                },
+                                backgroundColor: BloqoColors.error
+                            );
                       },
                       height: 60,
                       color: BloqoColors.error,
@@ -679,6 +710,34 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         context: context,
         title: localizedText.error_title,
         description: e.message,
+      );
+    }
+  }
+
+  Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
+    courseId}) async {
+    context.loaderOverlay.show();
+    try{
+      List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
+      if (!context.mounted) return;
+      deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
+      //FIXME
+      //updateNumEnrollments();
+      context.loaderOverlay.hide();
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      );
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
       );
     }
   }

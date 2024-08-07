@@ -170,6 +170,13 @@ Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localize
     var ref = BloqoUserCourseEnrolled.getRef();
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(userCourseEnrolled);
+
+    // FIXME
+    BloqoCourse courseEnrolled = await getCourseFromId(localizedText: localizedText, courseId: course.id);
+    int numEnrollments = courseEnrolled.numberOfEnrollments + 1;
+    courseEnrolled.numberOfEnrollments = numEnrollments;
+    saveCourseChanges(localizedText: localizedText, updatedCourse: courseEnrolled);
+
     return userCourseEnrolled;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
