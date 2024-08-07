@@ -18,6 +18,7 @@ import '../../components/complex/bloqo_review_component.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
@@ -681,6 +682,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try {
       BloqoUser? user = getUserFromAppState(context: context);
+      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+          localizedText: localizedText, courseId: course.id);
         BloqoUserCourseEnrolled userCourseEnrolled = await saveNewUserCourseEnrolled(localizedText: localizedText,
             course: course, publishedCourseId: publishedCourseId, userId: user!.id);
         if(!context.mounted) return;
@@ -701,6 +704,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           enrolledCourses = [userCourseEnrolled];
         }
         saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
+        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments + 1;
+        savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
     } on BloqoException catch (e) {
@@ -719,12 +724,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+          localizedText: localizedText, courseId: courseId);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
       await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
-      //FIXME
-      //updateNumEnrollments();
+      publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
+      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
       context.loaderOverlay.hide();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(

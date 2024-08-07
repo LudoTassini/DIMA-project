@@ -15,6 +15,7 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
@@ -533,12 +534,14 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+          localizedText: localizedText, courseId: courseId);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
       await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
-      //FIXME
-      //updateNumEnrollments();
+      publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
+      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
       context.loaderOverlay.hide();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
