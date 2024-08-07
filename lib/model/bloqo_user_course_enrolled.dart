@@ -59,8 +59,8 @@ class BloqoUserCourseEnrolled {
       enrolledUserId: data['enrolled_user_id'],
       courseAuthor: data['course_author_username'],
       courseName: data['course_name'],
-      sectionsCompleted: data['sections_completed'], //FIXME
-      chaptersCompleted: data['chapters_completed'], //FIXME
+      sectionsCompleted: data['sections_completed'],
+      chaptersCompleted: data['chapters_completed'],
       totNumSections: data['tot_num_sections'],
       sectionName: data['section_name'],
       sectionToComplete: data['section_to_complete'],

@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/bloqo_exception.dart';
 import '../utils/connectivity.dart';
 
-class BloqoPublishedCourse{
-
+class BloqoPublishedCourse {
   final String publishedCourseId;
   final String originalCourseId;
   final String courseName;
   final String authorUsername;
+  final String authorId;
   final bool isPublic;
   final Timestamp publicationDate;
   final String language;
@@ -29,6 +29,7 @@ class BloqoPublishedCourse{
     required this.originalCourseId,
     required this.courseName,
     required this.authorUsername,
+    required this.authorId,
     required this.isPublic,
     required this.publicationDate,
     required this.language,
@@ -42,15 +43,16 @@ class BloqoPublishedCourse{
     this.numberOfCompletions = 0,
   });
 
-  factory BloqoPublishedCourse.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options,
-      ){
-    final data = snapshot.data();
+  factory BloqoPublishedCourse.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options,) {
+    final data = snapshot.data()!;
     return BloqoPublishedCourse(
-      publishedCourseId: data!["published_course_id"],
+      publishedCourseId: data["published_course_id"],
       originalCourseId: data["original_course_id"],
       courseName: data["course_name"],
       authorUsername: data["author_username"],
+      authorId: data["author_id"],
       isPublic: data["is_public"],
       publicationDate: data["publication_date"],
       language: data["language"],
@@ -61,7 +63,7 @@ class BloqoPublishedCourse{
       reviews: data["reviews"],
       rating: (data["rating"] is int) ? (data["rating"] as int).toDouble() : data["rating"],
       numberOfEnrollments: data["number_of_enrollments"],
-      numberOfCompletions: data["number_of_completions"]
+      numberOfCompletions: data["number_of_completions"],
     );
   }
 
@@ -71,6 +73,7 @@ class BloqoPublishedCourse{
       "original_course_id": originalCourseId,
       "course_name": courseName,
       "author_username": authorUsername,
+      "author_id": authorId,
       "publication_date": publicationDate,
       "is_public": isPublic,
       "language": language,
@@ -81,8 +84,17 @@ class BloqoPublishedCourse{
       "reviews": reviews,
       "rating": rating,
       "number_of_enrollments": numberOfEnrollments,
-      "number_of_completions": numberOfCompletions
+      "number_of_completions": numberOfCompletions,
     };
+  }
+
+  static CollectionReference<BloqoPublishedCourse> getCollectionRef() {
+    var db = FirebaseFirestore.instance;
+    return db.collection("published_courses").withConverter<
+        BloqoPublishedCourse>(
+      fromFirestore: BloqoPublishedCourse.fromFirestore,
+      toFirestore: (BloqoPublishedCourse course, _) => course.toFirestore(),
+    );
   }
 
   static getRef() {
@@ -92,7 +104,6 @@ class BloqoPublishedCourse{
       toFirestore: (BloqoPublishedCourse course, _) => course.toFirestore(),
     );
   }
-
 }
 
 Future<BloqoPublishedCourse> getPublishedCourseFromCourseId({required var localizedText, required String courseId}) async {
@@ -103,6 +114,27 @@ Future<BloqoPublishedCourse> getPublishedCourseFromCourseId({required var locali
     var docSnapshot = querySnapshot.docs.first;
     BloqoPublishedCourse publishedCourse = docSnapshot.data();
     return publishedCourse;
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<List<BloqoPublishedCourse>> getPublishedCoursesFromAuthorId({
+  required var localizedText,
+  required String authorId,
+}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourse.getCollectionRef();
+    var querySnapshot = await ref.where("author_id", isEqualTo: authorId).get();
+    List<BloqoPublishedCourse> publishedCourses = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    return publishedCourses;
   } on FirebaseException catch (e) {
     switch (e.code) {
       case "network-request-failed":

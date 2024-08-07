@@ -4,6 +4,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/pages/from_search/user_courses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -156,9 +157,13 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           BloqoTextButton(
                             text: widget.courseAuthor.username,
                             color: BloqoColors.seasalt,
+                            // TODO
                             onPressed: () async {
-                              // TODO
-                            },
+                              _goToUserCoursesPage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  authorId: widget.course.authorId);
+                              },
                             fontSize: 16,
                           ),
                         ],
@@ -685,6 +690,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try {
       BloqoUser? user = getUserFromAppState(context: context);
+      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+          localizedText: localizedText, courseId: course.id);
         BloqoUserCourseEnrolled userCourseEnrolled = await saveNewUserCourseEnrolled(localizedText: localizedText,
             course: course, publishedCourseId: publishedCourseId, userId: user!.id);
         if(!context.mounted) return;
@@ -705,6 +712,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           enrolledCourses = [userCourseEnrolled];
         }
         saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
+        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments + 1;
+        savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
     } on BloqoException catch (e) {
@@ -723,12 +732,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+          localizedText: localizedText, courseId: courseId);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
       await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
-      //FIXME
-      //updateNumEnrollments();
+      publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
+      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
       context.loaderOverlay.hide();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -742,6 +753,31 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           context: context,
           title: localizedText.error_title,
           description: e.message
+      );
+    }
+  }
+
+  Future<void> _goToUserCoursesPage({required BuildContext context, required var localizedText, required String authorId}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoUser? courseAuthor = await getUserFromId(localizedText: localizedText, id: authorId);
+      List<BloqoPublishedCourse> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: authorId);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(
+        UserCoursesPage(
+          onPush: widget.onPush,
+          onNavigate: widget.onNavigateToPage,
+          author: courseAuthor,
+          publishedCourses: publishedCourses,
+        ));
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
       );
     }
   }
