@@ -235,7 +235,7 @@
   "private": "Private",
   "published_on": "Published on: ",
   "enroll_in": "Enroll in Course",
-  "unsubscribe": "unsubscribe",
+  "unsubscribe": "Unsubscribe",
   "by": "by ",
   "reviews": "Reviews",
   "no_reviews_yet": "There are no reviews yet.",
@@ -285,5 +285,8 @@
   "trim_extra_whitespaces": "Trim extra whitespaces at the beginning and at the end?",
   "comparison_ignore_case": "Should comparison ignore case?",
   "play_audio": "Play Audio",
-  "pause_audio": "Pause Audio"
+  "pause_audio": "Pause Audio",
+  "creator_cannot_subscribe": "As the creator of the course you cannot subscribe to it.",
+  "unsubscribe_confirmation": "By confirming, you will be unsubscribed from this course and will loose every progress made so far. Do you wish to proceed?",
+  "start_learning": "Start learning!"
 }

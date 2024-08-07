@@ -177,6 +177,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           onPush: widget.onPush,
           onNavigateToPage: widget.onNavigateToPage,
           course: courseSelected,
+          publishedCourseId: course.publishedCourseId,
           chapters: chapters,
           sections: sections,
           courseAuthor: courseAuthor,

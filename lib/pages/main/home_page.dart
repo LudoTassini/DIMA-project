@@ -382,9 +382,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
             chapters: chapters,
             sections: sections,
             enrollmentDate: userCourseEnrolled.enrollmentDate,
-            sectionsCompleted: userCourseEnrolled.sectionsCompleted,
+            sectionsCompleted: userCourseEnrolled.sectionsCompleted ?? [],
             totNumSections: userCourseEnrolled.totNumSections,
-            chaptersCompleted: userCourseEnrolled.chaptersCompleted,
+            chaptersCompleted: userCourseEnrolled.chaptersCompleted ?? [],
             comingFromHome: true);
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
