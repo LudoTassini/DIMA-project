@@ -295,5 +295,8 @@
   "course_publish_confirmation": "By confirming, this course will be published. Do you wish to continue?",
   "creator_cannot_subscribe": "As the creator of the course you cannot subscribe to it.",
   "unsubscribe_confirmation": "By confirming, you will be unsubscribed from this course and will loose every progress made so far. Do you wish to proceed?",
-  "start_learning": "Start learning!"
+  "start_learning": "Start learning!",
+  "statistics": "Statistics",
+  "users_enrolled": " users enrolled in this course",
+  "users_completed": " users completed this course"
 }

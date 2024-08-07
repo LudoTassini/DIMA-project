@@ -426,17 +426,19 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
     String difficultyTag = difficultyTags.where((entry) => entry.label == difficultyTagController.text).first.value;
 
     BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
-        publishedCourseId: uuid(),
-        originalCourseId: userCourseCreated.courseId,
-        courseName: userCourseCreated.courseName,
-        authorUsername: myUsername,
-        isPublic: publicPrivateCoursesToggle.get(),
-        publicationDate: Timestamp.now(),
-        language: getLanguageTagFromString(tag: languageTag).toString(),
-        modality: getModalityTagFromString(tag: modalityTag).toString(),
-        subject: getSubjectTagFromString(tag: subjectTag).toString(),
-        difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
-        duration: getDurationTagFromString(tag: durationTag).toString()
+      publishedCourseId: uuid(),
+      originalCourseId: userCourseCreated.courseId,
+      courseName: userCourseCreated.courseName,
+      authorUsername: myUsername,
+      isPublic: publicPrivateCoursesToggle.get(),
+      publicationDate: Timestamp.now(),
+      language: getLanguageTagFromString(tag: languageTag).toString(),
+      modality: getModalityTagFromString(tag: modalityTag).toString(),
+      subject: getSubjectTagFromString(tag: subjectTag).toString(),
+      difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
+      duration: getDurationTagFromString(tag: durationTag).toString(),
+      reviews: [],
+      rating: 0
     );
 
     await publishCourse(localizedText: localizedText, publishedCourse: publishedCourse);

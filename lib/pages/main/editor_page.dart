@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/constants.dart';
@@ -247,9 +248,10 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                   context.loaderOverlay.show();
                                                   try {
                                                     BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;
@@ -278,9 +280,10 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                   context.loaderOverlay.show();
                                                   try {
                                                     BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse));
+                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;

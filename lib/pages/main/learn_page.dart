@@ -177,7 +177,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                               child: BloqoFilledButton(
                                                 onPressed: () => widget.onNavigateToPage(2),
                                                 color: BloqoColors.russianViolet,
@@ -262,7 +262,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             ),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                             child: BloqoFilledButton(
                                               onPressed: () => widget.onNavigateToPage(2),
                                               color: BloqoColors.russianViolet,

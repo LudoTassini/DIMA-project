@@ -15,7 +15,6 @@ class BloqoCourse{
   final Timestamp creationDate;
   final List<dynamic> chapters;
 
-  List<dynamic>? reviews;
   String? description;
   Timestamp? publicationDate;
 
@@ -25,7 +24,6 @@ class BloqoCourse{
     required this.authorId,
     required this.creationDate,
     required this.chapters,
-    this.reviews,
     this.description,
     this.published = false,
     this.publicationDate,
@@ -45,7 +43,6 @@ class BloqoCourse{
       creationDate: data["creation_date"],
       publicationDate: data["publication_date"],
       chapters: data["chapters"],
-      reviews: data["reviews"],
     );
   }
 
@@ -58,8 +55,7 @@ class BloqoCourse{
       "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
-      "chapters": chapters,
-      "reviews": reviews,
+      "chapters": chapters
     };
   }
 
@@ -81,7 +77,6 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
       authorId: authorId,
       creationDate: Timestamp.now(),
       chapters: [],
-      reviews: []
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);

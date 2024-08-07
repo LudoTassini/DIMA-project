@@ -18,6 +18,7 @@ import '../../components/complex/bloqo_review_component.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
@@ -33,7 +34,7 @@ class CourseSearchPage extends StatefulWidget {
     required this.onPush,
     required this.onNavigateToPage,
     required this.course,
-    required this.publishedCourseId,
+    required this.publishedCourse,
     required this.chapters,
     required this.sections,
     required this.courseAuthor,
@@ -44,7 +45,7 @@ class CourseSearchPage extends StatefulWidget {
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
   final BloqoCourse course;
-  final String publishedCourseId;
+  final BloqoPublishedCourse publishedCourse;
   final List<BloqoChapter> chapters;
   final Map<String, List<BloqoSection>> sections;
   final BloqoUser courseAuthor;
@@ -465,7 +466,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           ),
                                         ),
                                         Text(
-                                          '(${widget.course.reviews?.length.toString() ?? '0'})',
+                                          '(${widget.publishedCourse.reviews.length.toString()})',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                             color: BloqoColors.seasalt,
                                             fontWeight: FontWeight.w500,
@@ -480,7 +481,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                               BloqoSeasaltContainer(
                                   child:
-                                (widget.course.reviews == null || widget.reviews!.isEmpty) ?
+                                (widget.reviews!.isEmpty) ?
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
                                       child: Row(
@@ -500,14 +501,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         ],
                                       ),
                                     )
-                                  : _reviewsDisplayed >= widget.course.reviews!.length ?
+                                  : _reviewsDisplayed >= widget.publishedCourse.reviews.length ?
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                                       child: Column(
                                         children:
                                           List.generate(
-                                        _reviewsDisplayed > widget.course.reviews!.length ?
-                                        widget.course.reviews!.length : _reviewsDisplayed,
+                                        _reviewsDisplayed > widget.publishedCourse.reviews.length ?
+                                        widget.publishedCourse.reviews.length : _reviewsDisplayed,
                                             (index) {
                                           BloqoReview review = widget.reviews![index];
                                           return BloqoReviewComponent(
@@ -523,8 +524,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         child: Column(
                                           children: [
                                             ...List.generate(
-                                              _reviewsDisplayed > widget.course.reviews!.length ?
-                                              widget.course.reviews!.length : _reviewsDisplayed,
+                                              _reviewsDisplayed > widget.publishedCourse.reviews.length ?
+                                              widget.publishedCourse.reviews.length : _reviewsDisplayed,
                                                   (index) {
                                                 BloqoReview review = widget.reviews![index];
                                                 return BloqoReviewComponent(
@@ -610,7 +611,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           child: BloqoFilledButton(
                             onPressed: () async {
                               _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
-                              chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourseId);
+                              chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourse.publishedCourseId);
                             },
                             height: 60,
                             color: BloqoColors.russianViolet,

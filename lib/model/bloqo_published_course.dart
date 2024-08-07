@@ -17,7 +17,9 @@ class BloqoPublishedCourse{
   final String subject;
   final String duration;
   final String difficulty;
-  final double? rating;
+
+  List<dynamic> reviews;
+  final double rating;
 
   int numberOfEnrollments;
   int numberOfCompletions;
@@ -34,7 +36,8 @@ class BloqoPublishedCourse{
     required this.subject,
     required this.difficulty,
     required this.duration,
-    this.rating,
+    required this.reviews,
+    required this.rating,
     this.numberOfEnrollments = 0,
     this.numberOfCompletions = 0,
   });
@@ -55,6 +58,7 @@ class BloqoPublishedCourse{
       subject: data["subject"],
       difficulty: data["difficulty"],
       duration: data["duration"],
+      reviews: data["reviews"],
       rating: (data["rating"] is int) ? (data["rating"] as int).toDouble() : data["rating"],
       numberOfEnrollments: data["number_of_enrollments"],
       numberOfCompletions: data["number_of_completions"]
@@ -74,6 +78,7 @@ class BloqoPublishedCourse{
       "subject": subject,
       "difficulty": difficulty,
       "duration": duration,
+      "reviews": reviews,
       "rating": rating,
       "number_of_enrollments": numberOfEnrollments,
       "number_of_completions": numberOfCompletions
