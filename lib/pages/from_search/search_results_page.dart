@@ -94,7 +94,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                               _goToCourseSearchPage(
                                 context: context,
                                 localizedText: localizedText,
-                                course: course,
+                                publishedCourse: course,
                               );
                             },
                           );
@@ -153,10 +153,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
   bool get wantKeepAlive => true;
 
   Future<void> _goToCourseSearchPage({required var localizedText, required BuildContext context,
-    required BloqoPublishedCourse course}) async {
+    required BloqoPublishedCourse publishedCourse}) async {
     context.loaderOverlay.show();
       try {
-        BloqoCourse courseSelected = await getCourseFromId(localizedText: localizedText, courseId: course.originalCourseId);
+        BloqoCourse courseSelected = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
         List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
         Map<String, List<BloqoSection>> sections = {};
         for(String chapterId in courseSelected.chapters) {
@@ -167,9 +167,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
         }
         BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
         List<BloqoReview> reviews = [];
-        if(courseSelected.reviews != null) {
+        if(publishedCourse.reviews.isNotEmpty) {
           reviews = await getReviewsFromIds(
-              localizedText: localizedText, reviewsIds: courseSelected.reviews);
+              localizedText: localizedText, reviewsIds: publishedCourse.reviews);
         }
         if(!context.mounted) return;
         context.loaderOverlay.hide();
@@ -177,12 +177,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           onPush: widget.onPush,
           onNavigateToPage: widget.onNavigateToPage,
           course: courseSelected,
-          publishedCourseId: course.publishedCourseId,
+          publishedCourse: publishedCourse,
           chapters: chapters,
           sections: sections,
           courseAuthor: courseAuthor,
           reviews:reviews,
-          rating: course.rating ?? 0,
+          rating: publishedCourse.rating,
         )
       );
 

@@ -296,5 +296,9 @@
   "creator_cannot_subscribe": "As the creator of the course you cannot subscribe to it.",
   "unsubscribe_confirmation": "By confirming, you will be unsubscribed from this course and will loose every progress made so far. Do you wish to proceed?",
   "start_learning": "Start learning!",
+  "statistics": "Statistics",
+  "users_enrolled": " users enrolled in this course",
+  "users_completed": " users completed this course",
+  "course_dismiss_confirmation": "By confirming, this course will be removed from the bloQo community. This means that everyone who enrolled in this course will no more be able to access its content, and no one will be able to enroll in this course until you publish it again. Do you wish to continue?",
   "published_courses_by_author": "Courses created by "
 }

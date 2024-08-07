@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
@@ -15,6 +16,7 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_user.dart';
 import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_course.dart';
@@ -73,6 +75,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
       initializeSectionsToShowMap(getLearnCourseChaptersFromAppState(context: context)?? [],
           getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
     }
+
+    BloqoUser user = getUserFromAppState(context: context)!;
 
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -432,6 +436,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       context: context,
                                                       localizedText: localizedText,
                                                       courseId: course.id,
+                                                      enrolledUserId: user.id
                                                     );
                                                   },
                                                   backgroundColor: BloqoColors.error
@@ -530,14 +535,14 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   bool get wantKeepAlive => true;
 
   Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
-  courseId}) async {
+  courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
       BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
           localizedText: localizedText, courseId: courseId);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
+      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
       publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;

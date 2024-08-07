@@ -15,7 +15,6 @@ class BloqoCourse{
   final Timestamp creationDate;
   final List<dynamic> chapters;
 
-  List<dynamic>? reviews;
   String? description;
   Timestamp? publicationDate;
 
@@ -25,7 +24,6 @@ class BloqoCourse{
     required this.authorId,
     required this.creationDate,
     required this.chapters,
-    this.reviews,
     this.description,
     this.published = false,
     this.publicationDate,
@@ -45,7 +43,6 @@ class BloqoCourse{
       creationDate: data["creation_date"],
       publicationDate: data["publication_date"],
       chapters: data["chapters"],
-      reviews: data["reviews"],
     );
   }
 
@@ -58,8 +55,7 @@ class BloqoCourse{
       "published": published,
       "creation_date": creationDate,
       "publication_date": publicationDate,
-      "chapters": chapters,
-      "reviews": reviews,
+      "chapters": chapters
     };
   }
 
@@ -81,7 +77,6 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
       authorId: authorId,
       creationDate: Timestamp.now(),
       chapters: [],
-      reviews: []
     );
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
@@ -172,14 +167,14 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
   }
 }
 
-Future<void> updateCourseStatus({required var localizedText, required String courseId}) async {
+Future<void> updateCourseStatus({required var localizedText, required String courseId, required bool published}) async {
   try {
     var ref = BloqoCourse.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
     var docSnapshot = querySnapshot.docs.first;
     BloqoCourse course = docSnapshot.data();
-    course.published = true;
+    course.published = published;
     course.publicationDate = Timestamp.now();
     await ref.doc(docSnapshot.id).update(course.toFirestore());
   } on FirebaseAuthException catch (e) {

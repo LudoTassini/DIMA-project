@@ -59,11 +59,11 @@ class BloqoReview{
 
 }
 
-Future<List<BloqoReview>> getReviewsFromIds({required var localizedText, required List<dynamic>? reviewsIds}) async {
+Future<List<BloqoReview>> getReviewsFromIds({required var localizedText, required List<dynamic> reviewsIds}) async {
   try {
     var ref = BloqoReview.getRef();
     List<BloqoReview> reviews = [];
-    for(var reviewId in reviewsIds!) {
+    for(var reviewId in reviewsIds) {
       await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: reviewId).get();
       BloqoReview review = querySnapshot.docs.first.data();

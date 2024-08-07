@@ -373,7 +373,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                               context: context,
                               localizedText: localizedText,
                               userCourseCreated: userCourseCreated,
-                              myUsername: myself.username
+                              myself: myself
                             );
                             if (!context.mounted) return;
                             context.loaderOverlay.hide();
@@ -407,7 +407,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required String myUsername}) async {
+  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required BloqoUser myself}) async {
     if(languageTagController.text == localizedText.none || subjectTagController.text == localizedText.none || durationTagController.text == localizedText.none ||
       modalityTagController.text == localizedText.none || difficultyTagController.text == localizedText.none){
       throw BloqoException(message: localizedText.missing_tag_error);
@@ -426,23 +426,25 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
     String difficultyTag = difficultyTags.where((entry) => entry.label == difficultyTagController.text).first.value;
 
     BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
-        publishedCourseId: uuid(),
-        originalCourseId: userCourseCreated.courseId,
-        courseName: userCourseCreated.courseName,
-        authorUsername: myUsername,
-        authorId: getUserFromAppState(context: context)!.id, //FIXME: è brutto scritto così?
-        isPublic: publicPrivateCoursesToggle.get(),
-        publicationDate: Timestamp.now(),
-        language: getLanguageTagFromString(tag: languageTag).toString(),
-        modality: getModalityTagFromString(tag: modalityTag).toString(),
-        subject: getSubjectTagFromString(tag: subjectTag).toString(),
-        difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
-        duration: getDurationTagFromString(tag: durationTag).toString()
+      publishedCourseId: uuid(),
+      originalCourseId: userCourseCreated.courseId,
+      courseName: userCourseCreated.courseName,
+      authorUsername: myself.username,
+      authorId: myself.id,
+      isPublic: publicPrivateCoursesToggle.get(),
+      publicationDate: Timestamp.now(),
+      language: getLanguageTagFromString(tag: languageTag).toString(),
+      modality: getModalityTagFromString(tag: modalityTag).toString(),
+      subject: getSubjectTagFromString(tag: subjectTag).toString(),
+      difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
+      duration: getDurationTagFromString(tag: durationTag).toString(),
+      reviews: [],
+      rating: 0
     );
 
     await publishCourse(localizedText: localizedText, publishedCourse: publishedCourse);
 
-    await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId);
+    await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId, published: true);
 
     if(!context.mounted) return;
     updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: userCourseCreated.courseId, published: true);

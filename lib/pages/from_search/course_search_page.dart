@@ -35,7 +35,7 @@ class CourseSearchPage extends StatefulWidget {
     required this.onPush,
     required this.onNavigateToPage,
     required this.course,
-    required this.publishedCourseId,
+    required this.publishedCourse,
     required this.chapters,
     required this.sections,
     required this.courseAuthor,
@@ -46,7 +46,7 @@ class CourseSearchPage extends StatefulWidget {
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
   final BloqoCourse course;
-  final String publishedCourseId;
+  final BloqoPublishedCourse publishedCourse;
   final List<BloqoChapter> chapters;
   final Map<String, List<BloqoSection>> sections;
   final BloqoUser courseAuthor;
@@ -99,6 +99,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         _reviewsDisplayed += Constants.reviewsToFurtherLoadAtRequest;
       });
     }
+
+    BloqoUser user = getUserFromAppState(context: context)!;
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -471,7 +473,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           ),
                                         ),
                                         Text(
-                                          '(${widget.course.reviews?.length.toString() ?? '0'})',
+                                          '(${widget.publishedCourse.reviews.length.toString()})',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                             color: BloqoColors.seasalt,
                                             fontWeight: FontWeight.w500,
@@ -486,7 +488,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                               BloqoSeasaltContainer(
                                   child:
-                                (widget.course.reviews == null || widget.reviews!.isEmpty) ?
+                                (widget.reviews!.isEmpty) ?
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
                                       child: Row(
@@ -506,14 +508,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         ],
                                       ),
                                     )
-                                  : _reviewsDisplayed >= widget.course.reviews!.length ?
+                                  : _reviewsDisplayed >= widget.publishedCourse.reviews.length ?
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                                       child: Column(
                                         children:
                                           List.generate(
-                                        _reviewsDisplayed > widget.course.reviews!.length ?
-                                        widget.course.reviews!.length : _reviewsDisplayed,
+                                        _reviewsDisplayed > widget.publishedCourse.reviews.length ?
+                                        widget.publishedCourse.reviews.length : _reviewsDisplayed,
                                             (index) {
                                           BloqoReview review = widget.reviews![index];
                                           return BloqoReviewComponent(
@@ -529,8 +531,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         child: Column(
                                           children: [
                                             ...List.generate(
-                                              _reviewsDisplayed > widget.course.reviews!.length ?
-                                              widget.course.reviews!.length : _reviewsDisplayed,
+                                              _reviewsDisplayed > widget.publishedCourse.reviews.length ?
+                                              widget.publishedCourse.reviews.length : _reviewsDisplayed,
                                                   (index) {
                                                 BloqoReview review = widget.reviews![index];
                                                 return BloqoReviewComponent(
@@ -616,7 +618,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           child: BloqoFilledButton(
                             onPressed: () async {
                               _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
-                              chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourseId);
+                              chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourse.publishedCourseId);
                             },
                             height: 60,
                             color: BloqoColors.russianViolet,
@@ -654,9 +656,10 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 description: localizedText.unsubscribe_confirmation,
                                 confirmationFunction: () async {
                                   await _tryDeleteUserCourseEnrolled(
-                                      context: context,
-                                      localizedText: localizedText,
-                                      courseId: widget.course.id,
+                                    context: context,
+                                    localizedText: localizedText,
+                                    courseId: widget.course.id,
+                                    enrolledUserId: user.id
                                   );
                                 },
                                 backgroundColor: BloqoColors.error
@@ -725,14 +728,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   }
 
   Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
-    courseId}) async {
+    courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
       BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
           localizedText: localizedText, courseId: courseId);
       BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId);
+      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
       publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
