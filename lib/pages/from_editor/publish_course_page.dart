@@ -430,6 +430,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
         originalCourseId: userCourseCreated.courseId,
         courseName: userCourseCreated.courseName,
         authorUsername: myUsername,
+        authorId: getUserFromAppState(context: context)!.id, //FIXME: è brutto scritto così?
         isPublic: publicPrivateCoursesToggle.get(),
         publicationDate: Timestamp.now(),
         language: getLanguageTagFromString(tag: languageTag).toString(),

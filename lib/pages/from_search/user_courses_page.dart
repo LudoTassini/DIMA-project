@@ -1,71 +1,61 @@
-import 'dart:io';
-
-import 'package:bloqo/components/complex/bloqo_setting.dart';
-import 'package:bloqo/components/forms/bloqo_switch.dart';
-import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
-import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/utils/bloqo_qr_code_type.dart';
-import 'package:bloqo/utils/bloqo_setting_type.dart';
-import 'package:bloqo/utils/connectivity.dart';
-import 'package:bloqo/utils/permissions.dart';
-import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
+import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/buttons/bloqo_text_button.dart';
+import '../../components/complex/bloqo_search_result_course.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
-import '../../components/custom/bloqo_snack_bar.dart';
+import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_published_course.dart';
+import '../../model/bloqo_review.dart';
+import '../../model/bloqo_user.dart';
+import '../../model/courses/bloqo_chapter.dart';
+import '../../model/courses/bloqo_course.dart';
+import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
-import '../../utils/auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
-import '../../utils/multimedia_uploader.dart';
-import '../../utils/text_validator.dart';
-import '../../utils/toggle.dart';
-import '../from_user/setting_page.dart';
+import 'course_search_page.dart';
 
-class UserPage extends StatefulWidget {
-  const UserPage({
+class UserCoursesPage extends StatefulWidget {
+  const UserCoursesPage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.onNavigate,
+    required this.author,
+    required this.publishedCourses
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigate;
+  final BloqoUser author;
+  final List<BloqoPublishedCourse> publishedCourses;
 
   @override
-  State<UserPage> createState() => _UserPageState();
+  State<UserCoursesPage> createState() => _UserCoursesPageState();
 }
 
-class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<UserPage> {
+class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAliveClientMixin<UserCoursesPage> {
 
   String? url;
-  final formKeyFullName = GlobalKey<FormState>();
-  late TextEditingController fullNameController;
-
-  @override
-  void initState() {
-    super.initState();
-    fullNameController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    fullNameController.dispose();
-    super.dispose();
-  }
+  int _publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+
+    void loadMorePublishedCourses() {
+      setState(() {
+        _publishedCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+      });
+    }
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -76,7 +66,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
             if(user.pictureUrl != "none"){
               url = user.pictureUrl;
             }
-            final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
             return Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -120,26 +109,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                       topRight: Radius.circular(0),
                                     ),
                                   ),
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    visualDensity: VisualDensity.compact,
-                                    icon: const Icon(
-                                      Icons.camera_alt,
-                                      color: BloqoColors.seasalt,
-                                      size: 22,
-                                    ),
-                                    onPressed: () async {
-                                      final newUrl = await _askUserForAnImage(
-                                          context: context,
-                                          localizedText: localizedText,
-                                          userId: user.id
-                                      );
-                                      if(newUrl != null) {
-                                        if(!context.mounted) return;
-                                        updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
-                                      }
-                                    },
-                                  ),
                                 ),
                               ),
                             ],
@@ -164,16 +133,20 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                user.fullName,
-                                                textAlign: TextAlign.start,
-                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  color: BloqoColors.secondaryText,
-                                                  fontSize: 16,
-                                                  letterSpacing: 0,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
+
+                                              user.isFullNameVisible ?
+                                                  Text(
+                                                    user.fullName,
+                                                    textAlign: TextAlign.start,
+                                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                      color: BloqoColors.secondaryText,
+                                                      fontSize: 16,
+                                                      letterSpacing: 0,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  )
+                                              : const SizedBox(),
+
                                               Text(
                                                 user.username,
                                                 textAlign: TextAlign.start,
@@ -230,7 +203,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                                   localizedText.followers,
                                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                     fontSize: 14,
-                                                    letterSpacing: 0,
                                                   ),
                                                 ),
                                               ),
@@ -238,7 +210,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                                 user.followers.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
-                                                  letterSpacing: 0,
                                                 ),
                                               ),
                                             ],
@@ -256,7 +227,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                                   localizedText.following,
                                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                     fontSize: 14,
-                                                    letterSpacing: 0,
                                                   ),
                                                 ),
                                               ),
@@ -264,7 +234,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                                 user.following.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
-                                                  letterSpacing: 0,
                                                 ),
                                               ),
                                             ],
@@ -281,118 +250,68 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                     ),
                   ),
                 ),
-                BloqoSetting(
-                  settingTitle: localizedText.account_settings_title,
-                  settingDescription: localizedText.account_settings_description,
-                  settingIcon: Icons.manage_accounts,
-                  onPressed: () {
-                    fullNameController.text = user.fullName;
-                    widget.onPush(SettingPage(
-                      settingTitle: localizedText.account_settings_title,
-                      settingDescription: localizedText.account_settings_description,
-                      forms: [
-                        Form(
-                          key: formKeyFullName,
-                          child: BloqoTextField(
-                            formKey: formKeyFullName,
-                            controller: fullNameController,
-                            labelText: localizedText.full_name,
-                            hintText: localizedText.full_name_hint,
-                            maxInputLength: Constants.maxFullNameLength,
-                            validator: (String? value) {
-                              return fullNameValidator(fullName: value, localizedText: localizedText);
-                            },
-                            padding: EdgeInsetsDirectional.zero,
+
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      localizedText.published_courses_by_author + widget.author.username,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontSize: 24,
+                        color: BloqoColors.seasalt
+                      ),
+                    ),
+                  ),
+                ),
+
+                widget.publishedCourses.isNotEmpty
+                  ? BloqoSeasaltContainer(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                          ),
+                        ...List.generate(
+                        _publishedCoursesDisplayed > widget.publishedCourses.length
+                        ? widget.publishedCourses.length
+                            : _publishedCoursesDisplayed,
+                        (index) {
+                          BloqoPublishedCourse course = widget.publishedCourses[index];
+                          return BloqoSearchResultCourse(
+                            course: course,
+                            onPressed: () async {
+                              _goToCourseSearchPage(
+                                context: context,
+                                localizedText: localizedText,
+                                course: course,
+                                );
+                              },
+                            );
+                        },
+                      ),
+
+                      if (_publishedCoursesDisplayed < widget.publishedCourses.length)
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                          child: BloqoTextButton(
+                            onPressed: loadMorePublishedCourses,
+                            text: localizedText.load_more_courses,
+                            color: BloqoColors.russianViolet,
                           ),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                                child: Text(
-                                  localizedText.full_name_visible,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
-                            ),
-                            BloqoSwitch(value: fullNameVisible),
-                          ],
-                        ),
                       ],
-                      controllers: [fullNameController, fullNameVisible],
-                      settingType: BloqoSettingType.account,
-                    ));
-                  },
-                ),
-                /*BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(onPush: widget.onPush)),
-                  settingTitle: localizedText.notification_settings_title,
-                  settingDescription: localizedText.notification_settings_description,
-                  settingIcon: Icons.edit_notifications,
-                ), TODO */
-                BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(
-                    settingTitle: localizedText.external_accounts_title,
-                    settingDescription: localizedText.external_accounts_description,
-                    settingType: BloqoSettingType.external,
-                    controllers: const [/* TODO */],
-                    forms: const [/* TODO */],
-                  )),
-                  settingTitle: localizedText.external_accounts_title,
-                  settingDescription: localizedText.external_accounts_description,
-                  settingIcon: Icons.app_registration,
-                ),
-                BloqoSetting(
-                  onPressed: () {
-                    showBloqoConfirmationAlert(
-                        context: context,
-                        title: localizedText.warning,
-                        description: localizedText.logout_confirmation,
-                        confirmationFunction: () async {
-                          await _confirmationFunction(
-                              context: context,
-                              localizedText: localizedText
-                          );
-                        },
-                        backgroundColor: BloqoColors.russianViolet
-                    );
-                  },
-                  settingTitle: localizedText.sign_out_title,
-                  settingDescription: localizedText.sign_out_description,
-                  settingIcon: Icons.logout,
-                ),
-                Container(
-                  height: 40,
-                ),
+                      ),
+                    )
+                : const SizedBox(),
+
               ],
             );
           },
         ),
       ),
     );
-  }
-
-  Future<void> _confirmationFunction({required BuildContext context, required var localizedText}) async {
-    context.loaderOverlay.show();
-    try{
-      await checkConnectivity(localizedText: localizedText);
-      await logout(localizedText: localizedText);
-      await deleteSharedPreferences();
-      if(!context.mounted) return;
-      context.loaderOverlay.hide();
-      Phoenix.rebirth(context);
-    }
-    on BloqoException catch(e) {
-      showBloqoErrorAlert(
-          context: context,
-          title: localizedText.error_title,
-          description: e.message
-      );
-      context.loaderOverlay.hide();
-    }
   }
 
   @override
@@ -405,40 +324,49 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     ));
   }
 
-  Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String userId}) async {
-    PermissionStatus permissionStatus = await requestPhotoLibraryPermission();
-    if(permissionStatus.isGranted) {
-      final pickedFile = await ImagePicker().pickImage(
-          source: ImageSource.gallery);
-      if (pickedFile != null) {
-        if(!context.mounted) return null;
-        context.loaderOverlay.show();
-        try {
-          final image = File(pickedFile.path);
-          final url = await uploadProfilePicture(
-              localizedText: localizedText,
-              image: image,
-              userId: userId
-          );
-          if (!context.mounted) return null;
-          context.loaderOverlay.hide();
-          ScaffoldMessenger.of(context).showSnackBar(
-            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-          );
-          return url;
-        }
-        on BloqoException catch (e) {
-          if (!context.mounted) return null;
-          context.loaderOverlay.hide();
-          showBloqoErrorAlert(
-              context: context,
-              title: localizedText.error_title,
-              description: e.message
-          );
-        }
+  Future<void> _goToCourseSearchPage({required var localizedText, required BuildContext context,
+    required BloqoPublishedCourse course}) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoCourse courseSelected = await getCourseFromId(localizedText: localizedText, courseId: course.originalCourseId);
+      List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
+      Map<String, List<BloqoSection>> sections = {};
+      for(String chapterId in courseSelected.chapters) {
+        List<BloqoSection> chapterSections = await getSectionsFromIds(
+            localizedText: localizedText,
+            sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+        sections[chapterId] = chapterSections;
       }
+      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
+      List<BloqoReview> reviews = [];
+      if(courseSelected.reviews != null) {
+        reviews = await getReviewsFromIds(
+            localizedText: localizedText, reviewsIds: courseSelected.reviews);
+      }
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(CourseSearchPage(
+        onPush: widget.onPush,
+        onNavigateToPage: widget.onNavigate,
+        course: courseSelected,
+        publishedCourseId: course.publishedCourseId,
+        chapters: chapters,
+        sections: sections,
+        courseAuthor: courseAuthor,
+        reviews:reviews,
+        rating: course.rating ?? 0,
+      )
+      );
+
+    } on BloqoException catch(e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
     }
-    return null;
   }
 
 }
