@@ -600,6 +600,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     if(permissionStatus.isGranted) {
       widget.onPush(QrCodeScanPage(
           onPush: widget.onPush,
+          onNavigateToPage: widget.onNavigateToPage,
       ));
     }
   }

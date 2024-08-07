@@ -39,8 +39,8 @@ class CourseSearchPage extends StatefulWidget {
     required this.chapters,
     required this.sections,
     required this.courseAuthor,
-    this.rating,
-    this.reviews
+    required this.rating,
+    required this.reviews
   });
 
   final void Function(Widget) onPush;
@@ -767,7 +767,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       widget.onPush(
         UserCoursesPage(
           onPush: widget.onPush,
-          onNavigate: widget.onNavigateToPage,
+          onNavigateToPage: widget.onNavigateToPage,
           author: courseAuthor,
           publishedCourses: publishedCourses,
         ));

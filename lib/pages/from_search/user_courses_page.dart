@@ -26,13 +26,13 @@ class UserCoursesPage extends StatefulWidget {
   const UserCoursesPage({
     super.key,
     required this.onPush,
-    required this.onNavigate,
+    required this.onNavigateToPage,
     required this.author,
     required this.publishedCourses
   });
 
   final void Function(Widget) onPush;
-  final void Function(int) onNavigate;
+  final void Function(int) onNavigateToPage;
   final BloqoUser author;
   final List<BloqoPublishedCourse> publishedCourses;
 
@@ -346,7 +346,7 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
       context.loaderOverlay.hide();
       widget.onPush(CourseSearchPage(
         onPush: widget.onPush,
-        onNavigateToPage: widget.onNavigate,
+        onNavigateToPage: widget.onNavigateToPage,
         course: courseSelected,
         publishedCourse: publishedCourse,
         chapters: chapters,

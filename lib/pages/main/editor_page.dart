@@ -374,10 +374,28 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       }
                                                   );
                                                 },
-                                              onGetQrCode: () => widget.onPush(QrCodePage(
-                                                  qrCodeTitle: course.courseName,
-                                                  qrCodeContent: "${BloqoQrCodeType.course.name}_${course.courseId}")
-                                              ),
+                                                onGetQrCode: () async {
+                                                  context.loaderOverlay.show();
+                                                  try{
+                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    widget.onPush(
+                                                        QrCodePage(
+                                                          qrCodeTitle: course.courseName,
+                                                          qrCodeContent: "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}"
+                                                        )
+                                                    );
+                                                  } on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                }
                                             );
                                           }
                                         },
