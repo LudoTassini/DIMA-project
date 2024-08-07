@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/bloqo_exception.dart';
 import '../utils/connectivity.dart';
@@ -152,4 +153,23 @@ Future<List<BloqoPublishedCourse>> getCoursesFromSearch({
     }
   }
 
+}
+
+Future<void> savePublishedCourseChanges({required var localizedText, required BloqoPublishedCourse updatedPublishedCourse}) async {
+  try {
+    var ref = BloqoPublishedCourse.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: updatedPublishedCourse.publishedCourseId).get();
+    DocumentSnapshot docSnapshot = querySnapshot.docs.first;
+    await ref.doc(docSnapshot.id).update(updatedPublishedCourse.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
 }

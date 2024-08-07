@@ -1,3 +1,4 @@
+import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -171,11 +172,10 @@ Future<BloqoUserCourseEnrolled> saveNewUserCourseEnrolled({required var localize
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(userCourseEnrolled);
 
-    // FIXME
-    BloqoCourse courseEnrolled = await getCourseFromId(localizedText: localizedText, courseId: course.id);
-    int numEnrollments = courseEnrolled.numberOfEnrollments + 1;
-    courseEnrolled.numberOfEnrollments = numEnrollments;
-    saveCourseChanges(localizedText: localizedText, updatedCourse: courseEnrolled);
+    BloqoPublishedCourse publishedCourseEnrolled = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
+    int numEnrollments = publishedCourseEnrolled.numberOfEnrollments + 1;
+    publishedCourseEnrolled.numberOfEnrollments = numEnrollments;
+    await savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseEnrolled);
 
     return userCourseEnrolled;
   } on FirebaseAuthException catch (e) {

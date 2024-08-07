@@ -292,7 +292,7 @@
   "publish_course_page_public_private_header": "Choose whether your course will be public or private",
   "publish_course_page_public_private_question": "Should your course be freely accessible by anyone?",
   "missing_tag_error": "You need to select a tag for every kind of tag to be able to publish a course!",
-  "course_publish_confirmation": "By confirming, this course will be published. Do you wish to continue?"
+  "course_publish_confirmation": "By confirming, this course will be published. Do you wish to continue?",
   "creator_cannot_subscribe": "As the creator of the course you cannot subscribe to it.",
   "unsubscribe_confirmation": "By confirming, you will be unsubscribed from this course and will loose every progress made so far. Do you wish to proceed?",
   "start_learning": "Start learning!"
