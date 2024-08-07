@@ -63,12 +63,20 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-  void _checkHomePrivilege(BuildContext context) {
+  Future<void> _checkHomePrivilege(BuildContext context) async {
     if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
       BloqoCourse? course = getLearnCourseFromAppState(context: context);
+      List<BloqoUserCourseEnrolled>? userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoUserCourseEnrolled? userCourseEnrolled = userCoursesEnrolled?.firstWhere((x) => x.courseId == course?.id);
+      String? sectionToCompleteId = userCourseEnrolled?.sectionToComplete;
+      BloqoSection sectionToComplete = await getSectionFromId(localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
       if (course != null) {
-        widget.onPush(CourseContentPage(onPush: widget.onPush));
+        widget.onPush(
+            CourseContentPage(
+              onPush: widget.onPush,
+              sectionToComplete: sectionToComplete,
+            ));
       }
     }
   }
@@ -322,8 +330,14 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     context.loaderOverlay.show();
     try {
       BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
+      String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
+      BloqoSection sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: sectionToCompleteId!);
+
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
-        widget.onPush(CourseContentPage(onPush: widget.onPush));
+        widget.onPush(CourseContentPage(
+            onPush: widget.onPush,
+            sectionToComplete: sectionToComplete,
+        ));
       } else {
         BloqoCourse course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseEnrolled.courseId);
@@ -335,6 +349,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
               sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
           sections[chapterId] = chapterSections;
         }
+
         if(!context.mounted) return;
         saveLearnCourseToAppState(
             context: context,
@@ -347,7 +362,11 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
             totNumSections: userCourseEnrolled.totNumSections,
             comingFromHome: true);
         context.loaderOverlay.hide();
-        widget.onPush(CourseContentPage(onPush: widget.onPush));
+        widget.onPush(
+            CourseContentPage(
+              onPush: widget.onPush,
+              sectionToComplete: sectionToComplete,
+            ));
       }
     } on BloqoException catch (e) {
       if(!context.mounted) return;
@@ -360,7 +379,4 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     }
   }
 
-}
-
-class BloqoUserCourse {
 }

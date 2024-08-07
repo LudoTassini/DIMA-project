@@ -2,8 +2,10 @@ import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
+import 'package:bloqo/model/courses/bloqo_block.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/pages/from_learn/section_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -30,9 +32,11 @@ class CourseContentPage extends StatefulWidget {
   const CourseContentPage({
     super.key,
     required this.onPush,
+    required this.sectionToComplete,
   });
 
   final void Function(Widget) onPush;
+  final BloqoSection sectionToComplete;
 
   @override
   State<CourseContentPage> createState() => _CourseContentPageState();
@@ -43,6 +47,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   final Map<String, bool> _showSectionsMap = {};
   bool isInitializedSectionMap = false;
 
+  String chapterNameToDisplay = '';
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -52,6 +58,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     void initializeSectionsToShowMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
         if (!chaptersCompleted.contains(chapter.id)) {
+          chapterNameToDisplay = chapter.name;
           _showSectionsMap[chapter.id] = true;
           break;
         }
@@ -77,6 +84,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
 
     BloqoUser user = getUserFromAppState(context: context)!;
+    bool isClickable = false;
 
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -160,10 +168,16 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                               children: [
                                 ...List.generate(
                                   chapters.length,
-                                      (chapterIndex) {
-                                    var chapter = chapters[chapterIndex];
+                                    (chapterIndex) {
+                                      var chapter = chapters[chapterIndex];
+
+                                      isClickable = false;
+                                      if (chaptersCompleted.contains(chapter)){
+                                        isClickable = true;
+                                      }
 
                                     return BloqoSeasaltContainer(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -180,7 +194,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       .textTheme
                                                       .displayMedium
                                                       ?.copyWith(
-                                                    color: BloqoColors.russianViolet,
+                                                    color: BloqoColors.secondaryText,
                                                     fontSize: 18,
                                                   ),
                                                 ),
@@ -269,7 +283,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     child: Text(
                                                       chapter.description!,
                                                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                        color: BloqoColors.russianViolet,
+                                                        color: BloqoColors.primaryText,
                                                       ),
                                                     ),
                                                   ),
@@ -286,14 +300,27 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                   sections[chapter.id]!.length,
                                                       (sectionIndex) {
                                                     var section = sections[chapter.id]![sectionIndex];
+                                                    if(widget.sectionToComplete.id == section.id) {
+                                                      isClickable = true;
+                                                    }
+
                                                     return BloqoCourseSection(
                                                       section: section,
                                                       index: sectionIndex,
+                                                      isClickable: isClickable,
                                                       isInLearnPage: true,
                                                       onPressed: () async {
-                                                        // TODO
+                                                        _goToSectionPage(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          section: section,
+                                                          chapterNameToDisplay: chapterNameToDisplay,
+                                                          courseName: course.name,
+                                                        );
                                                       },
                                                     );
+
+
                                                   },
                                                 ),
                                             Padding(
@@ -382,7 +409,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
-                                      25, 0, 25, 10),
+                                      25, 15, 25, 10),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -493,11 +520,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         padding: const EdgeInsetsDirectional.fromSTEB(
                             20, 0, 20, 20),
                         child: BloqoFilledButton(
-                          onPressed: () =>
-                              () async {
-                            // TODO
-                            //widget.onNavigateToPage(3),
-                          },
+                          onPressed: () async {
+                                _goToSectionPage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  section: widget.sectionToComplete,
+                                  courseName: course.name,
+                                  chapterNameToDisplay: chapterNameToDisplay,
+                                );
+                            },
                           height: 60,
                           color: BloqoColors.success,
                           text: localizedText.start_learning,
@@ -509,11 +540,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           20, 0, 20, 20),
                       child: BloqoFilledButton(
-                        onPressed: () =>
-                            () async {
-                          // TODO
-                          //widget.onNavigateToPage(3),
-                        },
+                        onPressed: () async {
+                          _goToSectionPage(
+                            context: context,
+                            localizedText: localizedText,
+                            section: widget.sectionToComplete,
+                            chapterNameToDisplay: chapterNameToDisplay,
+                            courseName: course.name,
+                            );
+                          },
                         height: 60,
                         color: BloqoColors.success,
                         text: localizedText.continue_learning,
@@ -560,6 +595,36 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
           context: context,
           title: localizedText.error_title,
           description: e.message
+      );
+    }
+  }
+
+  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSection section,
+    required String courseName, required String chapterNameToDisplay}) async {
+    context.loaderOverlay.show();
+    try {
+
+      List<BloqoBlock> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
+      if(!context.mounted) return;
+
+      context.loaderOverlay.hide();
+      widget.onPush(
+            SectionPage(
+            onPush: widget.onPush,
+            section: section,
+            blocks: blocks,
+            courseName: courseName,
+            chapterName: chapterNameToDisplay,
+        )
+      );
+
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
       );
     }
   }

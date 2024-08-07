@@ -21,7 +21,8 @@ class BloqoTextField extends StatefulWidget {
 
     this.initialValue,
     this.validator,
-    this.onTap
+    this.onTap,
+    this.isDisabled = false,
   });
 
   final GlobalKey<FormState> formKey;
@@ -38,6 +39,7 @@ class BloqoTextField extends StatefulWidget {
   final String? initialValue;
   final FormFieldValidator<String>? validator;
   final Function()? onTap;
+  final bool isDisabled;
 
   @override
   State<BloqoTextField> createState() => _BloqoTextFieldState();
@@ -96,6 +98,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
                 focusedErrorBorder: InputBorder.none,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 errorMaxLines: 10,
@@ -112,6 +115,7 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
               onTap: widget.onTap,
               maxLines: widget.isTextArea ? null : 1,
               expands: widget.isTextArea ? true : false,
+              enabled: !widget.isDisabled,
             )
           )
         )

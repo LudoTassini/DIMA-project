@@ -328,6 +328,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               return BloqoCourseSection(
                                                 section: section,
                                                 index: sectionIndex,
+                                                isClickable: false,
                                                 isInLearnPage: false,
                                                 onPressed: () async {
                                                   // TODO

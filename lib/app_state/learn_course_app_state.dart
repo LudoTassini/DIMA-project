@@ -116,6 +116,7 @@ int? getLearnCourseTotNumSectionsFromAppState({required BuildContext context}){
 void saveLearnCourseToAppState({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters,
   required Map<String, List<BloqoSection>> sections, required Timestamp enrollmentDate, required List<dynamic> sectionsCompleted,
   required int totNumSections, required List<dynamic> chaptersCompleted, bool comingFromHome = false}){
+
   Provider.of<LearnCourseAppState>(context, listen: false)._set(course, chapters, sections, enrollmentDate, sectionsCompleted,
       chaptersCompleted, totNumSections);
   if(comingFromHome) {
