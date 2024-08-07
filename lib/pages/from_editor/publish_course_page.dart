@@ -377,6 +377,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                             );
                             if (!context.mounted) return;
                             context.loaderOverlay.hide();
+                            Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                             );
@@ -412,6 +413,18 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
       throw BloqoException(message: localizedText.missing_tag_error);
     }
 
+    final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
+    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
+
+    String languageTag = languageTags.where((entry) => entry.label == languageTagController.text).first.value;
+    String subjectTag = subjectTags.where((entry) => entry.label == subjectTagController.text).first.value;
+    String durationTag = durationTags.where((entry) => entry.label == durationTagController.text).first.value;
+    String modalityTag = modalityTags.where((entry) => entry.label == modalityTagController.text).first.value;
+    String difficultyTag = difficultyTags.where((entry) => entry.label == difficultyTagController.text).first.value;
+
     BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
         publishedCourseId: uuid(),
         originalCourseId: userCourseCreated.courseId,
@@ -419,11 +432,11 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
         authorUsername: myUsername,
         isPublic: publicPrivateCoursesToggle.get(),
         publicationDate: Timestamp.now(),
-        language: getLanguageTagFromString(tag: languageTagController.text).toString(),
-        modality: getModalityTagFromString(tag: modalityTagController.text).toString(),
-        subject: getSubjectTagFromString(tag: subjectTagController.text).toString(),
-        difficulty: getDifficultyTagFromString(tag: difficultyTagController.text).toString(),
-        duration: getDurationTagFromString(tag: durationTagController.text).toString()
+        language: getLanguageTagFromString(tag: languageTag).toString(),
+        modality: getModalityTagFromString(tag: modalityTag).toString(),
+        subject: getSubjectTagFromString(tag: subjectTag).toString(),
+        difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
+        duration: getDurationTagFromString(tag: durationTag).toString()
     );
 
     await publishCourse(localizedText: localizedText, publishedCourse: publishedCourse);
