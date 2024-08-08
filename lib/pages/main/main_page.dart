@@ -1,11 +1,17 @@
+import 'dart:async';
+
+import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
+import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
+import '../../model/bloqo_user.dart';
+import '../../utils/constants.dart';
 import '../from_any/notifications_page.dart';
 import 'editor_page.dart';
 import 'home_page.dart';
@@ -19,9 +25,14 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
   int _selectedPageIndex = 0;
   late PageController _pageController;
   final ValueNotifier<bool> _canPopNotifier = ValueNotifier(false);
+
+  int notificationCount = 0;
+  Timer? _firstNotificationTimer;
+  Timer? _notificationTimer;
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
@@ -39,6 +50,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    _notificationTimer?.cancel();
+    _firstNotificationTimer?.cancel();
     _pageController.dispose();
     _canPopNotifier.dispose();
     super.dispose();
@@ -109,6 +122,19 @@ class _MainPageState extends State<MainPage> {
         break;
     }
 
+    var localizedText = getAppLocalizations(context)!;
+
+    BloqoUser myself = getUserFromAppState(context: context)!;
+
+    _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+
+    _notificationTimer = Timer.periodic(
+        const Duration(seconds: Constants.notificationCheckSeconds), (timer) async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+
     return ValueListenableBuilder<bool>(
       valueListenable: _canPopNotifier,
       builder: (context, canPop, child) {
@@ -132,6 +158,7 @@ class _MainPageState extends State<MainPage> {
                 ),
               );
             },
+            notificationCount: notificationCount
           ),
           bottomNavigationBar: BloqoNavBar(
             currentIndex: _selectedPageIndex,
@@ -172,6 +199,20 @@ class _MainPageState extends State<MainPage> {
       ],
     );
   }
+
+  Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
+    try {
+      List<
+          BloqoNotificationData> notifications = await getNotificationsFromUserId(
+          localizedText: localizedText, userId: userId);
+      int newNotificationCount = notifications.length;
+      setState(() {
+        notificationCount = newNotificationCount;
+      });
+    }
+    on Exception catch (_) {}
+  }
+
 }
 
 class NavigatorObserverWithNotifier extends NavigatorObserver {

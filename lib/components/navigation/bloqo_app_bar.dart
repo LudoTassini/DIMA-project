@@ -8,6 +8,7 @@ class BloqoAppBar {
     required bool canPop,
     required VoidCallback? onPop,
     VoidCallback? onNotificationIconPressed,
+    int notificationCount = 0,
   }) {
     return AppBar(
       backgroundColor: BloqoColors.russianViolet,
@@ -38,12 +39,43 @@ class BloqoAppBar {
             ),
           ),
           if (onNotificationIconPressed != null)
-            IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color: BloqoColors.seasalt,
+            GestureDetector(
+              onTap: onNotificationIconPressed,
+              child: Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications,
+                      color: BloqoColors.seasalt,
+                    ),
+                    onPressed: () {},
+                  ),
+                  if (notificationCount > 0)
+                    Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: BloqoColors.error,
+                          borderRadius: BorderRadius.circular(12), // Increased radius for larger circle
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18, // Increased minWidth to accommodate larger font size
+                          minHeight: 18, // Increased minHeight to accommodate larger font size
+                        ),
+                        child: Text(
+                          notificationCount < 10 ? '$notificationCount' : "9+",
+                          style: const TextStyle(
+                            color: BloqoColors.seasalt,
+                            fontSize: 10, // Set font size to 10
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              onPressed: onNotificationIconPressed,
             )
           else
             const SizedBox(width: 48), // Placeholder for symmetry
