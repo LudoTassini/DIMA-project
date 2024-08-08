@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../app_state/user_app_state.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
+import '../from_any/notifications_page.dart';
 import 'editor_page.dart';
 import 'home_page.dart';
 import 'learn_page.dart';
@@ -122,6 +123,13 @@ class _MainPageState extends State<MainPage> {
               _updateCanPop();
             }
                 : null,
+            onNotificationIconPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsPage(),
+                ),
+              );
+            },
           ),
           bottomNavigationBar: BloqoNavBar(
             currentIndex: _selectedPageIndex,

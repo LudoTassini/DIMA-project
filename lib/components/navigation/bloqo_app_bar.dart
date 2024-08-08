@@ -7,6 +7,7 @@ class BloqoAppBar {
     required String title,
     required bool canPop,
     required VoidCallback? onPop,
+    required VoidCallback? onNotificationIconPressed,
   }) {
     return AppBar(
       title: Text(
@@ -16,14 +17,25 @@ class BloqoAppBar {
         ),
       ),
       backgroundColor: BloqoColors.russianViolet,
-      leading: canPop ?
-      IconButton(
+      leading: canPop
+          ? IconButton(
         icon: const Icon(
           Icons.arrow_back,
-          color: BloqoColors.seasalt
+          color: BloqoColors.seasalt,
         ),
         onPressed: onPop,
-      ) : null,
+      )
+          : null,
+      actions: [
+        if(onNotificationIconPressed != null)
+          IconButton(
+            icon: const Icon(
+              Icons.notifications,
+              color: BloqoColors.seasalt,
+            ),
+            onPressed: onNotificationIconPressed, // Callback per la campanella
+          ),
+      ],
     );
   }
 }
