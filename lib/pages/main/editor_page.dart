@@ -61,7 +61,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      _checkHomePrivilege(context);
+      if(context.mounted) {
+        _checkHomePrivilege(context);
+      }
     });
   }
 

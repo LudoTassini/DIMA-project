@@ -1,10 +1,12 @@
 import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:bloqo/pages/from_search/user_courses_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +29,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
+import '../../utils/uuid.dart';
 
 class CourseSearchPage extends StatefulWidget {
 
@@ -100,7 +103,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       });
     }
 
-    BloqoUser user = getUserFromAppState(context: context)!;
+    BloqoUser myself = getUserFromAppState(context: context)!;
+
+    bool isCoursePublic = widget.publishedCourse.isPublic;
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -610,7 +615,46 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                 runAlignment: WrapAlignment.start,
                 verticalDirection: VerticalDirection.down,
                 children: [
-                  !isEnrolled?
+                  !isCoursePublic && widget.course.authorId != getUserFromAppState(context: context)!.id?
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          20, 10, 20, 10),
+                      child: BloqoFilledButton(
+                        onPressed: () async {
+                          await _tryRequestAccessToPrivateCourse(
+                            context: context,
+                            localizedText: localizedText,
+                            publishedCourseId: widget.publishedCourse.publishedCourseId,
+                            applicantId: myself.id,
+                            courseAuthorId: widget.publishedCourse.authorId
+                          );
+                        },
+                        height: 60,
+                        color: BloqoColors.warning,
+                        text: localizedText.request_access,
+                        icon: Icons.front_hand,
+                        fontSize: 24,
+                      ),
+                    )
+                  : (!isCoursePublic && widget.course.authorId == getUserFromAppState(context: context)!.id?
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        20, 10, 20, 10),
+                    child: BloqoFilledButton(
+                      onPressed: () async {
+                        showBloqoErrorAlert(
+                            context: context,
+                            title: localizedText.error_title,
+                            description: localizedText.creator_cannot_subscribe);
+                      },
+                      height: 60,
+                      color: BloqoColors.secondaryText,
+                      text: localizedText.request_access,
+                      icon: Icons.front_hand,
+                      fontSize: 24,
+                    ),
+                  )
+                  : (!isEnrolled?
                       widget.course.authorId != getUserFromAppState(context: context)!.id?
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(
@@ -659,7 +703,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                     context: context,
                                     localizedText: localizedText,
                                     courseId: widget.course.id,
-                                    enrolledUserId: user.id
+                                    enrolledUserId: myself.id
                                   );
                                 },
                                 backgroundColor: BloqoColors.error
@@ -670,7 +714,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       text: localizedText.unsubscribe,
                       fontSize: 24,
                     ),
-                  )
+                  )))
                 ],
               ),
             ],
@@ -771,6 +815,56 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           author: courseAuthor,
           publishedCourses: publishedCourses,
         ));
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
+  Future<void> _tryRequestAccessToPrivateCourse({
+    required BuildContext context,
+    required var localizedText,
+    required String publishedCourseId,
+    required String applicantId,
+    required String courseAuthorId,
+  }) async {
+    context.loaderOverlay.show();
+    try {
+      BloqoNotificationData? oldNotification = await getNotificationFromPublishedCourseIdAndApplicantId(
+          localizedText: localizedText,
+          publishedCourseId: publishedCourseId,
+          applicantId: applicantId
+      );
+      if(oldNotification == null){
+        BloqoNotificationData newNotification = BloqoNotificationData(
+          id: uuid(),
+          userId: courseAuthorId,
+          type: BloqoNotificationType.courseEnrollmentRequest.toString(),
+          timestamp: Timestamp.now(),
+          privatePublishedCourseId: publishedCourseId,
+          applicantId: applicantId
+        );
+        await pushNotification(localizedText: localizedText, notification: newNotification);
+        if(!context.mounted) return;
+        context.loaderOverlay.hide();
+        ScaffoldMessenger.of(context).showSnackBar(
+          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+        );
+      }
+      else{
+        if(!context.mounted) return;
+        context.loaderOverlay.hide();
+        showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: localizedText.already_requested_access_error,
+        );
+      }
     } on BloqoException catch (e) {
       if(!context.mounted) return;
       context.loaderOverlay.hide();

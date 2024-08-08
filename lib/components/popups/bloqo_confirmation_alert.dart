@@ -51,7 +51,9 @@ class BloqoConfirmationAlert extends StatelessWidget{
           ),
           onPressed: () {
             confirmationFunction();
-            Navigator.pop(context, "OK");
+            if(context.mounted) {
+              Navigator.pop(context, "OK");
+            }
           },
           child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(
               color: confirmationColor,

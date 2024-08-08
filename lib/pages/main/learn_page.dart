@@ -53,7 +53,9 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     completedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      _checkHomePrivilege(context);
+      if(context.mounted) {
+        _checkHomePrivilege(context);
+      }
     });
   }
 

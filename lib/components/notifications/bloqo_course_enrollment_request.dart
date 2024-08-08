@@ -1,28 +1,35 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../model/bloqo_user.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
+import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrollmentRequest extends StatefulWidget {
   const BloqoCourseEnrollmentRequest({
     super.key,
     required this.notification,
+    required this.onActionSuccessful
   });
 
   final BloqoNotificationData notification;
+  final void Function() onActionSuccessful;
 
   @override
   State<BloqoCourseEnrollmentRequest> createState() => _BloqoCourseEnrollmentRequestState();
 }
 
 class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequest> {
+
   @override
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
@@ -125,7 +132,18 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                     ),
                                     BloqoFilledButton(
                                       color: BloqoColors.error,
-                                      onPressed: () {}, // TODO
+                                      onPressed: () async {
+                                        await showBloqoConfirmationAlert(
+                                            context: context,
+                                            title: localizedText.warning,
+                                            description: localizedText.deny_enrollment_confirmation,
+                                            confirmationFunction: () async {
+                                              await _tryDeny(context: context, localizedText: localizedText);
+                                              widget.onActionSuccessful;
+                                            },
+                                            backgroundColor: BloqoColors.error
+                                        );
+                                      },
                                       text: localizedText.deny,
                                       fontSize: 16,
                                       height: 32,
@@ -171,4 +189,26 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
       return [];
     }
   }
+
+  Future<void> _tryDeny({
+    required BuildContext context,
+    required var localizedText
+  }) async {
+    context.loaderOverlay.show();
+    try{
+      await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message
+      );
+    }
+  }
+
 }

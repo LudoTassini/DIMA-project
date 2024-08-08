@@ -68,10 +68,12 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _updateCanPop() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _canPopNotifier.value =
-          _navigatorKeys[_selectedPageIndex].currentState?.canPop() ?? false;
-    });
+    if(context.mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _canPopNotifier.value =
+            _navigatorKeys[_selectedPageIndex].currentState?.canPop() ?? false;
+      });
+    }
   }
 
   void _pushNewPage(GlobalKey<NavigatorState> key, Widget newPage) {

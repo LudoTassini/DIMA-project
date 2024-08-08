@@ -5,6 +5,7 @@ import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user.dart';
@@ -18,11 +19,15 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> with AutomaticKeepAliveClientMixin<NotificationsPage> {
+
+  bool needsRebuild = false;
+
   @override
   Widget build(BuildContext context) {
-    BloqoUser user = getUserFromAppState(context: context)!;
     super.build(context);
+    BloqoUser user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
+    needsRebuild = false;
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
@@ -59,7 +64,18 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                         (index) {
                       BloqoNotificationData notification = notifications[index];
                       if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
-                        return BloqoCourseEnrollmentRequest(notification: notification);
+                        return BloqoCourseEnrollmentRequest(
+                          notification: notification,
+                          onActionSuccessful: ()
+                          {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                            );
+                            setState(() {
+                              needsRebuild = true;
+                            });
+                          },
+                        );
                       }
                       return Container();
                     },
