@@ -48,7 +48,7 @@ class BloqoAppBar {
                       Icons.notifications,
                       color: BloqoColors.seasalt,
                     ),
-                    onPressed: notificationCount > 0 ? () {} : onNotificationIconPressed,
+                    onPressed: onNotificationIconPressed,
                   ),
                   if (notificationCount > 0)
                     Positioned(

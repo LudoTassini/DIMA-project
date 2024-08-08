@@ -3,6 +3,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -12,17 +13,18 @@ import '../../model/bloqo_user.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
+import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrollmentRequest extends StatefulWidget {
   const BloqoCourseEnrollmentRequest({
     super.key,
     required this.notification,
-    required this.onActionSuccessful
+    required this.onNotificationHandled,
   });
 
   final BloqoNotificationData notification;
-  final void Function() onActionSuccessful;
+  final VoidCallback onNotificationHandled;
 
   @override
   State<BloqoCourseEnrollmentRequest> createState() => _BloqoCourseEnrollmentRequestState();
@@ -125,7 +127,27 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                   children: [
                                     BloqoFilledButton(
                                       color: BloqoColors.success,
-                                      onPressed: () {}, // TODO
+                                      onPressed: () async {
+                                        await showBloqoConfirmationAlert(
+                                            context: context,
+                                            title: localizedText.warning,
+                                            description: localizedText.accept_enrollment_confirmation,
+                                            confirmationFunction: () async {
+                                              await _tryAccept(
+                                                context: context,
+                                                localizedText: localizedText,
+                                                applicantId: applicant.id,
+                                                originalCourse: course
+                                              );
+                                              if(!context.mounted) return;
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                                              );
+                                            },
+                                            backgroundColor: BloqoColors.russianViolet,
+                                            confirmationColor: BloqoColors.success
+                                        );
+                                      },
                                       text: localizedText.accept,
                                       fontSize: 16,
                                       height: 32,
@@ -139,7 +161,10 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                             description: localizedText.deny_enrollment_confirmation,
                                             confirmationFunction: () async {
                                               await _tryDeny(context: context, localizedText: localizedText);
-                                              widget.onActionSuccessful;
+                                              if(!context.mounted) return;
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+                                              );
                                             },
                                             backgroundColor: BloqoColors.error
                                         );
@@ -190,6 +215,31 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
     }
   }
 
+  Future<void> _tryAccept({
+    required BuildContext context,
+    required var localizedText,
+    required String applicantId,
+    required BloqoCourse originalCourse
+  }) async {
+    context.loaderOverlay.show();
+    try{
+      await saveNewUserCourseEnrolled(localizedText: localizedText, course: originalCourse, publishedCourseId: widget.notification.privatePublishedCourseId!, userId: applicantId);
+      await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onNotificationHandled();
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
+      );
+    }
+  }
+
   Future<void> _tryDeny({
     required BuildContext context,
     required var localizedText
@@ -199,14 +249,15 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
       await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
       if (!context.mounted) return;
       context.loaderOverlay.hide();
+      widget.onNotificationHandled();
     }
     on BloqoException catch (e) {
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
-        context: context,
-        title: localizedText.error_title,
-        description: e.message
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
       );
     }
   }

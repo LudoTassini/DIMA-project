@@ -5,7 +5,6 @@ import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user.dart';
@@ -19,6 +18,7 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> with AutomaticKeepAliveClientMixin<NotificationsPage> {
+  List<BloqoNotificationData> notifications = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                 ),
               );
             } else if (snapshot.hasData) {
-              List<BloqoNotificationData> notifications = snapshot.data!;
+              notifications = snapshot.data!;
               if (notifications.isEmpty) {
                 return Center(
                   child: Text(
@@ -63,11 +63,10 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                       if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
                         return BloqoCourseEnrollmentRequest(
                           notification: notification,
-                          onActionSuccessful: ()
-                          {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                            );
+                          onNotificationHandled: () {
+                            setState(() {
+                              notifications.removeAt(index); // Rimuove la notifica dalla lista
+                            });
                           },
                         );
                       }
