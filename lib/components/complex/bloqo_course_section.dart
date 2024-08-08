@@ -10,12 +10,14 @@ class BloqoCourseSection extends StatelessWidget{
     required this.onPressed,
     required this.section,
     required this.index,
+    required this.isClickable,
     required this.isInLearnPage
   });
 
   final Function() onPressed;
   final BloqoSection section;
   final int index;
+  final bool isClickable;
   final bool isInLearnPage;
 
   @override
@@ -25,7 +27,7 @@ class BloqoCourseSection extends StatelessWidget{
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
-      child: isInLearnPage
+      child: isInLearnPage & isClickable
           ? ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
@@ -166,7 +168,7 @@ class BloqoCourseSection extends StatelessWidget{
               ),
             ),
 
-            isInLearnPage ?
+            isInLearnPage & isClickable ?
             const Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0, 5, 5, 5),
               child: Icon(

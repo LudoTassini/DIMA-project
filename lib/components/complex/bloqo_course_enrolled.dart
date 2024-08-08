@@ -172,7 +172,8 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               double maxWidth = constraints.maxWidth-20;
 
                               return BloqoProgressBar(
-                                percentage: (course!.sectionsCompleted?.length ?? 0) / course!.totNumSections,
+                                percentage: course!.isCompleted? 1 :
+                                  (course!.sectionsCompleted?.length ?? 0) / course!.totNumSections,
                                 width: maxWidth, // Pass the maximum width to the progress bar
                               );
                             },
