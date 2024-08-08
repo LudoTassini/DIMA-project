@@ -20,14 +20,11 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> with AutomaticKeepAliveClientMixin<NotificationsPage> {
 
-  bool needsRebuild = false;
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     BloqoUser user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
-    needsRebuild = false;
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
@@ -71,9 +68,6 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                             ScaffoldMessenger.of(context).showSnackBar(
                               BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                             );
-                            setState(() {
-                              needsRebuild = true;
-                            });
                           },
                         );
                       }
