@@ -5,6 +5,7 @@ import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
 import 'package:bloqo/utils/localization.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -13,6 +14,7 @@ import '../../model/bloqo_user.dart';
 import '../../model/courses/bloqo_course.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/uuid.dart';
 import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_error_alert.dart';
 
@@ -225,6 +227,16 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
     try{
       await saveNewUserCourseEnrolled(localizedText: localizedText, course: originalCourse, publishedCourseId: widget.notification.privatePublishedCourseId!, userId: applicantId);
       await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
+      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
+      BloqoNotificationData notification = BloqoNotificationData(
+        id: uuid(),
+        userId: applicantId,
+        type: BloqoNotificationType.courseEnrollmentAccepted.toString(),
+        timestamp: Timestamp.now(),
+        privateCourseName: originalCourse.name,
+        privateCourseAuthorUsername: courseAuthor.username
+      );
+      await pushNotification(localizedText: localizedText, notification: notification);
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onNotificationHandled();

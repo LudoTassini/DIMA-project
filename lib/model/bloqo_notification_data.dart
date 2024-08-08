@@ -14,7 +14,8 @@ class BloqoNotificationData{
   String? privatePublishedCourseId;
   String? applicantId;
 
-  String? content;
+  String? privateCourseName;
+  String? privateCourseAuthorUsername;
 
   BloqoNotificationData({
     required this.id,
@@ -23,7 +24,8 @@ class BloqoNotificationData{
     required this.timestamp,
     this.privatePublishedCourseId,
     this.applicantId,
-    this.content
+    this.privateCourseName,
+    this.privateCourseAuthorUsername
   });
 
   factory BloqoNotificationData.fromFirestore(
@@ -39,7 +41,8 @@ class BloqoNotificationData{
       timestamp: data["timestamp"],
       privatePublishedCourseId: data["private_published_course_id"],
       applicantId: data["applicant_id"],
-      content: data["content"]
+      privateCourseName: data["private_course_name"],
+      privateCourseAuthorUsername: data["private_course_author_username"]
     );
   }
 
@@ -51,7 +54,8 @@ class BloqoNotificationData{
       "timestamp": timestamp,
       "private_published_course_id": privatePublishedCourseId,
       "applicant_id": applicantId,
-      "content": content,
+      "private_course_name": privateCourseName,
+      "private_course_author_username": privateCourseAuthorUsername
     };
   }
 
@@ -67,7 +71,7 @@ class BloqoNotificationData{
 
 enum BloqoNotificationType{
   courseEnrollmentRequest,
-  genericInfo
+  courseEnrollmentAccepted
 }
 
 Future<List<BloqoNotificationData>> getNotificationsFromUserId({required var localizedText, required String userId}) async {
