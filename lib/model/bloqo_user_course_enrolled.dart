@@ -308,6 +308,37 @@ Future<void> updateUserCourseEnrolledStatusCompleted({required var localizedText
   }
 }
 
+Future<void> updateUserCourseEnrolledNewSectionToComplete({required var localizedText, required String courseId,
+  required String enrolledUserId, required BloqoSection sectionToComplete}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref
+        .where("course_id", isEqualTo: courseId)
+        .where("enrolled_user_id", isEqualTo: enrolledUserId)
+        .get();
+
+    var docSnapshot = querySnapshot.docs.first;
+
+    BloqoUserCourseEnrolled courseEnrolled = docSnapshot.data();
+
+    courseEnrolled.sectionToComplete = sectionToComplete.id;
+    courseEnrolled.sectionName = sectionToComplete.name;
+    courseEnrolled.lastUpdated = Timestamp.now();
+
+    await ref.doc(docSnapshot.id).update(courseEnrolled.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
 //TODO: rimuovere
 List<dynamic>? _checkDuplicates(List<dynamic>? list) {
   if (list == null) {

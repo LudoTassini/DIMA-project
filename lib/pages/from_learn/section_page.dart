@@ -210,11 +210,8 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _updateEnrolledCourseStatus({
-    required BuildContext context,
-    required var localizedText,
-    required BloqoSection section,
-  }) async {
+  Future<void> _updateEnrolledCourseStatus({required BuildContext context, required var localizedText,
+    required BloqoSection section}) async {
     // Show loader before starting async operations
     context.loaderOverlay.show();
 
@@ -228,7 +225,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
 
       // Update sections completed in both the course enrollment and app state
-      if (!sectionsCompleted.contains(section.id)) {
+      if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
         courseEnrolled.sectionsCompleted!.add(section.id);
         updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
@@ -277,6 +274,20 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
         );
         if (!context.mounted) return;
       }
+      // Otherwise set the new sectionToComplete
+      /*
+      else {
+        String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
+        var sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        await updateUserCourseEnrolledNewSectionToComplete(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+          sectionToComplete: sectionToComplete,
+        );
+        if (!context.mounted) return;
+      } */
+
       context.loaderOverlay.hide();
 
     } on BloqoException catch (e) {
@@ -289,6 +300,33 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
         );
       }
     }
+  }
+
+  String? _getNextSectionId({required List<BloqoChapter> chapters, required BloqoChapter chapter, required BloqoSection section,
+  }) {
+    // Ensure the section exists within the chapter
+    final sectionIndex = chapter.sections.indexOf(section.id);
+
+    // If section is not the last one in the current chapter
+    if (sectionIndex != -1 && sectionIndex < chapter.sections.length - 1) {
+      // Return the next section ID in the current chapter
+      return chapter.sections[sectionIndex + 1] as String;
+    }
+
+    // If the section is the last one in the current chapter, find the next chapter
+    final chapterIndex = chapters.indexOf(chapter);
+
+    // Ensure the current chapter is not the last one in the chapters list
+    if (chapterIndex != -1 && chapterIndex < chapters.length - 1) {
+      final nextChapter = chapters[chapterIndex + 1];
+
+      // Return the first section ID in the next chapter
+      if (nextChapter.sections.isNotEmpty) {
+        return nextChapter.sections.first as String;
+      }
+    }
+    // Return null if there are no further sections or chapters to navigate to
+    return null;
   }
 
 }
