@@ -5,7 +5,7 @@ import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
-import 'package:bloqo/pages/from_search/user_courses_page.dart';
+import 'package:bloqo/pages/from_any/user_courses_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -43,7 +43,8 @@ class CourseSearchPage extends StatefulWidget {
     required this.sections,
     required this.courseAuthor,
     required this.rating,
-    required this.reviews
+    required this.reviews,
+    this.enrollmentAlreadyRequested = false
   });
 
   final void Function(Widget) onPush;
@@ -57,6 +58,8 @@ class CourseSearchPage extends StatefulWidget {
   final double? rating;
   final List<BloqoReview>? reviews;
 
+  final bool enrollmentAlreadyRequested;
+
   @override
   State<CourseSearchPage> createState() => _CourseSearchPageState();
 }
@@ -65,11 +68,18 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
   bool isEnrolled = false;
   BloqoUserCourseEnrolled? enrolledCourse;
+  late bool buttonEnabled;
 
   final Map<String, bool> _showSectionsMap = {};
   bool isInitializedSectionMap = false;
 
   int _reviewsDisplayed = Constants.reviewsToShowAtFirst;
+
+  @override
+  void initState() {
+    super.initState();
+    buttonEnabled = !widget.enrollmentAlreadyRequested;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -615,7 +625,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                 runAlignment: WrapAlignment.start,
                 verticalDirection: VerticalDirection.down,
                 children: [
-                  !isCoursePublic && widget.course.authorId != getUserFromAppState(context: context)!.id?
+                  !isEnrolled && !isCoursePublic && widget.course.authorId != getUserFromAppState(context: context)!.id?
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           20, 10, 20, 10),
@@ -630,7 +640,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           );
                         },
                         height: 60,
-                        color: BloqoColors.warning,
+                        color: buttonEnabled ? BloqoColors.warning : BloqoColors.secondaryText,
                         text: localizedText.request_access,
                         icon: Icons.front_hand,
                         fontSize: 24,
@@ -712,6 +722,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       height: 60,
                       color: BloqoColors.error,
                       text: localizedText.unsubscribe,
+                      icon: Icons.close_sharp,
                       fontSize: 24,
                     ),
                   )))
@@ -855,6 +866,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         ScaffoldMessenger.of(context).showSnackBar(
           BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
         );
+        setState(() {
+          buttonEnabled = false;
+        });
       }
       else{
         if(!context.mounted) return;

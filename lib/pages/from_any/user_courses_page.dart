@@ -20,7 +20,7 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
-import 'course_search_page.dart';
+import '../from_search/course_search_page.dart';
 
 class UserCoursesPage extends StatefulWidget {
   const UserCoursesPage({
@@ -61,9 +61,8 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
       child: SingleChildScrollView(
         child: Consumer<UserAppState>(
           builder: (context, userAppState, _) {
-            final user = getUserFromAppState(context: context)!;
-            if(user.pictureUrl != "none"){
-              url = user.pictureUrl;
+            if(widget.author.pictureUrl != "none"){
+              url = widget.author.pictureUrl;
             }
             return Column(
               mainAxisSize: MainAxisSize.max,
@@ -132,10 +131,9 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-
-                                              user.isFullNameVisible ?
+                                              widget.author.isFullNameVisible ?
                                                   Text(
-                                                    user.fullName,
+                                                    widget.author.fullName,
                                                     textAlign: TextAlign.start,
                                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                       color: BloqoColors.secondaryText,
@@ -147,7 +145,7 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                               : const SizedBox(),
 
                                               Text(
-                                                user.username,
+                                                widget.author.username,
                                                 textAlign: TextAlign.start,
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   color: BloqoColors.primaryText,
@@ -175,8 +173,8 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                             ),
                                             onPressed: () {
                                               _showUserQrCode(
-                                                username: user.username,
-                                                userId: user.id,
+                                                username: widget.author.username,
+                                                userId: widget.author.id,
                                               );
                                             },
                                           ),
@@ -206,7 +204,7 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                                 ),
                                               ),
                                               Text(
-                                                user.followers.toString(),
+                                                widget.author.followers.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
                                                 ),
@@ -230,7 +228,7 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                                 ),
                                               ),
                                               Text(
-                                                user.following.toString(),
+                                                widget.author.following.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
                                                 ),
