@@ -301,5 +301,10 @@
   "users_completed": " users completed this course",
   "course_dismiss_confirmation": "By confirming, this course will be removed from the bloQo community. This means that everyone who enrolled in this course will no more be able to access its content, and no one will be able to enroll in this course until you publish it again. Do you wish to continue?",
   "published_courses_by_author": "Courses published by ",
-  "get_qr_code": "Get QR Code"
+  "get_qr_code": "Get QR Code",
+  "notifications": "Notifications",
+  "no_notifications": "There are no notifications to show.",
+  "has_requested_access": "has requested access to the following course:",
+  "accept": "Accept",
+  "deny": "Deny"
 }
