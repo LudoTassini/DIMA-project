@@ -19,6 +19,7 @@ class BloqoCourseCreated extends StatelessWidget {
     this.onPublish,
     this.onViewStatistics,
     this.onDismiss,
+    this.onGetQrCode,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
     this.showEditOptions = false,
     this.showPublishedOptions = false,
@@ -29,6 +30,7 @@ class BloqoCourseCreated extends StatelessWidget {
   final Function()? onPublish;
   final Function()? onViewStatistics;
   final Function()? onDismiss;
+  final Function()? onGetQrCode;
   final EdgeInsetsDirectional padding;
   final bool showEditOptions;
   final bool showPublishedOptions;
@@ -152,9 +154,18 @@ class BloqoCourseCreated extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Wrap(
+                    alignment: WrapAlignment.end,
                     spacing: 10,
-                    runSpacing: 10,
+                    runSpacing: 5,
                     children: [
+                      BloqoFilledButton(
+                        color: BloqoColors.chineseViolet,
+                        text: localizedText.get_qr_code,
+                        fontSize: 16,
+                        height: 32,
+                        icon: Icons.qr_code_2,
+                        onPressed: onGetQrCode ?? () {}
+                      ),
                       BloqoFilledButton(
                         color: BloqoColors.russianViolet,
                         onPressed: onViewStatistics ?? () {},

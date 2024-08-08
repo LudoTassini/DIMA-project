@@ -88,21 +88,30 @@ class BloqoPublishedCourse {
     };
   }
 
-  static CollectionReference<BloqoPublishedCourse> getCollectionRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("published_courses").withConverter<
-        BloqoPublishedCourse>(
-      fromFirestore: BloqoPublishedCourse.fromFirestore,
-      toFirestore: (BloqoPublishedCourse course, _) => course.toFirestore(),
-    );
-  }
-
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("published_courses").withConverter(
       fromFirestore: BloqoPublishedCourse.fromFirestore,
       toFirestore: (BloqoPublishedCourse course, _) => course.toFirestore(),
     );
+  }
+}
+
+Future<BloqoPublishedCourse> getPublishedCourseFromPublishedCourseId({required var localizedText, required String publishedCourseId}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourse.getRef();
+    var querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoPublishedCourse publishedCourse = docSnapshot.data();
+    return publishedCourse;
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }
 
@@ -130,10 +139,12 @@ Future<List<BloqoPublishedCourse>> getPublishedCoursesFromAuthorId({
 }) async {
   try {
     await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourse.getCollectionRef();
+    var ref = BloqoPublishedCourse.getRef();
     var querySnapshot = await ref.where("author_id", isEqualTo: authorId).get();
-    List<BloqoPublishedCourse> publishedCourses = querySnapshot.docs.map((doc) => doc.data()).toList();
-
+    List<BloqoPublishedCourse> publishedCourses = [];
+    for(var doc in querySnapshot.docs){
+      publishedCourses.add(doc.data());
+    }
     return publishedCourses;
   } on FirebaseException catch (e) {
     switch (e.code) {

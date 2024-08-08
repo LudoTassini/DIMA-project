@@ -13,7 +13,7 @@ class BloqoColors {
   static const Color tertiary = Color(0xFFEE8b60);
 
   static const Color error = Color(0xFFFA2B36);
-  static const Color warning = Color(0xFFF9CF58);
+  static const Color warning = Color(0xFFD5A203);
   static const Color success = Color(0xFF249689);
 
   static const Color rate = Color(0xFFC5A600);

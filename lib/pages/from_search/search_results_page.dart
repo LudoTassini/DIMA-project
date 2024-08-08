@@ -7,9 +7,11 @@ import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_published_course.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/courses/bloqo_chapter.dart';
@@ -171,6 +173,16 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           reviews = await getReviewsFromIds(
               localizedText: localizedText, reviewsIds: publishedCourse.reviews);
         }
+        bool enrollmentAlreadyRequested = false;
+        if(!publishedCourse.isPublic) {
+          if(!context.mounted) return;
+          BloqoUser myself = getUserFromAppState(context: context)!;
+          enrollmentAlreadyRequested = await getNotificationFromPublishedCourseIdAndApplicantId(
+              localizedText: localizedText,
+              publishedCourseId: publishedCourse.publishedCourseId,
+              applicantId: myself.id
+          ) != null;
+        }
         if(!context.mounted) return;
         context.loaderOverlay.hide();
         widget.onPush(CourseSearchPage(
@@ -183,6 +195,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           courseAuthor: courseAuthor,
           reviews:reviews,
           rating: publishedCourse.rating,
+          enrollmentAlreadyRequested: publishedCourse.isPublic ? false : enrollmentAlreadyRequested,
         )
       );
 

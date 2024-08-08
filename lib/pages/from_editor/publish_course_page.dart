@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import '../../app_state/editor_course_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
@@ -447,6 +448,12 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
     await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId, published: true);
 
     if(!context.mounted) return;
+
+    BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(context: context);
+    if(currentEditorCourse != null && currentEditorCourse.id == userCourseCreated.courseId) {
+      updateEditorCourseStatusInAppState(context: context, published: true);
+    }
+
     updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: userCourseCreated.courseId, published: true);
 
     await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);

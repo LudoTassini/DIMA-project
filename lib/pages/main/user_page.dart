@@ -352,7 +352,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                       title: localizedText.warning,
                       description: localizedText.logout_confirmation,
                       confirmationFunction: () async {
-                        await _confirmationFunction(
+                        await _tryLogout(
                             context: context,
                             localizedText: localizedText
                         );
@@ -375,7 +375,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     );
   }
 
-  Future<void> _confirmationFunction({required BuildContext context, required var localizedText}) async {
+  Future<void> _tryLogout({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
       await checkConnectivity(localizedText: localizedText);

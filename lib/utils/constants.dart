@@ -33,4 +33,6 @@ class Constants{
 
   static const int snackBarDuration = 2;
 
+  static const int notificationCheckSeconds = 10;
+
 }
