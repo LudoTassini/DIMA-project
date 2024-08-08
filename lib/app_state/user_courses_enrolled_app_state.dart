@@ -1,4 +1,3 @@
-import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/bloqo_user_course_enrolled.dart';
@@ -27,10 +26,25 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
     }
   }
 
+  void _updateCourse(BloqoUserCourseEnrolled userCourse) {
+    _userCourses?.removeWhere((x) => x.courseId == userCourse.courseId &&
+        x.enrolledUserId == userCourse.enrolledUserId);
+
+    _userCourses?.add(userCourse);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
 }
 
 void saveUserCoursesEnrolledToAppState({required BuildContext context, required List<BloqoUserCourseEnrolled> courses}){
   Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._set(courses);
+}
+
+void updateUserCoursesEnrolledToAppState({required BuildContext context, required BloqoUserCourseEnrolled userCourseEnrolled}){
+  Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._updateCourse(userCourseEnrolled);
 }
 
 List<BloqoUserCourseEnrolled>? getUserCoursesEnrolledFromAppState({required BuildContext context}){

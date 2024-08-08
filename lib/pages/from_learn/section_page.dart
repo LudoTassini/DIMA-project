@@ -1,0 +1,332 @@
+import 'package:bloqo/app_state/learn_course_app_state.dart';
+import 'package:bloqo/app_state/user_app_state.dart';
+import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
+import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
+import 'package:bloqo/components/containers/bloqo_main_container.dart';
+import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/components/quiz/bloqo_open_question_quiz.dart';
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../../components/multimedia/bloqo_audio_player.dart';
+import '../../components/multimedia/bloqo_video_player.dart';
+import '../../components/multimedia/bloqo_youtube_player.dart';
+import '../../components/navigation/bloqo_breadcrumbs.dart';
+import '../../components/popups/bloqo_error_alert.dart';
+import '../../components/quiz/bloqo_multiple_choice_quiz.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/courses/bloqo_block.dart';
+import '../../style/bloqo_colors.dart';
+import '../../style/bloqo_style_sheet.dart';
+import '../../utils/bloqo_exception.dart';
+import '../../utils/localization.dart';
+
+class SectionPage extends StatefulWidget {
+
+  const SectionPage({
+    super.key,
+    required this.onPush,
+    required this.section,
+    required this.blocks,
+    required this.courseName,
+    required this.chapter
+  });
+
+  final void Function(Widget) onPush;
+  final BloqoSection section;
+  final List<BloqoBlock> blocks;
+  final String courseName;
+  final BloqoChapter chapter;
+
+  @override
+  State<SectionPage> createState() => _SectionPageState();
+}
+
+class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClientMixin<SectionPage> {
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final localizedText = getAppLocalizations(context)!;
+
+    return BloqoMainContainer(
+      alignment: const AlignmentDirectional(-1.0, -1.0),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BloqoBreadcrumbs(
+              breadcrumbs: [
+                widget.courseName,
+                widget.chapter.name,
+                widget.section.name
+                // FIXME: non devono essere cliccabili
+            ]),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+
+                  ...List.generate(
+                  widget.blocks.length,
+                  (blockIndex) {
+                    var block = widget.blocks[blockIndex];
+
+                    if (block.type == BloqoBlockType.text.toString()) {
+                      return BloqoSeasaltContainer(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10), //20, 10, 20, 20
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  MarkdownBody(
+                                    data: block.content,
+                                    styleSheet: BloqoMarkdownStyleSheet.get(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if(block.type == BloqoBlockType.multimediaAudio.toString()) {
+                      return BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 0, 20, 20),
+                        child: Column(
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: BloqoAudioPlayer(
+                                      url: block.content
+                                  )
+                              ),
+                            ]
+                        ),
+                      );
+                  }
+
+                  if(block.type == BloqoBlockType.multimediaImage.toString()) {
+                    return BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                        child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Image.network(block.content),
+                                ),
+                            ],
+                        ),
+                    );
+                  }
+
+                  if(block.type == BloqoBlockType.multimediaVideo.toString()) {
+                    return BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 0, 20, 20),
+                        child: block.content != "" ?
+                          Column(
+                            children: [
+                              !block.content.startsWith("yt:")
+                                  ? BloqoVideoPlayer(
+                                  url: block.content
+                              )
+                                  : BloqoYouTubePlayer(
+                                  url: block.content.substring(3)
+                              ),
+                            ]
+                        ) : Container()
+                    );
+                  }
+
+                  if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
+                    return BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                        child: Column(
+                          children: [
+                            BloqoOpenQuestionQuiz(
+                              onPush: widget.onPush,
+                              block: block
+                            ),
+
+                        ],
+                      ),
+                    );
+                  }
+
+                  if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
+                    return BloqoSeasaltContainer(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                      child: Column(
+                        children: [
+                          BloqoMultipleChoiceQuiz(
+                              onPush: widget.onPush,
+                              block: block
+                          ),
+
+                        ],
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+
+                  }
+                ),
+
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                  child: BloqoFilledButton(
+                    onPressed: () {
+                      _updateEnrolledCourseStatus(
+                        context: context,
+                        localizedText: localizedText,
+                        section: widget.section,
+                      );
+                      Navigator.of(context).pop();
+                    },
+                    color: BloqoColors.success,
+                    text: localizedText.learned,
+                    fontSize: 24,
+                    height: 65,
+                  ),
+                ),
+
+                ],
+              ),
+            ),
+          ),
+      ],
+
+      ),
+
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Future<void> _updateEnrolledCourseStatus({required BuildContext context, required var localizedText,
+    required BloqoSection section}) async {
+    // Show loader before starting async operations
+    context.loaderOverlay.show();
+
+    try {
+      // Fetch necessary data from the app state before any async operations
+      final course = getLearnCourseFromAppState(context: context)!;
+      final user = getUserFromAppState(context: context)!;
+      final chapters = getLearnCourseChaptersFromAppState(context: context)!;
+      var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
+      final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
+      final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+
+      // Update sections completed in both the course enrollment and app state
+      if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
+
+        courseEnrolled.sectionsCompleted!.add(section.id);
+        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+        // Perform async operations and check if context is still mounted afterward
+        await updateUserCourseEnrolledCompletedSections(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+          sectionsCompleted: sectionsCompleted,
+        );
+        if (!context.mounted) return;
+      }
+
+      // Update chapters completed and course status
+      var chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context);
+
+        if (widget.chapter.sections.lastOrNull == section.id) {
+          // If the section is the last in the chapter
+          if (!chaptersCompleted!.contains(widget.chapter.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
+
+            courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
+            updateLearnCourseChaptersCompletedFromAppState(context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
+            updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+            // Perform async operations and check if context is still mounted afterward
+            await updateUserCourseEnrolledCompletedChapters(
+              localizedText: localizedText,
+              courseId: course.id,
+              enrolledUserId: user.id,
+              chaptersCompleted: chaptersCompleted,
+            );
+            if (!context.mounted) return;
+          }
+        }
+
+      // If the last chapter is completed, mark the course as completed
+      if (chapters.last.sections.lastOrNull == section.id) {
+        courseEnrolled.isCompleted = true;
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+        await updateUserCourseEnrolledStatusCompleted(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+        );
+        if (!context.mounted) return;
+      }
+      // Otherwise set the new sectionToComplete
+      /*
+      else {
+        String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
+        var sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        await updateUserCourseEnrolledNewSectionToComplete(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+          sectionToComplete: sectionToComplete,
+        );
+        if (!context.mounted) return;
+      } */
+
+      context.loaderOverlay.hide();
+
+    } on BloqoException catch (e) {
+      context.loaderOverlay.hide();
+      if (context.mounted) {
+        showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message,
+        );
+      }
+    }
+  }
+
+  String? _getNextSectionId({required List<BloqoChapter> chapters, required BloqoChapter chapter, required BloqoSection section,
+  }) {
+    // Ensure the section exists within the chapter
+    final sectionIndex = chapter.sections.indexOf(section.id);
+
+    // If section is not the last one in the current chapter
+    if (sectionIndex != -1 && sectionIndex < chapter.sections.length - 1) {
+      // Return the next section ID in the current chapter
+      return chapter.sections[sectionIndex + 1] as String;
+    }
+
+    // If the section is the last one in the current chapter, find the next chapter
+    final chapterIndex = chapters.indexOf(chapter);
+
+    // Ensure the current chapter is not the last one in the chapters list
+    if (chapterIndex != -1 && chapterIndex < chapters.length - 1) {
+      final nextChapter = chapters[chapterIndex + 1];
+
+      // Return the first section ID in the next chapter
+      if (nextChapter.sections.isNotEmpty) {
+        return nextChapter.sections.first as String;
+      }
+    }
+    // Return null if there are no further sections or chapters to navigate to
+    return null;
+  }
+
+}
