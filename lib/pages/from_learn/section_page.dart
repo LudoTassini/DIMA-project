@@ -1,18 +1,26 @@
+import 'package:bloqo/app_state/learn_course_app_state.dart';
+import 'package:bloqo/app_state/user_app_state.dart';
+import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/quiz/bloqo_open_question_quiz.dart';
+import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import '../../components/multimedia/bloqo_audio_player.dart';
 import '../../components/multimedia/bloqo_video_player.dart';
 import '../../components/multimedia/bloqo_youtube_player.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../components/quiz/bloqo_multiple_choice_quiz.dart';
+import '../../model/bloqo_user_course_enrolled.dart';
 import '../../model/courses/bloqo_block.dart';
 import '../../style/bloqo_colors.dart';
 import '../../style/bloqo_style_sheet.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 
 class SectionPage extends StatefulWidget {
@@ -23,14 +31,14 @@ class SectionPage extends StatefulWidget {
     required this.section,
     required this.blocks,
     required this.courseName,
-    required this.chapterName
+    required this.chapter
   });
 
   final void Function(Widget) onPush;
   final BloqoSection section;
   final List<BloqoBlock> blocks;
   final String courseName;
-  final String chapterName;
+  final BloqoChapter chapter;
 
   @override
   State<SectionPage> createState() => _SectionPageState();
@@ -51,7 +59,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
             BloqoBreadcrumbs(
               breadcrumbs: [
                 widget.courseName,
-                widget.chapterName,
+                widget.chapter.name,
                 widget.section.name
                 // FIXME: non devono essere cliccabili
             ]),
@@ -170,13 +178,23 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                   }
                 ),
 
-                BloqoFilledButton(
-                  onPressed: () {
-
-                  },
-                  color: BloqoColors.success,
-                  text: localizedText.learned,
-                )
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                  child: BloqoFilledButton(
+                    onPressed: () {
+                      _updateEnrolledCourseStatus(
+                        context: context,
+                        localizedText: localizedText,
+                        section: widget.section,
+                      );
+                      Navigator.of(context).pop();
+                    },
+                    color: BloqoColors.success,
+                    text: localizedText.learned,
+                    fontSize: 24,
+                    height: 65,
+                  ),
+                ),
 
                 ],
               ),
@@ -191,5 +209,86 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _updateEnrolledCourseStatus({
+    required BuildContext context,
+    required var localizedText,
+    required BloqoSection section,
+  }) async {
+    // Show loader before starting async operations
+    context.loaderOverlay.show();
+
+    try {
+      // Fetch necessary data from the app state before any async operations
+      final course = getLearnCourseFromAppState(context: context)!;
+      final user = getUserFromAppState(context: context)!;
+      final chapters = getLearnCourseChaptersFromAppState(context: context)!;
+      var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
+      final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
+      final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+
+      // Update sections completed in both the course enrollment and app state
+      if (!sectionsCompleted.contains(section.id)) {
+
+        courseEnrolled.sectionsCompleted!.add(section.id);
+        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+        // Perform async operations and check if context is still mounted afterward
+        await updateUserCourseEnrolledCompletedSections(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+          sectionsCompleted: sectionsCompleted,
+        );
+        if (!context.mounted) return;
+      }
+
+      // Update chapters completed and course status
+      var chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context);
+
+        if (widget.chapter.sections.lastOrNull == section.id) {
+          // If the section is the last in the chapter
+          if (!chaptersCompleted!.contains(widget.chapter.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
+
+            courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
+            updateLearnCourseChaptersCompletedFromAppState(context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
+            updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+            // Perform async operations and check if context is still mounted afterward
+            await updateUserCourseEnrolledCompletedChapters(
+              localizedText: localizedText,
+              courseId: course.id,
+              enrolledUserId: user.id,
+              chaptersCompleted: chaptersCompleted,
+            );
+            if (!context.mounted) return;
+          }
+        }
+
+      // If the last chapter is completed, mark the course as completed
+      if (chapters.last.sections.lastOrNull == section.id) {
+        courseEnrolled.isCompleted = true;
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+        await updateUserCourseEnrolledStatusCompleted(
+          localizedText: localizedText,
+          courseId: course.id,
+          enrolledUserId: user.id,
+        );
+        if (!context.mounted) return;
+      }
+      context.loaderOverlay.hide();
+
+    } on BloqoException catch (e) {
+      context.loaderOverlay.hide();
+      if (context.mounted) {
+        showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message,
+        );
+      }
+    }
+  }
 
 }

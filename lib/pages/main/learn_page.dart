@@ -70,12 +70,24 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
       List<BloqoUserCourseEnrolled>? userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context);
       BloqoUserCourseEnrolled? userCourseEnrolled = userCoursesEnrolled?.firstWhere((x) => x.courseId == course?.id);
       String? sectionToCompleteId = userCourseEnrolled?.sectionToComplete;
-      BloqoSection sectionToComplete = await getSectionFromId(localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
-      if (course != null) {
+      bool isCourseCompleted = userCourseEnrolled!.isCompleted;
+      BloqoSection? sectionToComplete;
+      if(!isCourseCompleted) {
+        sectionToComplete = await getSectionFromId(localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
+      }
+      if (course != null && !isCourseCompleted) {
         widget.onPush(
             CourseContentPage(
               onPush: widget.onPush,
-              sectionToComplete: sectionToComplete,
+              sectionToComplete: sectionToComplete!,
+              isCourseCompleted: isCourseCompleted,
+            ));
+      }
+      else {
+        widget.onPush(
+            CourseContentPage(
+              onPush: widget.onPush,
+              isCourseCompleted: isCourseCompleted,
             ));
       }
     }
@@ -326,50 +338,72 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
+  Future<void> _goToCoursePage({ required BuildContext context, required var localizedText,
+    required BloqoUserCourseEnrolled userCourseEnrolled }) async {
     context.loaderOverlay.show();
     try {
       BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
       String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
-      BloqoSection sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: sectionToCompleteId!);
+      bool isCourseCompleted = userCourseEnrolled.isCompleted;
+      BloqoSection? sectionToComplete;
+
+      // Fetch the sectionToComplete if the course is not completed
+      if (!isCourseCompleted && sectionToCompleteId != null) {
+        sectionToComplete = await getSectionFromId(
+          localizedText: localizedText,
+          sectionId: sectionToCompleteId,
+        );
+      }
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
-        widget.onPush(CourseContentPage(
+        widget.onPush(
+          CourseContentPage(
             onPush: widget.onPush,
+            isCourseCompleted: isCourseCompleted,
             sectionToComplete: sectionToComplete,
-        ));
+          ),
+        );
       } else {
         BloqoCourse course = await getCourseFromId(
-            localizedText: localizedText, courseId: userCourseEnrolled.courseId);
-        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+          localizedText: localizedText,
+          courseId: userCourseEnrolled.courseId,
+        );
+        List<BloqoChapter> chapters = await getChaptersFromIds(
+          localizedText: localizedText,
+          chapterIds: course.chapters,
+        );
         Map<String, List<BloqoSection>> sections = {};
-        for(String chapterId in course.chapters) {
+        for (String chapterId in course.chapters) {
           List<BloqoSection> chapterSections = await getSectionsFromIds(
-              localizedText: localizedText,
-              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+            localizedText: localizedText,
+            sectionIds: chapters.firstWhere((chapter) => chapter.id == chapterId).sections,
+          );
           sections[chapterId] = chapterSections;
         }
 
-        if(!context.mounted) return;
+        if (!context.mounted) return;
         saveLearnCourseToAppState(
-            context: context,
-            course: course,
-            chapters: chapters,
-            sections: sections,
-            enrollmentDate: userCourseEnrolled.enrollmentDate,
-            sectionsCompleted: userCourseEnrolled.sectionsCompleted ?? [],
-            chaptersCompleted: userCourseEnrolled.chaptersCompleted ?? [],
-            totNumSections: userCourseEnrolled.totNumSections,
-            comingFromHome: true);
+          context: context,
+          course: course,
+          chapters: chapters,
+          sections: sections,
+          enrollmentDate: userCourseEnrolled.enrollmentDate,
+          sectionsCompleted: userCourseEnrolled.sectionsCompleted ?? [],
+          chaptersCompleted: userCourseEnrolled.chaptersCompleted ?? [],
+          totNumSections: userCourseEnrolled.totNumSections,
+          comingFromHome: true,
+        );
         context.loaderOverlay.hide();
         widget.onPush(
-            CourseContentPage(
-              onPush: widget.onPush,
-              sectionToComplete: sectionToComplete,
-            ));
+          CourseContentPage(
+            onPush: widget.onPush,
+            isCourseCompleted: isCourseCompleted,
+            sectionToComplete: sectionToComplete,
+          ),
+        );
       }
     } on BloqoException catch (e) {
-      if(!context.mounted) return;
+      if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
         context: context,

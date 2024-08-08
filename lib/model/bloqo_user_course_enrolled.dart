@@ -80,6 +80,7 @@ class BloqoUserCourseEnrolled {
       'course_author_username': courseAuthor,
       'course_name': courseName,
       'sections_completed': sectionsCompleted,
+      'chapters_completed': chaptersCompleted,
       'tot_num_sections': totNumSections,
       'section_name': sectionName,
       'section_to_complete': sectionToComplete,
@@ -220,4 +221,98 @@ Future<void> deleteUserCoursesEnrolledForDismissedCourse({required var localized
         throw BloqoException(message: localizedText.generic_error);
     }
   }
+}
+
+Future<void> updateUserCourseEnrolledCompletedSections({required var localizedText, required String courseId, required String enrolledUserId,
+  required List<dynamic>? sectionsCompleted}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("course_id", isEqualTo: courseId)
+        .where("enrolled_user_id", isEqualTo: enrolledUserId).get();
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoUserCourseEnrolled userCourseEnrolled = docSnapshot.data();
+    sectionsCompleted = _checkDuplicates(sectionsCompleted);
+    userCourseEnrolled.sectionsCompleted = sectionsCompleted;
+
+    await ref.doc(docSnapshot.id).update(userCourseEnrolled.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    print(e);
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> updateUserCourseEnrolledCompletedChapters({required var localizedText, required String courseId, required String enrolledUserId,
+  required List<dynamic>? chaptersCompleted}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("course_id", isEqualTo: courseId)
+        .where("enrolled_user_id", isEqualTo: enrolledUserId).get();
+    var docSnapshot = querySnapshot.docs.first;
+
+    BloqoUserCourseEnrolled course = docSnapshot.data();
+
+    chaptersCompleted = _checkDuplicates(chaptersCompleted);
+    course.chaptersCompleted = chaptersCompleted;
+
+    await ref.doc(docSnapshot.id).update(course.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> updateUserCourseEnrolledStatusCompleted({required var localizedText, required String courseId, required String enrolledUserId,
+}) async {
+  try {
+    var ref = BloqoUserCourseEnrolled.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref
+        .where("course_id", isEqualTo: courseId)
+        .where("enrolled_user_id", isEqualTo: enrolledUserId)
+        .get();
+
+    var docSnapshot = querySnapshot.docs.first;
+
+    BloqoUserCourseEnrolled courseEnrolled = docSnapshot.data();
+
+    courseEnrolled.isCompleted = true;
+    courseEnrolled.sectionToComplete = null;
+    courseEnrolled.sectionName = null;
+    courseEnrolled.lastUpdated = Timestamp.now();
+
+    await ref.doc(docSnapshot.id).update(courseEnrolled.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  } catch (e) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+//TODO: rimuovere
+List<dynamic>? _checkDuplicates(List<dynamic>? list) {
+  if (list == null) {
+    return null;
+  }
+  List<dynamic> uniqueList = list.toSet().toList();
+  return uniqueList;
 }

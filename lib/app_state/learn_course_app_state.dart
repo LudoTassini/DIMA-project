@@ -53,6 +53,22 @@ class LearnCourseAppState with ChangeNotifier{
     return _totNumSections;
   }
 
+  void _setSectionsCompleted(List<dynamic> sectionsCompleted){
+    sectionsCompleted = _checkDuplicates(sectionsCompleted)!;
+    _sectionsCompleted = sectionsCompleted;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
+  void _setChaptersCompleted(List<dynamic> chaptersCompleted){
+    chaptersCompleted = _checkDuplicates(chaptersCompleted)!;
+    _chaptersCompleted = chaptersCompleted;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
   void _set(BloqoCourse? course, List<BloqoChapter>? chapters, Map<String, List<BloqoSection>>? sections, Timestamp? enrollmentDate,
       List<dynamic>? sectionsCompleted, List<dynamic>? chaptersCompleted, int? totNumSections){
     _course = course;
@@ -73,6 +89,15 @@ class LearnCourseAppState with ChangeNotifier{
 
   void _updateComingFromHomePrivilege(bool newValue){
     _fromHome = newValue;
+  }
+
+  //FIXME: sparire
+  List<dynamic>? _checkDuplicates(List<dynamic>? list) {
+    if (list == null) {
+      return null;
+    }
+    List<dynamic> uniqueList = list.toSet().toList();
+    return uniqueList;
   }
 
 }
@@ -122,6 +147,14 @@ void saveLearnCourseToAppState({required BuildContext context, required BloqoCou
   if(comingFromHome) {
     Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
+}
+
+void updateLearnCourseSectionsCompletedFromAppState({required BuildContext context, required List<dynamic> sectionsCompleted}){
+  Provider.of<LearnCourseAppState>(context, listen: false)._setSectionsCompleted(sectionsCompleted);
+}
+
+void updateLearnCourseChaptersCompletedFromAppState({required BuildContext context, required List<dynamic> chaptersCompleted}){
+  Provider.of<LearnCourseAppState>(context, listen: false)._setChaptersCompleted(chaptersCompleted);
 }
 
 bool getComingFromHomeLearnPrivilegeFromAppState({required BuildContext context}){

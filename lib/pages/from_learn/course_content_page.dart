@@ -32,11 +32,14 @@ class CourseContentPage extends StatefulWidget {
   const CourseContentPage({
     super.key,
     required this.onPush,
-    required this.sectionToComplete,
+    required this.isCourseCompleted,
+    this.sectionToComplete,
   });
 
   final void Function(Widget) onPush;
-  final BloqoSection sectionToComplete;
+  final BloqoSection? sectionToComplete;
+  final bool isCourseCompleted;
+
 
   @override
   State<CourseContentPage> createState() => _CourseContentPageState();
@@ -47,8 +50,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   final Map<String, bool> _showSectionsMap = {};
   bool isInitializedSectionMap = false;
 
-  String chapterNameToDisplay = '';
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -58,7 +59,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     void initializeSectionsToShowMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
         if (!chaptersCompleted.contains(chapter.id)) {
-          chapterNameToDisplay = chapter.name;
           _showSectionsMap[chapter.id] = true;
           break;
         }
@@ -300,8 +300,12 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                   sections[chapter.id]!.length,
                                                       (sectionIndex) {
                                                     var section = sections[chapter.id]![sectionIndex];
-                                                    if(widget.sectionToComplete.id == section.id) {
+                                                    if(widget.isCourseCompleted) {
                                                       isClickable = true;
+                                                    } else {
+                                                      if (widget.sectionToComplete!.id == section.id) {
+                                                        isClickable = true;
+                                                      }
                                                     }
 
                                                     return BloqoCourseSection(
@@ -314,7 +318,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           context: context,
                                                           localizedText: localizedText,
                                                           section: section,
-                                                          chapterNameToDisplay: chapterNameToDisplay,
                                                           courseName: course.name,
                                                         );
                                                       },
@@ -488,6 +491,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                   ),
                 ),
 
+                !widget.isCourseCompleted ?
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -515,50 +519,29 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                       ],
                     ),
 
-                    sectionsCompleted.isEmpty ?
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20, 0, 20, 20),
-                        child: BloqoFilledButton(
-                          onPressed: () async {
-                                _goToSectionPage(
-                                  context: context,
-                                  localizedText: localizedText,
-                                  section: widget.sectionToComplete,
-                                  courseName: course.name,
-                                  chapterNameToDisplay: chapterNameToDisplay,
-                                );
-                            },
-                          height: 60,
-                          color: BloqoColors.success,
-                          text: localizedText.start_learning,
-                          fontSize: 24,
-                          icon: Icons.lightbulb,
-                        ),
-                      )
-                      : Padding(
+                    Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           20, 0, 20, 20),
                       child: BloqoFilledButton(
                         onPressed: () async {
-                          _goToSectionPage(
-                            context: context,
-                            localizedText: localizedText,
-                            section: widget.sectionToComplete,
-                            chapterNameToDisplay: chapterNameToDisplay,
-                            courseName: course.name,
-                            );
+                              _goToSectionPage(
+                                context: context,
+                                localizedText: localizedText,
+                                section: widget.sectionToComplete!,
+                                courseName: course.name,
+                              );
                           },
                         height: 60,
                         color: BloqoColors.success,
-                        text: localizedText.continue_learning,
+                        text: sectionsCompleted.isEmpty ? localizedText.start_learning
+                            : localizedText.continue_learning,
                         fontSize: 24,
                         icon: Icons.lightbulb,
                       ),
-                    )
-
+                    ),
                   ],
-                ),
+                )
+                : Container(),
               ],
             );
           },
@@ -600,7 +583,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   }
 
   Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSection section,
-    required String courseName, required String chapterNameToDisplay}) async {
+    required String courseName}) async {
     context.loaderOverlay.show();
     try {
 
@@ -608,13 +591,17 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
       if(!context.mounted) return;
 
       context.loaderOverlay.hide();
+
+      BloqoChapter chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
+              (chapter) => chapter.sections.contains(section.id)).first;
+
       widget.onPush(
             SectionPage(
             onPush: widget.onPush,
             section: section,
             blocks: blocks,
             courseName: courseName,
-            chapterName: chapterNameToDisplay,
+            chapter: chapter,
         )
       );
 
