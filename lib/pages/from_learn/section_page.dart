@@ -165,10 +165,18 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       ),
                     );
                   }
+                  return const SizedBox();
 
-                    return const SizedBox();
                   }
                 ),
+
+                BloqoFilledButton(
+                  onPressed: () {
+
+                  },
+                  color: BloqoColors.success,
+                  text: localizedText.learned,
+                )
 
                 ],
               ),

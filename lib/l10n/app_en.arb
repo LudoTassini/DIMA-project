@@ -305,5 +305,6 @@
   "correct": "Correct!",
   "correct_answer": "The correct answer is: ",
   "wrong": "Wrong...",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "learned": "Learned!"
 }

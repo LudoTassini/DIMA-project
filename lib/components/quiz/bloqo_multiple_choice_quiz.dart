@@ -4,6 +4,7 @@ import '../../model/courses/bloqo_block.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 import '../buttons/bloqo_filled_button.dart';
+import '../custom/bloqo_snack_bar.dart';
 
 class BloqoMultipleChoiceQuiz extends StatefulWidget {
   const BloqoMultipleChoiceQuiz({
@@ -48,42 +49,40 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
     bool isSingleCorrectAnswer = correctAnswers.length == 1;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    localizedText.question,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: BloqoColors.primaryText,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 22,
-                    ),
-                  ),
-                ],
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                localizedText.quiz,
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: BloqoColors.russianViolet,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
               ),
-            ),
-            const Spacer(),
-            if (isAnswerGiven)
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                  child: Text(
-                    isAnswerCorrect ? localizedText.correct : localizedText.wrong,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: isAnswerCorrect ? BloqoColors.success : BloqoColors.error,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+              if (isAnswerGiven)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                      child: Text(
+                        isAnswerCorrect ? localizedText.correct : localizedText.wrong,
+                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: isAnswerCorrect ? BloqoColors.success : BloqoColors.error,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10),
@@ -122,7 +121,10 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                   onPressed: () {
                     setState(() {
                       isAnswerGiven = true;
-                      _checkAnswer(correctAnswers: correctAnswers);
+                      _checkAnswer(
+                        correctAnswers: correctAnswers,
+                        localizedText: localizedText,
+                      );
                     });
                   },
                   color: BloqoColors.russianViolet,
@@ -154,6 +156,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
         ),
       ],
     );
+
   }
 
   String _extractQuestion(String text) {
@@ -217,7 +220,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
     );
   }
 
-  void _checkAnswer({required List<String> correctAnswers}) {
+  void _checkAnswer({required List<String> correctAnswers, required var localizedText}) {
     if (correctAnswers.length == 1) {
       isAnswerCorrect = selectedRadioAnswer == correctAnswers.first;
     } else {
@@ -225,6 +228,17 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           selectedCheckboxAnswers.length == correctAnswers.length;
       isAnswerCorrect = allCorrect;
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+      BloqoSnackBar.get(
+          context: context,
+          child: Text(
+            isAnswerCorrect ? localizedText.correct
+            : localizedText.wrong
+          ),
+          backgroundColor: isAnswerCorrect ? BloqoColors.success
+          : BloqoColors.error,
+      ),
+    );
   }
 
 }
