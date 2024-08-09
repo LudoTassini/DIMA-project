@@ -57,11 +57,11 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BloqoBreadcrumbs(
+              disable: true,
               breadcrumbs: [
                 widget.courseName,
                 widget.chapter.name,
                 widget.section.name
-                // FIXME: non devono essere cliccabili
             ]),
             Expanded(
               child: SingleChildScrollView(
@@ -178,21 +178,25 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                   }
                 ),
 
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                  child: BloqoFilledButton(
-                    onPressed: () {
-                      _updateEnrolledCourseStatus(
-                        context: context,
-                        localizedText: localizedText,
-                        section: widget.section,
-                      );
-                      Navigator.of(context).pop();
-                    },
-                    color: BloqoColors.success,
-                    text: localizedText.learned,
-                    fontSize: 24,
-                    height: 65,
+                Align(
+                  alignment: Alignment.center,
+                  child:Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                    child: BloqoFilledButton(
+                      onPressed: () async {
+                        await _updateEnrolledCourseStatus(
+                          context: context,
+                          localizedText: localizedText,
+                          section: widget.section,
+                        );
+                        if(!context.mounted) return;
+                        Navigator.of(context).pop();
+                      },
+                      color: BloqoColors.success,
+                      text: localizedText.learned,
+                      fontSize: 24,
+                      height: 65,
+                    ),
                   ),
                 ),
 
@@ -272,22 +276,27 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           courseId: course.id,
           enrolledUserId: user.id,
         );
+
         if (!context.mounted) return;
       }
       // Otherwise set the new sectionToComplete
-      /*
       else {
         String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
-        var sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        BloqoSection sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+
+        if (!context.mounted) return;
+
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledNewSectionToComplete(
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,
           sectionToComplete: sectionToComplete,
         );
-        if (!context.mounted) return;
-      } */
 
+        if (!context.mounted) return;
+      }
+      print("Print hide");
       context.loaderOverlay.hide();
 
     } on BloqoException catch (e) {

@@ -91,462 +91,468 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
         child: Consumer<UserCoursesEnrolledAppState>(
             builder: (context, userCoursesEnrolledAppState, _) {
 
-              BloqoCourse course = getLearnCourseFromAppState(context: context)!;
-              List<BloqoChapter> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
-              Map<String, List<BloqoSection>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
-              Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
-              List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
-              List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
-              int totNumSections = getLearnCourseTotNumSectionsFromAppState(context: context)!;
+              return Consumer<LearnCourseAppState>(
+                builder: (context, learnCourseAppState, _) {
 
-              return Column(
-                children: [
-                  BloqoBreadcrumbs(breadcrumbs: [
-                    course.name,
-                  ]),
-                  Expanded(
-                  child:SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              20, 4, 0, 0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              localizedText.description,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .displayLarge
-                                  ?.copyWith(
-                                color: BloqoColors.seasalt,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: course.description != ''
-                                ? Text(
-                              course.description!,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: BloqoColors.seasalt,
-                                fontSize: 16,
-                              ),
-                            )
-                                : const SizedBox.shrink(), // This will take up no space
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              localizedText.content,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .displayLarge
-                                  ?.copyWith(
-                                color: BloqoColors.seasalt,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Column(
+                  BloqoCourse course = getLearnCourseFromAppState(context: context)!;
+                  List<BloqoChapter> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
+                  Map<String, List<BloqoSection>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
+                  Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
+                  List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
+                  List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
+                  int totNumSections = getLearnCourseTotNumSectionsFromAppState(context: context)!;
+
+                  return Column(
+                    children: [
+                      BloqoBreadcrumbs(breadcrumbs: [
+                        course.name,
+                      ]),
+                      Expanded(
+                      child:SingleChildScrollView(
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  20, 4, 0, 0),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  localizedText.description,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .displayLarge
+                                      ?.copyWith(
+                                    color: BloqoColors.seasalt,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: course.description != ''
+                                    ? Text(
+                                  course.description!,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: BloqoColors.seasalt,
+                                    fontSize: 16,
+                                  ),
+                                )
+                                    : const SizedBox.shrink(), // This will take up no space
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  localizedText.content,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .displayLarge
+                                      ?.copyWith(
+                                    color: BloqoColors.seasalt,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                ...List.generate(
-                                  chapters.length,
-                                    (chapterIndex) {
-                                      var chapter = chapters[chapterIndex];
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ...List.generate(
+                                      chapters.length,
+                                        (chapterIndex) {
+                                          var chapter = chapters[chapterIndex];
 
-                                      isClickable = false;
-                                      if (chaptersCompleted.contains(chapter)){
-                                        isClickable = true;
-                                      }
+                                          isClickable = false;
+                                          if (chaptersCompleted.contains(chapter)){
+                                            isClickable = true;
+                                          }
 
-                                    return BloqoSeasaltContainer(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  '${localizedText.chapter} ${chapterIndex+1}',
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displayMedium
-                                                      ?.copyWith(
-                                                    color: BloqoColors.secondaryText,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
+                                        return BloqoSeasaltContainer(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${localizedText.chapter} ${chapterIndex+1}',
+                                                      style: Theme
+                                                          .of(context)
+                                                          .textTheme
+                                                          .displayMedium
+                                                          ?.copyWith(
+                                                        color: BloqoColors.secondaryText,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
 
-                                                chaptersCompleted.contains(chapter.id) ?
-                                                  Row(
-                                                    children: [
-                                                      Align(
-                                                        alignment: Alignment.topRight,
-                                                        child: Text(
-                                                          localizedText.completed,
-                                                          textAlign: TextAlign.start,
-                                                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                            fontSize: 14,
-                                                            color: BloqoColors.success,
-                                                            fontWeight: FontWeight.w600,
+                                                    chaptersCompleted.contains(chapter.id) ?
+                                                      Row(
+                                                        children: [
+                                                          Align(
+                                                            alignment: Alignment.topRight,
+                                                            child: Text(
+                                                              localizedText.completed,
+                                                              textAlign: TextAlign.start,
+                                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                                fontSize: 14,
+                                                                color: BloqoColors.success,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Padding(
+                                                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                                                            child: Icon(
+                                                              Icons.check,
+                                                              color: BloqoColors.success,
+                                                              size: 24,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+
+                                                    : Row(
+                                                      children: [
+                                                        Align(
+                                                          alignment: Alignment.topRight,
+                                                          child: Text(
+                                                            localizedText.not_completed,
+                                                            textAlign: TextAlign.start,
+                                                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                              fontSize: 14,
+                                                              color: BloqoColors.secondaryText,
+                                                              fontWeight: FontWeight.w600,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      const Padding(
-                                                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                                                        child: Icon(
-                                                          Icons.check,
-                                                          color: BloqoColors.success,
-                                                          size: 24,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )
+                                                      ],
+                                                    ),
 
-                                                : Row(
+                                                  ],
+                                                ),
+
+                                              ),
+
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
+                                                child: Row(
                                                   children: [
                                                     Align(
-                                                      alignment: Alignment.topRight,
+                                                      alignment: Alignment.topLeft,
                                                       child: Text(
-                                                        localizedText.not_completed,
-                                                        textAlign: TextAlign.start,
-                                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                          fontSize: 14,
-                                                          color: BloqoColors.secondaryText,
-                                                          fontWeight: FontWeight.w600,
+                                                        chapter.name,
+                                                        style: Theme
+                                                            .of(context)
+                                                            .textTheme
+                                                            .displayLarge
+                                                            ?.copyWith(
+                                                          color: BloqoColors.russianViolet,
+                                                          fontSize: 24,
                                                         ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
+                                              ),
 
-                                              ],
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                                                child: chapter.description != ''
+                                                ? Padding(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
+                                                  child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Align(
+                                                        alignment: Alignment.topLeft,
+                                                        child: Text(
+                                                          chapter.description!,
+                                                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                            color: BloqoColors.primaryText,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                              : const SizedBox.shrink(), // This will take up no space
+                                              ),
+
+                                              ... (_showSectionsMap[chapter.id] == true
+                                                  ? [
+                                                    ...List.generate(
+                                                      sections[chapter.id]!.length,
+                                                          (sectionIndex) {
+                                                        var section = sections[chapter.id]![sectionIndex];
+                                                        if(widget.isCourseCompleted) {
+                                                          isClickable = true;
+                                                        } else {
+                                                          if (widget.sectionToComplete!.id == section.id) {
+                                                            isClickable = true;
+                                                          }
+                                                        }
+
+                                                        return BloqoCourseSection(
+                                                          section: section,
+                                                          index: sectionIndex,
+                                                          isClickable: isClickable,
+                                                          isInLearnPage: true,
+                                                          onPressed: () async {
+                                                            _goToSectionPage(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              section: section,
+                                                              courseName: course.name,
+                                                            );
+                                                          },
+                                                        );
+
+
+                                                      },
+                                                    ),
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      Opacity(
+                                                        opacity: 0.9,
+                                                        child: Align(
+                                                          alignment: const AlignmentDirectional(1, 0),
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              hideSections(chapter.id);
+                                                            },
+                                                            child: Row(
+                                                              children: [
+                                                                Text(
+                                                                  localizedText.collapse,
+                                                                  style: const TextStyle(
+                                                                    color: BloqoColors.secondaryText,
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.w600,
+                                                                  ),
+                                                                ),
+                                                                const Icon(
+                                                                  Icons.keyboard_arrow_up_sharp,
+                                                                  color: BloqoColors.secondaryText,
+                                                                  size: 25,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ]
+                                                  : [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      Opacity(
+                                                        opacity: 0.9,
+                                                        child: Align(
+                                                          alignment: const AlignmentDirectional(1, 0),
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              loadCompletedSections(chapter.id);
+                                                            },
+                                                            child: Row(
+                                                              children: [
+                                                                Text(
+                                                                  localizedText.view_more,
+                                                                  style: const TextStyle(
+                                                                    color: BloqoColors.secondaryText,
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.w600,
+                                                                  ),
+                                                                ),
+                                                                const Icon(
+                                                                  Icons.keyboard_arrow_right_sharp,
+                                                                  color: BloqoColors.secondaryText,
+                                                                  size: 25,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ]
                                             ),
-
+                                          ],
                                           ),
+                                        );
+                                      },
+                                    ),
 
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
-                                            child: Row(
-                                              children: [
-                                                Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Text(
-                                                    chapter.name,
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          25, 15, 25, 10),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  localizedText.enrolled_on,
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: BloqoColors.seasalt,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topLeft,
+                                                child:
+                                                  Text(
+                                                    DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
                                                     style: Theme
                                                         .of(context)
                                                         .textTheme
-                                                        .displayLarge
+                                                        .displaySmall
                                                         ?.copyWith(
-                                                      color: BloqoColors.russianViolet,
-                                                      fontSize: 24,
+                                                      color: BloqoColors.seasalt,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                                            child: chapter.description != ''
-                                            ? Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
-                                              child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Flexible(
-                                                  child: Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: Text(
-                                                      chapter.description!,
-                                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                        color: BloqoColors.primaryText,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                          : const SizedBox.shrink(), // This will take up no space
-                                          ),
-
-                                          ... (_showSectionsMap[chapter.id] == true
-                                              ? [
-                                                ...List.generate(
-                                                  sections[chapter.id]!.length,
-                                                      (sectionIndex) {
-                                                    var section = sections[chapter.id]![sectionIndex];
-                                                    if(widget.isCourseCompleted) {
-                                                      isClickable = true;
-                                                    } else {
-                                                      if (widget.sectionToComplete!.id == section.id) {
-                                                        isClickable = true;
-                                                      }
-                                                    }
-
-                                                    return BloqoCourseSection(
-                                                      section: section,
-                                                      index: sectionIndex,
-                                                      isClickable: isClickable,
-                                                      isInLearnPage: true,
-                                                      onPressed: () async {
-                                                        _goToSectionPage(
+                                          const SizedBox(width: 20), // Add some space between the text and the button
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
+                                              child: BloqoFilledButton(
+                                                color: BloqoColors.error,
+                                                onPressed: () {
+                                                  showBloqoConfirmationAlert(
+                                                      context: context,
+                                                      title: localizedText.warning,
+                                                      description: localizedText.unsubscribe_confirmation,
+                                                      confirmationFunction: () async {
+                                                        await _tryDeleteUserCourseEnrolled(
                                                           context: context,
                                                           localizedText: localizedText,
-                                                          section: section,
-                                                          courseName: course.name,
+                                                          courseId: course.id,
+                                                          enrolledUserId: user.id
                                                         );
                                                       },
-                                                    );
-
-
-                                                  },
-                                                ),
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          hideSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.collapse,
-                                                              style: const TextStyle(
-                                                                color: BloqoColors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            const Icon(
-                                                              Icons.keyboard_arrow_up_sharp,
-                                                              color: BloqoColors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                                      backgroundColor: BloqoColors.error
+                                                  );
+                                                },
+                                                text: localizedText.unsubscribe,
+                                                icon: Icons.close_sharp,
                                               ),
                                             ),
-                                          ]
-                                              : [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          loadCompletedSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.view_more,
-                                                              style: const TextStyle(
-                                                                color: BloqoColors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            const Icon(
-                                                              Icons.keyboard_arrow_right_sharp,
-                                                              color: BloqoColors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ]
-                                        ),
-                                      ],
-                                      ),
-                                    );
-                                  },
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      25, 15, 25, 10),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              localizedText.enrolled_on,
-                                              style: Theme
-                                                  .of(context)
-                                                  .textTheme
-                                                  .displaySmall
-                                                  ?.copyWith(
-                                                color: BloqoColors.seasalt,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child:
-                                              Text(
-                                                DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
-                                                style: Theme
-                                                    .of(context)
-                                                    .textTheme
-                                                    .displaySmall
-                                                    ?.copyWith(
-                                                  color: BloqoColors.seasalt,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(width: 20), // Add some space between the text and the button
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
-                                          child: BloqoFilledButton(
-                                            color: BloqoColors.error,
-                                            onPressed: () {
-                                              showBloqoConfirmationAlert(
-                                                  context: context,
-                                                  title: localizedText.warning,
-                                                  description: localizedText.unsubscribe_confirmation,
-                                                  confirmationFunction: () async {
-                                                    await _tryDeleteUserCourseEnrolled(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      courseId: course.id,
-                                                      enrolledUserId: user.id
-                                                    );
-                                                  },
-                                                  backgroundColor: BloqoColors.error
-                                              );
-                                            },
-                                            text: localizedText.unsubscribe,
-                                            icon: Icons.close_sharp,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
 
 
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
 
-                !widget.isCourseCompleted ?
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  direction: Axis.horizontal,
-                  runAlignment: WrapAlignment.start,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    Column(
+                    !widget.isCourseCompleted ?
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      direction: Axis.horizontal,
+                      runAlignment: WrapAlignment.start,
+                      verticalDirection: VerticalDirection.down,
                       children: [
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  double maxWidth = constraints.maxWidth-20;
+                                  return BloqoProgressBar(
+                                    percentage: sectionsCompleted.length / totNumSections,
+                                    width: maxWidth,
+                                    fontSize: 12,// Pass the maximum width to the progress bar
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              double maxWidth = constraints.maxWidth-20;
-                              return BloqoProgressBar(
-                                percentage: sectionsCompleted.length / totNumSections,
-                                width: maxWidth,
-                                fontSize: 12,// Pass the maximum width to the progress bar
-                              );
-                            },
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              20, 0, 20, 20),
+                          child: BloqoFilledButton(
+                            onPressed: () async {
+                                  _goToSectionPage(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    section: widget.sectionToComplete!,
+                                    courseName: course.name,
+                                  );
+                              },
+                            height: 60,
+                            color: BloqoColors.success,
+                            text: sectionsCompleted.isEmpty ? localizedText.start_learning
+                                : localizedText.continue_learning,
+                            fontSize: 24,
+                            icon: Icons.lightbulb,
                           ),
                         ),
                       ],
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 0, 20, 20),
-                      child: BloqoFilledButton(
-                        onPressed: () async {
-                              _goToSectionPage(
-                                context: context,
-                                localizedText: localizedText,
-                                section: widget.sectionToComplete!,
-                                courseName: course.name,
-                              );
-                          },
-                        height: 60,
-                        color: BloqoColors.success,
-                        text: sectionsCompleted.isEmpty ? localizedText.start_learning
-                            : localizedText.continue_learning,
-                        fontSize: 24,
-                        icon: Icons.lightbulb,
-                      ),
-                    ),
+                    )
+                    : Container(),
                   ],
-                )
-                : Container(),
-              ],
+                );
+              }
             );
-          },
-      ),
+          }
+        ),
     );
+
   }
 
   @override

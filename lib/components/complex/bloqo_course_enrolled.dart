@@ -1,19 +1,30 @@
+import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
+import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/bloqo_review.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
+import '../../pages/from_learn/review_page.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
+import '../../utils/localization.dart';
+import '../popups/bloqo_error_alert.dart';
 
-class BloqoCourseEnrolled extends StatelessWidget{
+class BloqoCourseEnrolled extends StatefulWidget {
   final BloqoUserCourseEnrolled? course;
   final EdgeInsetsDirectional padding;
   final bool showCompleted;
   final bool showInProgress;
   final Function() onPressed;
+  final void Function(Widget)? onPush;
 
   const BloqoCourseEnrolled({
     super.key,
     required this.course,
+    this.onPush,
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
     required this.onPressed,
     this.showCompleted = false,
@@ -21,10 +32,19 @@ class BloqoCourseEnrolled extends StatelessWidget{
   });
 
   @override
+  State<BloqoCourseEnrolled> createState() => _BloqoCourseEnrolledState();
+}
+
+class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with AutomaticKeepAliveClientMixin<BloqoCourseEnrolled>{
+
+  @override
   Widget build(BuildContext context) {
-    // FIXME: mettere button come in bloqo_setting e fare custom seasalt container
+    super.build(context);
+
+    final localizedText = getAppLocalizations(context)!;
+
     return Padding(
-        padding: padding,
+        padding: widget.padding,
         child: ElevatedButton(
           style: ButtonStyle(
             padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
@@ -37,7 +57,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
               ),
             )),
           ),
-          onPressed: onPressed,
+          onPressed: widget.onPressed,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -71,7 +91,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                                   child: Align(
                                     alignment:const AlignmentDirectional(-1, 0),
                                     child: Text(
-                                      course!.courseName,
+                                      widget.course!.courseName,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         fontSize: 16, ),
                                     ),
@@ -98,7 +118,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                                 ),
                                 Flexible(
                                   child: Text(
-                                    course!.courseAuthor,
+                                    widget.course!.courseAuthor,
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                       fontSize: 14,
                                     ),
@@ -107,7 +127,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               ],
                             ),
                           ),
-                          if(showInProgress)
+                          if(widget.showInProgress)
                             Padding(
                               padding:
                               const EdgeInsetsDirectional
@@ -126,7 +146,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                                   ),
                                   Flexible(
                                     child: Text(
-                                      course?.sectionName ?? '', // this is because completed courses do not have a section name, but text can't be of type String?
+                                      widget.course?.sectionName ?? '', // this is because completed courses do not have a section name, but text can't be of type String?
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         fontSize: 20,
                                         ),
@@ -156,7 +176,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 ),
               ],
             ),
-            if(showInProgress)
+            if(widget.showInProgress)
               Flexible(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -172,8 +192,8 @@ class BloqoCourseEnrolled extends StatelessWidget{
                               double maxWidth = constraints.maxWidth-20;
 
                               return BloqoProgressBar(
-                                percentage: course!.isCompleted? 1 :
-                                  (course!.sectionsCompleted?.length ?? 0) / course!.totNumSections,
+                                percentage: widget.course!.isCompleted? 1 :
+                                  (widget.course!.sectionsCompleted?.length ?? 0) / widget.course!.totNumSections,
                                 width: maxWidth, // Pass the maximum width to the progress bar
                               );
                             },
@@ -186,7 +206,7 @@ class BloqoCourseEnrolled extends StatelessWidget{
                 ),
               ),
 
-              if(showCompleted)
+              if(widget.showCompleted)
                 Flexible(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -194,21 +214,29 @@ class BloqoCourseEnrolled extends StatelessWidget{
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
                         child:
-                          course!.isRated ? BloqoFilledButton(
+                          widget.course!.isRated ? BloqoFilledButton(
                             color: BloqoColors.rated,
-                            onPressed: () {
-                              //TODO:
+                            onPressed: () async {
+                                await _goToReviewPage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  course: widget.course!,
+                                );
                             },
-                            text: 'Rated',
+                            text: localizedText.rated,
                             fontSize: 16,
                             height: 32,
                           )
                           :  BloqoFilledButton(
                               color: BloqoColors.rate,
-                              onPressed: () {
-                              //TODO:
+                              onPressed: () async {
+                                await _goToReviewPage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  course: widget.course!,
+                                );
                               },
-                              text: 'Rate',
+                              text: localizedText.rate,
                               fontSize: 16,
                               height: 32,
                             ),
@@ -232,6 +260,48 @@ class BloqoCourseEnrolled extends StatelessWidget{
         ),
       ),
     );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Future<void> _goToReviewPage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled course}) async {
+    context.loaderOverlay.show();
+    try {
+
+      BloqoReview? userReview;
+
+      if (course.isRated) {
+        BloqoUser user = getUserFromAppState(context: context)!;
+        BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(
+            localizedText: localizedText, courseId: course.courseId);
+        List reviewsIds = publishedCourse.reviews;
+        List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
+        userReview = reviews.where((review) => review.authorId == user.id).first;
+      } else {
+        userReview = null;
+      }
+
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+
+      widget.onPush!(
+          ReviewPage(
+            courseToReview: course,
+            onPush: widget.onPush!,
+            userReview: userReview,
+          )
+      );
+
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
   }
 
 }

@@ -19,7 +19,7 @@ class BloqoPublishedCourse {
   final String difficulty;
 
   List<dynamic> reviews;
-  final double rating;
+  late double rating;
 
   int numberOfEnrollments;
   int numberOfCompletions;
@@ -161,6 +161,30 @@ Future<void> publishCourse({required var localizedText, required BloqoPublishedC
     await checkConnectivity(localizedText: localizedText);
     var ref = BloqoPublishedCourse.getRef();
     await ref.doc().set(publishedCourse);
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> addReviewToPublishedCourse({required var localizedText, required String reviewId, required String publishedCourseId,
+  required double newRating}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourse.getRef();
+    var querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
+    var docSnapshot = querySnapshot.docs.first;
+
+    BloqoPublishedCourse updatedCourse = docSnapshot.data();
+    updatedCourse.reviews.add(reviewId);
+    updatedCourse.rating = newRating;
+
+    await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
+
   } on FirebaseException catch (e) {
     switch (e.code) {
       case "network-request-failed":

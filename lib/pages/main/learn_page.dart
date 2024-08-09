@@ -246,6 +246,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             return BloqoCourseEnrolled(
                                                 course: course,
                                                 showCompleted: true,
+                                                onPush: widget.onPush,
                                                 onPressed: () async {
                                                   await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
                                                 },
@@ -255,9 +256,13 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             return BloqoCourseEnrolled(
                                                 course: course,
                                                 showCompleted: true,
+                                                onPush: widget.onPush,
                                                 padding: const EdgeInsetsDirectional.all(15),
                                                 onPressed: () async {
-                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                                  await _goToCoursePage(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      userCourseEnrolled: course);
                                                 },
                                             );
                                           }
