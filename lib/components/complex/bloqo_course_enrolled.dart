@@ -270,14 +270,15 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
     try {
 
       BloqoReview? userReview;
+      BloqoUser user = getUserFromAppState(context: context)!;
 
       if (course.isRated) {
-        BloqoUser user = getUserFromAppState(context: context)!;
-        BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(
-            localizedText: localizedText, courseId: course.courseId);
+        BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(
+            localizedText: localizedText, publishedCourseId: course.publishedCourseId);
         List reviewsIds = publishedCourse.reviews;
         List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
-        userReview = reviews.where((review) => review.authorId == user.id).first;
+
+        userReview = reviews.where((review) => review.authorId == user.id).first; //error
       } else {
         userReview = null;
       }

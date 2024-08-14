@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_published_course.dart';
 import '../../style/bloqo_colors.dart';
@@ -154,26 +155,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                       child: Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15),
                         child: isRated
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  color: BloqoColors.seasalt,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: BloqoColors.success,
-                                    width: 3,
-                                      ),
-                                    ),
-                                  child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                                    child: Text(
-                                      localizedText.published,
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                        color: BloqoColors.success,
-                                        fontWeight: FontWeight.w500
-                                        ),
-                                      ),
-                                  ),
-                              )
+                            ? Container()
 
                             : BloqoFilledButton(
                               onPressed: () async {
@@ -197,8 +179,8 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
         ),
       );
 
-    } // togliere?
-    ); // togliere?
+    }
+    );
   }
 
   @override
@@ -239,16 +221,19 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
       loaderOverlay.hide();
 
       List<dynamic> reviewsIds = publishedCourse.reviews;
-      List<BloqoReview> reviews =
-      await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
-      loaderOverlay.hide();
-
+      List<BloqoReview> reviews = [];
       double newRating = 0;
-      if (reviews.isNotEmpty) {
+
+      if(reviewsIds.isNotEmpty) {
+        // potrebbero non esserci reviews
+        reviews = await getReviewsFromIds(
+            localizedText: localizedText, reviewsIds: reviewsIds);
+        loaderOverlay.hide();
         for (var review in reviews) {
           newRating += review.rating;
         }
       }
+
       newRating += rating;
       if (reviews.isNotEmpty) {
         newRating /= (reviews.length + 1);
@@ -282,6 +267,18 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
         return;
       } else {
       updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: userCourseEnrolled); }
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        BloqoSnackBar.get(
+          context: context,
+          child: Text(
+              localizedText.published
+          ),
+          backgroundColor: BloqoColors.success,
+        ),
+      );
+
 
     } on BloqoException catch (e) {
       if (!mounted) return; // Use mounted instead of context.mounted
