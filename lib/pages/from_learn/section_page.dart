@@ -233,6 +233,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
         courseEnrolled.sectionsCompleted!.add(section.id);
         updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
+
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
 
         // Perform async operations and check if context is still mounted afterward

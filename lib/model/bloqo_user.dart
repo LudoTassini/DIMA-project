@@ -10,9 +10,9 @@ class BloqoUser{
   late String username;
   late String fullName;
   late bool isFullNameVisible;
-  late int followers;
-  late int following;
   late String pictureUrl;
+  late List<dynamic> followers;
+  late List<dynamic> following;
 
   BloqoUser({
     required this.id,
@@ -20,9 +20,9 @@ class BloqoUser{
     required this.username,
     required this.fullName,
     required this.isFullNameVisible,
+    required this.pictureUrl,
     required this.followers,
-    required this.following,
-    required this.pictureUrl
+    required this.following
   });
 
   factory BloqoUser.fromFirestore(
@@ -37,9 +37,9 @@ class BloqoUser{
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
-      followers: data["followers"],
-      following: data["following"],
-      pictureUrl: data["picture_url"]
+      followers: data["followers"], //FIXME
+      following: data["following"], //FIXME
+      pictureUrl: data["picture_url"],
     );
   }
 

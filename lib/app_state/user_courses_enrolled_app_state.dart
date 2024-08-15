@@ -27,10 +27,12 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
   }
 
   void _updateCourse(BloqoUserCourseEnrolled userCourse) {
-    _userCourses?.removeWhere((x) => x.courseId == userCourse.courseId &&
+    final index = _userCourses!.indexWhere((x) => x.courseId == userCourse.courseId &&
         x.enrolledUserId == userCourse.enrolledUserId);
 
-    _userCourses?.add(userCourse);
+    if (index != -1) {
+      _userCourses![index] = userCourse;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

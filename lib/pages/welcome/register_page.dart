@@ -229,8 +229,8 @@ class _RegisterPageState extends State<RegisterPage> {
           username: username,
           fullName: fullName,
           isFullNameVisible: isFullNameVisible,
-          followers: 0,
-          following: 0,
+          followers: [],
+          following: [],
           pictureUrl: "none"
       );
 

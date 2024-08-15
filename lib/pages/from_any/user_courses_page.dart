@@ -203,8 +203,9 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                                   ),
                                                 ),
                                               ),
+                                              //FIXME: deve essere cliccabile
                                               Text(
-                                                widget.author.followers.toString(),
+                                                widget.author.followers.length.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
                                                 ),
@@ -227,8 +228,9 @@ class _UserCoursesPageState extends State<UserCoursesPage> with AutomaticKeepAli
                                                   ),
                                                 ),
                                               ),
+                                              //FIXME: deve essere cliccabile
                                               Text(
-                                                widget.author.following.toString(),
+                                                widget.author.following.length.toString(),
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                   fontSize: 18,
                                                 ),
