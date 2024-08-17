@@ -7,6 +7,7 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/welcome/register_page.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -57,6 +58,8 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    bool isTablet = checkDevice(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -78,68 +81,74 @@ class _WelcomePageState extends State<WelcomePage> {
                   fit: BoxFit.contain,
                 ),
               ),
-              BloqoSeasaltContainer(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 15),
-                  child: Column(
-                    children: [
-                      Text(
-                        localizedText.welcome,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: BloqoColors.russianViolet,
-                        )
-                      ),
-                      Form(
-                        key: formKeyEmail,
-                        child:
-                        BloqoTextField(
-                          formKey: formKeyEmail,
-                          controller: emailController,
-                          labelText: localizedText.email,
-                          hintText: localizedText.email_hint,
-                          maxInputLength: Constants.maxEmailLength,
-                          validator: (String? value) { return emailValidator(email: value, localizedText: localizedText);},
-                          keyboardType: TextInputType.emailAddress,
+
+              Padding(
+                padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                : Constants.tabletPadding,
+                child: BloqoSeasaltContainer(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 15),
+                    child: Column(
+                      children: [
+                        Text(
+                          localizedText.welcome,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            color: BloqoColors.russianViolet,
+                          )
                         ),
-                      ),
-                      Form(
-                          key: formKeyPassword,
+                        Form(
+                          key: formKeyEmail,
                           child:
                           BloqoTextField(
-                            formKey: formKeyPassword,
-                            controller: passwordController,
-                            labelText: localizedText.password,
-                            hintText: localizedText.password_hint,
-                            maxInputLength: Constants.maxPasswordLength,
-                            obscureText: true,
+                            formKey: formKeyEmail,
+                            controller: emailController,
+                            labelText: localizedText.email,
+                            hintText: localizedText.email_hint,
+                            maxInputLength: Constants.maxEmailLength,
+                            validator: (String? value) { return emailValidator(email: value, localizedText: localizedText);},
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
-                        child: BloqoFilledButton(
-                          onPressed: () async {
-                            await _tryLogin(
-                                  context: context,
-                                  localizedText: localizedText,
-                                  email: emailController.text,
-                                  password: passwordController.text);
-                          },
-                          color: BloqoColors.russianViolet,
-                          text: localizedText.login,
                         ),
-                      ),
-                      BloqoTextButton(
-                        text: localizedText.forgot_password,
-                        color: BloqoColors.russianViolet,
-                        onPressed: () {
-                          //TODO
-                        },
-                      )
-                    ]
+                        Form(
+                            key: formKeyPassword,
+                            child:
+                            BloqoTextField(
+                              formKey: formKeyPassword,
+                              controller: passwordController,
+                              labelText: localizedText.password,
+                              hintText: localizedText.password_hint,
+                              maxInputLength: Constants.maxPasswordLength,
+                              obscureText: true,
+                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 10),
+                          child: BloqoFilledButton(
+                            onPressed: () async {
+                              await _tryLogin(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    email: emailController.text,
+                                    password: passwordController.text);
+                            },
+                            color: BloqoColors.russianViolet,
+                            text: localizedText.login,
+                          ),
+                        ),
+                        BloqoTextButton(
+                          text: localizedText.forgot_password,
+                          color: BloqoColors.russianViolet,
+                          onPressed: () {
+                            //TODO
+                          },
+                        )
+                      ]
+                    ),
                   ),
                 ),
               ),
+
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [

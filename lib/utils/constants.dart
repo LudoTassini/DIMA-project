@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Constants{
 
   static const int maxEmailLength = 320;
@@ -37,5 +39,7 @@ class Constants{
 
   static const int maxReviewLength = 300;
   static const int maxReviewTitleLength = 20;
+
+  static const EdgeInsetsDirectional tabletPadding = EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0);
 
 }
