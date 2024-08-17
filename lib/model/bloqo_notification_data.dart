@@ -15,7 +15,7 @@ class BloqoNotificationData{
   String? applicantId;
 
   String? privateCourseName;
-  String? privateCourseAuthorUsername;
+  String? privateCourseAuthorId;
 
   BloqoNotificationData({
     required this.id,
@@ -25,7 +25,7 @@ class BloqoNotificationData{
     this.privatePublishedCourseId,
     this.applicantId,
     this.privateCourseName,
-    this.privateCourseAuthorUsername
+    this.privateCourseAuthorId
   });
 
   factory BloqoNotificationData.fromFirestore(
@@ -42,7 +42,7 @@ class BloqoNotificationData{
       privatePublishedCourseId: data["private_published_course_id"],
       applicantId: data["applicant_id"],
       privateCourseName: data["private_course_name"],
-      privateCourseAuthorUsername: data["private_course_author_username"]
+      privateCourseAuthorId: data["private_course_author_id"]
     );
   }
 
@@ -55,7 +55,7 @@ class BloqoNotificationData{
       "private_published_course_id": privatePublishedCourseId,
       "applicant_id": applicantId,
       "private_course_name": privateCourseName,
-      "private_course_author_username": privateCourseAuthorUsername
+      "private_course_author_username": privateCourseAuthorId
     };
   }
 

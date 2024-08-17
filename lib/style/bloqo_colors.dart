@@ -15,6 +15,7 @@ class BloqoColors {
   static const Color error = Color(0xFFFA2B36);
   static const Color warning = Color(0xFFD5A203);
   static const Color success = Color(0xFF249689);
+  static const Color okay = Color(0xFF29AEDD);
 
   static const Color rate = Color(0xFFC5A600);
   static const Color rated = Color(0xFF7E8A92);

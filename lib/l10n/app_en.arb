@@ -312,6 +312,7 @@
   "notifications": "Notifications",
   "no_notifications": "There are no notifications to show.",
   "has_requested_access": "has requested access to the following course:",
+  "has_granted_access": "has granted access to the following course:",
   "accept": "Accept",
   "deny": "Deny",
   "accept_enrollment_confirmation": "Are you sure you want to allow the access to your course?",
@@ -325,5 +326,6 @@
   "review_headliner_to_rate": "What do you think of this course?",
   "review_headliner_rated": "Here is your review!",
   "review_title": "Review title",
-  "title": "Title"
+  "title": "Title",
+  "okay": "Okay!"
 }

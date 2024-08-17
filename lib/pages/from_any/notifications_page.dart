@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../components/navigation/bloqo_app_bar.dart';
+import '../../components/notifications/bloqo_course_enrollment_accepted.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user.dart';
 import '../../style/bloqo_colors.dart';
@@ -65,7 +66,17 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                           notification: notification,
                           onNotificationHandled: () {
                             setState(() {
-                              notifications.removeAt(index); // Rimuove la notifica dalla lista
+                              notifications.removeAt(index);
+                            });
+                          },
+                        );
+                      }
+                      if(notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
+                        return BloqoCourseEnrollmentAccepted(
+                          notification: notification,
+                          onNotificationHandled: () {
+                            setState(() {
+                              notifications.removeAt(index);
                             });
                           },
                         );

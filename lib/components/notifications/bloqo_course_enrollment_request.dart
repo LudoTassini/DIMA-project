@@ -234,7 +234,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
         type: BloqoNotificationType.courseEnrollmentAccepted.toString(),
         timestamp: Timestamp.now(),
         privateCourseName: originalCourse.name,
-        privateCourseAuthorUsername: courseAuthor.username
+        privateCourseAuthorId: courseAuthor.id
       );
       await pushNotification(localizedText: localizedText, notification: notification);
       if (!context.mounted) return;
