@@ -311,6 +311,7 @@ Future<void> updateUserCourseEnrolledStatusCompleted({required var localizedText
 Future<void> updateUserCourseEnrolledNewSectionToComplete({required var localizedText, required String courseId,
   required String enrolledUserId, required BloqoSection sectionToComplete}) async {
   try {
+
     var ref = BloqoUserCourseEnrolled.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref
@@ -319,7 +320,6 @@ Future<void> updateUserCourseEnrolledNewSectionToComplete({required var localize
         .get();
 
     var docSnapshot = querySnapshot.docs.first;
-
     BloqoUserCourseEnrolled courseEnrolled = docSnapshot.data();
 
     courseEnrolled.sectionToComplete = sectionToComplete.id;
@@ -327,6 +327,7 @@ Future<void> updateUserCourseEnrolledNewSectionToComplete({required var localize
     courseEnrolled.lastUpdated = Timestamp.now();
 
     await ref.doc(docSnapshot.id).update(courseEnrolled.toFirestore());
+
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":
@@ -336,6 +337,31 @@ Future<void> updateUserCourseEnrolledNewSectionToComplete({required var localize
     }
   } catch (e) {
     throw BloqoException(message: localizedText.generic_error);
+  }
+}
+
+Future<void> updateUserCourseEnrolledRated({required var localizedText, required String userId, required String publishedCourseId}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseEnrolled.getRef();
+    var querySnapshot = await ref
+        .where("published_course_id", isEqualTo: publishedCourseId)
+        .where("enrolled_user_id", isEqualTo: userId)
+        .get();
+
+    var docSnapshot = querySnapshot.docs.first;
+    BloqoUserCourseEnrolled courseEnrolled = docSnapshot.data();
+
+    courseEnrolled.isRated = true;
+    await ref.doc(docSnapshot.id).update(courseEnrolled.toFirestore());
+
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
   }
 }
 

@@ -317,5 +317,13 @@
   "accept_enrollment_confirmation": "Are you sure you want to allow the access to your course?",
   "deny_enrollment_confirmation": "Are you sure you want to deny the access to your course?",
   "request_access": "Request Access",
-  "already_requested_access_error": "You have already requested access to this course, and the course author has to review it. Please wait and try again."
+  "already_requested_access_error": "You have already requested access to this course, and the course author has to review it. Please wait and try again.",
+  "rate": "Rate",
+  "rated": "Rated",
+  "your_review": "Your review",
+  "review": "Review",
+  "review_headliner_to_rate": "What do you think of this course?",
+  "review_headliner_rated": "Here is your review!",
+  "review_title": "Review title",
+  "title": "Title"
 }

@@ -35,4 +35,7 @@ class Constants{
 
   static const int notificationCheckSeconds = 10;
 
+  static const int maxReviewLength = 300;
+  static const int maxReviewTitleLength = 20;
+
 }

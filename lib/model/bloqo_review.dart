@@ -79,3 +79,18 @@ Future<List<BloqoReview>> getReviewsFromIds({required var localizedText, require
     }
   }
 }
+
+Future<void> publishReview({required var localizedText, required BloqoReview review}) async {
+  try {
+    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoReview.getRef();
+    await ref.doc().set(review);
+  } on FirebaseException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
