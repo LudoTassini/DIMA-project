@@ -9,6 +9,7 @@ import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -43,11 +44,12 @@ class EditorPage extends StatefulWidget {
   State<EditorPage> createState() => _EditorPageState();
 }
 
-class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<EditorPage> {
+class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<EditorPage> {
 
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
+  late Ticker _ticker;
 
   @override
   void initState() {
@@ -60,15 +62,16 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      if(context.mounted) {
-        _checkHomePrivilege(context);
-      }
+    _ticker = createTicker((Duration elapsed) {
+      _checkHomePrivilege(context);
     });
+
+    _ticker.start();
   }
 
   @override
   void dispose() {
+    _ticker.dispose();
     tabController.dispose();
     super.dispose();
   }

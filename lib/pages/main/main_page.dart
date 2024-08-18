@@ -49,12 +49,47 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _startNotificationTimers();
+  }
+
+  @override
   void dispose() {
     _notificationTimer?.cancel();
     _firstNotificationTimer?.cancel();
     _pageController.dispose();
     _canPopNotifier.dispose();
     super.dispose();
+  }
+
+  void _startNotificationTimers() {
+    var localizedText = getAppLocalizations(context)!;
+    BloqoUser myself = getUserFromAppState(context: context)!;
+
+    _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+
+    _notificationTimer = Timer.periodic(
+        const Duration(seconds: Constants.notificationCheckSeconds), (timer) async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+  }
+
+  Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
+    if (!mounted) return;
+    try {
+      List<BloqoNotificationData> notifications = await getNotificationsFromUserId(
+          localizedText: localizedText, userId: userId);
+      int newNotificationCount = notifications.length;
+      if (mounted) {
+        setState(() {
+          notificationCount = newNotificationCount;
+        });
+      }
+    } catch (_) {
+    }
   }
 
   void _onItemTapped(int index) {
@@ -198,19 +233,6 @@ class _MainPageState extends State<MainPage> {
         NavigatorObserverWithNotifier(_canPopNotifier),
       ],
     );
-  }
-
-  Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
-    try {
-      List<
-          BloqoNotificationData> notifications = await getNotificationsFromUserId(
-          localizedText: localizedText, userId: userId);
-      int newNotificationCount = notifications.length;
-      setState(() {
-        notificationCount = newNotificationCount;
-      });
-    }
-    on Exception catch (_) {}
   }
 
 }
