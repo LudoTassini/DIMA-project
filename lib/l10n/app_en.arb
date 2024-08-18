@@ -64,8 +64,7 @@
   "homepage_editing_quote": "\"Tell me and I forget. Teach me and I remember. Involve me and I learn.\" - Benjamin Franklin",
   "homepage_no_created_courses": "You have not created any courses yet. Go to the Editor and create a new one now!",
   "progress_bar_completion": "% of course completed",
-  "load_more_courses": "Load more",
-
+  "load_more": "Load more",
   "none": "None",
   "error_enter_valid_email": "Please enter a valid email address.",
   "error_password_empty": "The password cannot be empty.",
@@ -239,7 +238,6 @@
   "by": "by ",
   "reviews": "Reviews",
   "no_reviews_yet": "There are no reviews yet.",
-  "load_more_reviews": "Load more reviews",
   "block": "Block",
   "text": "Text",
   "multimedia": "Multimedia",
@@ -311,6 +309,7 @@
   "get_qr_code": "Get QR Code",
   "notifications": "Notifications",
   "no_notifications": "There are no notifications to show.",
+  "no_users": "There are no users to show.",
   "has_requested_access": "has requested access to the following course:",
   "has_granted_access": "has granted access to the following course:",
   "accept": "Accept",
@@ -327,5 +326,9 @@
   "review_headliner_rated": "Here is your review!",
   "review_title": "Review title",
   "title": "Title",
-  "okay": "Okay!"
+  "okay": "Okay!",
+  "follow": "Follow",
+  "unfollow": "Unfollow",
+  "users_who_follow": "Users who follow ",
+  "users_who_are_followed_by": "Users who are followed by "
 }

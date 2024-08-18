@@ -37,8 +37,8 @@ class BloqoUser{
       username: data["username"],
       fullName: data["full_name"],
       isFullNameVisible: data["is_full_name_visible"],
-      followers: data["followers"], //FIXME
-      following: data["following"], //FIXME
+      followers: data["followers"],
+      following: data["following"],
       pictureUrl: data["picture_url"],
     );
   }
@@ -91,6 +91,68 @@ Future<BloqoUser> getUserFromEmail({required var localizedText, required String 
     var querySnapshot = await ref.where("email", isEqualTo: email).get();
     BloqoUser user = querySnapshot.docs.first.data();
     return user;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<List<BloqoUser>> getUsersFromUserIds({required var localizedText, required List<dynamic> userIds}) async {
+  try {
+    List<BloqoUser> users = [];
+    for(String userId in userIds){
+      BloqoUser user = await getUserFromId(localizedText: localizedText, id: userId);
+      users.add(user);
+    }
+    return users;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> followUser({required var localizedText, required String userToFollowId, required String myUserId}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: userToFollowId).get();
+    BloqoUser userToFollow = querySnapshot.docs.first.data();
+    userToFollow.followers.add(myUserId);
+    await ref.doc(querySnapshot.docs.first.id).update(userToFollow.toFirestore());
+    querySnapshot = await ref.where("id", isEqualTo: myUserId).get();
+    BloqoUser myself = querySnapshot.docs.first.data();
+    myself.following.add(userToFollowId);
+    await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case "network-request-failed":
+        throw BloqoException(message: localizedText.network_error);
+      default:
+        throw BloqoException(message: localizedText.generic_error);
+    }
+  }
+}
+
+Future<void> unfollowUser({required var localizedText, required String userToUnfollowId, required String myUserId}) async {
+  try {
+    var ref = BloqoUser.getRef();
+    await checkConnectivity(localizedText: localizedText);
+    var querySnapshot = await ref.where("id", isEqualTo: userToUnfollowId).get();
+    BloqoUser userToUnfollow = querySnapshot.docs.first.data();
+    userToUnfollow.followers.remove(myUserId);
+    await ref.doc(querySnapshot.docs.first.id).update(userToUnfollow.toFirestore());
+    querySnapshot = await ref.where("id", isEqualTo: myUserId).get();
+    BloqoUser myself = querySnapshot.docs.first.data();
+    myself.following.remove(userToUnfollowId);
+    await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case "network-request-failed":

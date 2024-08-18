@@ -182,7 +182,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                     if (inProgressCoursesDisplayed < inProgressCourses.length)
                                       BloqoTextButton(
                                           onPressed: loadMoreInProgressCourses,
-                                          text: localizedText.load_more_courses,
+                                          text: localizedText.load_more,
                                           color: BloqoColors.russianViolet
                                       ),
                                     if (inProgressCourses.isEmpty)
@@ -272,7 +272,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                   if (completedCoursesDisplayed < completedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreCompletedCourses,
-                                        text: localizedText.load_more_courses,
+                                        text: localizedText.load_more,
                                         color: BloqoColors.russianViolet
                                     ),
                                   if (completedCourses.isEmpty && inProgressCourses.isEmpty)

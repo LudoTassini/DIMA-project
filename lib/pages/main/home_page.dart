@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                       if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
                         BloqoTextButton(
                           onPressed: loadMoreEnrolledCourses,
-                          text: localizedText.load_more_courses,
+                          text: localizedText.load_more,
                           color: BloqoColors.russianViolet
                         ),
 
@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           TextButton(
                             onPressed: loadMoreCreatedCourses,
                             child: Text(
-                              localizedText.load_more_courses,
+                              localizedText.load_more,
                               style: const TextStyle(
                               color: BloqoColors.primaryText,
                               decoration: TextDecoration.underline,

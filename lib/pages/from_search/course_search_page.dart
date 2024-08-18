@@ -5,7 +5,7 @@ import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
-import 'package:bloqo/pages/from_any/user_courses_page.dart';
+import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -559,7 +559,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                                             BloqoTextButton(
                                                 onPressed: loadMoreReviews,
-                                                text: localizedText.load_more_reviews,
+                                                text: localizedText.load_more,
                                                 color: BloqoColors.russianViolet
                                             ),
                                         ],
@@ -821,7 +821,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
-        UserCoursesPage(
+        UserProfilePage(
           onPush: widget.onPush,
           onNavigateToPage: widget.onNavigateToPage,
           author: courseAuthor,

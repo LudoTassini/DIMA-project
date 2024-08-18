@@ -107,7 +107,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                           child: BloqoTextButton(
                             onPressed: loadMorePublishedCourses,
-                            text: localizedText.load_more_courses,
+                            text: localizedText.load_more,
                             color: BloqoColors.russianViolet,
                           ),
                         ),

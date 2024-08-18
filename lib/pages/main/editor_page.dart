@@ -180,7 +180,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   if (inProgressCoursesDisplayed < inProgressCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreInProgressCourses,
-                                        text: localizedText.load_more_courses,
+                                        text: localizedText.load_more,
                                         color: BloqoColors.russianViolet
                                     ),
                                   if (inProgressCourses.isEmpty)
@@ -406,7 +406,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   if (publishedCoursesDisplayed < publishedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMorePublishedCourses,
-                                        text: localizedText.load_more_courses,
+                                        text: localizedText.load_more,
                                         color: BloqoColors.russianViolet
                                     ),
                                   if (publishedCourses.isEmpty)

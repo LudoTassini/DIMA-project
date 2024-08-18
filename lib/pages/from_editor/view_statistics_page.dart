@@ -270,7 +270,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
 
                       BloqoTextButton(
                           onPressed: loadMoreReviews,
-                          text: localizedText.load_more_reviews,
+                          text: localizedText.load_more,
                           color: BloqoColors.russianViolet
                       ),
                     ],

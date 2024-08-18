@@ -6,7 +6,7 @@ import 'package:bloqo/model/courses/bloqo_chapter.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/model/courses/bloqo_section.dart';
 import 'package:bloqo/pages/from_search/course_search_page.dart';
-import 'package:bloqo/pages/from_any/user_courses_page.dart';
+import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -164,7 +164,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
-          UserCoursesPage(
+          UserProfilePage(
             onPush: widget.onPush,
             onNavigateToPage: widget.onNavigateToPage,
             author: user,
