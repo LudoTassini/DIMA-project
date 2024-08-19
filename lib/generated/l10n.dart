@@ -3169,6 +3169,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Application Settings`
+  String get application_settings_title {
+    return Intl.message(
+      'Application Settings',
+      name: 'application_settings_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Modify your experience with bloQo to best use the application.`
+  String get application_settings_description {
+    return Intl.message(
+      'Modify your experience with bloQo to best use the application.',
+      name: 'application_settings_description',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

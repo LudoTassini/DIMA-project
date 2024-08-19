@@ -193,11 +193,8 @@ Future<void> _updateSettings({
           }
         }
         break;
-      case BloqoSettingType.notification:
-      // TODO Implement notification settings update logic here
-        break;
-      case BloqoSettingType.external:
-      // TODO Implement external accounts settings update logic here
+      case BloqoSettingType.application:
+      // TODO Implement application settings update logic here
         break;
       default:
         break;

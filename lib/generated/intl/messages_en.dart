@@ -46,6 +46,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "answer": MessageLookupByLibrary.simpleMessage("Answer"),
         "answer_not_empty_error": MessageLookupByLibrary.simpleMessage(
             "You cannot submit a quiz with an empty answer!"),
+        "application_settings_description": MessageLookupByLibrary.simpleMessage(
+            "Modify your experience with bloQo to best use the application."),
+        "application_settings_title":
+            MessageLookupByLibrary.simpleMessage("Application Settings"),
         "architecture": MessageLookupByLibrary.simpleMessage("Architecture"),
         "assigned_to": MessageLookupByLibrary.simpleMessage("assigned to:"),
         "author_username":

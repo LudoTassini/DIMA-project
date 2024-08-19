@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:bloqo/components/complex/bloqo_setting.dart';
+import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
+import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
@@ -48,15 +50,18 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
 
   final formKeyFullName = GlobalKey<FormState>();
   late TextEditingController fullNameController;
+  late TextEditingController languageController;
 
   @override
   void initState() {
     super.initState();
     fullNameController = TextEditingController();
+    languageController = TextEditingController();
   }
 
   @override
   void dispose() {
+    languageController.dispose();
     fullNameController.dispose();
     super.dispose();
   }
@@ -65,6 +70,9 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+
+    List<DropdownMenuEntry<String>> languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
+    languages.removeWhere((x) => x.label == localizedText.other);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -140,23 +148,43 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                     ));
                   },
                 ),
-                /*BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(onPush: widget.onPush)),
-                  settingTitle: localizedText.notification_settings_title,
-                  settingDescription: localizedText.notification_settings_description,
-                  settingIcon: Icons.edit_notifications,
-                ), TODO */
                 BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(
-                    settingTitle: localizedText.external_accounts_title,
-                    settingDescription: localizedText.external_accounts_description,
-                    settingType: BloqoSettingType.external,
-                    controllers: const [/* TODO */],
-                    forms: const [/* TODO */],
-                  )),
-                  settingTitle: localizedText.external_accounts_title,
-                  settingDescription: localizedText.external_accounts_description,
-                  settingIcon: Icons.app_registration,
+                  settingTitle: localizedText.application_settings_title,
+                  settingDescription: localizedText.application_settings_description,
+                  settingIcon: Icons.settings_applications_rounded,
+                  onPressed: () {
+                    widget.onPush(SettingPage(
+                      settingTitle: localizedText.application_settings_title,
+                      settingDescription: localizedText.application_settings_description,
+                      settingType: BloqoSettingType.application,
+                      forms: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                            child: LayoutBuilder(
+                                builder: (BuildContext context, BoxConstraints constraints) {
+                                  double availableWidth = constraints.maxWidth;
+                                  return Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        BloqoDropdown(
+                                          controller: languageController,
+                                          dropdownMenuEntries: languages,
+                                          //initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
+                                          width: availableWidth
+                                        )
+                                      ]
+                                  );
+                                }
+                            )
+                          )
+                        )
+                      ],
+                      controllers: [
+                        languageController
+                      ],
+                    ));
+                  },
                 ),
                 BloqoSetting(
                   onPressed: () {

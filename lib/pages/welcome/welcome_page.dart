@@ -191,7 +191,7 @@ class _WelcomePageState extends State<WelcomePage> {
           localizedText: localizedText, email: email);
 
       // saves on the shared preferences that the user is logged in along with some data
-      addSharedPreferences(
+      addUserSharedPreferences(
         id: user.id,
         email: email,
         password: password

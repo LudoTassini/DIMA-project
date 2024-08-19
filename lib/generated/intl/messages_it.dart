@@ -49,6 +49,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "answer": MessageLookupByLibrary.simpleMessage("Risposta"),
         "answer_not_empty_error": MessageLookupByLibrary.simpleMessage(
             "Non puoi salvare un quiz con una risposta vuota!"),
+        "application_settings_description": MessageLookupByLibrary.simpleMessage(
+            "Modifica la tua esperienza con bloQo per trarre il meglio dall\'uso dell\'applicazione."),
+        "application_settings_title": MessageLookupByLibrary.simpleMessage(
+            "Impostazioni dell\'applicazione"),
         "architecture": MessageLookupByLibrary.simpleMessage("Architettura"),
         "assigned_to": MessageLookupByLibrary.simpleMessage("assegnato a:"),
         "author_username":
@@ -229,7 +233,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name_hint":
             MessageLookupByLibrary.simpleMessage("es. Vanessa Visconti"),
         "full_name_visible": MessageLookupByLibrary.simpleMessage(
-            "Nome completo visibile alla comunità"),
+            "Nome completo visibile alla community"),
         "generic_error": MessageLookupByLibrary.simpleMessage(
             "Non riusciamo a completare l\'azione a causa di un errore sconosciuto. Riprova più tardi."),
         "geography": MessageLookupByLibrary.simpleMessage("Geografia"),

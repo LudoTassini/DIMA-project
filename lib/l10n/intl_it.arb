@@ -18,7 +18,7 @@
   "username_hint": "es. adorobloqo00",
   "full_name": "Nome completo",
   "full_name_hint": "es. Vanessa Visconti",
-  "full_name_visible": "Nome completo visibile alla comunità",
+  "full_name_visible": "Nome completo visibile alla community",
   "register": "Registrati",
   "back_to_login": "Hai già un account? Accedi!",
   "error_title": "Oops, si è verificato un errore!",
@@ -334,5 +334,7 @@
   "course_completion_certificate": "Certificato di Completamento del Corso",
   "assigned_to": "assegnato a:",
   "for_successfully_completing_course": "per aver completato con successo il seguente corso:",
-  "date": "Data"
+  "date": "Data",
+  "application_settings_title": "Impostazioni dell'applicazione",
+  "application_settings_description": "Modifica la tua esperienza con bloQo per trarre il meglio dall'uso dell'applicazione."
 }

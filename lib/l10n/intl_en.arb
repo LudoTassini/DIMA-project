@@ -335,5 +335,7 @@
   "course_completion_certificate": "Course Completion Certificate",
   "assigned_to": "assigned to:",
   "for_successfully_completing_course": "for successfully completing the following course:",
-  "date": "Date"
+  "date": "Date",
+  "application_settings_title": "Application Settings",
+  "application_settings_description": "Modify your experience with bloQo to best use the application."
 }

@@ -153,11 +153,15 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                           ]
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.publishedCourse.numberOfCompletions.toString(),
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
+                              child: Text(
+                                widget.publishedCourse.numberOfCompletions.toString(),
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                   fontWeight: FontWeight.bold
+                                ),
                               ),
                             ),
                             Expanded(

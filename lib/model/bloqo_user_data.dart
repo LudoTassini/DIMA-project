@@ -227,3 +227,10 @@ Future<BloqoUserData> getUserFromId({required var localizedText, required String
     }
   }
 }
+
+Future<BloqoUserData> silentGetUserFromId({required String id}) async {
+  var ref = BloqoUserData.getRef();
+  var querySnapshot = await ref.where("id", isEqualTo: id).get();
+  BloqoUserData user = querySnapshot.docs.first.data();
+  return user;
+}

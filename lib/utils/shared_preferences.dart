@@ -1,11 +1,35 @@
+import 'dart:ui';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String sharedLogged = "USER_IS_LOGGED";
 const String sharedUserEmail = "USER";
 const String sharedUserID = "USER_ID";
 const String sharedPassword = "PASSWORD";
+const String languageCode = "LANGUAGE_CODE";
 
-Future<void> addSharedPreferences({required String id, required String email, required String password}) async {
+Future<Locale?> readLanguageCode() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? locale = prefs.getString(languageCode);
+  return locale != null ? Locale(locale) : null;
+}
+
+Future<void> saveLanguageCode({required String newLanguageCode}) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString(languageCode, newLanguageCode);
+}
+
+Future<String> getUserIdFromSharedPreferences() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if(prefs.getString(sharedUserID) == null){
+    throw Exception();
+  }
+  else {
+    return prefs.getString(sharedUserID)!;
+  }
+}
+
+Future<void> addUserSharedPreferences({required String id, required String email, required String password}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool(sharedLogged, true);
   await prefs.setString(sharedUserEmail, email);
@@ -19,4 +43,5 @@ Future<void> deleteSharedPreferences() async {
   await prefs.remove(sharedUserEmail);
   await prefs.remove(sharedUserID);
   await prefs.remove(sharedPassword);
+  await prefs.remove(languageCode);
 }

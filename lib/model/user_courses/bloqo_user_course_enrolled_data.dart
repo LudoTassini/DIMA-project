@@ -123,7 +123,18 @@ Future<List<BloqoUserCourseEnrolledData>> getUserCoursesEnrolled({required var l
   }
 }
 
-Future<BloqoUserCourseEnrolledData> getUserCourseEnrolledFromId({required var localizedText, required String courseId}) async {
+// FIXME: limitare a tre corsi
+Future<List<BloqoUserCourseEnrolledData>> silentGetUserCoursesEnrolled({required BloqoUserData user}) async {
+  var ref = BloqoUserCourseEnrolledData.getRef();
+  var querySnapshot = await ref.where("enrolled_user_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
+  List<BloqoUserCourseEnrolledData> userCourses = [];
+  for(var doc in querySnapshot.docs) {
+    userCourses.add(doc.data());
+  }
+  return userCourses;
+}
+
+Future<BloqoUserCourseEnrolledData> getUserCourseEnrolledFromCourseId({required var localizedText, required String courseId}) async {
   try {
     var ref = BloqoUserCourseEnrolledData.getRef();
     await checkConnectivity(localizedText: localizedText);
