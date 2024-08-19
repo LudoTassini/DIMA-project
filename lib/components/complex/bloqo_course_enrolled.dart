@@ -207,13 +207,15 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
               ),
 
               if(widget.showCompleted)
-                Flexible(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
-                        child:
+                Align(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: 10,
+                        runSpacing: 5,
+                        children: [
                           widget.course!.isRated ? BloqoFilledButton(
                             color: BloqoColors.rated,
                             onPressed: () async {
@@ -240,21 +242,18 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                               fontSize: 16,
                               height: 32,
                             ),
+                            BloqoFilledButton(
+                              color: BloqoColors.success,
+                              onPressed: () {
+                                //TODO:
+                              },
+                              text: 'Get Certificate',
+                              fontSize: 16,
+                              height: 32,
                           ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: BloqoFilledButton(
-                          color: BloqoColors.success,
-                          onPressed: () {
-                            //TODO:
-                          },
-                          text: 'Get Certificate',
-                          fontSize: 16,
-                          height: 32,
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                  )
                 ),
               ],
         ),

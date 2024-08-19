@@ -193,7 +193,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
           chapters: chapters,
           sections: sections,
           courseAuthor: courseAuthor,
-          reviews:reviews,
+          reviews: reviews,
           rating: publishedCourse.rating,
           enrollmentAlreadyRequested: publishedCourse.isPublic ? false : enrollmentAlreadyRequested,
         )

@@ -2,7 +2,6 @@ import 'package:bloqo/model/bloqo_review.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../../style/bloqo_colors.dart';
-import '../../utils/localization.dart';
 
 class BloqoReviewComponent extends StatelessWidget{
   const BloqoReviewComponent({
@@ -26,13 +25,12 @@ class BloqoReviewComponent extends StatelessWidget{
             width: 3,
           ),
         ),
-        //padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
                 children: [
                   Text(
                     review.authorUsername,
@@ -54,13 +52,9 @@ class BloqoReviewComponent extends StatelessWidget{
                     direction: Axis.horizontal,
                   ),
                 ],
-              )
+              ),
 
-            ),
-
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-              child: Row(
+              Row(
                 children: [
                   Text(
                     review.commentTitle,
@@ -73,28 +67,27 @@ class BloqoReviewComponent extends StatelessWidget{
                   ),
                 ],
               ),
-            ),
 
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 4, 10, 10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  review.comment,
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme
-                      .displayMedium?.copyWith(
-                    fontSize: 14,
-                    color: BloqoColors.secondaryText,
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    review.comment,
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme
+                        .displayMedium?.copyWith(
+                      fontSize: 14,
+                      color: BloqoColors.secondaryText,
+                    ),
                   ),
                 ),
-              ),
 
-            ),
-
-          ],
-        ),
-      ),
+              )
+            ]
+          )
+        )
+      )
     );
   }
 }

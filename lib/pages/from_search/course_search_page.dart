@@ -515,7 +515,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               child: Text(
                                                 localizedText.no_reviews_yet,
                                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: BloqoColors.primaryText,
                                                   fontSize: 15,
                                                   ),
                                                 ),
