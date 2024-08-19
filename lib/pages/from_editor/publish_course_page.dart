@@ -3,7 +3,7 @@ import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
-import 'package:bloqo/model/bloqo_user_course_created.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/courses/tags/bloqo_modality_tag.dart';
 import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
 import 'package:bloqo/utils/localization.dart';
@@ -18,9 +18,9 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_dropdown.dart';
 import '../../components/forms/bloqo_switch.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../model/courses/tags/bloqo_difficulty_tag.dart';
 import '../../model/courses/tags/bloqo_duration_tag.dart';
@@ -89,8 +89,8 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
     final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
 
-    final BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((uc) => uc.courseId == widget.courseId).first;
-    final BloqoUser myself = getUserFromAppState(context: context)!;
+    final BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((uc) => uc.courseId == widget.courseId).first;
+    final BloqoUserData myself = getUserFromAppState(context: context)!;
 
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -393,7 +393,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required BloqoUser myself}) async {
+  Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreatedData userCourseCreated, required BloqoUserData myself}) async {
     try {
 
       if (languageTagController.text == localizedText.none ||
@@ -436,7 +436,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
           .first
           .value;
 
-      BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
+      BloqoPublishedCourseData publishedCourse = BloqoPublishedCourseData(
           publishedCourseId: uuid(),
           originalCourseId: userCourseCreated.courseId,
           courseName: userCourseCreated.courseName,
@@ -462,7 +462,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
 
       if (!context.mounted) return;
 
-      BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(
+      BloqoCourseData? currentEditorCourse = getEditorCourseFromAppState(
           context: context);
       if (currentEditorCourse != null &&
           currentEditorCourse.id == userCourseCreated.courseId) {

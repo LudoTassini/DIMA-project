@@ -2,11 +2,11 @@ import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_courses_created_app_state.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../model/courses/bloqo_chapter.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/courses/bloqo_block_data.dart';
+import '../../model/courses/bloqo_chapter_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -26,10 +26,10 @@ class BloqoEditableBlock extends StatelessWidget {
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
 
-  final BloqoCourse course;
-  final BloqoChapter chapter;
-  final BloqoSection section;
-  final BloqoBlock block;
+  final BloqoCourseData course;
+  final BloqoChapterData chapter;
+  final BloqoSectionData section;
+  final BloqoBlockData block;
   final bool editable;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;
@@ -134,7 +134,7 @@ class BloqoEditableBlock extends StatelessWidget {
       await deleteBlock(localizedText: localizedText, blockId: block.id, courseId: course.id);
       await deleteBlockFromSection(localizedText: localizedText, sectionId: section.id, blockId: block.id);
       if (!context.mounted) return;
-      BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((c) => c.courseId == course.id).first;
+      BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((c) => c.courseId == course.id).first;
       await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: updatedUserCourseCreated);
       if(block.number < section.blocks.length){
         await reorderBlocks(localizedText: localizedText, blockIds: section.blocks);

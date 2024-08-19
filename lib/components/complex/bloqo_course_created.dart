@@ -3,8 +3,8 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_courses_created_app_state.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -25,7 +25,7 @@ class BloqoCourseCreated extends StatelessWidget {
     this.showPublishedOptions = false,
   });
 
-  final BloqoUserCourseCreated course;
+  final BloqoUserCourseCreatedData course;
   final Function() onPressed;
   final Function()? onPublish;
   final Function()? onViewStatistics;
@@ -195,7 +195,7 @@ class BloqoCourseCreated extends StatelessWidget {
   Future<void> _tryDeleteCourse({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      BloqoCourse courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
+      BloqoCourseData courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
       await deleteUserCourseCreated(localizedText: localizedText, courseId: course.courseId);
       await deleteCourse(localizedText: localizedText, course: courseToDelete);
       if (!context.mounted) return;

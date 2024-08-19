@@ -2,9 +2,9 @@ import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
-import 'package:bloqo/model/courses/bloqo_block.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_block_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/pages/from_learn/section_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +18,10 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -37,7 +37,7 @@ class CourseContentPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoSection? sectionToComplete;
+  final BloqoSectionData? sectionToComplete;
   final bool isCourseCompleted;
 
 
@@ -56,7 +56,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     final localizedText = getAppLocalizations(context)!;
 
     // FIXME
-    void initializeSectionsToShowMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
+    void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
         if (!chaptersCompleted.contains(chapter.id)) {
           _showSectionsMap[chapter.id] = true;
@@ -83,7 +83,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
           getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
     }
 
-    BloqoUser user = getUserFromAppState(context: context)!;
+    BloqoUserData user = getUserFromAppState(context: context)!;
     bool isClickable = false;
 
     return BloqoMainContainer(
@@ -94,9 +94,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
               return Consumer<LearnCourseAppState>(
                 builder: (context, learnCourseAppState, _) {
 
-                  BloqoCourse course = getLearnCourseFromAppState(context: context)!;
-                  List<BloqoChapter> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
-                  Map<String, List<BloqoSection>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
+                  BloqoCourseData course = getLearnCourseFromAppState(context: context)!;
+                  List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
+                  Map<String, List<BloqoSectionData>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
                   Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
                   List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
                   List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
@@ -562,10 +562,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try{
-      List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
-      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+      List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
           localizedText: localizedText, courseId: courseId);
-      BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
       await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
@@ -588,17 +588,17 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
   }
 
-  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSection section,
+  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSectionData section,
     required String courseName}) async {
     context.loaderOverlay.show();
     try {
 
-      List<BloqoBlock> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
+      List<BloqoBlockData> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
       if(!context.mounted) return;
 
       context.loaderOverlay.hide();
 
-      BloqoChapter chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
+      BloqoChapterData chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
               (chapter) => chapter.sections.contains(section.id)).first;
 
       widget.onPush(

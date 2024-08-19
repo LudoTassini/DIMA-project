@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../popups/bloqo_error_alert.dart';
@@ -31,12 +31,12 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
     return BloqoSeasaltContainer(
-      child: FutureBuilder<BloqoUser?>(
+      child: FutureBuilder<BloqoUserData?>(
         future: _getRequiredData(
             localizedText: localizedText,
             courseAuthorId: widget.notification.courseAuthorId!
         ),
-        builder: (BuildContext context, AsyncSnapshot<BloqoUser?> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<BloqoUserData?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: LoadingAnimationWidget.prograssiveDots(
@@ -55,7 +55,7 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
                 ),
               );
             } else {
-              BloqoUser courseAuthor = snapshot.data!;
+              BloqoUserData courseAuthor = snapshot.data!;
               return Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -157,12 +157,12 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
     );
   }
 
-  Future<BloqoUser?> _getRequiredData({
+  Future<BloqoUserData?> _getRequiredData({
     required var localizedText,
     required String courseAuthorId,
   }) async {
     try {
-      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseAuthorId);
+      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: courseAuthorId);
       return courseAuthor;
     } on Exception catch (_) {
       return null;

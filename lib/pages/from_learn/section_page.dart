@@ -5,8 +5,8 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/quiz/bloqo_open_question_quiz.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -16,8 +16,8 @@ import '../../components/multimedia/bloqo_youtube_player.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../components/quiz/bloqo_multiple_choice_quiz.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
-import '../../model/courses/bloqo_block.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
+import '../../model/courses/bloqo_block_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../style/bloqo_style_sheet.dart';
 import '../../utils/bloqo_exception.dart';
@@ -35,10 +35,10 @@ class SectionPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoSection section;
-  final List<BloqoBlock> blocks;
+  final BloqoSectionData section;
+  final List<BloqoBlockData> blocks;
   final String courseName;
-  final BloqoChapter chapter;
+  final BloqoChapterData chapter;
 
   @override
   State<SectionPage> createState() => _SectionPageState();
@@ -215,7 +215,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
   bool get wantKeepAlive => true;
 
   Future<void> _updateEnrolledCourseStatus({required BuildContext context, required var localizedText,
-    required BloqoSection section}) async {
+    required BloqoSectionData section}) async {
     // Show loader before starting async operations
     context.loaderOverlay.show();
 
@@ -283,7 +283,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       // Otherwise set the new sectionToComplete
       else {
         String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
-        BloqoSection sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        BloqoSectionData sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
 
         if (!context.mounted) return;
 
@@ -297,7 +297,6 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
         if (!context.mounted) return;
       }
-      print("Print hide");
       context.loaderOverlay.hide();
 
     } on BloqoException catch (e) {
@@ -312,7 +311,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
     }
   }
 
-  String? _getNextSectionId({required List<BloqoChapter> chapters, required BloqoChapter chapter, required BloqoSection section,
+  String? _getNextSectionId({required List<BloqoChapterData> chapters, required BloqoChapterData chapter, required BloqoSectionData section,
   }) {
     // Ensure the section exists within the chapter
     final sectionIndex = chapter.sections.indexOf(section.id);

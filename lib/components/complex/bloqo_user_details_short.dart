@@ -1,10 +1,10 @@
-import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../popups/bloqo_error_alert.dart';
@@ -18,7 +18,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
     required this.onNavigateToPage
   });
 
-  final BloqoUser user;
+  final BloqoUserData user;
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
 
@@ -209,7 +209,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
   Future<void> _tryGoToProfilePage({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      List<BloqoPublishedCourse> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: user.id);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: user.id);
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       onPush(

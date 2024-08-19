@@ -1,14 +1,14 @@
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
-import '../../components/complex/bloqo_review_component.dart';
+import '../../components/complex/bloqo_review.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
-import '../../model/bloqo_review.dart';
+import '../../model/courses/published_courses/bloqo_review_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 
@@ -20,8 +20,8 @@ class ViewStatisticsPage extends StatefulWidget {
     required this.reviews
   });
 
-  final BloqoPublishedCourse publishedCourse;
-  final List<BloqoReview> reviews;
+  final BloqoPublishedCourseData publishedCourse;
+  final List<BloqoReviewData> reviews;
 
   @override
   State<ViewStatisticsPage> createState() => _ViewStatisticsPageState();
@@ -244,8 +244,8 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                       _reviewsDisplayed > widget.publishedCourse.reviews.length ?
                       widget.publishedCourse.reviews.length : _reviewsDisplayed,
                           (index) {
-                        BloqoReview review = widget.reviews[index];
-                        return BloqoReviewComponent(
+                        BloqoReviewData review = widget.reviews[index];
+                        return BloqoReview(
                           review: review,
                         );
                       },
@@ -261,8 +261,8 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                         _reviewsDisplayed > widget.publishedCourse.reviews.length ?
                         widget.publishedCourse.reviews.length : _reviewsDisplayed,
                             (index) {
-                          BloqoReview review = widget.reviews[index];
-                          return BloqoReviewComponent(
+                          BloqoReviewData review = widget.reviews[index];
+                          return BloqoReview(
                             review: review,
                           );
                         },

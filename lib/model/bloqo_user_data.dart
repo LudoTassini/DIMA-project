@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/bloqo_exception.dart';
 
-class BloqoUser{
+class BloqoUserData{
   late String id;
   late String email;
   late String username;
@@ -14,7 +14,7 @@ class BloqoUser{
   late List<dynamic> followers;
   late List<dynamic> following;
 
-  BloqoUser({
+  BloqoUserData({
     required this.id,
     required this.email,
     required this.username,
@@ -25,13 +25,13 @@ class BloqoUser{
     required this.following
   });
 
-  factory BloqoUser.fromFirestore(
+  factory BloqoUserData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
 
-    return BloqoUser(
+    return BloqoUserData(
       id: data!["id"],
       email: data["email"],
       username: data["username"],
@@ -59,18 +59,18 @@ class BloqoUser{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("users").withConverter(
-      fromFirestore: BloqoUser.fromFirestore,
-      toFirestore: (BloqoUser user, _) => user.toFirestore(),
+      fromFirestore: BloqoUserData.fromFirestore,
+      toFirestore: (BloqoUserData user, _) => user.toFirestore(),
     );
   }
 
 }
 
-Future<void> registerNewUser({required var localizedText, required BloqoUser user, required String password}) async {
+Future<void> registerNewUser({required var localizedText, required BloqoUserData user, required String password}) async {
   try {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: user.email, password: password);
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await ref.doc().set(user);
   } on FirebaseAuthException catch (e) {
     switch(e.code){
@@ -84,12 +84,12 @@ Future<void> registerNewUser({required var localizedText, required BloqoUser use
   }
 }
 
-Future<BloqoUser> getUserFromEmail({required var localizedText, required String email}) async {
+Future<BloqoUserData> getUserFromEmail({required var localizedText, required String email}) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("email", isEqualTo: email).get();
-    BloqoUser user = querySnapshot.docs.first.data();
+    BloqoUserData user = querySnapshot.docs.first.data();
     return user;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -101,11 +101,11 @@ Future<BloqoUser> getUserFromEmail({required var localizedText, required String 
   }
 }
 
-Future<List<BloqoUser>> getUsersFromUserIds({required var localizedText, required List<dynamic> userIds}) async {
+Future<List<BloqoUserData>> getUsersFromUserIds({required var localizedText, required List<dynamic> userIds}) async {
   try {
-    List<BloqoUser> users = [];
+    List<BloqoUserData> users = [];
     for(String userId in userIds){
-      BloqoUser user = await getUserFromId(localizedText: localizedText, id: userId);
+      BloqoUserData user = await getUserFromId(localizedText: localizedText, id: userId);
       users.add(user);
     }
     return users;
@@ -121,14 +121,14 @@ Future<List<BloqoUser>> getUsersFromUserIds({required var localizedText, require
 
 Future<void> followUser({required var localizedText, required String userToFollowId, required String myUserId}) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: userToFollowId).get();
-    BloqoUser userToFollow = querySnapshot.docs.first.data();
+    BloqoUserData userToFollow = querySnapshot.docs.first.data();
     userToFollow.followers.add(myUserId);
     await ref.doc(querySnapshot.docs.first.id).update(userToFollow.toFirestore());
     querySnapshot = await ref.where("id", isEqualTo: myUserId).get();
-    BloqoUser myself = querySnapshot.docs.first.data();
+    BloqoUserData myself = querySnapshot.docs.first.data();
     myself.following.add(userToFollowId);
     await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
   } on FirebaseAuthException catch (e) {
@@ -143,14 +143,14 @@ Future<void> followUser({required var localizedText, required String userToFollo
 
 Future<void> unfollowUser({required var localizedText, required String userToUnfollowId, required String myUserId}) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: userToUnfollowId).get();
-    BloqoUser userToUnfollow = querySnapshot.docs.first.data();
+    BloqoUserData userToUnfollow = querySnapshot.docs.first.data();
     userToUnfollow.followers.remove(myUserId);
     await ref.doc(querySnapshot.docs.first.id).update(userToUnfollow.toFirestore());
     querySnapshot = await ref.where("id", isEqualTo: myUserId).get();
-    BloqoUser myself = querySnapshot.docs.first.data();
+    BloqoUserData myself = querySnapshot.docs.first.data();
     myself.following.remove(userToUnfollowId);
     await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
   } on FirebaseAuthException catch (e) {
@@ -169,7 +169,7 @@ Future<void> saveProfilePictureUrl({
   required String pictureUrl,
 }) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: userId).get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -192,7 +192,7 @@ Future<void> saveProfilePictureUrl({
 
 Future<bool> isUsernameAlreadyTaken({required var localizedText, required String username}) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("username", isEqualTo: username).get();
     if (querySnapshot.docs.length != 0) {
@@ -211,12 +211,12 @@ Future<bool> isUsernameAlreadyTaken({required var localizedText, required String
   }
 }
 
-Future<BloqoUser> getUserFromId({required var localizedText, required String id}) async {
+Future<BloqoUserData> getUserFromId({required var localizedText, required String id}) async {
   try {
-    var ref = BloqoUser.getRef();
+    var ref = BloqoUserData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: id).get();
-    BloqoUser user = querySnapshot.docs.first.data();
+    BloqoUserData user = querySnapshot.docs.first.data();
     return user;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {

@@ -2,8 +2,8 @@ import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_editable_quiz_answer.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
-import 'package:bloqo/model/bloqo_user_course_created.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +16,9 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_switch.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
+import '../../model/courses/bloqo_block_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -39,7 +39,7 @@ class EditQuizBlockPage extends StatefulWidget {
   final String courseId;
   final String chapterId;
   final String sectionId;
-  final BloqoBlock block;
+  final BloqoBlockData block;
 
   @override
   State<EditQuizBlockPage> createState() => _EditQuizBlockPageState();
@@ -132,10 +132,10 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       child: Consumer<EditorCourseAppState>(
         builder: (context, editorCourseAppState, _) {
 
-          BloqoCourse course = getEditorCourseFromAppState(context: context)!;
-          BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-          BloqoSection section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
-          BloqoBlock block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
+          BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
+          BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
+          BloqoSectionData section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
+          BloqoBlockData block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
           List<DropdownMenuEntry<String>> quizTypes = buildQuizTypesList(localizedText: localizedText);
 
           if(firstBuild && block.type != null) {
@@ -546,7 +546,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
     return question + answer;
   }
 
-  Future<void> _trySaveMultipleChoiceQuizChanges({required BuildContext context, required var localizedText, required String courseId, required String sectionId, required BloqoBlock block}) async {
+  Future<void> _trySaveMultipleChoiceQuizChanges({required BuildContext context, required var localizedText, required String courseId, required String sectionId, required BloqoBlockData block}) async {
     context.loaderOverlay.show();
     try{
 
@@ -559,7 +559,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       await saveBlockMultipleChoiceQuiz(localizedText: localizedText, blockId: block.id, content: content);
 
       if (!context.mounted) return;
-      BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
+      BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
       await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
@@ -596,7 +596,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
     return question + answer;
   }
 
-  Future<void> _trySaveOpenQuestionQuizChanges({required BuildContext context, required var localizedText, required String courseId, required String sectionId, required BloqoBlock block}) async {
+  Future<void> _trySaveOpenQuestionQuizChanges({required BuildContext context, required var localizedText, required String courseId, required String sectionId, required BloqoBlockData block}) async {
     context.loaderOverlay.show();
     try{
 
@@ -609,7 +609,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       await saveBlockOpenQuestionQuiz(localizedText: localizedText, blockId: block.id, content: content);
 
       if (!context.mounted) return;
-      BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
+      BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
       await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);

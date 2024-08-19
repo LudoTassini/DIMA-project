@@ -2,8 +2,8 @@ import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_sorting_option.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_sorting_option.dart';
 import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/localization.dart';
@@ -609,7 +609,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     context.loaderOverlay.show();
     try {
       final query = _buildQuery();
-      List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(
+      List<BloqoPublishedCourseData> coursesFromSearch = await getCoursesFromSearch(
           localizedText: localizedText, query: query);
       if(!context.mounted) return;
       context.loaderOverlay.hide();

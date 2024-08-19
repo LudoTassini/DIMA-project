@@ -1,6 +1,6 @@
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_block.dart';
+import '../../model/courses/bloqo_block_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 import '../buttons/bloqo_filled_button.dart';
@@ -14,7 +14,7 @@ class BloqoMultipleChoiceQuiz extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoBlock block;
+  final BloqoBlockData block;
 
   @override
   State<BloqoMultipleChoiceQuiz> createState() => _BloqoMultipleChoiceQuizState();

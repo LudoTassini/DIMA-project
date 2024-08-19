@@ -1,8 +1,8 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
-import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -12,10 +12,10 @@ import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_notification_data.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/courses/bloqo_chapter.dart';
-import '../../model/courses/bloqo_section.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/bloqo_chapter_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -32,7 +32,7 @@ class SearchResultsPage extends StatefulWidget {
 
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
-  final List<BloqoPublishedCourse> publishedCourses;
+  final List<BloqoPublishedCourseData> publishedCourses;
 
   @override
   State<SearchResultsPage> createState() => _SearchResultsPageState();
@@ -89,7 +89,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                             ? widget.publishedCourses.length
                             : _publishedCoursesDisplayed,
                             (index) {
-                          BloqoPublishedCourse course = widget.publishedCourses[index];
+                          BloqoPublishedCourseData course = widget.publishedCourses[index];
                           return BloqoSearchResultCourse(
                             course: course,
                             onPressed: () async {
@@ -155,20 +155,20 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
   bool get wantKeepAlive => true;
 
   Future<void> _goToCourseSearchPage({required var localizedText, required BuildContext context,
-    required BloqoPublishedCourse publishedCourse}) async {
+    required BloqoPublishedCourseData publishedCourse}) async {
     context.loaderOverlay.show();
       try {
-        BloqoCourse courseSelected = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
-        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
-        Map<String, List<BloqoSection>> sections = {};
+        BloqoCourseData courseSelected = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
+        List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
+        Map<String, List<BloqoSectionData>> sections = {};
         for(String chapterId in courseSelected.chapters) {
-          List<BloqoSection> chapterSections = await getSectionsFromIds(
+          List<BloqoSectionData> chapterSections = await getSectionsFromIds(
               localizedText: localizedText,
               sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
           sections[chapterId] = chapterSections;
         }
-        BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
-        List<BloqoReview> reviews = [];
+        BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
+        List<BloqoReviewData> reviews = [];
         if(publishedCourse.reviews.isNotEmpty) {
           reviews = await getReviewsFromIds(
               localizedText: localizedText, reviewsIds: publishedCourse.reviews);
@@ -176,7 +176,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
         bool enrollmentAlreadyRequested = false;
         if(!publishedCourse.isPublic) {
           if(!context.mounted) return;
-          BloqoUser myself = getUserFromAppState(context: context)!;
+          BloqoUserData myself = getUserFromAppState(context: context)!;
           enrollmentAlreadyRequested = await getNotificationFromPublishedCourseIdAndApplicantId(
               localizedText: localizedText,
               publishedCourseId: publishedCourse.publishedCourseId,

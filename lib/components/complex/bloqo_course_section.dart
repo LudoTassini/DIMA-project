@@ -1,5 +1,5 @@
 import 'package:bloqo/app_state/learn_course_app_state.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
@@ -15,7 +15,7 @@ class BloqoCourseSection extends StatelessWidget{
   });
 
   final Function() onPressed;
-  final BloqoSection section;
+  final BloqoSectionData section;
   final int index;
   final bool isClickable;
   final bool isInLearnPage;

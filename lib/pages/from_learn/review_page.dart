@@ -3,16 +3,16 @@ import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/custom/bloqo_rating_bar.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/bloqo_user.dart';
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_published_course.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -28,8 +28,8 @@ class ReviewPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoUserCourseEnrolled courseToReview;
-  final BloqoReview? userReview;
+  final BloqoUserCourseEnrolledData courseToReview;
+  final BloqoReviewData? userReview;
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
@@ -190,9 +190,9 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
 
   Future<void> _tryPublishReview({required BuildContext context, required TextEditingController controllerTitle, required TextEditingController controllerReview,
-    required int rating, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
+    required int rating, required BloqoUserCourseEnrolledData userCourseEnrolled}) async {
 
-    BloqoUser myself = getUserFromAppState(context: context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
 
     final localizedText = getAppLocalizations(context)!;
     final loaderOverlay = context.loaderOverlay;
@@ -200,7 +200,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
     try {
 
-      BloqoReview reviewToPublish = BloqoReview(
+      BloqoReviewData reviewToPublish = BloqoReviewData(
         authorUsername: myself.username,
         authorId: myself.id,
         rating: rating,
@@ -211,14 +211,14 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
       await publishReview(localizedText: localizedText, review: reviewToPublish);
 
-      BloqoPublishedCourse publishedCourse =
+      BloqoPublishedCourseData publishedCourse =
       await getPublishedCourseFromPublishedCourseId(
         localizedText: localizedText,
         publishedCourseId: widget.courseToReview.publishedCourseId,
       );
 
       List<dynamic> reviewsIds = publishedCourse.reviews;
-      List<BloqoReview> reviews = [];
+      List<BloqoReviewData> reviews = [];
       double newRating = 0;
 
       if(reviewsIds.isNotEmpty) {

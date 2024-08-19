@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/editor_course_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/courses/bloqo_chapter.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/courses/bloqo_chapter_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -24,9 +24,9 @@ class BloqoEditableSection extends StatelessWidget {
     this.padding = const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
   });
 
-  final BloqoCourse course;
-  final BloqoChapter chapter;
-  final BloqoSection section;
+  final BloqoCourseData course;
+  final BloqoChapterData chapter;
+  final BloqoSectionData section;
   final bool editable;
   final Function() onPressed;
   final EdgeInsetsDirectional padding;

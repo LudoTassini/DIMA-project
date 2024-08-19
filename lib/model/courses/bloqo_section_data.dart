@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
-import 'bloqo_block.dart';
+import 'bloqo_block_data.dart';
 
-class BloqoSection{
+class BloqoSectionData{
 
   final String id;
   int number;
@@ -14,19 +14,19 @@ class BloqoSection{
 
   List<dynamic> blocks;
 
-  BloqoSection({
+  BloqoSectionData({
     required this.id,
     required this.number,
     required this.name,
     required this.blocks
   });
 
-  factory BloqoSection.fromFirestore(
+  factory BloqoSectionData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ){
     final data = snapshot.data();
-    return BloqoSection(
+    return BloqoSectionData(
         id: data!["id"],
         number: data["number"],
         name: data["name"],
@@ -46,21 +46,21 @@ class BloqoSection{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("sections").withConverter(
-      fromFirestore: BloqoSection.fromFirestore,
-      toFirestore: (BloqoSection section, _) => section.toFirestore(),
+      fromFirestore: BloqoSectionData.fromFirestore,
+      toFirestore: (BloqoSectionData section, _) => section.toFirestore(),
     );
   }
 
 }
 
-Future<List<BloqoSection>> getSectionsFromIds({required var localizedText, required List<dynamic> sectionIds}) async {
+Future<List<BloqoSectionData>> getSectionsFromIds({required var localizedText, required List<dynamic> sectionIds}) async {
   try {
-    var ref = BloqoSection.getRef();
-    List<BloqoSection> sections = [];
+    var ref = BloqoSectionData.getRef();
+    List<BloqoSectionData> sections = [];
     for(String sectionId in sectionIds) {
       await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
-      BloqoSection section = querySnapshot.docs.first.data();
+      BloqoSectionData section = querySnapshot.docs.first.data();
       sections.add(section);
     }
     return sections;
@@ -74,12 +74,12 @@ Future<List<BloqoSection>> getSectionsFromIds({required var localizedText, requi
   }
 }
 
-Future<BloqoSection> getSectionFromId({required var localizedText, required String sectionId}) async {
+Future<BloqoSectionData> getSectionFromId({required var localizedText, required String sectionId}) async {
   try {
-    var ref = BloqoSection.getRef();
+    var ref = BloqoSectionData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
-    BloqoSection section = querySnapshot.docs.first.data();
+    BloqoSectionData section = querySnapshot.docs.first.data();
     return section;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -91,15 +91,15 @@ Future<BloqoSection> getSectionFromId({required var localizedText, required Stri
   }
 }
 
-Future<BloqoSection> saveNewSection({required var localizedText, required int sectionNumber}) async {
+Future<BloqoSectionData> saveNewSection({required var localizedText, required int sectionNumber}) async {
   try {
-    BloqoSection section = BloqoSection(
+    BloqoSectionData section = BloqoSectionData(
       id: uuid(),
       number: sectionNumber,
       name: "${localizedText.section} $sectionNumber",
       blocks: [],
     );
-    var ref = BloqoSection.getRef();
+    var ref = BloqoSectionData.getRef();
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(section);
     return section;
@@ -113,9 +113,9 @@ Future<BloqoSection> saveNewSection({required var localizedText, required int se
   }
 }
 
-Future<void> deleteSection({required var localizedText, required BloqoSection section, required String courseId}) async {
+Future<void> deleteSection({required var localizedText, required BloqoSectionData section, required String courseId}) async {
   try {
-    var ref = BloqoSection.getRef();
+    var ref = BloqoSectionData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: section.id).get();
     await querySnapshot.docs[0].reference.delete();
@@ -133,8 +133,8 @@ Future<void> deleteSection({required var localizedText, required BloqoSection se
 }
 
 Future<void> reorderSections({required var localizedText, required List<dynamic> sectionIds}) async {
-  var ref = BloqoSection.getRef();
-  Map<String, BloqoSection> sections = {};
+  var ref = BloqoSectionData.getRef();
+  Map<String, BloqoSectionData> sections = {};
 
   for (String sectionId in sectionIds) {
     await checkConnectivity(localizedText: localizedText);
@@ -142,7 +142,7 @@ Future<void> reorderSections({required var localizedText, required List<dynamic>
 
     if (querySnapshot.docs.isNotEmpty) {
       var doc = querySnapshot.docs.first;
-      BloqoSection section = doc.data();
+      BloqoSectionData section = doc.data();
       sections[doc.id] = section;
     }
   }
@@ -160,9 +160,9 @@ Future<void> reorderSections({required var localizedText, required List<dynamic>
   }
 }
 
-Future<void> saveSectionChanges({required var localizedText, required BloqoSection updatedSection}) async {
+Future<void> saveSectionChanges({required var localizedText, required BloqoSectionData updatedSection}) async {
   try {
-    var ref = BloqoSection.getRef();
+    var ref = BloqoSectionData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedSection.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
@@ -181,11 +181,11 @@ Future<void> saveSectionChanges({required var localizedText, required BloqoSecti
 
 Future<void> deleteBlockFromSection({required var localizedText, required String sectionId, required String blockId}) async {
   try {
-    var ref = BloqoSection.getRef();
+    var ref = BloqoSectionData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: sectionId).get();
     var docSnapshot = querySnapshot.docs.first;
-    BloqoSection section = docSnapshot.data();
+    BloqoSectionData section = docSnapshot.data();
     section.blocks.remove(blockId);
     await ref.doc(docSnapshot.id).update(section.toFirestore());
   } on FirebaseAuthException catch (e) {

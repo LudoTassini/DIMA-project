@@ -4,14 +4,14 @@ import 'dart:ui' as ui;
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_review.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../pages/from_learn/review_page.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
@@ -20,7 +20,7 @@ import '../custom/bloqo_certificate.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrolled extends StatefulWidget {
-  final BloqoUserCourseEnrolled? course;
+  final BloqoUserCourseEnrolledData? course;
   final EdgeInsetsDirectional padding;
   final bool showCompleted;
   final bool showInProgress;
@@ -283,18 +283,18 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _goToReviewPage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled course}) async {
+  Future<void> _goToReviewPage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolledData course}) async {
     context.loaderOverlay.show();
     try {
 
-      BloqoReview? userReview;
-      BloqoUser user = getUserFromAppState(context: context)!;
+      BloqoReviewData? userReview;
+      BloqoUserData user = getUserFromAppState(context: context)!;
 
       if (course.isRated) {
-        BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(
+        BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
             localizedText: localizedText, publishedCourseId: course.publishedCourseId);
         List reviewsIds = publishedCourse.reviews;
-        List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
+        List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
 
         userReview = reviews.where((review) => review.authorId == user.id).first; //error
       } else {

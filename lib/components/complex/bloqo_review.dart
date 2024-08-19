@@ -1,15 +1,15 @@
-import 'package:bloqo/model/bloqo_review.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../../style/bloqo_colors.dart';
 
-class BloqoReviewComponent extends StatelessWidget{
-  const BloqoReviewComponent({
+class BloqoReview extends StatelessWidget{
+  const BloqoReview({
     super.key,
     required this.review
   });
 
-  final BloqoReview review;
+  final BloqoReviewData review;
 
   @override
   Widget build(BuildContext context) {

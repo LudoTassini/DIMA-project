@@ -9,7 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/notifications/bloqo_course_enrollment_accepted_notification.dart';
 import '../../model/bloqo_notification_data.dart';
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../style/bloqo_colors.dart';
 
 class NotificationsPage extends StatefulWidget {
@@ -25,7 +25,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    BloqoUser user = getUserFromAppState(context: context)!;
+    BloqoUserData user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
     return Scaffold(
       appBar: BloqoAppBar.get(

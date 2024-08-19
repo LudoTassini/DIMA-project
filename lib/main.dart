@@ -40,8 +40,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final bool userIsLoggedIn = await _checkIfUserIsLoggedIn();
-
   // Run app
   runApp(
     Phoenix(
@@ -63,9 +61,7 @@ Future<void> main() async {
             ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
             ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
           ],
-          child: MyApp(
-            userIsLoggedIn: userIsLoggedIn,
-          ),
+          child: const MyApp(),
         ),
       )
     ),
@@ -75,10 +71,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
-    required this.userIsLoggedIn,
   });
-
-  final bool userIsLoggedIn;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -6,7 +6,7 @@ import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
 
-class BloqoCourse{
+class BloqoCourseData{
 
   final String id;
   String name;
@@ -18,7 +18,7 @@ class BloqoCourse{
   String? description;
   Timestamp? publicationDate;
 
-  BloqoCourse({
+  BloqoCourseData({
     required this.id,
     required this.name,
     required this.authorId,
@@ -29,12 +29,12 @@ class BloqoCourse{
     this.publicationDate,
   });
 
-  factory BloqoCourse.fromFirestore(
+  factory BloqoCourseData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ){
     final data = snapshot.data();
-    return BloqoCourse(
+    return BloqoCourseData(
       id: data!["id"],
       name: data["name"],
       authorId: data["author_id"],
@@ -62,23 +62,23 @@ class BloqoCourse{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("courses").withConverter(
-      fromFirestore: BloqoCourse.fromFirestore,
-      toFirestore: (BloqoCourse course, _) => course.toFirestore(),
+      fromFirestore: BloqoCourseData.fromFirestore,
+      toFirestore: (BloqoCourseData course, _) => course.toFirestore(),
     );
   }
 
 }
 
-Future<BloqoCourse> saveNewCourse({required var localizedText, required String authorId}) async {
+Future<BloqoCourseData> saveNewCourse({required var localizedText, required String authorId}) async {
   try {
-    BloqoCourse course = BloqoCourse(
+    BloqoCourseData course = BloqoCourseData(
       id: uuid(),
       name: localizedText.course,
       authorId: authorId,
       creationDate: Timestamp.now(),
       chapters: [],
     );
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(course);
     return course;
@@ -92,12 +92,12 @@ Future<BloqoCourse> saveNewCourse({required var localizedText, required String a
   }
 }
 
-Future<BloqoCourse> getCourseFromId({required var localizedText, required String courseId}) async {
+Future<BloqoCourseData> getCourseFromId({required var localizedText, required String courseId}) async {
   try {
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
-    BloqoCourse course = querySnapshot.docs.first.data();
+    BloqoCourseData course = querySnapshot.docs.first.data();
     return course;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -109,14 +109,14 @@ Future<BloqoCourse> getCourseFromId({required var localizedText, required String
   }
 }
 
-Future<void> deleteCourse({required var localizedText, required BloqoCourse course}) async {
+Future<void> deleteCourse({required var localizedText, required BloqoCourseData course}) async {
   try {
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: course.id).get();
     await querySnapshot.docs[0].reference.delete();
-    List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
-    for(BloqoChapter chapter in chapters){
+    List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+    for(BloqoChapterData chapter in chapters){
       await deleteChapter(localizedText: localizedText, chapter: chapter, courseId: course.id);
     }
   } on FirebaseAuthException catch (e) {
@@ -131,11 +131,11 @@ Future<void> deleteCourse({required var localizedText, required BloqoCourse cour
 
 Future<void> deleteChapterFromCourse({required var localizedText, required String courseId, required String chapterId}) async {
   try {
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
     var docSnapshot = querySnapshot.docs.first;
-    BloqoCourse course = docSnapshot.data();
+    BloqoCourseData course = docSnapshot.data();
     course.chapters.remove(chapterId);
     await ref.doc(docSnapshot.id).update(course.toFirestore());
   } on FirebaseAuthException catch (e) {
@@ -148,9 +148,9 @@ Future<void> deleteChapterFromCourse({required var localizedText, required Strin
   }
 }
 
-Future<void> saveCourseChanges({required var localizedText, required BloqoCourse updatedCourse}) async {
+Future<void> saveCourseChanges({required var localizedText, required BloqoCourseData updatedCourse}) async {
   try {
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedCourse.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
@@ -169,11 +169,11 @@ Future<void> saveCourseChanges({required var localizedText, required BloqoCourse
 
 Future<void> updateCourseStatus({required var localizedText, required String courseId, required bool published}) async {
   try {
-    var ref = BloqoCourse.getRef();
+    var ref = BloqoCourseData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: courseId).get();
     var docSnapshot = querySnapshot.docs.first;
-    BloqoCourse course = docSnapshot.data();
+    BloqoCourseData course = docSnapshot.data();
     course.published = published;
     course.publicationDate = Timestamp.now();
     await ref.doc(docSnapshot.id).update(course.toFirestore());

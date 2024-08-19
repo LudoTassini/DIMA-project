@@ -3,7 +3,7 @@ import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../pages/from_any/qr_code_page.dart';
 import '../../pages/from_any/user_list_page.dart';
 import '../../style/bloqo_colors.dart';
@@ -27,7 +27,7 @@ class BloqoUserDetails extends StatefulWidget {
     this.onReplacePicture,
   });
 
-  final BloqoUser user;
+  final BloqoUserData user;
   final bool isFullNameVisible;
   final bool showFollowingOptions;
   final void Function(Widget) onPush;

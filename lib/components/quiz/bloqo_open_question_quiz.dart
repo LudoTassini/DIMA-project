@@ -1,6 +1,6 @@
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_block.dart';
+import '../../model/courses/bloqo_block_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -16,7 +16,7 @@ class BloqoOpenQuestionQuiz extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoBlock block;
+  final BloqoBlockData block;
 
   @override
   State<BloqoOpenQuestionQuiz> createState() => _BloqoOpenQuestionQuizState();

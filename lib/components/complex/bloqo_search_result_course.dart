@@ -1,4 +1,4 @@
-import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
 import 'package:flutter/material.dart';
 import '../../model/courses/tags/bloqo_difficulty_tag.dart';
@@ -12,7 +12,7 @@ import '../../utils/localization.dart';
 
 class BloqoSearchResultCourse extends StatelessWidget{
 
-  final BloqoPublishedCourse? course;
+  final BloqoPublishedCourseData? course;
   final EdgeInsetsDirectional padding;
   final Function() onPressed;
 

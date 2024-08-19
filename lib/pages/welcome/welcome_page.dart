@@ -16,9 +16,9 @@ import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../utils/constants.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/shared_preferences.dart';
@@ -187,7 +187,7 @@ class _WelcomePageState extends State<WelcomePage> {
         password: password);
 
       // gets user data
-      BloqoUser user = await getUserFromEmail(
+      BloqoUserData user = await getUserFromEmail(
           localizedText: localizedText, email: email);
 
       // saves on the shared preferences that the user is logged in along with some data
@@ -197,9 +197,9 @@ class _WelcomePageState extends State<WelcomePage> {
         password: password
       );
 
-      List<BloqoUserCourseEnrolled> userCoursesEnrolled = await getUserCoursesEnrolled(
+      List<BloqoUserCourseEnrolledData> userCoursesEnrolled = await getUserCoursesEnrolled(
           localizedText: localizedText, user: user);
-      List<BloqoUserCourseCreated> userCoursesCreated = await getUserCoursesCreated(
+      List<BloqoUserCourseCreatedData> userCoursesCreated = await getUserCoursesCreated(
           localizedText: localizedText, user: user);
 
       if (!context.mounted) return;

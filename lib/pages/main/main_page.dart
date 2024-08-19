@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../app_state/user_app_state.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../utils/constants.dart';
 import '../from_any/notifications_page.dart';
 import 'editor_page.dart';
@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
 
   void _startNotificationTimers() {
     var localizedText = getAppLocalizations(context)!;
-    BloqoUser myself = getUserFromAppState(context: context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
 
     _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
       await _checkForNotifications(localizedText: localizedText, userId: myself.id);
@@ -159,7 +159,7 @@ class _MainPageState extends State<MainPage> {
 
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoUser myself = getUserFromAppState(context: context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
 
     _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
       await _checkForNotifications(localizedText: localizedText, userId: myself.id);

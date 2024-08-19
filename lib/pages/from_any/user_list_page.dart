@@ -4,7 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_user_details_short.dart';
 import '../../components/containers/bloqo_main_container.dart';
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -18,7 +18,7 @@ class UserListPage extends StatefulWidget {
     required this.onNavigateToPage
   });
 
-  final BloqoUser reference;
+  final BloqoUserData reference;
   final bool followers;
   final void Function(Widget) onPush;
   final void Function(int) onNavigateToPage;
@@ -28,7 +28,7 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClientMixin<UserListPage> {
-  List<BloqoUser> users = [];
+  List<BloqoUserData> users = [];
   int _usersDisplayed = Constants.usersToShowAtFirst;
 
   @override
@@ -47,7 +47,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
         future: widget.followers
             ? getUsersFromUserIds(localizedText: localizedText, userIds: widget.reference.followers)
             : getUsersFromUserIds(localizedText: localizedText, userIds: widget.reference.following),
-        builder: (BuildContext context, AsyncSnapshot<List<BloqoUser>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<BloqoUserData>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: LoadingAnimationWidget.prograssiveDots(
@@ -89,7 +89,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                         children: List.generate(
                           _usersDisplayed > users.length ? users.length : _usersDisplayed,
                               (index) {
-                            BloqoUser user = users[index];
+                            BloqoUserData user = users[index];
                             return BloqoUserDetailsShort(
                               user: user,
                               onPush: widget.onPush,

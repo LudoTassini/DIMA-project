@@ -10,7 +10,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/user_app_state.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_setting_type.dart';
 import '../../utils/localization.dart';
@@ -158,7 +158,7 @@ Future<void> _updateSettings({
       case BloqoSettingType.account:
         final String newFullName = controllers[0].text;
         final bool newFullNameVisible = controllers[1].get();
-        final BloqoUser? user = getUserFromAppState(context: context);
+        final BloqoUserData? user = getUserFromAppState(context: context);
 
         if (user == null) {
           throw BloqoException(message: localizedText!.generic_error);
@@ -168,7 +168,7 @@ Future<void> _updateSettings({
         final bool oldFullNameVisible = user.isFullNameVisible;
 
         if (newFullName != oldFullName || newFullNameVisible != oldFullNameVisible) {
-          var ref = BloqoUser.getRef();
+          var ref = BloqoUserData.getRef();
           var querySnapshot = await ref.where("id", isEqualTo: user.id).get();
 
           if (querySnapshot.docs.isNotEmpty) {

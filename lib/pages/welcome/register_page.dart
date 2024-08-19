@@ -1,5 +1,5 @@
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
-import 'package:bloqo/model/bloqo_user.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -223,7 +223,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
 
-      final user = BloqoUser(
+      final user = BloqoUserData(
           id: uuid(),
           email: email,
           username: username,

@@ -1,4 +1,4 @@
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -6,7 +6,7 @@ import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
 
-class BloqoChapter{
+class BloqoChapterData{
 
   final String id;
   int number;
@@ -15,7 +15,7 @@ class BloqoChapter{
   String? description;
   List<dynamic> sections;
 
-  BloqoChapter({
+  BloqoChapterData({
     required this.id,
     required this.number,
     required this.name,
@@ -23,12 +23,12 @@ class BloqoChapter{
     this.description
   });
 
-  factory BloqoChapter.fromFirestore(
+  factory BloqoChapterData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ){
     final data = snapshot.data();
-    return BloqoChapter(
+    return BloqoChapterData(
       id: data!["id"],
       number: data["number"],
       name: data["name"],
@@ -50,22 +50,22 @@ class BloqoChapter{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("chapters").withConverter(
-      fromFirestore: BloqoChapter.fromFirestore,
-      toFirestore: (BloqoChapter chapter, _) => chapter.toFirestore(),
+      fromFirestore: BloqoChapterData.fromFirestore,
+      toFirestore: (BloqoChapterData chapter, _) => chapter.toFirestore(),
     );
   }
 
 }
 
-Future<BloqoChapter> saveNewChapter({required var localizedText, required int chapterNumber}) async {
+Future<BloqoChapterData> saveNewChapter({required var localizedText, required int chapterNumber}) async {
   try {
-    BloqoChapter chapter = BloqoChapter(
+    BloqoChapterData chapter = BloqoChapterData(
         id: uuid(),
         number: chapterNumber,
         name: "${localizedText.chapter} $chapterNumber",
         sections: [],
     );
-    var ref = BloqoChapter.getRef();
+    var ref = BloqoChapterData.getRef();
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(chapter);
     return chapter;
@@ -79,14 +79,14 @@ Future<BloqoChapter> saveNewChapter({required var localizedText, required int ch
   }
 }
 
-Future<List<BloqoChapter>> getChaptersFromIds({required var localizedText, required List<dynamic> chapterIds}) async {
+Future<List<BloqoChapterData>> getChaptersFromIds({required var localizedText, required List<dynamic> chapterIds}) async {
   try {
-    var ref = BloqoChapter.getRef();
-    List<BloqoChapter> chapters = [];
+    var ref = BloqoChapterData.getRef();
+    List<BloqoChapterData> chapters = [];
     for(String chapterId in chapterIds) {
       await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
-      BloqoChapter chapter = querySnapshot.docs.first.data();
+      BloqoChapterData chapter = querySnapshot.docs.first.data();
       chapters.add(chapter);
     }
     return chapters;
@@ -100,14 +100,14 @@ Future<List<BloqoChapter>> getChaptersFromIds({required var localizedText, requi
   }
 }
 
-Future<void> deleteChapter({required var localizedText, required BloqoChapter chapter, required String courseId}) async {
+Future<void> deleteChapter({required var localizedText, required BloqoChapterData chapter, required String courseId}) async {
   try {
-    var ref = BloqoChapter.getRef();
+    var ref = BloqoChapterData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: chapter.id).get();
     await querySnapshot.docs[0].reference.delete();
-    List<BloqoSection> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
-    for(BloqoSection section in sections){
+    List<BloqoSectionData> sections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
+    for(BloqoSectionData section in sections){
       await deleteSection(localizedText: localizedText, section: section, courseId: courseId);
     }
   } on FirebaseAuthException catch (e) {
@@ -121,8 +121,8 @@ Future<void> deleteChapter({required var localizedText, required BloqoChapter ch
 }
 
 Future<void> reorderChapters({required var localizedText, required List<dynamic> chapterIds}) async {
-  var ref = BloqoChapter.getRef();
-  Map<String, BloqoChapter> chapters = {};
+  var ref = BloqoChapterData.getRef();
+  Map<String, BloqoChapterData> chapters = {};
 
   for (String chapterId in chapterIds) {
     await checkConnectivity(localizedText: localizedText);
@@ -130,7 +130,7 @@ Future<void> reorderChapters({required var localizedText, required List<dynamic>
 
     if (querySnapshot.docs.isNotEmpty) {
       var doc = querySnapshot.docs.first;
-      BloqoChapter chapter = doc.data();
+      BloqoChapterData chapter = doc.data();
       chapters[doc.id] = chapter;
     }
   }
@@ -148,9 +148,9 @@ Future<void> reorderChapters({required var localizedText, required List<dynamic>
   }
 }
 
-Future<void> saveChapterChanges({required var localizedText, required BloqoChapter updatedChapter}) async {
+Future<void> saveChapterChanges({required var localizedText, required BloqoChapterData updatedChapter}) async {
   try {
-    var ref = BloqoChapter.getRef();
+    var ref = BloqoChapterData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedChapter.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
@@ -169,11 +169,11 @@ Future<void> saveChapterChanges({required var localizedText, required BloqoChapt
 
 Future<void> deleteSectionFromChapter({required var localizedText, required String chapterId, required String sectionId}) async {
   try {
-    var ref = BloqoChapter.getRef();
+    var ref = BloqoChapterData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: chapterId).get();
     var docSnapshot = querySnapshot.docs.first;
-    BloqoChapter chapter = docSnapshot.data();
+    BloqoChapterData chapter = docSnapshot.data();
     chapter.sections.remove(sectionId);
     await ref.doc(docSnapshot.id).update(chapter.toFirestore());
   } on FirebaseAuthException catch (e) {

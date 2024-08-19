@@ -1,7 +1,7 @@
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
-import 'package:bloqo/model/bloqo_user_course_created.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/pages/from_editor/edit_multimedia_block_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -16,9 +16,9 @@ import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
+import '../../model/courses/bloqo_block_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -70,10 +70,10 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
             builder: (context, editorCourseAppState, _){
-              BloqoCourse course = getEditorCourseFromAppState(context: context)!;
-              BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-              BloqoSection section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
-              List<BloqoBlock> blocks = getEditorCourseSectionBlocksFromAppState(context: context, sectionId: widget.sectionId) ?? [];
+              BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
+              BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
+              BloqoSectionData section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
+              List<BloqoBlockData> blocks = getEditorCourseSectionBlocksFromAppState(context: context, sectionId: widget.sectionId) ?? [];
               if(firstBuild) {
                 sectionNameController.text = section.name;
                 firstBuild = false;
@@ -135,7 +135,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                 children: List.generate(
                                                     blocks.length,
                                                         (index) {
-                                                      BloqoBlock block = blocks[index];
+                                                      BloqoBlockData block = blocks[index];
                                                       if (index < blocks.length - 1) {
                                                         return BloqoEditableBlock(
                                                             course: course,
@@ -327,15 +327,15 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _addBlock({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required BloqoSection section, required BloqoBlockSuperType blockSuperType}) async {
+  Future<void> _addBlock({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required BloqoSectionData section, required BloqoBlockSuperType blockSuperType}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoBlock block = await saveNewBlock(localizedText: localizedText, blockSuperType: blockSuperType, blockNumber: section.blocks.length + 1);
+    BloqoBlockData block = await saveNewBlock(localizedText: localizedText, blockSuperType: blockSuperType, blockNumber: section.blocks.length + 1);
 
     if(!context.mounted) return;
     addBlockToEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id, block: block);
 
-    BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
+    BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     await saveUserCourseCreatedChanges(
@@ -347,7 +347,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
     _saveChanges(context: context, course: course, chapter: chapter, section: section);
   }
 
-  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required BloqoSection section}) async {
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required BloqoSectionData section}) async {
     var localizedText = getAppLocalizations(context)!;
 
     section.name = sectionNameController.text;
@@ -364,7 +364,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
     updateEditorCourseSectionNameInAppState(context: context, chapterId: chapter.id, sectionId: section.id, newName: section.name);
   }
 
-  void _goToEditBlockPage({required BloqoBlockSuperType blockSuperType, required String courseId, required String chapterId, required String sectionId, required BloqoBlock block}){
+  void _goToEditBlockPage({required BloqoBlockSuperType blockSuperType, required String courseId, required String chapterId, required String sectionId, required BloqoBlockData block}){
     switch(blockSuperType){
       case BloqoBlockSuperType.text:
         widget.onPush(EditTextBlockPage(onPush: widget.onPush, chapterId: chapterId, sectionId: sectionId, block: block));

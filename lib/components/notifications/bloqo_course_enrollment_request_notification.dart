@@ -2,16 +2,16 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../model/bloqo_user.dart';
-import '../../model/courses/bloqo_course.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/uuid.dart';
@@ -63,8 +63,8 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                 ),
               );
             } else {
-              BloqoUser applicant = snapshot.data![0] as BloqoUser;
-              BloqoCourse course = snapshot.data![1] as BloqoCourse;
+              BloqoUserData applicant = snapshot.data![0] as BloqoUserData;
+              BloqoCourseData course = snapshot.data![1] as BloqoCourseData;
               return Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -208,9 +208,9 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
     required String publishedCourseId,
   }) async {
     try {
-      BloqoUser applicant = await getUserFromId(localizedText: localizedText, id: applicantId);
-      BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(localizedText: localizedText, publishedCourseId: publishedCourseId);
-      BloqoCourse privateCourse = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
+      BloqoUserData applicant = await getUserFromId(localizedText: localizedText, id: applicantId);
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(localizedText: localizedText, publishedCourseId: publishedCourseId);
+      BloqoCourseData privateCourse = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
       return [applicant, privateCourse];
     } on Exception catch (_) {
       return [];
@@ -221,13 +221,13 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
     required BuildContext context,
     required var localizedText,
     required String applicantId,
-    required BloqoCourse originalCourse
+    required BloqoCourseData originalCourse
   }) async {
     context.loaderOverlay.show();
     try{
       await saveNewUserCourseEnrolled(localizedText: localizedText, course: originalCourse, publishedCourseId: widget.notification.privatePublishedCourseId!, userId: applicantId);
       await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
-      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
+      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
       BloqoNotificationData notification = BloqoNotificationData(
         id: uuid(),
         userId: applicantId,

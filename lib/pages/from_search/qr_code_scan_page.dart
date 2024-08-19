@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/bloqo_user.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
-import 'package:bloqo/model/courses/bloqo_course.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/model/courses/bloqo_course_data.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
@@ -14,7 +14,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_published_course.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 
 class QrCodeScanPage extends StatefulWidget {
@@ -113,18 +113,18 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     context.loaderOverlay.show();
     try {
       controller?.pauseCamera();
-      BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
           localizedText: localizedText, publishedCourseId: publishedCourseId);
-      BloqoCourse course = await getCourseFromId(localizedText: localizedText,
+      BloqoCourseData course = await getCourseFromId(localizedText: localizedText,
           courseId: publishedCourse.originalCourseId);
-      List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
-      Map<String, List<BloqoSection>> sections = {};
-      for (BloqoChapter chapter in chapters) {
-        List<BloqoSection> chapterSections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
+      List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+      Map<String, List<BloqoSectionData>> sections = {};
+      for (BloqoChapterData chapter in chapters) {
+        List<BloqoSectionData> chapterSections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
         sections[chapter.id] = chapterSections;
       }
-      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: publishedCourse.authorId);
-      List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
+      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: publishedCourse.authorId);
+      List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
@@ -159,8 +159,8 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     context.loaderOverlay.show();
     try {
       controller?.pauseCamera();
-      BloqoUser user = await getUserFromId(localizedText: localizedText, id: userId);
-      List<BloqoPublishedCourse> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: userId);
+      BloqoUserData user = await getUserFromId(localizedText: localizedText, id: userId);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: userId);
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
