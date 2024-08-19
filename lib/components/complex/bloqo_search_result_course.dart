@@ -118,7 +118,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                               ),
                             ),
                             Text(
-                              localizedText.uploaded_on + DateFormat('dd/MM/yyyy').format(course!.publicationDate.toDate()),
+                              localizedText.published_on + DateFormat('dd/MM/yyyy').format(course!.publicationDate.toDate()),
                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                 fontSize: 14,
                               ),

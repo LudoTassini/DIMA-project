@@ -143,8 +143,11 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                               ),
                             ),
                             Expanded(
-                              child: Text(
-                                localizedText.users_enrolled
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                child: Text(
+                                  localizedText.users_enrolled
+                                )
                               )
                             )
                           ]
@@ -158,8 +161,11 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                               ),
                             ),
                             Expanded(
-                              child: Text(
-                                localizedText.users_completed
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                child: Text(
+                                  localizedText.users_completed,
+                                )
                               )
                             )
                           ]
