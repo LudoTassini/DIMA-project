@@ -15,7 +15,7 @@ class BloqoMainContainer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
             BloqoColors.russianViolet,

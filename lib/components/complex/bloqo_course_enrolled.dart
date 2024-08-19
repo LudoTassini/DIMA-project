@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
@@ -5,12 +8,15 @@ import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/bloqo_review.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../model/bloqo_user.dart';
 import '../../model/bloqo_user_course_enrolled.dart';
 import '../../pages/from_learn/review_page.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
+import '../custom/bloqo_certificate.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrolled extends StatefulWidget {
@@ -244,10 +250,23 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                             ),
                             BloqoFilledButton(
                               color: BloqoColors.success,
-                              onPressed: () {
-                                //TODO:
+                              onPressed: () async {
+                                String myFullName = getUserFromAppState(context: context)!.fullName;
+                                ui.Image certificateImage = await getCertificateImage(
+                                  context: context,
+                                  fullName: myFullName,
+                                  courseName: widget.course!.courseName,
+                                );
+                                final byteData = await certificateImage.toByteData(format: ui.ImageByteFormat.png);
+                                final pngBytes = byteData!.buffer.asUint8List();
+
+                                final directory = (await getApplicationDocumentsDirectory()).path;
+                                final imgFile = File('$directory/certificate.png');
+                                imgFile.writeAsBytes(pngBytes);
+
+                                Share.shareXFiles([XFile('$directory/certificate.png')]);
                               },
-                              text: 'Get Certificate',
+                              text: localizedText.get_certificate,
                               fontSize: 16,
                               height: 32,
                           ),

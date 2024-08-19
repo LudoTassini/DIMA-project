@@ -331,5 +331,10 @@
   "follow": "Follow",
   "unfollow": "Unfollow",
   "users_who_follow": "Users who follow ",
-  "users_who_are_followed_by": "Users who are followed by "
+  "users_who_are_followed_by": "Users who are followed by ",
+  "get_certificate": "Get certificate",
+  "course_completion_certificate": "Course Completion Certificate",
+  "assigned_to": "assigned to:",
+  "for_successfully_completing_course": "for successfully completing the following course:",
+  "date": "Date"
 }
