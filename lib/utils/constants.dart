@@ -27,7 +27,9 @@ class Constants{
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
   static const int coursesToShowAtFirstTablet = 4;
+  static const int coursesToShowAtFirstTabletLearnPage = 8;
   static const int coursesToFurtherLoadAtRequestTablet = 4;
+  static const int coursesToFurtherLoadAtRequestTabletLearnPage = 8;
 
   static const int reviewsToShowAtFirst = 3;
   static const int reviewsToFurtherLoadAtRequest = 3;
@@ -43,6 +45,7 @@ class Constants{
   static const int maxReviewLength = 300;
   static const int maxReviewTitleLength = 20;
 
-  static const EdgeInsetsDirectional tabletPadding = EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0);
+  static const EdgeInsetsDirectional tabletPaddingWelcomePages = EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0);
+  static const EdgeInsetsDirectional tabletPadding = EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0);
 
 }

@@ -8,6 +8,7 @@ import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/utils/bloqo_qr_code_type.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
@@ -66,6 +67,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    bool isTablet = checkDevice(context);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -77,297 +79,300 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
               url = user.pictureUrl;
             }
             final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
-            return Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                BloqoSeasaltContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Stack(
-                            alignment: const AlignmentDirectional(0, 1),
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 1.0,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: url != null
-                                      ? FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/portrait_placeholder.png",
-                                    image: url!,
-                                    fit: BoxFit.cover,
-                                    placeholderFit: BoxFit.cover,
-                                  )
-                                      : Image.asset(
-                                    "assets/images/portrait_placeholder.png",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment: const AlignmentDirectional(1, 1),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: BloqoColors.russianViolet,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(8),
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(0),
-                                    ),
-                                  ),
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    visualDensity: VisualDensity.compact,
-                                    icon: const Icon(
-                                      Icons.camera_alt,
-                                      color: BloqoColors.seasalt,
-                                      size: 22,
-                                    ),
-                                    onPressed: () async {
-                                      final newUrl = await _askUserForAnImage(
-                                        context: context,
-                                        localizedText: localizedText,
-                                        userId: user.id
-                                      );
-                                      if(newUrl != null) {
-                                        if(!context.mounted) return;
-                                        updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 0, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            return Padding(
+              padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  BloqoSeasaltContainer(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Stack(
+                              alignment: const AlignmentDirectional(0, 1),
                               children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              user.fullName,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                color: BloqoColors.secondaryText,
-                                                fontSize: 16,
-                                                letterSpacing: 0,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Text(
-                                              user.username,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                color: BloqoColors.primaryText,
-                                                fontSize: 22,
-                                                letterSpacing: 0,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                AspectRatio(
+                                  aspectRatio: 1.0,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: url != null
+                                        ? FadeInImage.assetNetwork(
+                                      placeholder: "assets/images/portrait_placeholder.png",
+                                      image: url!,
+                                      fit: BoxFit.cover,
+                                      placeholderFit: BoxFit.cover,
+                                    )
+                                        : Image.asset(
+                                      "assets/images/portrait_placeholder.png",
+                                      fit: BoxFit.cover,
                                     ),
-                                    Align(
-                                      alignment: const AlignmentDirectional(1, 0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: BloqoColors.russianViolet,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.qr_code_2,
-                                            color: BloqoColors.seasalt,
-                                            size: 32,
-                                          ),
-                                          onPressed: () {
-                                            _showUserQrCode(
-                                              username: user.username,
-                                              userId: user.id,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                                  child: Wrap(
-                                    spacing: 15.0,
-                                    runSpacing: 10.0,
+                                Align(
+                                  alignment: const AlignmentDirectional(1, 1),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: BloqoColors.russianViolet,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(0),
+                                        bottomRight: Radius.circular(8),
+                                        topLeft: Radius.circular(0),
+                                        topRight: Radius.circular(0),
+                                      ),
+                                    ),
+                                    child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      visualDensity: VisualDensity.compact,
+                                      icon: const Icon(
+                                        Icons.camera_alt,
+                                        color: BloqoColors.seasalt,
+                                        size: 22,
+                                      ),
+                                      onPressed: () async {
+                                        final newUrl = await _askUserForAnImage(
+                                          context: context,
+                                          localizedText: localizedText,
+                                          userId: user.id
+                                        );
+                                        if(newUrl != null) {
+                                          if(!context.mounted) return;
+                                          updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 0, 0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                                              child: Text(
-                                                localizedText.followers,
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                user.fullName,
+                                                textAlign: TextAlign.start,
                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  fontSize: 14,
+                                                  color: BloqoColors.secondaryText,
+                                                  fontSize: 16,
                                                   letterSpacing: 0,
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                               ),
-                                            ),
-                                            Text(
-                                              user.followers.toString(),
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                fontSize: 18,
-                                                letterSpacing: 0,
+                                              Text(
+                                                user.username,
+                                                textAlign: TextAlign.start,
+                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                  color: BloqoColors.primaryText,
+                                                  fontSize: 22,
+                                                  letterSpacing: 0,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                                              child: Text(
-                                                localizedText.following,
-                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  fontSize: 14,
-                                                  letterSpacing: 0,
-                                                ),
-                                              ),
+                                      Align(
+                                        alignment: const AlignmentDirectional(1, 0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: BloqoColors.russianViolet,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.qr_code_2,
+                                              color: BloqoColors.seasalt,
+                                              size: 32,
                                             ),
-                                            Text(
-                                              user.following.toString(),
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                fontSize: 18,
-                                                letterSpacing: 0,
-                                              ),
-                                            ),
-                                          ],
+                                            onPressed: () {
+                                              _showUserQrCode(
+                                                username: user.username,
+                                                userId: user.id,
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            )
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                BloqoSetting(
-                  settingTitle: localizedText.account_settings_title,
-                  settingDescription: localizedText.account_settings_description,
-                  settingIcon: Icons.manage_accounts,
-                  onPressed: () {
-                    fullNameController.text = user.fullName;
-                    widget.onPush(SettingPage(
-                      settingTitle: localizedText.account_settings_title,
-                      settingDescription: localizedText.account_settings_description,
-                      forms: [
-                        Form(
-                          key: formKeyFullName,
-                          child: BloqoTextField(
-                            formKey: formKeyFullName,
-                            controller: fullNameController,
-                            labelText: localizedText.full_name,
-                            hintText: localizedText.full_name_hint,
-                            maxInputLength: Constants.maxFullNameLength,
-                            validator: (String? value) {
-                              return fullNameValidator(fullName: value, localizedText: localizedText);
-                            },
-                            padding: EdgeInsetsDirectional.zero,
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                localizedText.full_name_visible,
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                                    child: Wrap(
+                                      spacing: 15.0,
+                                      runSpacing: 10.0,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                                child: Text(
+                                                  localizedText.followers,
+                                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                    fontSize: 14,
+                                                    letterSpacing: 0,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                user.followers.toString(),
+                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                  fontSize: 18,
+                                                  letterSpacing: 0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                                child: Text(
+                                                  localizedText.following,
+                                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                    fontSize: 14,
+                                                    letterSpacing: 0,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                user.following.toString(),
+                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                  fontSize: 18,
+                                                  letterSpacing: 0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               )
                             ),
-                            BloqoSwitch(value: fullNameVisible),
-                          ],
-                        ),
-                      ],
-                      controllers: [fullNameController, fullNameVisible],
-                      settingType: BloqoSettingType.account,
-                    ));
-                  },
-                ),
-                /*BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(onPush: widget.onPush)),
-                  settingTitle: localizedText.notification_settings_title,
-                  settingDescription: localizedText.notification_settings_description,
-                  settingIcon: Icons.edit_notifications,
-                ), TODO */
-                BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  BloqoSetting(
+                    settingTitle: localizedText.account_settings_title,
+                    settingDescription: localizedText.account_settings_description,
+                    settingIcon: Icons.manage_accounts,
+                    onPressed: () {
+                      fullNameController.text = user.fullName;
+                      widget.onPush(SettingPage(
+                        settingTitle: localizedText.account_settings_title,
+                        settingDescription: localizedText.account_settings_description,
+                        forms: [
+                          Form(
+                            key: formKeyFullName,
+                            child: BloqoTextField(
+                              formKey: formKeyFullName,
+                              controller: fullNameController,
+                              labelText: localizedText.full_name,
+                              hintText: localizedText.full_name_hint,
+                              maxInputLength: Constants.maxFullNameLength,
+                              validator: (String? value) {
+                                return fullNameValidator(fullName: value, localizedText: localizedText);
+                              },
+                              padding: EdgeInsetsDirectional.zero,
+                            ),
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  localizedText.full_name_visible,
+                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ),
+                              BloqoSwitch(value: fullNameVisible),
+                            ],
+                          ),
+                        ],
+                        controllers: [fullNameController, fullNameVisible],
+                        settingType: BloqoSettingType.account,
+                      ));
+                    },
+                  ),
+                  /*BloqoSetting(
+                    onPressed: () => widget.onPush(SettingPage(onPush: widget.onPush)),
+                    settingTitle: localizedText.notification_settings_title,
+                    settingDescription: localizedText.notification_settings_description,
+                    settingIcon: Icons.edit_notifications,
+                  ), TODO */
+                  BloqoSetting(
+                    onPressed: () => widget.onPush(SettingPage(
+                      settingTitle: localizedText.external_accounts_title,
+                      settingDescription: localizedText.external_accounts_description,
+                      settingType: BloqoSettingType.external,
+                      controllers: const [/* TODO */],
+                      forms: const [/* TODO */],
+                    )),
                     settingTitle: localizedText.external_accounts_title,
                     settingDescription: localizedText.external_accounts_description,
-                    settingType: BloqoSettingType.external,
-                    controllers: const [/* TODO */],
-                    forms: const [/* TODO */],
-                  )),
-                  settingTitle: localizedText.external_accounts_title,
-                  settingDescription: localizedText.external_accounts_description,
-                  settingIcon: Icons.app_registration,
-                ),
-                BloqoSetting(
-                  onPressed: () {
-                    showBloqoConfirmationAlert(
-                      context: context,
-                      title: localizedText.warning,
-                      description: localizedText.logout_confirmation,
-                      confirmationFunction: () async {
-                        await _tryLogout(
-                            context: context,
-                            localizedText: localizedText
-                        );
-                      },
-                      backgroundColor: BloqoColors.russianViolet
-                    );
-                  },
-                  settingTitle: localizedText.sign_out_title,
-                  settingDescription: localizedText.sign_out_description,
-                  settingIcon: Icons.logout,
-                ),
-                Container(
-                  height: 40,
-                ),
-              ],
+                    settingIcon: Icons.app_registration,
+                  ),
+                  BloqoSetting(
+                    onPressed: () {
+                      showBloqoConfirmationAlert(
+                        context: context,
+                        title: localizedText.warning,
+                        description: localizedText.logout_confirmation,
+                        confirmationFunction: () async {
+                          await _tryLogout(
+                              context: context,
+                              localizedText: localizedText
+                          );
+                        },
+                        backgroundColor: BloqoColors.russianViolet
+                      );
+                    },
+                    settingTitle: localizedText.sign_out_title,
+                    settingDescription: localizedText.sign_out_description,
+                    settingIcon: Icons.logout,
+                  ),
+                  Container(
+                    height: 40,
+                  ),
+                ],
+              ),
             );
           },
         ),

@@ -6,6 +6,7 @@ import 'package:bloqo/model/bloqo_published_course.dart';
 import 'package:bloqo/model/bloqo_sorting_option.dart';
 import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     super.build(context);
 
     final localizedText = getAppLocalizations(context)!;
+    bool isTablet = checkDevice(context);
 
     final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
@@ -104,235 +106,272 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList(localizedText: localizedText);
 
     return BloqoMainContainer(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Text(
-                    localizedText.search_page_header_1,
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: BloqoColors.seasalt,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w600,
+      child: Padding(
+        padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Text(
+                      localizedText.search_page_header_1,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        color: BloqoColors.seasalt,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Text(
-                    localizedText.search_page_header_2,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: BloqoColors.seasalt,
-                    )
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                  child: Form(
-                    key: formKeyCourseName,
-                    child: BloqoTextField(
-                      formKey: formKeyCourseName,
-                      controller: courseNameController,
-                      labelText: localizedText.course_name,
-                      hintText: localizedText.course_name_hint,
-                      maxInputLength: Constants.maxCourseNameLength,
-                    )
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                  child: Form(
-                    key: formKeyAuthorUsername,
-                    child: BloqoTextField(
-                      formKey: formKeyAuthorUsername,
-                      controller: authorUsernameController,
-                      labelText: localizedText.author_username,
-                      hintText: localizedText.author_username_hint,
-                      maxInputLength: Constants.maxUsernameLength,
-                    )
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                  child: Form(
-                      key: formKeyMinimumPublicationDate,
-                      child: BloqoTextField(
-                        formKey: formKeyMinimumPublicationDate,
-                        controller: minimumPublicationDateController,
-                        labelText: localizedText.minimum_publication_date,
-                        hintText: localizedText.minimum_publication_date_hint,
-                        keyboardType: TextInputType.datetime,
-                        maxInputLength: 10,
-                        onTap: () async {
-                          // Below line stops keyboard from appearing
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          // Show Date Picker Here
-                          DateTime? picked = await _selectDate(localizedText: localizedText);
-                          setState(() {
-                            if(picked == null){
-                              minimumPublicationDateController.text = "";
-                            }
-                            else{
-                              minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
-                            }
-                          });
-                        }
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Text(
+                      localizedText.search_page_header_2,
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        color: BloqoColors.seasalt,
                       )
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                  child: Form(
-                      key: formKeyMaximumPublicationDate,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                    child: Form(
+                      key: formKeyCourseName,
                       child: BloqoTextField(
-                        formKey: formKeyMaximumPublicationDate,
-                        controller: maximumPublicationDateController,
-                        labelText: localizedText.maximum_publication_date,
-                        hintText: localizedText.maximum_publication_date_hint,
-                        keyboardType: TextInputType.datetime,
-                        maxInputLength: 10,
-                        onTap: () async {
-                          // Below line stops keyboard from appearing
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          // Show Date Picker Here
-                          DateTime? picked = await _selectDate(localizedText: localizedText);
-                          setState(() {
-                            if(picked == null){
-                              maximumPublicationDateController.text = "";
-                            }
-                            else{
-                              maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
-                            }
-                          });
-                        }
+                        formKey: formKeyCourseName,
+                        controller: courseNameController,
+                        labelText: localizedText.course_name,
+                        hintText: localizedText.course_name_hint,
+                        maxInputLength: Constants.maxCourseNameLength,
                       )
-                  ),
-                ),
-                BloqoSeasaltContainer(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                            child: Text(
-                              localizedText.show_public_courses,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.russianViolet,
-                                  fontWeight: FontWeight.w600
-                              ),
-                            ),
-                          ),
-                        ),
-                        BloqoSwitch(
-                          value: publicCoursesToggle,
-                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                        )
-                      ],
                     ),
                   ),
-                ),
-                BloqoSeasaltContainer(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                            child: Text(
-                              localizedText.show_private_courses,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: BloqoColors.russianViolet,
-                                fontWeight: FontWeight.w600
-                              ),
-                            ),
-                          ),
-                        ),
-                        BloqoSwitch(
-                          value: privateCoursesToggle,
-                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                        )
-                      ],
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                    child: Form(
+                      key: formKeyAuthorUsername,
+                      child: BloqoTextField(
+                        formKey: formKeyAuthorUsername,
+                        controller: authorUsernameController,
+                        labelText: localizedText.author_username,
+                        hintText: localizedText.author_username_hint,
+                        maxInputLength: Constants.maxUsernameLength,
+                      )
                     ),
                   ),
-                ),
-                BloqoSeasaltContainer(
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                    child: Form(
+                        key: formKeyMinimumPublicationDate,
+                        child: BloqoTextField(
+                          formKey: formKeyMinimumPublicationDate,
+                          controller: minimumPublicationDateController,
+                          labelText: localizedText.minimum_publication_date,
+                          hintText: localizedText.minimum_publication_date_hint,
+                          keyboardType: TextInputType.datetime,
+                          maxInputLength: 10,
+                          onTap: () async {
+                            // Below line stops keyboard from appearing
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            // Show Date Picker Here
+                            DateTime? picked = await _selectDate(localizedText: localizedText);
+                            setState(() {
+                              if(picked == null){
+                                minimumPublicationDateController.text = "";
+                              }
+                              else{
+                                minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                              }
+                            });
+                          }
+                        )
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                    child: Form(
+                        key: formKeyMaximumPublicationDate,
+                        child: BloqoTextField(
+                          formKey: formKeyMaximumPublicationDate,
+                          controller: maximumPublicationDateController,
+                          labelText: localizedText.maximum_publication_date,
+                          hintText: localizedText.maximum_publication_date_hint,
+                          keyboardType: TextInputType.datetime,
+                          maxInputLength: 10,
+                          onTap: () async {
+                            // Below line stops keyboard from appearing
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            // Show Date Picker Here
+                            DateTime? picked = await _selectDate(localizedText: localizedText);
+                            setState(() {
+                              if(picked == null){
+                                maximumPublicationDateController.text = "";
+                              }
+                              else{
+                                maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                              }
+                            });
+                          }
+                        )
+                    ),
+                  ),
+                  BloqoSeasaltContainer(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
-                      child: Column(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                      child: Row(
                         mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                              localizedText.search_page_tag_header,
-                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: BloqoColors.russianViolet
-                            )
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                  child: Icon(
-                                    Icons.label,
-                                    color: Color(0xFFFF00FF),
-                                    size: 24,
-                                  ),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                              child: Text(
+                                localizedText.show_public_courses,
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    color: BloqoColors.russianViolet,
+                                    fontWeight: FontWeight.w600
                                 ),
-                                Expanded(
-                                    child: LayoutBuilder(
+                              ),
+                            ),
+                          ),
+                          BloqoSwitch(
+                            value: publicCoursesToggle,
+                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  BloqoSeasaltContainer(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                              child: Text(
+                                localizedText.show_private_courses,
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: BloqoColors.russianViolet,
+                                  fontWeight: FontWeight.w600
+                                ),
+                              ),
+                            ),
+                          ),
+                          BloqoSwitch(
+                            value: privateCoursesToggle,
+                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  BloqoSeasaltContainer(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                localizedText.search_page_tag_header,
+                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BloqoColors.russianViolet
+                              )
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                    child: Icon(
+                                      Icons.label,
+                                      color: Color(0xFFFF00FF),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: LayoutBuilder(
+                                          builder: (BuildContext context, BoxConstraints constraints) {
+                                            double availableWidth = constraints.maxWidth;
+                                            return Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children:[
+                                                  BloqoDropdown(
+                                                      controller: languageTagController,
+                                                      dropdownMenuEntries: languageTags,
+                                                      initialSelection: languageTags[0].value,
+                                                      label: localizedText.language_tag,
+                                                      width: availableWidth
+                                                  ),
+                                                ]
+                                            );
+                                          }
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                    child: Icon(
+                                      Icons.label,
+                                      color: Color(0xFFFF0000),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: LayoutBuilder(
                                         builder: (BuildContext context, BoxConstraints constraints) {
                                           double availableWidth = constraints.maxWidth;
                                           return Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children:[
-                                                BloqoDropdown(
-                                                    controller: languageTagController,
-                                                    dropdownMenuEntries: languageTags,
-                                                    initialSelection: languageTags[0].value,
-                                                    label: localizedText.language_tag,
-                                                    width: availableWidth
-                                                ),
-                                              ]
+                                            mainAxisSize: MainAxisSize.max,
+                                            children:[
+                                              BloqoDropdown(
+                                                  controller: subjectTagController,
+                                                  dropdownMenuEntries: subjectTags,
+                                                  initialSelection: subjectTags[0].value,
+                                                  label: localizedText.subject_tag,
+                                                  width: availableWidth
+                                              ),
+                                            ]
                                           );
                                         }
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                  child: Icon(
-                                    Icons.label,
-                                    color: Color(0xFFFF0000),
-                                    size: 24,
+                                      )
                                   ),
-                                ),
-                                Expanded(
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                    child: Icon(
+                                      Icons.label,
+                                      color: Color(0xFF0000FF),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Expanded(
                                     child: LayoutBuilder(
                                       builder: (BuildContext context, BoxConstraints constraints) {
                                         double availableWidth = constraints.maxWidth;
@@ -340,218 +379,184 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                           mainAxisSize: MainAxisSize.max,
                                           children:[
                                             BloqoDropdown(
-                                                controller: subjectTagController,
-                                                dropdownMenuEntries: subjectTags,
-                                                initialSelection: subjectTags[0].value,
-                                                label: localizedText.subject_tag,
+                                                controller: durationTagController,
+                                                dropdownMenuEntries: durationTags,
+                                                initialSelection: durationTags[0].value,
+                                                label: localizedText.duration_tag,
                                                 width: availableWidth
                                             ),
                                           ]
                                         );
                                       }
                                     )
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                  child: Icon(
-                                    Icons.label,
-                                    color: Color(0xFF0000FF),
-                                    size: 24,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: LayoutBuilder(
-                                    builder: (BuildContext context, BoxConstraints constraints) {
-                                      double availableWidth = constraints.maxWidth;
-                                      return Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children:[
-                                          BloqoDropdown(
-                                              controller: durationTagController,
-                                              dropdownMenuEntries: durationTags,
-                                              initialSelection: durationTags[0].value,
-                                              label: localizedText.duration_tag,
-                                              width: availableWidth
-                                          ),
-                                        ]
-                                      );
-                                    }
                                   )
-                                )
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                  child: Icon(
-                                    Icons.label,
-                                    color: Color(0xFF00FF00),
-                                    size: 24,
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                    child: Icon(
+                                      Icons.label,
+                                      color: Color(0xFF00FF00),
+                                      size: 24,
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: LayoutBuilder(
-                                    builder: (BuildContext context, BoxConstraints constraints) {
-                                      double availableWidth = constraints.maxWidth;
-                                      return Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children:[
-                                            BloqoDropdown(
-                                                controller: modalityTagController,
-                                                dropdownMenuEntries: modalityTags,
-                                                initialSelection: modalityTags[0].value,
-                                                label: localizedText.modality_tag,
-                                                width: availableWidth
-                                            ),
-                                          ]
-                                      );
-                                    }
-                                  )
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                  child: Icon(
-                                    Icons.label,
-                                    color: Color(0xFFFFFF00),
-                                    size: 24,
-                                  ),
-                                ),
-                                Expanded(
+                                  Expanded(
                                     child: LayoutBuilder(
-                                    builder: (BuildContext context, BoxConstraints constraints) {
-                                      double availableWidth = constraints.maxWidth;
-                                      return Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children:[
-                                            BloqoDropdown(
-                                                controller: difficultyTagController,
-                                                dropdownMenuEntries: difficultyTags,
-                                                initialSelection: difficultyTags[0].value,
-                                                label: localizedText.difficulty_tag,
-                                                width: availableWidth
-                                            ),
-                                          ]
-                                      );
-                                    }
+                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                        double availableWidth = constraints.maxWidth;
+                                        return Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children:[
+                                              BloqoDropdown(
+                                                  controller: modalityTagController,
+                                                  dropdownMenuEntries: modalityTags,
+                                                  initialSelection: modalityTags[0].value,
+                                                  label: localizedText.modality_tag,
+                                                  width: availableWidth
+                                              ),
+                                            ]
+                                        );
+                                      }
+                                    )
                                   )
-                                )
-                              ],
+                                ],
+                              ),
                             ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
+                                    child: Icon(
+                                      Icons.label,
+                                      color: Color(0xFFFFFF00),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: LayoutBuilder(
+                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                        double availableWidth = constraints.maxWidth;
+                                        return Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children:[
+                                              BloqoDropdown(
+                                                  controller: difficultyTagController,
+                                                  dropdownMenuEntries: difficultyTags,
+                                                  initialSelection: difficultyTags[0].value,
+                                                  label: localizedText.difficulty_tag,
+                                                  width: availableWidth
+                                              ),
+                                            ]
+                                        );
+                                      }
+                                    )
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                  ),
+                  BloqoSeasaltContainer(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                            child: Text(
+                              localizedText.search_page_sort_header,
+                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: BloqoColors.russianViolet,
+                              ),
+                            ),
+                          ),
+                          LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints) {
+                              double availableWidth = constraints.maxWidth;
+                              return Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children:[
+                                  BloqoDropdown(
+                                    controller: sortByController,
+                                    dropdownMenuEntries: sortingOptions,
+                                    label: localizedText.sort_by,
+                                    initialSelection: sortingOptions[0].value,
+                                    width: availableWidth,
+                                  )
+                                ]
+                              );
+                            }
                           )
                         ],
                       ),
-                    )
-                ),
-                BloqoSeasaltContainer(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
-                          child: Text(
-                            localizedText.search_page_sort_header,
-                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: BloqoColors.russianViolet,
-                            ),
-                          ),
-                        ),
-                        LayoutBuilder(
-                          builder: (BuildContext context, BoxConstraints constraints) {
-                            double availableWidth = constraints.maxWidth;
-                            return Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children:[
-                                BloqoDropdown(
-                                  controller: sortByController,
-                                  dropdownMenuEntries: sortingOptions,
-                                  label: localizedText.sort_by,
-                                  initialSelection: sortingOptions[0].value,
-                                  width: availableWidth,
-                                )
-                              ]
-                            );
-                          }
-                        )
-                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                  child: Center(
-                    child: BloqoTextButton(
-                      color: BloqoColors.error,
-                      onPressed: () => _resetSearchCriteria(localizedText: localizedText),
-                      text: localizedText.reset_search_criteria,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                    child: Center(
+                      child: BloqoTextButton(
+                        color: BloqoColors.error,
+                        onPressed: () => _resetSearchCriteria(localizedText: localizedText),
+                        text: localizedText.reset_search_criteria,
+                      )
                     )
                   )
-                )
-              ]
-            )
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                    child: BloqoFilledButton(
-                      onPressed: () async {
-                        await _goToQrCodeScanPage(
-                          localizedText: localizedText
-                        );
-                      },
-                      color: BloqoColors.chineseViolet,
-                      icon: Icons.qr_code_2,
-                      text: localizedText.scan_qr_code,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                    child: BloqoFilledButton(
-                      onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
-                      color: BloqoColors.russianViolet,
-                      text: localizedText.search,
-                      icon: Icons.search
-                    ),
-                  ),
-                ),
-              ],
+                ]
+              )
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                      child: BloqoFilledButton(
+                        onPressed: () async {
+                          await _goToQrCodeScanPage(
+                            localizedText: localizedText
+                          );
+                        },
+                        color: BloqoColors.chineseViolet,
+                        icon: Icons.qr_code_2,
+                        text: localizedText.scan_qr_code,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                      child: BloqoFilledButton(
+                        onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
+                        color: BloqoColors.russianViolet,
+                        text: localizedText.search,
+                        icon: Icons.search
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

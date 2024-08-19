@@ -84,7 +84,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
               Padding(
                 padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                : Constants.tabletPadding,
+                : Constants.tabletPaddingWelcomePages,
                 child: BloqoSeasaltContainer(
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 15, 15),

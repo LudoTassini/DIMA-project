@@ -7,6 +7,7 @@ import 'package:bloqo/model/bloqo_review.dart';
 import 'package:bloqo/model/courses/bloqo_course.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -87,6 +88,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    bool isTablet = checkDevice(context);
 
     void loadMoreInProgressCourses() {
       setState(() {

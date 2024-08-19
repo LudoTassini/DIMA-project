@@ -83,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
               Padding(
                 padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                : Constants.tabletPadding,
+                : Constants.tabletPaddingWelcomePages,
                 child:
                   BloqoSeasaltContainer(
                     child: Padding(

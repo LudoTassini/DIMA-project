@@ -18,6 +18,7 @@ import '../../model/courses/bloqo_course.dart';
 import '../../model/courses/bloqo_section.dart';
 import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/check_device.dart';
 import '../../utils/localization.dart';
 
 class LearnPage extends StatefulWidget {
@@ -40,6 +41,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int completedCoursesDisplayed;
+  late int coursesToFurtherLoadAtRequest;
+  bool initialized = false;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     )..addListener(() => setState(() {}));
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     completedCoursesDisplayed = Constants.coursesToShowAtFirst;
+    coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
 
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
       if(context.mounted) {
@@ -99,16 +103,27 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    bool isTablet = checkDevice(context);
+
+    if(isTablet && !initialized){
+      setState(() {
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
+        completedCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+        initialized = true;
+      }
+      );
+    }
 
     void loadMoreInProgressCourses() {
       setState(() {
-        inProgressCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        inProgressCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
     void loadMoreCompletedCourses() {
       setState(() {
-        completedCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        completedCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
@@ -151,7 +166,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                               child: Column(
                                   children: [
-                                    if (inProgressCourses.isNotEmpty)
+                                    if (inProgressCourses.isNotEmpty && !isTablet)
                                       Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: List.generate(
@@ -179,12 +194,42 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                           },
                                         ),
                                       ),
+
+                                    if (inProgressCourses.isNotEmpty && isTablet)
+                                      GridView.builder(
+                                        shrinkWrap: true, // This allows the GridView to adjust its height to fit its content
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, // Number of columns in the grid
+                                          crossAxisSpacing: 10.0, // Spacing between columns
+                                          mainAxisSpacing: 10.0, // Spacing between rows
+                                          childAspectRatio: 6/2, // Aspect ratio for the grid items
+                                        ),
+                                        itemCount: inProgressCoursesDisplayed > inProgressCourses.length
+                                            ? inProgressCourses.length
+                                            : inProgressCoursesDisplayed,
+                                        itemBuilder: (context, index) {
+                                          BloqoUserCourseEnrolled course = inProgressCourses[index];
+                                          return BloqoCourseEnrolled(
+                                            course: course,
+                                            showInProgress: true,
+                                            onPressed: () async {
+                                              await _goToCoursePage(
+                                                  context: context,
+                                                  localizedText: localizedText,
+                                                  userCourseEnrolled: course
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+
                                     if (inProgressCoursesDisplayed < inProgressCourses.length)
                                       BloqoTextButton(
                                           onPressed: loadMoreInProgressCourses,
                                           text: localizedText.load_more_courses,
                                           color: BloqoColors.russianViolet
                                       ),
+
                                     if (inProgressCourses.isEmpty)
                                       Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -235,7 +280,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                             child: Column(
                                 children: [
-                                  if (completedCourses.isNotEmpty)
+
+                                  if (completedCourses.isNotEmpty && !isTablet)
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: List.generate(
@@ -269,6 +315,37 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                         },
                                       ),
                                     ),
+
+                                  if (completedCourses.isNotEmpty && isTablet)
+                                    GridView.builder(
+                                      shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, // Number of columns in the grid
+                                        crossAxisSpacing: 10.0,
+                                        mainAxisSpacing: 10.0,
+                                        childAspectRatio: 6/2, // Aspect ratio for the grid items (width/height ratio)
+                                      ),
+                                      itemCount: completedCoursesDisplayed > completedCourses.length
+                                          ? completedCourses.length
+                                          : completedCoursesDisplayed,
+                                      itemBuilder: (context, index) {
+                                        BloqoUserCourseEnrolled course = completedCourses[index];
+                                        return BloqoCourseEnrolled(
+                                          course: course,
+                                          showCompleted: true,
+                                          onPush: widget.onPush,
+                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0), // Padding for the last item, if needed
+                                          onPressed: () async {
+                                            await _goToCoursePage(
+                                              context: context,
+                                              localizedText: localizedText,
+                                              userCourseEnrolled: course,
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+
                                   if (completedCoursesDisplayed < completedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreCompletedCourses,

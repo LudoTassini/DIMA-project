@@ -45,17 +45,22 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   int _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirst;
   int _coursesCreatedDisplayed = Constants.coursesToShowAtFirst;
   int _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
+  bool _initialized = false;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-
     bool isTablet = checkDevice(context);
-    if(isTablet){
-      _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirstTablet;
-      _coursesCreatedDisplayed = Constants.coursesToShowAtFirstTablet;
-      _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+
+    if(isTablet && !_initialized){
+      setState(() {
+        _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirstTablet;
+        _coursesCreatedDisplayed = Constants.coursesToShowAtFirstTablet;
+        _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+        _initialized = true;
+        }
+      );
     }
 
     void loadMoreEnrolledCourses() {
@@ -83,11 +88,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           Flexible(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-              child: Text(
-                localizedText.homepage_learning,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: BloqoColors.seasalt,
-                  fontSize: 30,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  localizedText.homepage_learning,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: BloqoColors.seasalt,
+                    fontSize: 30,
+                  ),
                 ),
               ),
             ),
@@ -143,12 +151,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                       if (userCoursesEnrolled.isNotEmpty && isTablet)
                         GridView.builder(
+                          key: ValueKey(_coursesEnrolledInDisplayed),
                           shrinkWrap: true, // This helps in unbounded height cases
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2, // Number of columns in the grid
                             crossAxisSpacing: 10.0,
                             mainAxisSpacing: 10.0,
-                            childAspectRatio: 6/2, // 2/1
+                            childAspectRatio: 6/2,
                           ),
                           itemCount: _coursesEnrolledInDisplayed > userCoursesEnrolled.length
                               ? userCoursesEnrolled.length
@@ -214,12 +223,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           Flexible(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-              child: Text(
-                localizedText.homepage_editing,
-                textAlign: TextAlign.end,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: BloqoColors.seasalt,
-                  fontSize: 30,
+              child: Align(
+                alignment: Alignment.topRight,
+                child:Text(
+                  localizedText.homepage_editing,
+                  textAlign: TextAlign.end,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: BloqoColors.seasalt,
+                    fontSize: 30,
+                  ),
                 ),
               ),
             ),
@@ -274,12 +286,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                       if (userCoursesCreated.isNotEmpty && isTablet)
                         GridView.builder(
+                          key: ValueKey(_coursesCreatedDisplayed),
                           shrinkWrap: true, // This helps in unbounded height cases
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2, // Number of columns in the grid
                             crossAxisSpacing: 10.0,
                             mainAxisSpacing: 10.0,
-                            childAspectRatio: 8/2, // 3/2
+                            childAspectRatio: 8/2,
                           ),
                           itemCount: _coursesCreatedDisplayed > userCoursesCreated.length
                               ? userCoursesCreated.length
@@ -296,16 +309,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         ),
 
                         if (_coursesCreatedDisplayed < userCoursesCreated.length)
-                          TextButton(
-                            onPressed: loadMoreCreatedCourses,
-                            child: Text(
-                              localizedText.load_more_courses,
-                              style: const TextStyle(
-                              color: BloqoColors.primaryText,
-                              decoration: TextDecoration.underline,
+                          Padding(
+                            padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                            : const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            child: BloqoTextButton(
+                                onPressed: loadMoreCreatedCourses,
+                                text: localizedText.load_more_courses,
+                                color: BloqoColors.russianViolet
                             ),
                           ),
-                        ),
 
                         if (userCoursesCreated.isEmpty)
                           Padding(
