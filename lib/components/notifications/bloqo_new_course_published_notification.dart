@@ -11,8 +11,8 @@ import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../popups/bloqo_error_alert.dart';
 
-class BloqoCourseEnrollmentAccepted extends StatefulWidget {
-  const BloqoCourseEnrollmentAccepted({
+class BloqoNewCoursePublishedNotification extends StatefulWidget {
+  const BloqoNewCoursePublishedNotification({
     super.key,
     required this.notification,
     required this.onNotificationHandled,
@@ -22,10 +22,10 @@ class BloqoCourseEnrollmentAccepted extends StatefulWidget {
   final VoidCallback onNotificationHandled;
 
   @override
-  State<BloqoCourseEnrollmentAccepted> createState() => _BloqoCourseEnrollmentRequestState();
+  State<BloqoNewCoursePublishedNotification> createState() => _BloqoNewCoursePublishedNotificationState();
 }
 
-class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAccepted> {
+class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePublishedNotification> {
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +33,8 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
     return BloqoSeasaltContainer(
       child: FutureBuilder<BloqoUser?>(
         future: _getRequiredData(
-          localizedText: localizedText,
-          courseAuthorId: widget.notification.privateCourseAuthorId!
+            localizedText: localizedText,
+            courseAuthorId: widget.notification.courseAuthorId!
         ),
         builder: (BuildContext context, AsyncSnapshot<BloqoUser?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,13 +97,13 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
                                   ),
                                 ),
                                 Text(
-                                  localizedText.has_granted_access,
+                                  localizedText.has_published_new_course,
                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                     fontSize: 18,
                                   ),
                                 ),
                                 Text(
-                                  widget.notification.privateCourseName!,
+                                  widget.notification.courseName!,
                                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -122,8 +122,8 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
                                       color: BloqoColors.okay,
                                       onPressed: () async {
                                         await _tryDeleteNotification(
-                                          context: context,
-                                          localizedText: localizedText
+                                            context: context,
+                                            localizedText: localizedText
                                         );
                                       },
                                       text: localizedText.okay,

@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
+import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_user_course_created.dart';
 import 'package:bloqo/model/courses/tags/bloqo_modality_tag.dart';
 import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
@@ -369,28 +370,12 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                         description: localizedText.course_publish_confirmation,
                         confirmationFunction: () async {
                           context.loaderOverlay.show();
-                          try {
-                            await _tryPublishCourse(
-                              context: context,
-                              localizedText: localizedText,
-                              userCourseCreated: userCourseCreated,
-                              myself: myself
-                            );
-                            if (!context.mounted) return;
-                            context.loaderOverlay.hide();
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                            );
-                          } on BloqoException catch (e) {
-                            if (!context.mounted) return;
-                            context.loaderOverlay.hide();
-                            showBloqoErrorAlert(
-                              context: context,
-                              title: localizedText.error_title,
-                              description: e.message,
-                            );
-                          }
+                          await _tryPublishCourse(
+                            context: context,
+                            localizedText: localizedText,
+                            userCourseCreated: userCourseCreated,
+                            myself: myself
+                          );
                         },
                         backgroundColor: BloqoColors.russianViolet,
                         confirmationColor: BloqoColors.success
@@ -409,54 +394,119 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
   bool get wantKeepAlive => true;
 
   Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated, required BloqoUser myself}) async {
-    if(languageTagController.text == localizedText.none || subjectTagController.text == localizedText.none || durationTagController.text == localizedText.none ||
-      modalityTagController.text == localizedText.none || difficultyTagController.text == localizedText.none){
-      throw BloqoException(message: localizedText.missing_tag_error);
+    try {
+
+      if (languageTagController.text == localizedText.none ||
+          subjectTagController.text == localizedText.none ||
+          durationTagController.text == localizedText.none ||
+          modalityTagController.text == localizedText.none ||
+          difficultyTagController.text == localizedText.none) {
+        throw BloqoException(message: localizedText.missing_tag_error);
+      }
+
+      final List<DropdownMenuEntry<String>> languageTags = buildTagList(
+          type: BloqoCourseTagType.language, localizedText: localizedText);
+      final List<DropdownMenuEntry<String>> subjectTags = buildTagList(
+          type: BloqoCourseTagType.subject, localizedText: localizedText);
+      final List<DropdownMenuEntry<String>> durationTags = buildTagList(
+          type: BloqoCourseTagType.duration, localizedText: localizedText);
+      final List<DropdownMenuEntry<String>> modalityTags = buildTagList(
+          type: BloqoCourseTagType.modality, localizedText: localizedText);
+      final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(
+          type: BloqoCourseTagType.difficulty, localizedText: localizedText);
+
+      String languageTag = languageTags
+          .where((entry) => entry.label == languageTagController.text)
+          .first
+          .value;
+      String subjectTag = subjectTags
+          .where((entry) => entry.label == subjectTagController.text)
+          .first
+          .value;
+      String durationTag = durationTags
+          .where((entry) => entry.label == durationTagController.text)
+          .first
+          .value;
+      String modalityTag = modalityTags
+          .where((entry) => entry.label == modalityTagController.text)
+          .first
+          .value;
+      String difficultyTag = difficultyTags
+          .where((entry) => entry.label == difficultyTagController.text)
+          .first
+          .value;
+
+      BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
+          publishedCourseId: uuid(),
+          originalCourseId: userCourseCreated.courseId,
+          courseName: userCourseCreated.courseName,
+          authorUsername: myself.username,
+          authorId: myself.id,
+          isPublic: publicPrivateCoursesToggle.get(),
+          publicationDate: Timestamp.now(),
+          language: getLanguageTagFromString(tag: languageTag).toString(),
+          modality: getModalityTagFromString(tag: modalityTag).toString(),
+          subject: getSubjectTagFromString(tag: subjectTag).toString(),
+          difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
+          duration: getDurationTagFromString(tag: durationTag).toString(),
+          reviews: [],
+          rating: 0
+      );
+
+      await publishCourse(
+          localizedText: localizedText, publishedCourse: publishedCourse);
+
+      await updateCourseStatus(localizedText: localizedText,
+          courseId: userCourseCreated.courseId,
+          published: true);
+
+      if (!context.mounted) return;
+
+      BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(
+          context: context);
+      if (currentEditorCourse != null &&
+          currentEditorCourse.id == userCourseCreated.courseId) {
+        updateEditorCourseStatusInAppState(context: context, published: true);
+      }
+
+      updateUserCourseCreatedPublishedStatusInAppState(context: context,
+          courseId: userCourseCreated.courseId,
+          published: true);
+
+      await saveUserCourseCreatedChanges(localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated);
+
+      if (!context.mounted) return;
+      List<dynamic> followerIds = getUserFromAppState(context: context)!.followers;
+      for(String followerId in followerIds){
+        BloqoNotificationData notification = BloqoNotificationData(
+          id: uuid(),
+          userId: followerId,
+          type: BloqoNotificationType.newCourseFromFollowedUser.toString(),
+          timestamp: Timestamp.now(),
+          courseAuthorId: myself.id,
+          courseName: userCourseCreated.courseName
+        );
+        await pushNotification(localizedText: localizedText, notification: notification);
+      }
+
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      );
+
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
     }
 
-    final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
-    final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
-    final List<DropdownMenuEntry<String>> durationTags = buildTagList(type: BloqoCourseTagType.duration, localizedText: localizedText);
-    final List<DropdownMenuEntry<String>> modalityTags = buildTagList(type: BloqoCourseTagType.modality, localizedText: localizedText);
-    final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
-
-    String languageTag = languageTags.where((entry) => entry.label == languageTagController.text).first.value;
-    String subjectTag = subjectTags.where((entry) => entry.label == subjectTagController.text).first.value;
-    String durationTag = durationTags.where((entry) => entry.label == durationTagController.text).first.value;
-    String modalityTag = modalityTags.where((entry) => entry.label == modalityTagController.text).first.value;
-    String difficultyTag = difficultyTags.where((entry) => entry.label == difficultyTagController.text).first.value;
-
-    BloqoPublishedCourse publishedCourse = BloqoPublishedCourse(
-      publishedCourseId: uuid(),
-      originalCourseId: userCourseCreated.courseId,
-      courseName: userCourseCreated.courseName,
-      authorUsername: myself.username,
-      authorId: myself.id,
-      isPublic: publicPrivateCoursesToggle.get(),
-      publicationDate: Timestamp.now(),
-      language: getLanguageTagFromString(tag: languageTag).toString(),
-      modality: getModalityTagFromString(tag: modalityTag).toString(),
-      subject: getSubjectTagFromString(tag: subjectTag).toString(),
-      difficulty: getDifficultyTagFromString(tag: difficultyTag).toString(),
-      duration: getDurationTagFromString(tag: durationTag).toString(),
-      reviews: [],
-      rating: 0
-    );
-
-    await publishCourse(localizedText: localizedText, publishedCourse: publishedCourse);
-
-    await updateCourseStatus(localizedText: localizedText, courseId: userCourseCreated.courseId, published: true);
-
-    if(!context.mounted) return;
-
-    BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(context: context);
-    if(currentEditorCourse != null && currentEditorCourse.id == userCourseCreated.courseId) {
-      updateEditorCourseStatusInAppState(context: context, published: true);
-    }
-
-    updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: userCourseCreated.courseId, published: true);
-
-    await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
   }
 
 }

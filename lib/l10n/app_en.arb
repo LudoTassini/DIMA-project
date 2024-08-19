@@ -312,6 +312,7 @@
   "no_users": "There are no users to show.",
   "has_requested_access": "has requested access to the following course:",
   "has_granted_access": "has granted access to the following course:",
+  "has_published_new_course": "has published a new course:",
   "accept": "Accept",
   "deny": "Deny",
   "accept_enrollment_confirmation": "Are you sure you want to allow the access to your course?",

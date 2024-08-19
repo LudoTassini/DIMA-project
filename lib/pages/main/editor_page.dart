@@ -110,6 +110,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
           List<BloqoUserCourseCreated> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
           List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
           List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
+          inProgressCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+          publishedCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
           return Column(
             children: [
               TabBar(

@@ -122,6 +122,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
           List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
           List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
           List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
+          inProgressCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+          completedCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
           return Column(
             children: [
               TabBar(

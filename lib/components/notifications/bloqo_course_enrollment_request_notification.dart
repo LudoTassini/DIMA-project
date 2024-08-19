@@ -18,8 +18,8 @@ import '../../utils/uuid.dart';
 import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_error_alert.dart';
 
-class BloqoCourseEnrollmentRequest extends StatefulWidget {
-  const BloqoCourseEnrollmentRequest({
+class BloqoCourseEnrollmentRequestNotification extends StatefulWidget {
+  const BloqoCourseEnrollmentRequestNotification({
     super.key,
     required this.notification,
     required this.onNotificationHandled,
@@ -29,10 +29,10 @@ class BloqoCourseEnrollmentRequest extends StatefulWidget {
   final VoidCallback onNotificationHandled;
 
   @override
-  State<BloqoCourseEnrollmentRequest> createState() => _BloqoCourseEnrollmentRequestState();
+  State<BloqoCourseEnrollmentRequestNotification> createState() => _BloqoCourseEnrollmentRequestNotificationState();
 }
 
-class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequest> {
+class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEnrollmentRequestNotification> {
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,13 @@
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
-import 'package:bloqo/components/notifications/bloqo_course_enrollment_request.dart';
+import 'package:bloqo/components/notifications/bloqo_course_enrollment_request_notification.dart';
+import 'package:bloqo/components/notifications/bloqo_new_course_published_notification.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../components/navigation/bloqo_app_bar.dart';
-import '../../components/notifications/bloqo_course_enrollment_accepted.dart';
+import '../../components/notifications/bloqo_course_enrollment_accepted_notification.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user.dart';
 import '../../style/bloqo_colors.dart';
@@ -62,7 +63,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                         (index) {
                       BloqoNotificationData notification = notifications[index];
                       if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
-                        return BloqoCourseEnrollmentRequest(
+                        return BloqoCourseEnrollmentRequestNotification(
                           notification: notification,
                           onNotificationHandled: () {
                             setState(() {
@@ -72,7 +73,17 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                         );
                       }
                       if(notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
-                        return BloqoCourseEnrollmentAccepted(
+                        return BloqoCourseEnrollmentAcceptedNotification(
+                          notification: notification,
+                          onNotificationHandled: () {
+                            setState(() {
+                              notifications.removeAt(index);
+                            });
+                          },
+                        );
+                      }
+                      if(notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
+                        return BloqoNewCoursePublishedNotification(
                           notification: notification,
                           onNotificationHandled: () {
                             setState(() {
