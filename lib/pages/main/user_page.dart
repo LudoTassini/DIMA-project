@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_setting.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
@@ -8,7 +9,6 @@ import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -158,27 +158,35 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                       settingDescription: localizedText.application_settings_description,
                       settingType: BloqoSettingType.application,
                       forms: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                            child: LayoutBuilder(
-                                builder: (BuildContext context, BoxConstraints constraints) {
-                                  double availableWidth = constraints.maxWidth;
-                                  return Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        BloqoDropdown(
-                                          controller: languageController,
-                                          dropdownMenuEntries: languages,
-                                          //initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
-                                          width: availableWidth
-                                        )
-                                      ]
-                                  );
-                                }
-                            )
-                          )
-                        )
+                        Row(
+                            children:[
+                              Expanded(
+                                  child: Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                      child: LayoutBuilder(
+                                          builder: (BuildContext context, BoxConstraints constraints) {
+                                            double availableWidth = constraints.maxWidth;
+                                            String initialSelection = languages
+                                                .firstWhere(
+                                                    (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
+                                            languageController.text = initialSelection;
+                                            return Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  BloqoDropdown(
+                                                      controller: languageController,
+                                                      dropdownMenuEntries: languages,
+                                                      initialSelection: initialSelection,
+                                                      width: availableWidth
+                                                  )
+                                                ]
+                                            );
+                                          }
+                                      )
+                                  )
+                              )
+                            ]
+                        ),
                       ],
                       controllers: [
                         languageController
@@ -219,7 +227,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Future<void> _tryLogout({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await checkConnectivity(localizedText: localizedText);
       await logout(localizedText: localizedText);
       await deleteSharedPreferences();
       if(!context.mounted) return;
