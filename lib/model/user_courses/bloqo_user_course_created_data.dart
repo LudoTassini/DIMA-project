@@ -88,7 +88,6 @@ Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({required var locali
 }
 
 // FIXME: limitare a tre corsi
-// FIXME: da cambiare: author_id --> course_author_id
 Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({required var localizedText, required BloqoUserData user}) async {
   try {
     var ref = BloqoUserCourseCreatedData.getRef();

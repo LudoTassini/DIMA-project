@@ -172,7 +172,6 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           BloqoTextButton(
                             text: widget.courseAuthor.username,
                             color: BloqoColors.seasalt,
-                            // TODO
                             onPressed: () async {
                               _goToUserCoursesPage(
                                   context: context,
@@ -345,9 +344,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                 index: sectionIndex,
                                                 isClickable: false,
                                                 isInLearnPage: false,
-                                                onPressed: () async {
-                                                  // TODO
-                                                },
+                                                onPressed: () {},
                                               );
                                             },
                                           ),

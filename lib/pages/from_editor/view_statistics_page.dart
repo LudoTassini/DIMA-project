@@ -1,15 +1,20 @@
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_review.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
+import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/published_courses/bloqo_review_data.dart';
 import '../../style/bloqo_colors.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 
 class ViewStatisticsPage extends StatefulWidget {
@@ -17,11 +22,15 @@ class ViewStatisticsPage extends StatefulWidget {
   const ViewStatisticsPage({
     super.key,
     required this.publishedCourse,
-    required this.reviews
+    required this.reviews,
+    required this.onPush,
+    required this.onNavigateToPage
   });
 
   final BloqoPublishedCourseData publishedCourse;
   final List<BloqoReviewData> reviews;
+  final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<ViewStatisticsPage> createState() => _ViewStatisticsPageState();
@@ -87,7 +96,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                             text: widget.publishedCourse.authorUsername,
                             color: BloqoColors.seasalt,
                             onPressed: () async {
-                              // TODO
+                              await _tryGoToProfilePage(context: context, localizedText: localizedText);
                             },
                             fontSize: 16,
                           ),
@@ -312,5 +321,32 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _tryGoToProfilePage({required BuildContext context, required var localizedText}) async {
+    context.loaderOverlay.show();
+    try{
+      BloqoUserData author = await getUserFromId(localizedText: localizedText, id: widget.publishedCourse.authorId);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: author.id);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(
+          UserProfilePage(
+              onPush: widget.onPush,
+              onNavigateToPage: widget.onNavigateToPage,
+              author: author,
+              publishedCourses: publishedCourses
+          )
+      );
+    }
+    on BloqoException catch(e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
 
 }

@@ -54,7 +54,6 @@ class LearnCourseAppState with ChangeNotifier{
   }
 
   void _setSectionsCompleted(List<dynamic> sectionsCompleted){
-    sectionsCompleted = _checkDuplicates(sectionsCompleted)!;
     _sectionsCompleted = sectionsCompleted;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
@@ -62,7 +61,6 @@ class LearnCourseAppState with ChangeNotifier{
   }
 
   void _setChaptersCompleted(List<dynamic> chaptersCompleted){
-    chaptersCompleted = _checkDuplicates(chaptersCompleted)!;
     _chaptersCompleted = chaptersCompleted;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
@@ -89,15 +87,6 @@ class LearnCourseAppState with ChangeNotifier{
 
   void _updateComingFromHomePrivilege(bool newValue){
     _fromHome = newValue;
-  }
-
-  //FIXME: sparire
-  List<dynamic>? _checkDuplicates(List<dynamic>? list) {
-    if (list == null) {
-      return null;
-    }
-    List<dynamic> uniqueList = list.toSet().toList();
-    return uniqueList;
   }
 
 }

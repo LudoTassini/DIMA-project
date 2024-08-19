@@ -36,9 +36,11 @@ class EditorPage extends StatefulWidget {
   const EditorPage({
     super.key,
     required this.onPush,
+    required this.onNavigateToPage
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<EditorPage> createState() => _EditorPageState();
@@ -263,7 +265,12 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
+                                                    widget.onPush(ViewStatisticsPage(
+                                                      publishedCourse: publishedCourse,
+                                                      reviews: reviews,
+                                                      onPush: widget.onPush,
+                                                      onNavigateToPage: widget.onNavigateToPage,
+                                                    ));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;
@@ -334,7 +341,12 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
+                                                    widget.onPush(ViewStatisticsPage(
+                                                      publishedCourse: publishedCourse,
+                                                      reviews: reviews,
+                                                      onPush: widget.onPush,
+                                                      onNavigateToPage: widget.onNavigateToPage,
+                                                    ));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;

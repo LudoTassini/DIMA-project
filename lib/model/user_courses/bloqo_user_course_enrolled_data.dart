@@ -232,7 +232,6 @@ Future<void> updateUserCourseEnrolledCompletedSections({required var localizedTe
         .where("enrolled_user_id", isEqualTo: enrolledUserId).get();
     var docSnapshot = querySnapshot.docs.first;
     BloqoUserCourseEnrolledData userCourseEnrolled = docSnapshot.data();
-    sectionsCompleted = _checkDuplicates(sectionsCompleted);
     userCourseEnrolled.sectionsCompleted = sectionsCompleted;
 
     await ref.doc(docSnapshot.id).update(userCourseEnrolled.toFirestore());
@@ -259,7 +258,6 @@ Future<void> updateUserCourseEnrolledCompletedChapters({required var localizedTe
 
     BloqoUserCourseEnrolledData course = docSnapshot.data();
 
-    chaptersCompleted = _checkDuplicates(chaptersCompleted);
     course.chaptersCompleted = chaptersCompleted;
 
     await ref.doc(docSnapshot.id).update(course.toFirestore());
@@ -362,13 +360,4 @@ Future<void> updateUserCourseEnrolledRated({required var localizedText, required
         throw BloqoException(message: localizedText.generic_error);
     }
   }
-}
-
-//TODO: rimuovere
-List<dynamic>? _checkDuplicates(List<dynamic>? list) {
-  if (list == null) {
-    return null;
-  }
-  List<dynamic> uniqueList = list.toSet().toList();
-  return uniqueList;
 }
