@@ -49,6 +49,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
+  late int coursesToFurtherLoadAtRequest;
+  late bool initialized;
 
   @override
   void initState() {
@@ -60,6 +62,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     )..addListener(() => setState(() {}));
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
+    coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
+    initialized = false;
 
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
       if(context.mounted) {
@@ -90,15 +94,25 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     final localizedText = getAppLocalizations(context)!;
     bool isTablet = checkDevice(context);
 
+    if(isTablet && !initialized){
+      setState(() {
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
+        publishedCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletLearnPage;
+        initialized = true;
+      }
+      );
+    }
+
     void loadMoreInProgressCourses() {
       setState(() {
-        inProgressCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        inProgressCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
     void loadMorePublishedCourses() {
       setState(() {
-        publishedCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        publishedCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
@@ -141,7 +155,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             builder: (context, editorCourseAppState, _){
                               return Column(
                                 children: [
-                                  if (inProgressCourses.isNotEmpty)
+
+                                  if (inProgressCourses.isNotEmpty && !isTablet)
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: List.generate(
@@ -179,6 +194,46 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         },
                                       ),
                                     ),
+
+
+
+
+                                  if (inProgressCourses.isNotEmpty && !isTablet)
+                                    GridView.builder(
+                                      shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, // Number of columns in the grid
+                                        crossAxisSpacing: 10.0, // Spacing between columns
+                                        mainAxisSpacing: 10.0, // Spacing between rows
+                                        childAspectRatio: 6/2, // Aspect ratio for the grid items (width/height ratio)
+                                      ),
+                                      itemCount: inProgressCoursesDisplayed > inProgressCourses.length
+                                          ? inProgressCourses.length
+                                          : inProgressCoursesDisplayed,
+                                      itemBuilder: (context, index) {
+                                        BloqoUserCourseCreated course = inProgressCourses[index];
+                                        return BloqoCourseCreated(
+                                          course: course,
+                                          padding: index == (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1
+                                              ? const EdgeInsetsDirectional.all(15)
+                                              : const EdgeInsetsDirectional.all(0),
+                                          onPressed: () async {
+                                            await _goToCoursePage(
+                                              context: context,
+                                              localizedText: localizedText,
+                                              userCourseCreated: course,
+                                            );
+                                          },
+                                          showEditOptions: true,
+                                          onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId)),
+                                        );
+                                      },
+                                    ),
+
+
+
+
+
                                   if (inProgressCoursesDisplayed < inProgressCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreInProgressCourses,
