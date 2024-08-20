@@ -264,6 +264,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "is_answer_correct":
             MessageLookupByLibrary.simpleMessage("Is this answer correct?"),
         "italian": MessageLookupByLibrary.simpleMessage("Italian"),
+        "language": MessageLookupByLibrary.simpleMessage("Language"),
         "language_tag": MessageLookupByLibrary.simpleMessage("Language Tag"),
         "languages": MessageLookupByLibrary.simpleMessage("Languages"),
         "law": MessageLookupByLibrary.simpleMessage("Law"),

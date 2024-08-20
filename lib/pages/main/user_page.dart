@@ -159,30 +159,42 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                       settingType: BloqoSettingType.application,
                       forms: [
                         Row(
-                            children:[
+                            children: [
                               Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                      child: LayoutBuilder(
-                                          builder: (BuildContext context, BoxConstraints constraints) {
-                                            double availableWidth = constraints.maxWidth;
-                                            String initialSelection = languages
-                                                .firstWhere(
-                                                    (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
-                                            languageController.text = initialSelection;
-                                            return Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  BloqoDropdown(
-                                                      controller: languageController,
-                                                      dropdownMenuEntries: languages,
-                                                      initialSelection: initialSelection,
-                                                      width: availableWidth
-                                                  )
-                                                ]
-                                            );
-                                          }
-                                      )
+                                  child: LayoutBuilder(
+                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                        double availableWidth = constraints.maxWidth;
+                                        String initialSelection = languages
+                                            .firstWhere(
+                                                (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
+                                        languageController.text = initialSelection;
+                                        return Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      localizedText.language,
+                                                      textAlign: TextAlign.start,
+                                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                        color: BloqoColors.russianViolet
+                                                      )
+                                                    )
+                                                  ]
+                                                )
+                                              ),
+                                              BloqoDropdown(
+                                                  controller: languageController,
+                                                  dropdownMenuEntries: languages,
+                                                  initialSelection: initialSelection,
+                                                  width: availableWidth
+                                              )
+                                            ]
+                                        );
+                                      }
                                   )
                               )
                             ]

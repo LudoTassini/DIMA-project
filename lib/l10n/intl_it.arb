@@ -336,5 +336,6 @@
   "for_successfully_completing_course": "per aver completato con successo il seguente corso:",
   "date": "Data",
   "application_settings_title": "Impostazioni dell'applicazione",
-  "application_settings_description": "Modifica la tua esperienza con bloQo per trarre il meglio dall'uso dell'applicazione."
+  "application_settings_description": "Modifica la tua esperienza con bloQo per trarre il meglio dall'uso dell'applicazione.",
+  "language": "Lingua"
 }
