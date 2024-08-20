@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               ? userCoursesEnrolled.length
                               : _coursesEnrolledInDisplayed,
                           itemBuilder: (context, index) {
-                            BloqoUserCourseEnrolled course = userCoursesEnrolled[index];
+                            BloqoUserCourseEnrolledData course = userCoursesEnrolled[index];
                             return BloqoCourseEnrolled(
                               course: course,
                               showInProgress: true,
@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               ? userCoursesCreated.length
                               : _coursesCreatedDisplayed,
                           itemBuilder: (context, index) {
-                            BloqoUserCourseCreated course = userCoursesCreated[index];
+                            BloqoUserCourseCreatedData course = userCoursesCreated[index];
                             return BloqoCourseCreated(
                               course: course,
                               onPressed: () async {

@@ -214,7 +214,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                             ? inProgressCourses.length
                                             : inProgressCoursesDisplayed,
                                         itemBuilder: (context, index) {
-                                          BloqoUserCourseEnrolled course = inProgressCourses[index];
+                                          BloqoUserCourseEnrolledData course = inProgressCourses[index];
                                           return BloqoCourseEnrolled(
                                             course: course,
                                             showInProgress: true,
@@ -335,7 +335,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           ? completedCourses.length
                                           : completedCoursesDisplayed,
                                       itemBuilder: (context, index) {
-                                        BloqoUserCourseEnrolled course = completedCourses[index];
+                                        BloqoUserCourseEnrolledData course = completedCourses[index];
                                         return BloqoCourseEnrolled(
                                           course: course,
                                           showCompleted: true,
