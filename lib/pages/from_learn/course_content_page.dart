@@ -24,8 +24,11 @@ import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/bloqo_qr_code_type.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
+
+import '../from_any/qr_code_page.dart';
 
 class CourseContentPage extends StatefulWidget {
 
@@ -113,23 +116,63 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  20, 4, 0, 0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  localizedText.description,
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .displayLarge
-                                      ?.copyWith(
-                                    color: theme.colors.highContrastColor,
-                                    fontSize: 24,
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        20, 10, 0, 0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        localizedText.description,
+                                        style: Theme.of(context).textTheme.displayLarge
+                                            ?.copyWith(
+                                          color: theme.colors.highContrastColor,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20, 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: theme.colors.inBetweenColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.qr_code_2,
+                                          color: theme.colors.highContrastColor,
+                                          size: 32,
+                                        ),
+                                        onPressed: () async {
+                                          context.loaderOverlay.show();
+                                          try{
+                                            BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
+                                            if (!context.mounted) return;
+                                            context.loaderOverlay.hide();
+                                            widget.onPush(
+                                                QrCodePage(
+                                                    qrCodeTitle: course.name,
+                                                    qrCodeContent: "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}"
+                                                )
+                                            );
+                                          } on BloqoException catch (e) {
+                                            if (!context.mounted) return;
+                                            context.loaderOverlay.hide();
+                                            showBloqoErrorAlert(
+                                              context: context,
+                                              title: localizedText.error_title,
+                                              description: e.message,
+                                            );
+                                          }
+                                        }
+                                      ),
+                                    ),
+                                  )
+                                ]
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
