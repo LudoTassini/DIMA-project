@@ -7,7 +7,6 @@ import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
-import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:bloqo/style/bloqo_theme.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_startup_information.dart';
@@ -54,7 +53,7 @@ Future<void> main() async {
         overlayWidgetBuilder: (_) {
           return Center(
             child: LoadingAnimationWidget.prograssiveDots(
-              color: BloqoColors.russianViolet,
+              color: const Color(0xFF442367),
               size: 100,
             ),
           );
@@ -104,6 +103,7 @@ class _BloqoAppState extends State<BloqoApp> {
     });
 
     updateLanguageInAppState(context: context, newLanguageCode: startupInfo.locale.languageCode);
+    updateAppThemeInAppState(context: context, newTheme: startupInfo.theme);
 
     if (startupInfo.isLoggedIn) {
       saveUserToAppState(context: context, user: startupInfo.user!);
@@ -133,7 +133,7 @@ class _BloqoAppState extends State<BloqoApp> {
     return BloqoMainContainer(
       child: Center(
         child: LoadingAnimationWidget.prograssiveDots(
-          color: BloqoColors.seasalt,
+          color: const Color(0xFFF7F9F9),
           size: 100,
         ),
       ),
@@ -143,7 +143,7 @@ class _BloqoAppState extends State<BloqoApp> {
   Widget _buildWelcomeScreen() {
     return MaterialApp(
       title: 'bloQo',
-      theme: BloqoTheme.get(),
+      theme: LilacOrchidTheme().getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),
@@ -154,7 +154,7 @@ class _BloqoAppState extends State<BloqoApp> {
   Widget _buildMainScreen() {
     return MaterialApp(
       title: 'bloQo',
-      theme: BloqoTheme.get(),
+      theme: LilacOrchidTheme().getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),
@@ -163,8 +163,27 @@ class _BloqoAppState extends State<BloqoApp> {
   }
 
   Future<BloqoStartupInformation> _getStartupInformation({required BuildContext context}) async {
-    final Locale locale = await _getInitLanguage(context: context);
     final bool isLoggedIn = await _checkIfUserIsLoggedIn();
+
+    if(!context.mounted) {
+      return BloqoStartupInformation(
+        isLoggedIn: false,
+        locale: const Locale('en'),
+        theme: LilacOrchidTheme()
+      );
+    }
+
+    final Locale locale = await _getInitLanguage(context: context);
+
+    if(!context.mounted) {
+      return BloqoStartupInformation(
+        isLoggedIn: false,
+        locale: const Locale('en'),
+        theme: LilacOrchidTheme()
+      );
+    }
+
+    final BloqoAppTheme theme = await _getInitTheme(context: context);
 
     if (isLoggedIn) {
       try {
@@ -175,6 +194,7 @@ class _BloqoAppState extends State<BloqoApp> {
         return BloqoStartupInformation(
           isLoggedIn: isLoggedIn,
           locale: locale,
+          theme: theme,
           user: user,
           userCoursesCreated: userCoursesCreated,
           userCoursesEnrolled: userCoursesEnrolled,
@@ -183,12 +203,14 @@ class _BloqoAppState extends State<BloqoApp> {
         return BloqoStartupInformation(
           isLoggedIn: false,
           locale: locale,
+          theme: theme,
         );
       }
     } else {
       return BloqoStartupInformation(
         isLoggedIn: false,
         locale: locale,
+        theme: theme
       );
     }
   }
@@ -224,4 +246,20 @@ class _BloqoAppState extends State<BloqoApp> {
 
     return const Locale('en');
   }
+
+  Future<BloqoAppTheme> _getInitTheme({required BuildContext context}) async {
+    String? savedTheme = await readAppTheme();
+    if (savedTheme != null) {
+      switch(savedTheme){
+        case BloqoAppThemeType.lilacOrchid:
+          return LilacOrchidTheme();
+        default:
+          return LilacOrchidTheme();
+      }
+    }
+    else{
+      return LilacOrchidTheme();
+    }
+  }
+
 }

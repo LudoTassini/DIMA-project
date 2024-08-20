@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../model/bloqo_user_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../popups/bloqo_error_alert.dart';
 
@@ -29,16 +29,17 @@ class BloqoUserDetailsShort extends StatelessWidget{
       url = user.pictureUrl;
     }
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
       padding: const EdgeInsets.all(20),
       child: ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.all(15)),
-          backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+          backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
           shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
-              color: BloqoColors.seasalt,
+            side: BorderSide(
+              color: theme.colors.highContrastColor,
               width: 0,
             ),
           )),
@@ -74,9 +75,9 @@ class BloqoUserDetailsShort extends StatelessWidget{
                   Align(
                     alignment: const AlignmentDirectional(1, 1),
                     child: Container(
-                      decoration: const BoxDecoration(
-                        color: BloqoColors.russianViolet,
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: theme.colors.leadingColor,
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(0),
                           bottomRight: Radius.circular(8),
                           topLeft: Radius.circular(0),
@@ -112,7 +113,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                       user.fullName,
                                       textAlign: TextAlign.start,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                        color: BloqoColors.secondaryText,
+                                        color: theme.colors.secondaryText,
                                         fontSize: 14,
                                         letterSpacing: 0,
                                         overflow: TextOverflow.ellipsis,
@@ -122,7 +123,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     user.username,
                                     textAlign: TextAlign.start,
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      color: BloqoColors.primaryText,
+                                      color: theme.colors.primaryText,
                                       fontSize: 18,
                                       letterSpacing: 0,
                                       overflow: TextOverflow.ellipsis,
@@ -195,9 +196,9 @@ class BloqoUserDetailsShort extends StatelessWidget{
                   )
               ),
             ),
-            const Icon(
+            Icon(
               Icons.play_circle,
-              color: BloqoColors.russianViolet,
+              color: theme.colors.leadingColor,
               size: 24,
             ),
           ],

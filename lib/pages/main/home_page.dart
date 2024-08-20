@@ -2,10 +2,10 @@ import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
-import 'package:bloqo/style/bloqo_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/editor_course_app_state.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_app_state.dart';
@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMoreEnrolledCourses() {
       setState(() {
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               child: Text(
                 localizedText.homepage_learning,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: BloqoColors.seasalt,
+                  color: theme.colors.highContrastColor,
                   fontSize: 30,
                 ),
               ),
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FontStyle.italic,
-                                    color: BloqoColors.primaryText,
+                                    color: theme.colors.primaryText,
                                   ),
                                 ),
                               ),
@@ -130,7 +131,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         BloqoTextButton(
                           onPressed: loadMoreEnrolledCourses,
                           text: localizedText.load_more,
-                          color: BloqoColors.russianViolet
+                          color: theme.colors.leadingColor
                         ),
 
                       if (userCoursesEnrolled.isEmpty)
@@ -142,7 +143,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               Text(
                                 localizedText.homepage_no_enrolled_courses,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.primaryText,
+                                  color: theme.colors.primaryText,
                                   fontSize: 14,
                                 ),
                               ),
@@ -150,7 +151,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                 padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
                                 child: BloqoFilledButton(
                                   onPressed: () => widget.onNavigateToPage(2),
-                                  color: BloqoColors.russianViolet,
+                                  color: theme.colors.leadingColor,
                                   text: localizedText.take_me_there_button,
                                   fontSize: 16,
                                 ),
@@ -171,7 +172,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                 localizedText.homepage_editing,
                 textAlign: TextAlign.end,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: BloqoColors.seasalt,
+                  color: theme.colors.highContrastColor,
                   fontSize: 30,
                 ),
               ),
@@ -197,7 +198,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                 child: Text(
                                   localizedText.homepage_editing_quote,
                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: BloqoColors.primaryText,
+                                    color: theme.colors.primaryText,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FontStyle.italic,
@@ -230,12 +231,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             onPressed: loadMoreCreatedCourses,
                             child: Text(
                               localizedText.load_more,
-                              style: const TextStyle(
-                              color: BloqoColors.primaryText,
-                              decoration: TextDecoration.underline,
+                              style: TextStyle(
+                                color: theme.colors.primaryText,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
-                        ),
 
                         if (userCoursesCreated.isEmpty)
                           Padding(
@@ -246,7 +247,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                 Text(
                                   localizedText.homepage_no_created_courses,
                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.primaryText,
+                                  color: theme.colors.primaryText,
                                   fontSize: 14,
                                 ),
                               ),
@@ -254,7 +255,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                 padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
                                 child: BloqoFilledButton(
                                   onPressed: () async { await _createNewCourse(context: context, localizedText: localizedText); },
-                                  color: BloqoColors.russianViolet,
+                                  color: theme.colors.leadingColor,
                                   text: localizedText.take_me_there_button,
                                   fontSize: 16,
                                 ),

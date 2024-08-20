@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
@@ -12,7 +13,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../model/bloqo_user_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/uuid.dart';
 import '../custom/bloqo_snack_bar.dart';
@@ -37,6 +37,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
   @override
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoSeasaltContainer(
       child: FutureBuilder<List<Object>>(
         future: _getRequiredData(
@@ -48,7 +49,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: LoadingAnimationWidget.prograssiveDots(
-                color: BloqoColors.russianViolet,
+                color: theme.colors.leadingColor,
                 size: 100,
               ),
             );
@@ -58,7 +59,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                 child: Text(
                   "Error",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: BloqoColors.error,
+                    color: theme.colors.error,
                   ),
                 ),
               );
@@ -128,7 +129,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                   runSpacing: 10,
                                   children: [
                                     BloqoFilledButton(
-                                      color: BloqoColors.success,
+                                      color: theme.colors.success,
                                       onPressed: () async {
                                         await showBloqoConfirmationAlert(
                                             context: context,
@@ -146,8 +147,8 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                                 BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                               );
                                             },
-                                            backgroundColor: BloqoColors.russianViolet,
-                                            confirmationColor: BloqoColors.success
+                                            backgroundColor: theme.colors.leadingColor,
+                                            confirmationColor: theme.colors.success
                                         );
                                       },
                                       text: localizedText.accept,
@@ -155,7 +156,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                       height: 32,
                                     ),
                                     BloqoFilledButton(
-                                      color: BloqoColors.error,
+                                      color: theme.colors.error,
                                       onPressed: () async {
                                         await showBloqoConfirmationAlert(
                                             context: context,
@@ -168,7 +169,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                                 BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                               );
                                             },
-                                            backgroundColor: BloqoColors.error
+                                            backgroundColor: theme.colors.error
                                         );
                                       },
                                       text: localizedText.deny,
@@ -192,7 +193,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
               child: Text(
                 "Error",
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.error,
+                  color: theme.colors.error,
                 ),
               ),
             );

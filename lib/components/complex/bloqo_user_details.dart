@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../pages/from_any/qr_code_page.dart';
 import '../../pages/from_any/user_list_page.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/bloqo_qr_code_type.dart';
 import '../buttons/bloqo_filled_button.dart';
@@ -51,6 +51,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
     }
     currentlyFollowing ??= getUserFromAppState(context: context)!.following.contains(widget.user.id);
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoSeasaltContainer(
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -84,9 +85,9 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                       Align(
                         alignment: const AlignmentDirectional(1, 1),
                         child: Container(
-                          decoration: const BoxDecoration(
-                            color: BloqoColors.russianViolet,
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: theme.colors.leadingColor,
+                            borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(0),
                               bottomRight: Radius.circular(8),
                               topLeft: Radius.circular(0),
@@ -96,9 +97,9 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                           child: widget.onReplacePicture != null ? IconButton(
                             padding: EdgeInsets.zero,
                             visualDensity: VisualDensity.compact,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.camera_alt,
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               size: 22,
                             ),
                             onPressed: widget.onReplacePicture
@@ -132,7 +133,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           widget.user.fullName,
                                           textAlign: TextAlign.start,
                                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                            color: BloqoColors.secondaryText,
+                                            color: theme.colors.secondaryText,
                                             fontSize: 16,
                                             letterSpacing: 0,
                                             overflow: TextOverflow.ellipsis,
@@ -142,7 +143,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                         widget.user.username,
                                         textAlign: TextAlign.start,
                                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                          color: BloqoColors.primaryText,
+                                          color: theme.colors.primaryText,
                                           fontSize: 22,
                                           letterSpacing: 0,
                                           overflow: TextOverflow.ellipsis,
@@ -156,13 +157,13 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                 alignment: const AlignmentDirectional(1, 0),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: BloqoColors.chineseViolet,
+                                    color: theme.colors.inBetweenColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.qr_code_2,
-                                      color: BloqoColors.seasalt,
+                                      color: theme.colors.highContrastColor,
                                       size: 32,
                                     ),
                                     onPressed: () {
@@ -192,7 +193,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                                           child: BloqoTextButton(
                                               text: localizedText.followers,
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               onPressed: () {
                                                 widget.onPush(UserListPage(
                                                   reference: widget.user,
@@ -222,7 +223,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                                           child: BloqoTextButton(
                                               text: localizedText.following,
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               onPressed: () {
                                                 widget.onPush(UserListPage(
                                                   reference: widget.user,
@@ -255,7 +256,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                 child: !currentlyFollowing! ? BloqoFilledButton(
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   icon: Icons.person_add_alt_1_rounded,
                   text: localizedText.follow,
                   onPressed: () async {
@@ -265,7 +266,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                     );
                   }
                 ) : BloqoFilledButton(
-                    color: BloqoColors.error,
+                    color: theme.colors.error,
                     icon: Icons.person_remove_alt_1_rounded,
                     text: localizedText.unfollow,
                     onPressed: () async {

@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
@@ -22,7 +23,6 @@ import '../../model/bloqo_user_data.dart';
 import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
@@ -54,6 +54,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     // FIXME
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
@@ -124,7 +125,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                       .textTheme
                                       .displayLarge
                                       ?.copyWith(
-                                    color: BloqoColors.seasalt,
+                                    color: theme.colors.highContrastColor,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -139,7 +140,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   course.description!,
                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                     fontWeight: FontWeight.w400,
-                                    color: BloqoColors.seasalt,
+                                    color: theme.colors.highContrastColor,
                                     fontSize: 16,
                                   ),
                                 )
@@ -157,7 +158,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                       .textTheme
                                       .displayLarge
                                       ?.copyWith(
-                                    color: BloqoColors.seasalt,
+                                    color: theme.colors.highContrastColor,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -197,7 +198,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           .textTheme
                                                           .displayMedium
                                                           ?.copyWith(
-                                                        color: BloqoColors.secondaryText,
+                                                        color: theme.colors.secondaryText,
                                                         fontSize: 18,
                                                       ),
                                                     ),
@@ -212,16 +213,16 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               textAlign: TextAlign.start,
                                                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                                 fontSize: 14,
-                                                                color: BloqoColors.success,
+                                                                color: theme.colors.success,
                                                                 fontWeight: FontWeight.w600,
                                                               ),
                                                             ),
                                                           ),
-                                                          const Padding(
-                                                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                                                          Padding(
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                                                             child: Icon(
                                                               Icons.check,
-                                                              color: BloqoColors.success,
+                                                              color: theme.colors.success,
                                                               size: 24,
                                                             ),
                                                           ),
@@ -237,7 +238,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             textAlign: TextAlign.start,
                                                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                               fontSize: 14,
-                                                              color: BloqoColors.secondaryText,
+                                                              color: theme.colors.secondaryText,
                                                               fontWeight: FontWeight.w600,
                                                             ),
                                                           ),
@@ -263,7 +264,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             .textTheme
                                                             .displayLarge
                                                             ?.copyWith(
-                                                          color: BloqoColors.russianViolet,
+                                                          color: theme.colors.leadingColor,
                                                           fontSize: 24,
                                                         ),
                                                       ),
@@ -286,7 +287,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         child: Text(
                                                           chapter.description!,
                                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                            color: BloqoColors.primaryText,
+                                                            color: theme.colors.primaryText,
                                                           ),
                                                         ),
                                                       ),
@@ -347,15 +348,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               children: [
                                                                 Text(
                                                                   localizedText.collapse,
-                                                                  style: const TextStyle(
-                                                                    color: BloqoColors.secondaryText,
+                                                                  style: TextStyle(
+                                                                    color: theme.colors.secondaryText,
                                                                     fontSize: 14,
                                                                     fontWeight: FontWeight.w600,
                                                                   ),
                                                                 ),
-                                                                const Icon(
+                                                                Icon(
                                                                   Icons.keyboard_arrow_up_sharp,
-                                                                  color: BloqoColors.secondaryText,
+                                                                  color: theme.colors.secondaryText,
                                                                   size: 25,
                                                                 ),
                                                               ],
@@ -386,15 +387,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               children: [
                                                                 Text(
                                                                   localizedText.view_more,
-                                                                  style: const TextStyle(
-                                                                    color: BloqoColors.secondaryText,
+                                                                  style: TextStyle(
+                                                                    color: theme.colors.secondaryText,
                                                                     fontSize: 14,
                                                                     fontWeight: FontWeight.w600,
                                                                   ),
                                                                 ),
-                                                                const Icon(
+                                                                Icon(
                                                                   Icons.keyboard_arrow_right_sharp,
-                                                                  color: BloqoColors.secondaryText,
+                                                                  color: theme.colors.secondaryText,
                                                                   size: 25,
                                                                 ),
                                                               ],
@@ -431,7 +432,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       .textTheme
                                                       .displaySmall
                                                       ?.copyWith(
-                                                    color: BloqoColors.seasalt,
+                                                    color: theme.colors.highContrastColor,
                                                     fontSize: 16,
                                                   ),
                                                 ),
@@ -443,7 +444,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                             child: Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
                                               child: BloqoFilledButton(
-                                                color: BloqoColors.error,
+                                                color: theme.colors.error,
                                                 onPressed: () {
                                                   showBloqoConfirmationAlert(
                                                       context: context,
@@ -457,7 +458,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           enrolledUserId: user.id
                                                         );
                                                       },
-                                                      backgroundColor: BloqoColors.error
+                                                      backgroundColor: theme.colors.error
                                                   );
                                                 },
                                                 text: localizedText.unsubscribe,
@@ -520,7 +521,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   );
                               },
                             height: 60,
-                            color: BloqoColors.success,
+                            color: theme.colors.success,
                             text: sectionsCompleted.isEmpty ? localizedText.start_learning
                                 : localizedText.continue_learning,
                             fontSize: 24,

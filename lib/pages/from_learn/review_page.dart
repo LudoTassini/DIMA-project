@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
@@ -13,7 +14,6 @@ import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/published_courses/bloqo_published_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -68,6 +68,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     final formKeyAnswerTitle = GlobalKey<FormState>();
     final formKeyAnswerReview = GlobalKey<FormState>();
@@ -88,7 +89,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                       child: Text(
                         widget.courseToReview.courseName,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 30),
                       ),
                     ),
@@ -98,7 +99,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                       child: Text(
                         !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 20),
                       ),
                     ),
@@ -167,7 +168,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                                   userCourseEnrolled: widget.courseToReview
                                 );
                               },
-                              color: BloqoColors.russianViolet,
+                              color: theme.colors.leadingColor,
                               text: localizedText.publish,
                               icon: Icons.comment
                             ),

@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
@@ -15,7 +16,6 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -61,6 +61,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
@@ -118,7 +119,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 child: Text(
                                                   localizedText.chapters_header,
                                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                    color: BloqoColors.russianViolet,
+                                                    color: theme.colors.leadingColor,
                                                     fontSize: 30,
                                                   ),
                                                 ),
@@ -130,7 +131,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 child: Text(
                                                   localizedText.edit_course_page_no_chapters,
                                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: BloqoColors.primaryText,
+                                                    color: theme.colors.primaryText,
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -170,7 +171,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                               Padding(
                                                 padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                                 child: BloqoFilledButton(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: theme.colors.leadingColor,
                                                   onPressed: () async {
                                                     context.loaderOverlay.show();
                                                     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -211,7 +212,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                         child: BloqoFilledButton(
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {

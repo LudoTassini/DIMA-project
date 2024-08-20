@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
 class BloqoCertificate extends StatelessWidget {
@@ -19,17 +19,18 @@ class BloqoCertificate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     DateTime now = DateTime.now();
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            BloqoColors.russianViolet,
-            BloqoColors.darkFuchsia
+            theme.colors.leadingColor,
+            theme.colors.trailingColor
           ],
-          stops: [0, 1],
-          begin: AlignmentDirectional(0, -1),
-          end: AlignmentDirectional(0, 1),
+          stops: const [0, 1],
+          begin: const AlignmentDirectional(0, -1),
+          end: const AlignmentDirectional(0, 1),
         ),
       ),
       alignment: Alignment.center,
@@ -50,7 +51,7 @@ class BloqoCertificate extends StatelessWidget {
                     child: Text(
                       'bloQo',
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: BloqoColors.seasalt,
+                        color: theme.colors.highContrastColor,
                         fontSize: 60,
                       ),
                     ),
@@ -67,36 +68,36 @@ class BloqoCertificate extends StatelessWidget {
             Text(
               localizedText.course_completion_certificate,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.colors.highContrastColor),
             ),
             const SizedBox(height: 20),
             Text(
               localizedText.assigned_to,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 18, color: theme.colors.highContrastColor),
             ),
             Text(
               fullName,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: theme.colors.highContrastColor),
             ),
             const SizedBox(height: 20),
             Text(
               localizedText.for_successfully_completing_course,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 18, color: theme.colors.highContrastColor),
             ),
             const SizedBox(height: 20),
             Text(
               courseName,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 22, fontStyle: FontStyle.italic, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic, color: theme.colors.highContrastColor),
             ),
             const SizedBox(height: 20),
             Text(
               '${localizedText.date}: ${now.day}/${now.month}/${now.year}',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: BloqoColors.seasalt),
+              style: TextStyle(fontSize: 16, color: theme.colors.highContrastColor),
             ),
           ],
         ),

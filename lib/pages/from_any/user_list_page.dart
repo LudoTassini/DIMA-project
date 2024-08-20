@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -5,7 +6,6 @@ import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_user_details_short.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../model/bloqo_user_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
@@ -35,6 +35,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMoreUsers() {
       setState(() {
@@ -51,7 +52,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: LoadingAnimationWidget.prograssiveDots(
-                color: BloqoColors.seasalt,
+                color: theme.colors.highContrastColor,
                 size: 100,
               ),
             );
@@ -62,7 +63,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                 child: Text(
                   localizedText.no_users,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: BloqoColors.seasalt,
+                    color: theme.colors.highContrastColor,
                   ),
                 ),
               );
@@ -80,7 +81,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                           child: Text(
                             (widget.followers ? localizedText.users_who_follow : localizedText.users_who_are_followed_by) +
                                 widget.reference.username,
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: BloqoColors.seasalt),
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: theme.colors.highContrastColor),
                           ),
                         ),
                       ),
@@ -102,7 +103,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                         BloqoTextButton(
                           onPressed: loadMoreUsers,
                           text: localizedText.load_more,
-                          color: BloqoColors.seasalt,
+                          color: theme.colors.highContrastColor,
                         ),
                     ],
                   ),
@@ -114,7 +115,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
               child: Text(
                 "Error",
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.error,
+                  color: theme.colors.error,
                 ),
               ),
             );

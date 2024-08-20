@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
@@ -25,7 +26,6 @@ import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../model/courses/tags/bloqo_difficulty_tag.dart';
 import '../../model/courses/tags/bloqo_duration_tag.dart';
 import '../../model/courses/tags/bloqo_language_tag.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/toggle.dart';
 import '../../utils/uuid.dart';
@@ -82,6 +82,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
     super.build(context);
 
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> subjectTags = buildTagList(type: BloqoCourseTagType.subject, localizedText: localizedText);
@@ -106,7 +107,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                         child: Text(
                           localizedText.publish_course_page_header_1,
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 30,
                             fontWeight: FontWeight.w600,
                           ),
@@ -117,7 +118,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                         child: Text(
                             localizedText.publish_course_page_header_2,
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                             )
                         ),
                       ),
@@ -133,7 +134,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                                         localizedText.publish_course_page_public_private_header,
                                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: BloqoColors.russianViolet
+                                            color: theme.colors.leadingColor
                                         )
                                     ),
                                     Row(
@@ -146,7 +147,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                                             child: Text(
                                               localizedText.publish_course_page_public_private_question,
                                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: theme.colors.leadingColor,
                                                   fontWeight: FontWeight.w500
                                               ),
                                             ),
@@ -173,7 +174,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                                     localizedText.publish_course_page_tag_header,
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: BloqoColors.russianViolet
+                                        color: theme.colors.leadingColor
                                     )
                                 ),
                                 Padding(
@@ -362,7 +363,7 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: BloqoFilledButton(
-                  color: BloqoColors.success,
+                  color: theme.colors.success,
                   onPressed: () async {
                     await showBloqoConfirmationAlert(
                         context: context,
@@ -377,8 +378,8 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                             myself: myself
                           );
                         },
-                        backgroundColor: BloqoColors.russianViolet,
-                        confirmationColor: BloqoColors.success
+                        backgroundColor: theme.colors.leadingColor,
+                        confirmationColor: theme.colors.success
                     );
                   },
                   text: localizedText.publish,

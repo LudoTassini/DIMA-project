@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -26,7 +27,6 @@ import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_block_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -86,6 +86,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<EditorCourseAppState>(
@@ -132,7 +133,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   child: Text(
                                     localizedText.choose_multimedia_type,
                                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: BloqoColors.russianViolet,
+                                      color: theme.colors.leadingColor,
                                       fontSize: 30,
                                     ),
                                   ),
@@ -180,7 +181,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                         child: Text(
                                           localizedText.upload_audio,
                                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                            color: BloqoColors.russianViolet,
+                                            color: theme.colors.leadingColor,
                                             fontSize: 30,
                                           ),
                                         ),
@@ -189,7 +190,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                         child: BloqoFilledButton(
-                                            color: BloqoColors.russianViolet,
+                                            color: theme.colors.leadingColor,
                                             onPressed: () async {
                                               final newUrl = await _askUserForAnAudio(
                                                   context: context,
@@ -221,7 +222,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       child: Text(
                                         localizedText.upload_image,
                                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                          color: BloqoColors.russianViolet,
+                                          color: theme.colors.leadingColor,
                                           fontSize: 30,
                                         ),
                                       ),
@@ -230,7 +231,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                     child: BloqoFilledButton(
-                                      color: BloqoColors.russianViolet,
+                                      color: theme.colors.leadingColor,
                                       onPressed: () async {
                                         final newUrl = await _askUserForAnImage(
                                             context: context,
@@ -262,7 +263,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                         child: Text(
                                           localizedText.upload_video,
                                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                            color: BloqoColors.russianViolet,
+                                            color: theme.colors.leadingColor,
                                             fontSize: 30,
                                           ),
                                         ),
@@ -271,7 +272,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                                         child: BloqoFilledButton(
-                                            color: BloqoColors.russianViolet,
+                                            color: theme.colors.leadingColor,
                                             onPressed: () async {
                                               final newUrl = await _askUserForAVideo(
                                                 context: context,
@@ -294,7 +295,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                                         child: BloqoFilledButton(
-                                            color: BloqoColors.russianViolet,
+                                            color: theme.colors.leadingColor,
                                             onPressed: () {
                                               setState(() {
                                                 showEmbedFromYouTube = true;
@@ -323,7 +324,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                           child: Text(
                                             localizedText.embed_from_youtube,
                                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               fontSize: 30,
                                             ),
                                           ),
@@ -343,7 +344,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       Padding(
                                           padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                                           child: BloqoFilledButton(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               onPressed: () async {
                                                 await _embedYouTubeVideo(
                                                     context: context,
@@ -375,7 +376,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       child: Text(
                                         localizedText.multimedia_audio_short,
                                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                          color: BloqoColors.russianViolet,
+                                          color: theme.colors.leadingColor,
                                           fontSize: 30,
                                         ),
                                       ),
@@ -391,7 +392,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                                         child: BloqoFilledButton(
-                                            color: BloqoColors.error,
+                                            color: theme.colors.error,
                                             onPressed: () {
                                               showBloqoConfirmationAlert(
                                                   context: context,
@@ -408,7 +409,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                                         block: block
                                                     );
                                                   },
-                                                  backgroundColor: BloqoColors.error
+                                                  backgroundColor: theme.colors.error
                                               );
                                             },
                                             text: localizedText.delete_file,
@@ -430,7 +431,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       child: Text(
                                         localizedText.multimedia_image_short,
                                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                          color: BloqoColors.russianViolet,
+                                          color: theme.colors.leadingColor,
                                           fontSize: 30,
                                         ),
                                       ),
@@ -444,7 +445,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                                         child: BloqoFilledButton(
-                                            color: BloqoColors.error,
+                                            color: theme.colors.error,
                                             onPressed: () {
                                               showBloqoConfirmationAlert(
                                                   context: context,
@@ -461,7 +462,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                                         block: block
                                                     );
                                                   },
-                                                  backgroundColor: BloqoColors.error
+                                                  backgroundColor: theme.colors.error
                                               );
                                             },
                                             text: localizedText.delete_file,
@@ -483,7 +484,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   child: Text(
                                     localizedText.multimedia_video_short,
                                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: BloqoColors.russianViolet,
+                                      color: theme.colors.leadingColor,
                                       fontSize: 30,
                                     ),
                                   ),
@@ -496,7 +497,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                                   child: BloqoFilledButton(
-                                    color: BloqoColors.error,
+                                    color: theme.colors.error,
                                     onPressed: () {
                                       showBloqoConfirmationAlert(
                                         context: context,
@@ -520,7 +521,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                             block: block
                                           );
                                         },
-                                        backgroundColor: BloqoColors.error
+                                        backgroundColor: theme.colors.error
                                       );
                                     },
                                     text: localizedText.delete_file,

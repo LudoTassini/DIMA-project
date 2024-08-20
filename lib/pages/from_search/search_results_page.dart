@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
@@ -16,7 +17,6 @@ import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -46,6 +46,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
   Widget build(BuildContext context){
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMorePublishedCourses() {
       setState(() {
@@ -68,7 +69,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                     child: Text(
                       localizedText.search_results_header,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: BloqoColors.seasalt,
+                        color: theme.colors.highContrastColor,
                         fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
@@ -108,7 +109,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                           child: BloqoTextButton(
                             onPressed: loadMorePublishedCourses,
                             text: localizedText.load_more,
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                           ),
                         ),
                     ],
@@ -124,7 +125,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                         Text(
                           localizedText.no_search_results,
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             fontSize: 15,
                           ),
                         ),
@@ -132,7 +133,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                           padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 15),
                           child: BloqoFilledButton(
                             onPressed: () => widget.onNavigateToPage(2),
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             text: localizedText.take_me_there_button,
                             fontSize: 16,
                           ),

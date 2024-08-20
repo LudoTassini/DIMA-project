@@ -7,6 +7,7 @@ const String sharedUserEmail = "USER";
 const String sharedUserID = "USER_ID";
 const String sharedPassword = "PASSWORD";
 const String languageCode = "LANGUAGE_CODE";
+const String appTheme = "APP_THEME";
 
 Future<Locale?> readLanguageCode() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -14,9 +15,20 @@ Future<Locale?> readLanguageCode() async {
   return locale != null ? Locale(locale) : null;
 }
 
+Future<String?> readAppTheme() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? theme = prefs.getString(appTheme);
+  return theme;
+}
+
 Future<void> saveLanguageCode({required String newLanguageCode}) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString(languageCode, newLanguageCode);
+}
+
+Future<void> saveAppTheme({required String newTheme}) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString(appTheme, newTheme);
 }
 
 Future<String> getUserIdFromSharedPreferences() async {

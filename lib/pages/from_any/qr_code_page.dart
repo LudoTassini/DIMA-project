@@ -1,9 +1,9 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../components/containers/bloqo_main_container.dart';
-import '../../style/bloqo_colors.dart';
 
 class QrCodePage extends StatelessWidget {
 
@@ -18,6 +18,7 @@ class QrCodePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -29,7 +30,7 @@ class QrCodePage extends StatelessWidget {
               qrCodeTitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                color: BloqoColors.seasalt
+                color: theme.colors.highContrastColor
               ),
             )
           ),

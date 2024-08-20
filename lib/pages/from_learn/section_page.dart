@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/learn_course_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
@@ -18,7 +19,6 @@ import '../../components/popups/bloqo_error_alert.dart';
 import '../../components/quiz/bloqo_multiple_choice_quiz.dart';
 import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_block_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../style/bloqo_style_sheet.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
@@ -50,6 +50,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -192,7 +193,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                         if(!context.mounted) return;
                         Navigator.of(context).pop();
                       },
-                      color: BloqoColors.success,
+                      color: theme.colors.success,
                       text: localizedText.learned,
                       fontSize: 24,
                       height: 65,

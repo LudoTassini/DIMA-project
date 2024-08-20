@@ -12,6 +12,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
@@ -25,7 +26,6 @@ import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -85,6 +85,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters) {
       _showSectionsMap[chapters[0].id] = true;
@@ -143,7 +144,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                       widget.course.name,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: BloqoColors.seasalt,
+                        color: theme.colors.highContrastColor,
                         fontSize: 36,
                       ),
                     ),
@@ -165,13 +166,13 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           Text(
                             localizedText.by,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 16,
                             ),
                           ),
                           BloqoTextButton(
                             text: widget.courseAuthor.username,
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             onPressed: () async {
                               _goToUserCoursesPage(
                                   context: context,
@@ -185,9 +186,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                     ),
                     RatingBarIndicator(
                       rating: widget.rating?? 0,
-                      itemBuilder: (context, index) => const Icon(
+                      itemBuilder: (context, index) => Icon(
                         Icons.star,
-                        color: BloqoColors.tertiary,
+                        color: theme.colors.tertiary,
                       ),
                       itemCount: 5,
                       itemSize: 24,
@@ -211,7 +212,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                             localizedText.description,
                             style: Theme.of(context).textTheme.displayLarge
                                 ?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 24,
                             ),
                           ),
@@ -227,7 +228,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                               widget.course.description!,
                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: BloqoColors.seasalt,
+                                color: theme.colors.highContrastColor,
                                 fontSize: 16,
                               ),
                             )
@@ -243,7 +244,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                             localizedText.content,
                             style: Theme.of(context).textTheme.displayLarge
                                 ?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 24,
                             ),
                           ),
@@ -277,7 +278,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                     .textTheme
                                                     .displayMedium
                                                     ?.copyWith(
-                                                  color: BloqoColors.secondaryText,
+                                                  color: theme.colors.secondaryText,
                                                   fontSize: 18,
                                                 ),
                                               ),
@@ -299,7 +300,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                       .textTheme
                                                       .displayLarge
                                                       ?.copyWith(
-                                                    color: BloqoColors.russianViolet,
+                                                    color: theme.colors.leadingColor,
                                                     fontSize: 24,
                                                   ),
                                                 ),
@@ -322,7 +323,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                     child: Text(
                                                       chapter.description!,
                                                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                        color: BloqoColors.primaryText,
+                                                        color: theme.colors.primaryText,
                                                       ),
                                                     ),
                                                   ),
@@ -366,15 +367,15 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                         children: [
                                                           Text(
                                                             localizedText.collapse,
-                                                            style: const TextStyle(
-                                                              color: BloqoColors.secondaryText,
+                                                            style: TextStyle(
+                                                              color: theme.colors.secondaryText,
                                                               fontSize: 14,
                                                               fontWeight: FontWeight.w600,
                                                             ),
                                                           ),
-                                                          const Icon(
+                                                          Icon(
                                                             Icons.keyboard_arrow_up_sharp,
-                                                            color: BloqoColors.secondaryText,
+                                                            color: theme.colors.secondaryText,
                                                             size: 25,
                                                           ),
                                                         ],
@@ -407,15 +408,15 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                         children: [
                                                           Text(
                                                             localizedText.view_more,
-                                                            style: const TextStyle(
-                                                              color: BloqoColors.secondaryText,
+                                                            style: TextStyle(
+                                                              color: theme.colors.secondaryText,
                                                               fontSize: 14,
                                                               fontWeight: FontWeight.w600,
                                                             ),
                                                           ),
-                                                          const Icon(
+                                                          Icon(
                                                             Icons.keyboard_arrow_right_sharp,
-                                                            color: BloqoColors.secondaryText,
+                                                            color: theme.colors.secondaryText,
                                                             size: 25,
                                                           ),
                                                         ],
@@ -445,7 +446,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                       child: Text(
                                         localizedText.reviews,
                                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                          color: BloqoColors.seasalt,
+                                          color: theme.colors.highContrastColor,
                                           fontSize: 24,
                                         ),
                                       ),
@@ -458,7 +459,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           Text(
                                             widget.rating!.toDouble().toString(),
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.seasalt,
+                                              color: theme.colors.highContrastColor,
                                               fontWeight: FontWeight.w500,
                                               fontSize: 16,
                                             ),
@@ -466,7 +467,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         : Text(
                                           '0',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                            color: BloqoColors.seasalt,
+                                            color: theme.colors.highContrastColor,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           ),
@@ -476,9 +477,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                                           child: RatingBarIndicator(
                                             rating: widget.rating?? 0,
-                                            itemBuilder: (context, index) => const Icon(
+                                            itemBuilder: (context, index) => Icon(
                                               Icons.star,
-                                              color: BloqoColors.tertiary,
+                                              color: theme.colors.tertiary,
                                             ),
                                             itemCount: 5,
                                             itemSize: 24,
@@ -488,7 +489,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         Text(
                                           '(${widget.publishedCourse.reviews.length.toString()})',
                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                            color: BloqoColors.seasalt,
+                                            color: theme.colors.highContrastColor,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           ),
@@ -512,7 +513,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               child: Text(
                                                 localizedText.no_reviews_yet,
                                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                  color: BloqoColors.primaryText,
+                                                  color: theme.colors.primaryText,
                                                   fontSize: 15,
                                                   ),
                                                 ),
@@ -557,7 +558,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                             BloqoTextButton(
                                                 onPressed: loadMoreReviews,
                                                 text: localizedText.load_more,
-                                                color: BloqoColors.russianViolet
+                                                color: theme.colors.leadingColor
                                             ),
                                         ],
                                       ),
@@ -583,7 +584,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               .textTheme
                                               .displaySmall
                                               ?.copyWith(
-                                            color: BloqoColors.seasalt,
+                                            color: theme.colors.highContrastColor,
                                             fontSize: 16,
                                           ),
                                         )
@@ -595,7 +596,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                             .textTheme
                                             .displaySmall
                                             ?.copyWith(
-                                          color: BloqoColors.seasalt,
+                                          color: theme.colors.highContrastColor,
                                           fontSize: 16,
                                         ),
                                       )
@@ -638,7 +639,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           );
                         },
                         height: 60,
-                        color: buttonEnabled ? BloqoColors.warning : BloqoColors.secondaryText,
+                        color: buttonEnabled ? theme.colors.warning : theme.colors.secondaryText,
                         text: localizedText.request_access,
                         icon: Icons.front_hand,
                         fontSize: 24,
@@ -656,7 +657,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                             description: localizedText.creator_cannot_subscribe);
                       },
                       height: 60,
-                      color: BloqoColors.secondaryText,
+                      color: theme.colors.secondaryText,
                       text: localizedText.request_access,
                       icon: Icons.front_hand,
                       fontSize: 24,
@@ -673,7 +674,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                               chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourse.publishedCourseId);
                             },
                             height: 60,
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             text: localizedText.enroll_in,
                             icon: Icons.add,
                             fontSize: 24,
@@ -690,7 +691,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 description: localizedText.creator_cannot_subscribe);
                           },
                           height: 60,
-                          color: BloqoColors.secondaryText,
+                          color: theme.colors.secondaryText,
                           text: localizedText.enroll_in,
                           icon: Icons.add,
                           fontSize: 24,
@@ -714,11 +715,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                     enrolledUserId: myself.id
                                   );
                                 },
-                                backgroundColor: BloqoColors.error
+                                backgroundColor: theme.colors.error
                             );
                       },
                       height: 60,
-                      color: BloqoColors.error,
+                      color: theme.colors.error,
                       text: localizedText.unsubscribe,
                       icon: Icons.close_sharp,
                       fontSize: 24,

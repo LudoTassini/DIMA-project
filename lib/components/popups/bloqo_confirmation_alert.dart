@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
+import '../../app_state/application_settings_app_state.dart';
 import '../../utils/localization.dart';
 
 class BloqoConfirmationAlert extends StatelessWidget{
@@ -22,32 +22,33 @@ class BloqoConfirmationAlert extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return AlertDialog(
       title: Text(title),
       content: Text(description),
       backgroundColor: backgroundColor,
       titleTextStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
           fontSize: 24
       ),
       contentTextStyle: Theme.of(context).textTheme.displayMedium?.copyWith(
-        color: BloqoColors.seasalt,
+        color: theme.colors.highContrastColor,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       actions: [
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () => Navigator.pop(context, 'Cancel'),
           child: Text(localizedText.cancel, style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              color: BloqoColors.russianViolet,
+              color: theme.colors.leadingColor,
               fontWeight: FontWeight.bold
           )),
         ),
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () {
             confirmationFunction();
@@ -72,7 +73,9 @@ showBloqoConfirmationAlert({
   required String description,
   required Function() confirmationFunction,
   required Color backgroundColor,
-  Color confirmationColor = BloqoColors.error}){
+  Color? confirmationColor}){
+  var theme = getAppThemeFromAppState(context: context);
+  confirmationColor ??= theme.colors.error;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -81,7 +84,7 @@ showBloqoConfirmationAlert({
         description: description,
         confirmationFunction: confirmationFunction,
         backgroundColor: backgroundColor,
-        confirmationColor: confirmationColor,
+        confirmationColor: confirmationColor!,
       );
     },
   );

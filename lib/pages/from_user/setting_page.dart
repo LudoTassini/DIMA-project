@@ -14,7 +14,6 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_setting_type.dart';
 import '../../utils/localization.dart';
 
@@ -44,6 +43,7 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Column(
@@ -61,7 +61,7 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
                         child: Text(
                           widget.settingTitle,
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 30,
                             fontWeight: FontWeight.w600,
                           ),
@@ -78,7 +78,7 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
                         child: Text(
                           widget.settingDescription,
                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                           ),
                         ),
                       ),
@@ -107,7 +107,7 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                   child: BloqoFilledButton(
-                    color: BloqoColors.russianViolet,
+                    color: theme.colors.leadingColor,
                     onPressed: () async {
                       context.loaderOverlay.show();
                       try {

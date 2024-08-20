@@ -1,30 +1,48 @@
 import 'package:flutter/material.dart';
 
 class BloqoColors {
-  static const Color seasalt = Color(0xFFF7F9F9);
-  static const Color russianViolet = Color(0xFF442367); // on FlutterFlow this color is actually Russian Violet 2
-  static const Color chineseViolet = Color(0xFF745575); // on FlutterFlow this color is actually Chinese Violet 2
-  static const Color darkFuchsia = Color(0xFF953A5C);
-  static const Color fuchsiaRose = Color(0xFFD23E74); // on FlutterFlow this color is actually Fuchsia Rose 2
-  static const Color inactiveTracker = Color(0xFFE0E3E7);
 
-  static const Color primaryText = Color(0xFF14181B);
-  static const Color secondaryText = Color(0xFF57636C);
-  static const Color tertiary = Color(0xFFEE8b60);
+  BloqoColors({
+    required this.highContrastColor,
+    required this.leadingColor,
+    required this.inBetweenColor,
+    required this.trailingColor,
+    required this.inactiveTracker,
+    required this.primaryText,
+    required this.secondaryText,
+    required this.tertiary,
+    required this.error,
+    required this.warning,
+    required this.success,
+    required this.okay,
+    required this.rate,
+    required this.inactive,
+    required this.textBlockButton,
+    required this.multimediaBlockButton,
+    required this.quizBlockButton
+  });
 
-  static const Color error = Color(0xFFFA2B36);
-  static const Color warning = Color(0xFFD5A203);
-  static const Color success = Color(0xFF249689);
-  static const Color okay = Color(0xFF29AEDD);
+  final Color highContrastColor;
+  final Color leadingColor;
+  final Color inBetweenColor;
+  final Color trailingColor;
+  final Color inactiveTracker;
 
-  static const Color rate = Color(0xFFC5A600);
-  static const Color rated = Color(0xFF7E8A92);
+  final Color primaryText;
+  final Color secondaryText;
+  final Color tertiary;
 
-  static const Color textBlockButton = Color(0xFF092127);
-  static const Color multimediaBlockButton = Color(0xFF3792AF);
-  static const Color quizBlockButton = Color(0xFF095A30);
+  final Color error;
+  final Color warning;
+  final Color success;
+  final Color okay;
 
-  // used for navbar workaround to delete overlay when a navigation destination is selected
-  static const Color newDarkFuchsia = Color(0x00712C45);
+  final Color rate;
+
+  final Color inactive;
+
+  final Color textBlockButton;
+  final Color multimediaBlockButton;
+  final Color quizBlockButton;
 
 }

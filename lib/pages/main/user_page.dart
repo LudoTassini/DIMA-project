@@ -22,7 +22,6 @@ import '../../app_state/user_app_state.dart';
 import '../../components/complex/bloqo_user_details.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -70,6 +69,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     List<DropdownMenuEntry<String>> languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
     languages.removeWhere((x) => x.label == localizedText.other);
@@ -180,7 +180,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                                       localizedText.language,
                                                       textAlign: TextAlign.start,
                                                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                        color: BloqoColors.russianViolet
+                                                        color: theme.colors.leadingColor
                                                       )
                                                     )
                                                   ]
@@ -218,7 +218,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                             localizedText: localizedText
                         );
                       },
-                      backgroundColor: BloqoColors.russianViolet
+                      backgroundColor: theme.colors.leadingColor
                     );
                   },
                   settingTitle: localizedText.sign_out_title,

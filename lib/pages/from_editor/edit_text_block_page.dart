@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
@@ -18,7 +19,6 @@ import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_block_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -63,6 +63,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<EditorCourseAppState>(
@@ -95,7 +96,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                                 child: Text(
                                   localizedText.write_text_here,
                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     fontSize: 30,
                                   ),
                                 ),
@@ -127,7 +128,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                                 child: Text(
                                   localizedText.preview,
                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     fontSize: 30,
                                   ),
                                 ),
@@ -151,7 +152,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                   child: BloqoFilledButton(
-                    color: BloqoColors.russianViolet,
+                    color: theme.colors.leadingColor,
                     onPressed: () async {
                       context.loaderOverlay.show();
                       try {

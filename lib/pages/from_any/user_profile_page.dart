@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,6 @@ import '../../model/bloqo_user_data.dart';
 import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -48,6 +48,7 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMorePublishedCourses() {
       setState(() {
@@ -81,7 +82,7 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
                       localizedText.published_courses_by_author + widget.author.username,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
                         fontSize: 24,
-                        color: BloqoColors.seasalt
+                        color: theme.colors.highContrastColor
                       ),
                     ),
                   ),
@@ -120,7 +121,7 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
                           child: BloqoTextButton(
                             onPressed: loadMorePublishedCourses,
                             text: localizedText.load_more,
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                           ),
                         ),
                       ],

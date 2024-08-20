@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
@@ -25,7 +26,6 @@ import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_block_data.dart';
 import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/bloqo_qr_code_type.dart';
 import '../../utils/localization.dart';
@@ -92,6 +92,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -135,7 +136,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                           child: Text(
                             localizedText.editor_page_header_1,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -188,7 +189,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                     BloqoTextButton(
                                         onPressed: loadMoreInProgressCourses,
                                         text: localizedText.load_more,
-                                        color: BloqoColors.russianViolet
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (inProgressCourses.isEmpty)
                                     Padding(
@@ -199,7 +200,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                           Text(
                                             localizedText.editor_page_no_in_progress_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -209,7 +210,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                               onPressed: () async {
                                                 await _createNewCourse(context: context, localizedText: localizedText);
                                               },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -232,7 +233,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                             localizedText.editor_page_header_2,
                             textAlign: TextAlign.end,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -287,7 +288,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                       context: context,
                                                       title: localizedText.warning,
                                                       description: localizedText.course_dismiss_confirmation,
-                                                      backgroundColor: BloqoColors.error,
+                                                      backgroundColor: theme.colors.error,
                                                       confirmationFunction: () async {
                                                         context.loaderOverlay.show();
                                                         try {
@@ -363,7 +364,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                       context: context,
                                                       title: localizedText.warning,
                                                       description: localizedText.course_dismiss_confirmation,
-                                                      backgroundColor: BloqoColors.error,
+                                                      backgroundColor: theme.colors.error,
                                                       confirmationFunction: () async {
                                                         context.loaderOverlay.show();
                                                         try {
@@ -424,7 +425,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                     BloqoTextButton(
                                         onPressed: loadMorePublishedCourses,
                                         text: localizedText.load_more,
-                                        color: BloqoColors.russianViolet
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (publishedCourses.isEmpty)
                                     Padding(
@@ -435,7 +436,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                           Text(
                                             localizedText.editor_page_no_published_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -443,7 +444,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
                                               onPressed: () { tabController.animateTo(0); },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -462,7 +463,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: BloqoFilledButton(
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   onPressed: () async {
                     await _createNewCourse(context: context, localizedText: localizedText);
                   },

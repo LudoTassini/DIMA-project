@@ -1,13 +1,12 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
-
-import '../../style/bloqo_colors.dart';
 
 class BloqoSeasaltContainer extends StatelessWidget {
   const BloqoSeasaltContainer({
     super.key,
     required this.child,
     this.padding = const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-    this.borderColor = BloqoColors.seasalt,
+    this.borderColor = const Color(0xFFF7F9F9),
     this.borderRadius = 15,
     this.borderWidth,
   });
@@ -20,11 +19,12 @@ class BloqoSeasaltContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
       padding: padding,
       child: Container(
         decoration: BoxDecoration(
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
           borderRadius: BorderRadius.circular(borderRadius),
           border: borderWidth == null? null : Border.all(
             width: borderWidth!,

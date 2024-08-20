@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -17,7 +18,6 @@ import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 
@@ -102,6 +102,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -145,7 +146,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                           child: Text(
                             localizedText.learn_page_header_1,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -188,7 +189,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                       BloqoTextButton(
                                           onPressed: loadMoreInProgressCourses,
                                           text: localizedText.load_more,
-                                          color: BloqoColors.russianViolet
+                                          color: theme.colors.leadingColor
                                       ),
                                     if (inProgressCourses.isEmpty)
                                       Padding(
@@ -199,7 +200,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                             Text(
                                               localizedText.learn_page_no_in_progress_courses,
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                color: BloqoColors.primaryText,
+                                                color: theme.colors.primaryText,
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -207,7 +208,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                               padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                               child: BloqoFilledButton(
                                                 onPressed: () => widget.onNavigateToPage(2),
-                                                color: BloqoColors.russianViolet,
+                                                color: theme.colors.leadingColor,
                                                 text: localizedText.take_me_there_button,
                                                 fontSize: 16,
                                               ),
@@ -229,7 +230,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                             localizedText.learn_page_header_2,
                             textAlign: TextAlign.end,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -278,7 +279,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                     BloqoTextButton(
                                         onPressed: loadMoreCompletedCourses,
                                         text: localizedText.load_more,
-                                        color: BloqoColors.russianViolet
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (completedCourses.isEmpty && inProgressCourses.isEmpty)
                                     Padding(
@@ -289,7 +290,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           Text(
                                             localizedText.learn_page_no_in_progress_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -297,7 +298,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                             child: BloqoFilledButton(
                                               onPressed: () => widget.onNavigateToPage(2),
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -314,7 +315,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           Text(
                                             localizedText.learn_page_no_completed_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -322,7 +323,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
                                               onPressed: () { tabController.animateTo(0); },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),

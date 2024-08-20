@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_editable_quiz_answer.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
@@ -19,7 +20,6 @@ import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/bloqo_block_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -127,6 +127,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<EditorCourseAppState>(
@@ -229,7 +230,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                   child: Text(
                                     localizedText.choose_quiz_type,
                                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: BloqoColors.russianViolet,
+                                      color: theme.colors.leadingColor,
                                       fontSize: 30,
                                     ),
                                   ),
@@ -276,7 +277,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           child: Text(
                                             localizedText.enter_question,
                                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               fontSize: 30,
                                             ),
                                           ),
@@ -301,7 +302,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           child: Text(
                                             localizedText.enter_possible_answers,
                                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               fontSize: 30,
                                             ),
                                           ),
@@ -313,7 +314,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           child: Text(
                                             localizedText.edit_block_quiz_page_no_answers,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -341,7 +342,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                         Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 30),
                                             child: BloqoFilledButton(
-                                                color: BloqoColors.russianViolet,
+                                                color: theme.colors.leadingColor,
                                                 onPressed: () => _addAnswer(),
                                                 text: localizedText.add_answer,
                                                 icon: Icons.add
@@ -351,7 +352,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                         Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                             child: BloqoFilledButton(
-                                                color: BloqoColors.russianViolet,
+                                                color: theme.colors.leadingColor,
                                                 onPressed: () async {
                                                   await _trySaveMultipleChoiceQuizChanges(
                                                       context: context,
@@ -377,7 +378,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           child: Text(
                                             localizedText.enter_question,
                                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               fontSize: 30,
                                             ),
                                           ),
@@ -402,7 +403,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                           child: Text(
                                             localizedText.enter_answer,
                                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               fontSize: 30,
                                             ),
                                           ),
@@ -431,7 +432,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                   child: Text(
                                                     localizedText.trim_extra_whitespaces,
                                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                        color: BloqoColors.russianViolet,
+                                                        color: theme.colors.leadingColor,
                                                         fontSize: 18,
                                                         fontWeight: FontWeight.w500
                                                     )
@@ -448,7 +449,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     child: Text(
                                                       localizedText.comparison_ignore_case,
                                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                        color: BloqoColors.russianViolet,
+                                                        color: theme.colors.leadingColor,
                                                         fontSize: 18,
                                                         fontWeight: FontWeight.w500
                                                       )
@@ -466,7 +467,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                         Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                             child: BloqoFilledButton(
-                                                color: BloqoColors.russianViolet,
+                                                color: theme.colors.leadingColor,
                                                 onPressed: () async {
                                                   await _trySaveOpenQuestionQuizChanges(
                                                       context: context,

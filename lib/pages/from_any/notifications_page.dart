@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/notifications/bloqo_course_enrollment_request_notification.dart';
@@ -10,7 +11,6 @@ import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/notifications/bloqo_course_enrollment_accepted_notification.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user_data.dart';
-import '../../style/bloqo_colors.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -27,6 +27,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
     super.build(context);
     BloqoUserData user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
@@ -41,7 +42,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: LoadingAnimationWidget.prograssiveDots(
-                  color: BloqoColors.seasalt,
+                  color: theme.colors.highContrastColor,
                   size: 100,
                 ),
               );
@@ -52,7 +53,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                   child: Text(
                     localizedText.no_notifications,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: BloqoColors.seasalt,
+                      color: theme.colors.highContrastColor,
                     ),
                   ),
                 );
@@ -102,7 +103,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                 child: Text(
                   "Error",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: BloqoColors.error,
+                    color: theme.colors.error,
                   ),
                 ),
               );

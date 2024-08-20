@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -5,7 +6,6 @@ import '../../app_state/user_courses_created_app_state.dart';
 import '../../model/user_courses/bloqo_user_course_created_data.dart';
 import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../custom/bloqo_snack_bar.dart';
@@ -31,16 +31,17 @@ class BloqoEditableChapter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
         padding: padding,
         child: ElevatedButton(
           style: ButtonStyle(
             padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
             shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
-              side: const BorderSide(
-                color: BloqoColors.russianViolet,
+              side: BorderSide(
+                color: theme.colors.leadingColor,
                 width: 2,
               ),
             )),
@@ -63,7 +64,7 @@ class BloqoEditableChapter extends StatelessWidget {
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: BloqoColors.secondaryText
+                              color: theme.colors.secondaryText
                             ),
                           ),
                           Row(
@@ -86,9 +87,9 @@ class BloqoEditableChapter extends StatelessWidget {
                           IconButton(
                             padding: const EdgeInsets.only(right: 5.0),
                             visualDensity: VisualDensity.compact,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.delete_forever,
-                              color: BloqoColors.error,
+                              color: theme.colors.error,
                               size: 24,
                             ),
                             onPressed: () {
@@ -102,13 +103,13 @@ class BloqoEditableChapter extends StatelessWidget {
                                       localizedText: localizedText
                                   );
                                 },
-                                backgroundColor: BloqoColors.error
+                                backgroundColor: theme.colors.error
                               );
                             },
                           ),
-                        const Icon(
+                        Icon(
                           Icons.navigate_next,
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                           size: 24,
                         )
                       ]
