@@ -2,8 +2,8 @@ import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_sorting_option.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_sorting_option.dart';
 import 'package:bloqo/pages/from_search/qr_code_scan_page.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/check_device.dart';
@@ -15,12 +15,12 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../app_state/application_settings_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_dropdown.dart';
 import '../../components/forms/bloqo_switch.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/toggle.dart';
 import '../from_search/search_results_page.dart';
@@ -96,6 +96,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     super.build(context);
 
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     final List<DropdownMenuEntry<String>> languageTags = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText);
@@ -120,7 +121,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: Text(
                       localizedText.search_page_header_1,
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: BloqoColors.seasalt,
+                        color: theme.colors.highContrastColor,
                         fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
@@ -131,7 +132,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     child: Text(
                       localizedText.search_page_header_2,
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: BloqoColors.seasalt,
+                        color: theme.colors.highContrastColor,
                       )
                     ),
                   ),
@@ -231,7 +232,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               child: Text(
                                 localizedText.show_public_courses,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     fontWeight: FontWeight.w600
                                 ),
                               ),
@@ -259,7 +260,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               child: Text(
                                 localizedText.show_private_courses,
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: BloqoColors.russianViolet,
+                                  color: theme.colors.leadingColor,
                                   fontWeight: FontWeight.w600
                                 ),
                               ),
@@ -285,7 +286,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                 localizedText.search_page_tag_header,
                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: BloqoColors.russianViolet
+                                color: theme.colors.leadingColor
                               )
                             ),
                             Padding(
@@ -480,7 +481,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               localizedText.search_page_sort_header,
                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                               ),
                             ),
                           ),
@@ -509,7 +510,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                     child: Center(
                       child: BloqoTextButton(
-                        color: BloqoColors.error,
+                        color: theme.colors.error,
                         onPressed: () => _resetSearchCriteria(localizedText: localizedText),
                         text: localizedText.reset_search_criteria,
                       )
@@ -534,7 +535,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                             localizedText: localizedText
                           );
                         },
-                        color: BloqoColors.chineseViolet,
+                        color: theme.colors.inBetweenColor,
                         icon: Icons.qr_code_2,
                         text: localizedText.scan_qr_code,
                       ),
@@ -546,7 +547,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                       child: BloqoFilledButton(
                         onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
-                        color: BloqoColors.russianViolet,
+                        color: theme.colors.leadingColor,
                         text: localizedText.search,
                         icon: Icons.search
                       ),
@@ -614,7 +615,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     context.loaderOverlay.show();
     try {
       final query = _buildQuery();
-      List<BloqoPublishedCourse> coursesFromSearch = await getCoursesFromSearch(
+      List<BloqoPublishedCourseData> coursesFromSearch = await getCoursesFromSearch(
           localizedText: localizedText, query: query);
       if(!context.mounted) return;
       context.loaderOverlay.hide();

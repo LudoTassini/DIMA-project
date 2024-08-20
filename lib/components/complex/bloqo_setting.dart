@@ -1,5 +1,5 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
-import '../../style/bloqo_colors.dart';
 
 class BloqoSetting extends StatelessWidget{
   const BloqoSetting({
@@ -17,12 +17,13 @@ class BloqoSetting extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
         child: ElevatedButton(
           style: ButtonStyle(
             padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
             shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
           ),
           onPressed: onPressed,
@@ -66,7 +67,7 @@ class BloqoSetting extends StatelessWidget{
                 padding: const EdgeInsets.all(8),
                 child: Icon(
                   settingIcon,
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   size: 50,
                 ),
               ),

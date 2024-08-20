@@ -1,7 +1,7 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 import '../../utils/toggle.dart';
@@ -31,13 +31,14 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
         padding: padding,
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: BloqoColors.russianViolet,
+              color: theme.colors.leadingColor,
               width: 2,
             ),
           ),
@@ -56,7 +57,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                           Text(
                             "${localizedText.answer} $answerNumber",
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              color: BloqoColors.russianViolet,
+                              color: theme.colors.leadingColor,
                               fontWeight: FontWeight.w600
                             )
                           ),
@@ -64,9 +65,9 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                             IconButton(
                               padding: const EdgeInsets.only(left: 5.0),
                               visualDensity: VisualDensity.compact,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.delete_forever,
-                                color: BloqoColors.error,
+                                color: theme.colors.error,
                                 size: 24,
                               ),
                               onPressed: () {
@@ -75,7 +76,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                                     title: localizedText.warning,
                                     description: localizedText.delete_answer_confirmation,
                                     confirmationFunction: onDelete,
-                                    backgroundColor: BloqoColors.error
+                                    backgroundColor: theme.colors.error
                                 );
                               },
                             ),
@@ -103,7 +104,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                     Text(
                         localizedText.is_answer_correct,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w500
                         )

@@ -1,15 +1,17 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
-import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/courses/bloqo_course.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -19,13 +21,12 @@ import '../../components/complex/bloqo_course_created.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../model/courses/bloqo_chapter.dart';
-import '../../model/courses/bloqo_section.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
+import '../../model/courses/bloqo_block_data.dart';
+import '../../model/courses/bloqo_chapter_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/bloqo_qr_code_type.dart';
 import '../../utils/localization.dart';
@@ -36,21 +37,24 @@ class EditorPage extends StatefulWidget {
   const EditorPage({
     super.key,
     required this.onPush,
+    required this.onNavigateToPage
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<EditorPage> createState() => _EditorPageState();
 }
 
-class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<EditorPage> {
+class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<EditorPage> {
 
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
   late int coursesToFurtherLoadAtRequest;
   late bool initialized;
+  late Ticker _ticker;
 
   @override
   void initState() {
@@ -65,15 +69,16 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
     initialized = false;
 
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      if(context.mounted) {
-        _checkHomePrivilege(context);
-      }
+    _ticker = createTicker((Duration elapsed) {
+      _checkHomePrivilege(context);
     });
+
+    _ticker.start();
   }
 
   @override
   void dispose() {
+    _ticker.dispose();
     tabController.dispose();
     super.dispose();
   }
@@ -81,7 +86,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   void _checkHomePrivilege(BuildContext context) {
     if (getComingFromHomeEditorPrivilegeFromAppState(context: context)) {
       useComingFromHomeEditorPrivilegeFromAppState(context: context);
-      BloqoCourse? course = getEditorCourseFromAppState(context: context);
+      BloqoCourseData? course = getEditorCourseFromAppState(context: context);
       if (course != null) {
         widget.onPush(EditCoursePage(onPush: widget.onPush));
       }
@@ -92,6 +97,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     if(isTablet && !initialized){
@@ -120,9 +126,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesCreatedAppState>(
         builder: (context, userCoursesCreatedAppState, _) {
-          List<BloqoUserCourseCreated> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
-          List<BloqoUserCourseCreated> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
-          List<BloqoUserCourseCreated> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
+          List<BloqoUserCourseCreatedData> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
+          List<BloqoUserCourseCreatedData> inProgressCourses = userCoursesCreated.where((course) => !course.published).toList();
+          List<BloqoUserCourseCreatedData> publishedCourses = userCoursesCreated.where((course) => course.published).toList();
+          inProgressCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+          publishedCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
           return Column(
             children: [
               TabBar(
@@ -144,7 +152,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           child: Text(
                             localizedText.editor_page_header_1,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -162,7 +170,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       children: List.generate(
                                         inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
                                             (index) {
-                                          BloqoUserCourseCreated course = inProgressCourses[index];
+                                          BloqoUserCourseCreatedData course = inProgressCourses[index];
                                           if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
                                             return BloqoCourseCreated(
                                                 course: course,
@@ -237,8 +245,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   if (inProgressCoursesDisplayed < inProgressCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreInProgressCourses,
-                                        text: localizedText.load_more_courses,
-                                        color: BloqoColors.russianViolet
+                                        text: localizedText.load_more,
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (inProgressCourses.isEmpty)
                                     Padding(
@@ -249,7 +257,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Text(
                                             localizedText.editor_page_no_in_progress_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -259,7 +267,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                               onPressed: () async {
                                                 await _createNewCourse(context: context, localizedText: localizedText);
                                               },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -282,7 +290,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             localizedText.editor_page_header_2,
                             textAlign: TextAlign.end,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -297,7 +305,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       children: List.generate(
                                         publishedCoursesDisplayed > publishedCourses.length ? publishedCourses.length : publishedCoursesDisplayed,
                                             (index) {
-                                          BloqoUserCourseCreated course = publishedCourses[index];
+                                          BloqoUserCourseCreatedData course = publishedCourses[index];
                                           if(index != (publishedCoursesDisplayed > publishedCourses.length ? publishedCourses.length : publishedCoursesDisplayed) - 1) {
                                             return BloqoCourseCreated(
                                                 course: course,
@@ -311,11 +319,16 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                 onViewStatistics: () async {
                                                   context.loaderOverlay.show();
                                                   try {
-                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
-                                                    List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
+                                                    BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
+                                                    widget.onPush(ViewStatisticsPage(
+                                                      publishedCourse: publishedCourse,
+                                                      reviews: reviews,
+                                                      onPush: widget.onPush,
+                                                      onNavigateToPage: widget.onNavigateToPage,
+                                                    ));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;
@@ -332,11 +345,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       context: context,
                                                       title: localizedText.warning,
                                                       description: localizedText.course_dismiss_confirmation,
-                                                      backgroundColor: BloqoColors.error,
+                                                      backgroundColor: theme.colors.error,
                                                       confirmationFunction: () async {
                                                         context.loaderOverlay.show();
                                                         try {
-                                                          BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                          BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
                                                           if(!context.mounted) return;
                                                           await _tryDismissCourse(
                                                             context: context,
@@ -382,11 +395,16 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                 onViewStatistics: () async {
                                                   context.loaderOverlay.show();
                                                   try {
-                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
-                                                    List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
+                                                    BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
-                                                    widget.onPush(ViewStatisticsPage(publishedCourse: publishedCourse, reviews: reviews));
+                                                    widget.onPush(ViewStatisticsPage(
+                                                      publishedCourse: publishedCourse,
+                                                      reviews: reviews,
+                                                      onPush: widget.onPush,
+                                                      onNavigateToPage: widget.onNavigateToPage,
+                                                    ));
                                                   }
                                                   on BloqoException catch (e) {
                                                     if (!context.mounted) return;
@@ -403,11 +421,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                       context: context,
                                                       title: localizedText.warning,
                                                       description: localizedText.course_dismiss_confirmation,
-                                                      backgroundColor: BloqoColors.error,
+                                                      backgroundColor: theme.colors.error,
                                                       confirmationFunction: () async {
                                                         context.loaderOverlay.show();
                                                         try {
-                                                          BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                          BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
                                                           if(!context.mounted) return;
                                                           await _tryDismissCourse(
                                                             context: context,
@@ -436,7 +454,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                                 onGetQrCode: () async {
                                                   context.loaderOverlay.show();
                                                   try{
-                                                    BloqoPublishedCourse publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
+                                                    BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.courseId);
                                                     if (!context.mounted) return;
                                                     context.loaderOverlay.hide();
                                                     widget.onPush(
@@ -463,8 +481,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   if (publishedCoursesDisplayed < publishedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMorePublishedCourses,
-                                        text: localizedText.load_more_courses,
-                                        color: BloqoColors.russianViolet
+                                        text: localizedText.load_more,
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (publishedCourses.isEmpty)
                                     Padding(
@@ -475,7 +493,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Text(
                                             localizedText.editor_page_no_published_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -483,7 +501,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
                                               onPressed: () { tabController.animateTo(0); },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -502,7 +520,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: BloqoFilledButton(
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   onPressed: () async {
                     await _createNewCourse(context: context, localizedText: localizedText);
                   },
@@ -524,12 +542,12 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     context.loaderOverlay.show();
     try {
 
-      BloqoCourse course = await saveNewCourse(
+      BloqoCourseData course = await saveNewCourse(
           localizedText: localizedText,
           authorId: getUserFromAppState(context: context)!.id
       );
 
-      BloqoUserCourseCreated userCourseCreated = await saveNewUserCourseCreated(
+      BloqoUserCourseCreatedData userCourseCreated = await saveNewUserCourseCreated(
           localizedText: localizedText,
           course: course
       );
@@ -557,26 +575,26 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreated userCourseCreated}) async {
+  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseCreatedData userCourseCreated}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? editorCourse = getEditorCourseFromAppState(context: context);
+      BloqoCourseData? editorCourse = getEditorCourseFromAppState(context: context);
       if (editorCourse != null && editorCourse.id == userCourseCreated.courseId) {
         context.loaderOverlay.hide();
         widget.onPush(EditCoursePage(onPush: widget.onPush));
       } else {
-        BloqoCourse course = await getCourseFromId(
+        BloqoCourseData course = await getCourseFromId(
             localizedText: localizedText, courseId: userCourseCreated.courseId);
-        List<BloqoChapter> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
-        Map<String, List<BloqoSection>> sections = {};
-        Map<String, List<BloqoBlock>> blocks = {};
+        List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+        Map<String, List<BloqoSectionData>> sections = {};
+        Map<String, List<BloqoBlockData>> blocks = {};
         for(String chapterId in course.chapters) {
-          List<BloqoSection> chapterSections = await getSectionsFromIds(
+          List<BloqoSectionData> chapterSections = await getSectionsFromIds(
               localizedText: localizedText,
               sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
           sections[chapterId] = chapterSections;
-          for(BloqoSection section in chapterSections){
-            List<BloqoBlock> sectionBlocks = await getBlocksFromIds(
+          for(BloqoSectionData section in chapterSections){
+            List<BloqoBlockData> sectionBlocks = await getBlocksFromIds(
                 localizedText: localizedText,
                 blockIds: section.blocks
             );
@@ -606,12 +624,12 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
     if(!context.mounted) return;
 
-    BloqoCourse? currentEditorCourse = getEditorCourseFromAppState(context: context);
+    BloqoCourseData? currentEditorCourse = getEditorCourseFromAppState(context: context);
     if(currentEditorCourse != null && currentEditorCourse.id == courseId) {
       updateEditorCourseStatusInAppState(context: context, published: false);
     }
     updateUserCourseCreatedPublishedStatusInAppState(context: context, courseId: courseId, published: false);
-    BloqoUserCourseCreated userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((ucc) => ucc.courseId == courseId).first;
+    BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((ucc) => ucc.courseId == courseId).first;
 
     await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
   }

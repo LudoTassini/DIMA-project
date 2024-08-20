@@ -2,9 +2,9 @@ import 'package:bloqo/utils/connectivity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../utils/bloqo_exception.dart';
+import '../../../utils/bloqo_exception.dart';
 
-class BloqoReview{
+class BloqoReviewData{
 
   final String id;
   final String authorUsername;
@@ -13,7 +13,7 @@ class BloqoReview{
   final String commentTitle;
   final String comment;
 
-  BloqoReview({
+  BloqoReviewData({
     required this.authorUsername,
     required this.authorId,
     required this.rating,
@@ -22,13 +22,13 @@ class BloqoReview{
     required this.comment
   });
 
-  factory BloqoReview.fromFirestore(
+  factory BloqoReviewData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ) {
     final data = snapshot.data();
 
-    return BloqoReview(
+    return BloqoReviewData(
         id: data!["id"],
         authorUsername: data["author_username"],
         authorId: data["author_id"],
@@ -52,21 +52,21 @@ class BloqoReview{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("reviews").withConverter(
-      fromFirestore: BloqoReview.fromFirestore,
-      toFirestore: (BloqoReview review, _) => review.toFirestore(),
+      fromFirestore: BloqoReviewData.fromFirestore,
+      toFirestore: (BloqoReviewData review, _) => review.toFirestore(),
     );
   }
 
 }
 
-Future<List<BloqoReview>> getReviewsFromIds({required var localizedText, required List<dynamic> reviewsIds}) async {
+Future<List<BloqoReviewData>> getReviewsFromIds({required var localizedText, required List<dynamic> reviewsIds}) async {
   try {
-    var ref = BloqoReview.getRef();
-    List<BloqoReview> reviews = [];
+    var ref = BloqoReviewData.getRef();
+    List<BloqoReviewData> reviews = [];
     for(var reviewId in reviewsIds) {
       await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: reviewId).get();
-      BloqoReview review = querySnapshot.docs.first.data();
+      BloqoReviewData review = querySnapshot.docs.first.data();
       reviews.add(review);
     }
     return reviews;
@@ -80,10 +80,10 @@ Future<List<BloqoReview>> getReviewsFromIds({required var localizedText, require
   }
 }
 
-Future<void> publishReview({required var localizedText, required BloqoReview review}) async {
+Future<void> publishReview({required var localizedText, required BloqoReviewData review}) async {
   try {
     await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoReview.getRef();
+    var ref = BloqoReviewData.getRef();
     await ref.doc().set(review);
   } on FirebaseException catch (e) {
     switch (e.code) {

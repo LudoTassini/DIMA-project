@@ -1,8 +1,9 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
-import 'package:bloqo/model/bloqo_user_course_created.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +15,7 @@ import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -61,12 +61,13 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
             builder: (context, editorCourseAppState, _){
-              BloqoCourse course = getEditorCourseFromAppState(context: context)!;
-              List<BloqoChapter> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
+              BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
+              List<BloqoChapterData> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
               if(firstBuild) {
                 courseNameController.text = course.name;
                 if (course.description != null) {
@@ -118,7 +119,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 child: Text(
                                                   localizedText.chapters_header,
                                                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                    color: BloqoColors.russianViolet,
+                                                    color: theme.colors.leadingColor,
                                                     fontSize: 30,
                                                   ),
                                                 ),
@@ -130,7 +131,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 child: Text(
                                                   localizedText.edit_course_page_no_chapters,
                                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: BloqoColors.primaryText,
+                                                    color: theme.colors.primaryText,
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -141,7 +142,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 children: List.generate(
                                                   course.chapters.length,
                                                   (index) {
-                                                    BloqoChapter chapter = chapters[index];
+                                                    BloqoChapterData chapter = chapters[index];
                                                     if (index < course.chapters.length - 1) {
                                                       return BloqoEditableChapter(
                                                           course: course,
@@ -170,7 +171,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                               Padding(
                                                 padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                                 child: BloqoFilledButton(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: theme.colors.leadingColor,
                                                   onPressed: () async {
                                                     context.loaderOverlay.show();
                                                     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -211,7 +212,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                         child: BloqoFilledButton(
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {
@@ -249,10 +250,10 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _addChapter({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
+  Future<void> _addChapter({required BuildContext context, required BloqoCourseData course, required List<BloqoChapterData> chapters}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoChapter chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
+    BloqoChapterData chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
 
     if(!context.mounted) return;
     addChapterToEditorCourseAppState(context: context, chapter: chapter);
@@ -260,7 +261,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
     _saveChanges(context: context, course: course, chapters: chapters);
   }
 
-  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters}) async {
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourseData course, required List<BloqoChapterData> chapters}) async {
     var localizedText = getAppLocalizations(context)!;
     course.name = courseNameController.text;
     if(course.name == ""){
@@ -268,7 +269,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
     }
     course.description = courseDescriptionController.text;
 
-    BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
+    BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
         !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     updatedUserCourseCreated.courseName = course.name;

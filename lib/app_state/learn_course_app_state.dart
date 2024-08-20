@@ -2,38 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/courses/bloqo_chapter.dart';
-import '../model/courses/bloqo_course.dart';
-import '../model/courses/bloqo_section.dart';
+import '../model/courses/bloqo_chapter_data.dart';
+import '../model/courses/bloqo_course_data.dart';
+import '../model/courses/bloqo_section_data.dart';
 
 class LearnCourseAppState with ChangeNotifier{
 
-  BloqoCourse? _course;
-  List<BloqoChapter>? _chapters;
-  Map<String, List<BloqoSection>>? _sections;
+  BloqoCourseData? _course;
+  List<BloqoChapterData>? _chapters;
+  Map<String, List<BloqoSectionData>>? _sections;
   Timestamp? _enrollmentDate;
   List<dynamic>? _sectionsCompleted;
   int? _totNumSections;
   List<dynamic>? _chaptersCompleted;
   bool _fromHome = false;
 
-  BloqoCourse? _getCourse() {
+  BloqoCourseData? _getCourse() {
     return _course;
   }
 
-  BloqoChapter? _getChapterFromId(String chapterId){
+  BloqoChapterData? _getChapterFromId(String chapterId){
     return _chapters?.where((chapter) => chapter.id == chapterId).first;
   }
 
-  List<BloqoChapter>? _getChapters(){
+  List<BloqoChapterData>? _getChapters(){
     return _chapters;
   }
 
-  Map<String, List<BloqoSection>>? _getSections(){
+  Map<String, List<BloqoSectionData>>? _getSections(){
     return _sections;
   }
 
-  List<BloqoSection>? _getSectionsFromChapter(String chapterId){
+  List<BloqoSectionData>? _getSectionsFromChapter(String chapterId){
     return _sections?[chapterId];
   }
 
@@ -54,7 +54,6 @@ class LearnCourseAppState with ChangeNotifier{
   }
 
   void _setSectionsCompleted(List<dynamic> sectionsCompleted){
-    sectionsCompleted = _checkDuplicates(sectionsCompleted)!;
     _sectionsCompleted = sectionsCompleted;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
@@ -62,14 +61,13 @@ class LearnCourseAppState with ChangeNotifier{
   }
 
   void _setChaptersCompleted(List<dynamic> chaptersCompleted){
-    chaptersCompleted = _checkDuplicates(chaptersCompleted)!;
     _chaptersCompleted = chaptersCompleted;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  void _set(BloqoCourse? course, List<BloqoChapter>? chapters, Map<String, List<BloqoSection>>? sections, Timestamp? enrollmentDate,
+  void _set(BloqoCourseData? course, List<BloqoChapterData>? chapters, Map<String, List<BloqoSectionData>>? sections, Timestamp? enrollmentDate,
       List<dynamic>? sectionsCompleted, List<dynamic>? chaptersCompleted, int? totNumSections){
     _course = course;
     _chapters = chapters;
@@ -91,34 +89,25 @@ class LearnCourseAppState with ChangeNotifier{
     _fromHome = newValue;
   }
 
-  //FIXME: sparire
-  List<dynamic>? _checkDuplicates(List<dynamic>? list) {
-    if (list == null) {
-      return null;
-    }
-    List<dynamic> uniqueList = list.toSet().toList();
-    return uniqueList;
-  }
-
 }
 
-BloqoCourse? getLearnCourseFromAppState({required BuildContext context}){
+BloqoCourseData? getLearnCourseFromAppState({required BuildContext context}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getCourse();
 }
 
-BloqoChapter? getLearnCourseChapterFromAppState({required BuildContext context, required String chapterId}){
+BloqoChapterData? getLearnCourseChapterFromAppState({required BuildContext context, required String chapterId}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getChapterFromId(chapterId);
 }
 
-List<BloqoChapter>? getLearnCourseChaptersFromAppState({required BuildContext context}){
+List<BloqoChapterData>? getLearnCourseChaptersFromAppState({required BuildContext context}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getChapters();
 }
 
-List<BloqoSection>? getLearnCourseChapterSectionsFromAppState({required BuildContext context, required String chapterId}){
+List<BloqoSectionData>? getLearnCourseChapterSectionsFromAppState({required BuildContext context, required String chapterId}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getSectionsFromChapter(chapterId);
 }
 
-Map<String, List<BloqoSection>>? getLearnCourseSectionsFromAppState({required BuildContext context}){
+Map<String, List<BloqoSectionData>>? getLearnCourseSectionsFromAppState({required BuildContext context}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getSections();
 }
 
@@ -138,8 +127,8 @@ int? getLearnCourseTotNumSectionsFromAppState({required BuildContext context}){
   return Provider.of<LearnCourseAppState>(context, listen: false)._getTotNumSections();
 }
 
-void saveLearnCourseToAppState({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters,
-  required Map<String, List<BloqoSection>> sections, required Timestamp enrollmentDate, required List<dynamic> sectionsCompleted,
+void saveLearnCourseToAppState({required BuildContext context, required BloqoCourseData course, required List<BloqoChapterData> chapters,
+  required Map<String, List<BloqoSectionData>> sections, required Timestamp enrollmentDate, required List<dynamic> sectionsCompleted,
   required int totNumSections, required List<dynamic> chaptersCompleted, bool comingFromHome = false}){
 
   Provider.of<LearnCourseAppState>(context, listen: false)._set(course, chapters, sections, enrollmentDate, sectionsCompleted,

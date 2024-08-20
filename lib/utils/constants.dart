@@ -31,10 +31,13 @@ class Constants{
   static const int coursesToFurtherLoadAtRequestTablet = 4;
   static const int coursesToFurtherLoadAtRequestTabletLearnPage = 8;
 
+  static const int usersToShowAtFirst = 10;
+  static const int usersToFurtherLoadAtRequest = 10;
   static const int reviewsToShowAtFirst = 3;
   static const int reviewsToFurtherLoadAtRequest = 3;
 
   static const int maxCoursesToFetch = 50;
+  static const int maxNotificationsToFetch = 50;
 
   static const double textAreaContainerHeight = 200.0;
 

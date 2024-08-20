@@ -1,6 +1,6 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
 class BloqoErrorAlert extends StatelessWidget{
@@ -16,26 +16,27 @@ class BloqoErrorAlert extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return AlertDialog(
       title: Text(title),
       content: Text(description),
-      backgroundColor: BloqoColors.error,
+      backgroundColor: theme.colors.error,
       titleTextStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
-        color: BloqoColors.seasalt,
+        color: theme.colors.highContrastColor,
         fontSize: 24
       ),
       contentTextStyle: Theme.of(context).textTheme.displayMedium?.copyWith(
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       actions: [
         FilledButton(
           style: Theme.of(context).filledButtonTheme.style?.copyWith(
-              backgroundColor: WidgetStateProperty.resolveWith((_) => BloqoColors.seasalt)
+              backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () => Navigator.pop(context, "OK"),
           child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(
-            color: BloqoColors.error,
+            color: theme.colors.error,
             fontWeight: FontWeight.bold
           )),
         )

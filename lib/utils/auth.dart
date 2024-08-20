@@ -3,6 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'connectivity.dart';
 
+Future<bool> silentLogin({required String email, required String password}) async {
+  try {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return true;
+  }
+  on Exception catch (_) {
+    return false;
+  }
+}
+
 Future<void> login({required var localizedText, required String email, required String password}) async {
   try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(

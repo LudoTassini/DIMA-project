@@ -1,18 +1,18 @@
-import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/app_state/application_settings_app_state.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
 import 'package:flutter/material.dart';
 import '../../model/courses/tags/bloqo_difficulty_tag.dart';
 import '../../model/courses/tags/bloqo_duration_tag.dart';
 import '../../model/courses/tags/bloqo_language_tag.dart';
 import '../../model/courses/tags/bloqo_modality_tag.dart';
-import '../../style/bloqo_colors.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/localization.dart';
 
 class BloqoSearchResultCourse extends StatelessWidget{
 
-  final BloqoPublishedCourse? course;
+  final BloqoPublishedCourseData? course;
   final EdgeInsetsDirectional padding;
   final Function() onPressed;
 
@@ -26,17 +26,18 @@ class BloqoSearchResultCourse extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     return Padding(
         padding: padding,
         child: ElevatedButton(
           style: ButtonStyle(
             padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
             shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
-              side: const BorderSide(
-                color: BloqoColors.russianViolet,
+              side: BorderSide(
+                color: theme.colors.leadingColor,
                 width: 3,
               ),
             )),
@@ -58,11 +59,11 @@ class BloqoSearchResultCourse extends StatelessWidget{
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            const Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                               child: Icon(
                                 Icons.menu_book_rounded,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 size: 24,
                               ),
                             ),
@@ -87,11 +88,11 @@ class BloqoSearchResultCourse extends StatelessWidget{
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            const Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                               child: Icon(
                                 Icons.person,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 size: 24,
                               ),
                             ),
@@ -109,16 +110,16 @@ class BloqoSearchResultCourse extends StatelessWidget{
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            const Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                               child: Icon(
                                 Icons.timer_outlined,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 size: 24,
                               ),
                             ),
                             Text(
-                              localizedText.uploaded_on + DateFormat('dd/MM/yyyy').format(course!.publicationDate.toDate()),
+                              localizedText.published_on + DateFormat('dd/MM/yyyy').format(course!.publicationDate.toDate()),
                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                 fontSize: 14,
                               ),
@@ -131,11 +132,11 @@ class BloqoSearchResultCourse extends StatelessWidget{
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            const Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                               child: Icon(
                                 Icons.public,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 size: 24,
                               ),
                             ),
@@ -315,15 +316,15 @@ class BloqoSearchResultCourse extends StatelessWidget{
                   ),
                 ),
               ),
-              const Column(
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                     child: Icon(
                       Icons.play_circle,
-                      color: BloqoColors.russianViolet,
+                      color: theme.colors.leadingColor,
                       size: 24,
                     ),
                   ),

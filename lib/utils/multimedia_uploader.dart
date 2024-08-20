@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../model/bloqo_user.dart';
-import '../model/courses/bloqo_block.dart';
+import '../model/bloqo_user_data.dart';
+import '../model/courses/bloqo_block_data.dart';
 import 'bloqo_exception.dart';
 import 'connectivity.dart';
 

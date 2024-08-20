@@ -1,5 +1,6 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
-import 'package:bloqo/model/bloqo_user.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -16,7 +17,6 @@ import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/forms/bloqo_switch.dart';
 import '../../utils/constants.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/text_validator.dart';
 import '../../utils/uuid.dart';
 import '../main/main_page.dart';
@@ -61,6 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     return Scaffold(
@@ -75,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Text(
                   'bloQo',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: BloqoColors.seasalt,
+                    color: theme.colors.highContrastColor,
                     fontSize: 60,
                   ),
                 ),
@@ -97,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 localizedText.register_thank_you,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                  color: BloqoColors.russianViolet,
+                                  color: theme.colors.leadingColor,
                                   fontSize: 25,
                                 )
                             ),
@@ -108,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               localizedText.register_explanation,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -169,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: Text(
                                   localizedText.full_name_visible,
                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -192,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fullName: fullNameController.text,
                                 isFullNameVisible: visibilitySwitch.value.get());
                             },
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             text: localizedText.register,
                           ),
                         ),
@@ -200,7 +201,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
                           child: BloqoTextButton(
                             text: localizedText.back_to_login,
-                            color: BloqoColors.russianViolet,
+                            color: theme.colors.leadingColor,
                             onPressed: () {
                               if(!context.mounted) return;
                               Navigator.pushReplacement(
@@ -232,7 +233,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
 
-      final user = BloqoUser(
+      final user = BloqoUserData(
           id: uuid(),
           email: email,
           username: username,

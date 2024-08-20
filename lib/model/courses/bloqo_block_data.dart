@@ -7,7 +7,7 @@ import '../../utils/bloqo_exception.dart';
 import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
 
-class BloqoBlock{
+class BloqoBlockData{
 
   final String id;
   final String superType;
@@ -16,7 +16,7 @@ class BloqoBlock{
   int number;
   String content;
 
-  BloqoBlock({
+  BloqoBlockData({
     required this.id,
     required this.superType,
     this.type,
@@ -25,12 +25,12 @@ class BloqoBlock{
     required this.content
   });
 
-  factory BloqoBlock.fromFirestore(
+  factory BloqoBlockData.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
       ){
     final data = snapshot.data();
-    return BloqoBlock(
+    return BloqoBlockData(
         id: data!["id"],
         superType: data["super_type"],
         type: data["type"],
@@ -54,8 +54,8 @@ class BloqoBlock{
   static getRef() {
     var db = FirebaseFirestore.instance;
     return db.collection("blocks").withConverter(
-      fromFirestore: BloqoBlock.fromFirestore,
-      toFirestore: (BloqoBlock block, _) => block.toFirestore(),
+      fromFirestore: BloqoBlockData.fromFirestore,
+      toFirestore: (BloqoBlockData block, _) => block.toFirestore(),
     );
   }
 
@@ -222,14 +222,14 @@ List<DropdownMenuEntry<String>> buildQuizTypesList({required var localizedText, 
   return dropdownMenuEntries;
 }
 
-Future<List<BloqoBlock>> getBlocksFromIds({required var localizedText, required List<dynamic> blockIds}) async {
+Future<List<BloqoBlockData>> getBlocksFromIds({required var localizedText, required List<dynamic> blockIds}) async {
   try {
-    var ref = BloqoBlock.getRef();
-    List<BloqoBlock> blocks = [];
+    var ref = BloqoBlockData.getRef();
+    List<BloqoBlockData> blocks = [];
     for(String blockId in blockIds) {
       await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
-      BloqoBlock block = querySnapshot.docs.first.data();
+      BloqoBlockData block = querySnapshot.docs.first.data();
       blocks.add(block);
     }
     return blocks;
@@ -243,16 +243,16 @@ Future<List<BloqoBlock>> getBlocksFromIds({required var localizedText, required 
   }
 }
 
-Future<BloqoBlock> saveNewBlock({required var localizedText, required BloqoBlockSuperType blockSuperType, required int blockNumber}) async {
+Future<BloqoBlockData> saveNewBlock({required var localizedText, required BloqoBlockSuperType blockSuperType, required int blockNumber}) async {
   try {
-    BloqoBlock block = BloqoBlock(
+    BloqoBlockData block = BloqoBlockData(
       id: uuid(),
       superType: blockSuperType.toString(),
       number: blockNumber,
       name: getNameBasedOnBlockSuperType(localizedText: localizedText, superType: blockSuperType),
       content: "",
     );
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(block);
     return block;
@@ -268,10 +268,10 @@ Future<BloqoBlock> saveNewBlock({required var localizedText, required BloqoBlock
 
 Future<void> deleteBlock({required var localizedText, required String courseId, required String blockId}) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
-    BloqoBlock blockToDelete = querySnapshot.docs[0].data();
+    BloqoBlockData blockToDelete = querySnapshot.docs[0].data();
     String? type = blockToDelete.type;
     await querySnapshot.docs[0].reference.delete();
     if(type != null) {
@@ -301,8 +301,8 @@ Future<void> deleteBlock({required var localizedText, required String courseId, 
 }
 
 Future<void> reorderBlocks({required var localizedText, required List<dynamic> blockIds}) async {
-  var ref = BloqoBlock.getRef();
-  Map<String, BloqoBlock> blocks = {};
+  var ref = BloqoBlockData.getRef();
+  Map<String, BloqoBlockData> blocks = {};
 
   for (String blockId in blockIds) {
     await checkConnectivity(localizedText: localizedText);
@@ -310,7 +310,7 @@ Future<void> reorderBlocks({required var localizedText, required List<dynamic> b
 
     if (querySnapshot.docs.isNotEmpty) {
       var doc = querySnapshot.docs.first;
-      BloqoBlock block = doc.data();
+      BloqoBlockData block = doc.data();
       blocks[doc.id] = block;
     }
   }
@@ -328,9 +328,9 @@ Future<void> reorderBlocks({required var localizedText, required List<dynamic> b
   }
 }
 
-Future<void> saveBlockChanges({required var localizedText, required BloqoBlock updatedBlock}) async {
+Future<void> saveBlockChanges({required var localizedText, required BloqoBlockData updatedBlock}) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedBlock.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
@@ -353,7 +353,7 @@ Future<void> saveBlockAudioUrl({
   required String audioUrl
 }) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -381,7 +381,7 @@ Future<void> saveBlockImageUrl({
   required String imageUrl
 }) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -409,7 +409,7 @@ Future<void> saveBlockVideoUrl({
   required String videoUrl
 }) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -437,7 +437,7 @@ Future<void> saveBlockMultipleChoiceQuiz({
   required String content
 }) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -465,7 +465,7 @@ Future<void> saveBlockOpenQuestionQuiz({
   required String content
 }) async {
   try {
-    var ref = BloqoBlock.getRef();
+    var ref = BloqoBlockData.getRef();
     await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
