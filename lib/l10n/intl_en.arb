@@ -223,7 +223,7 @@
   "course": "Course",
   "chapter": "Chapter",
   "section": "Section",
-  "enrolled_on": "Enrolled on: ",
+  "enrolled_on": "Enrolled on:",
   "not_completed": "Not completed",
   "view_more": "View more",
   "collapse": "Collapse",

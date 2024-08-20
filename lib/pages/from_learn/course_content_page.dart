@@ -415,17 +415,17 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(
-                                          25, 15, 25, 10),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          25, 50, 25, 10),
+                                      child: Wrap(
+                                        spacing: 10.0,
+                                        runSpacing: 10.0,
                                         children: [
                                           Column(
                                             children: [
                                               Align(
-                                                alignment: Alignment.topLeft,
+                                                alignment: Alignment.center,
                                                 child: Text(
-                                                  localizedText.enrolled_on,
+                                                  "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
                                                   style: Theme
                                                       .of(context)
                                                       .textTheme
@@ -436,24 +436,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                   ),
                                                 ),
                                               ),
-                                              Align(
-                                                alignment: Alignment.topLeft,
-                                                child:
-                                                  Text(
-                                                    DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
-                                                    style: Theme
-                                                        .of(context)
-                                                        .textTheme
-                                                        .displaySmall
-                                                        ?.copyWith(
-                                                      color: BloqoColors.seasalt,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                              ),
                                             ],
                                           ),
-                                          const SizedBox(width: 20), // Add some space between the text and the button
+
                                           Expanded(
                                             child: Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary

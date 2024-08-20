@@ -2040,10 +2040,10 @@ class S {
     );
   }
 
-  /// `Enrolled on: `
+  /// `Enrolled on:`
   String get enrolled_on {
     return Intl.message(
-      'Enrolled on: ',
+      'Enrolled on:',
       name: 'enrolled_on',
       desc: '',
       args: [],

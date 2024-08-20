@@ -170,7 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "english": MessageLookupByLibrary.simpleMessage("Inglese"),
         "enroll_in": MessageLookupByLibrary.simpleMessage("Iscriviti al Corso"),
         "enrolled_on":
-            MessageLookupByLibrary.simpleMessage("Iscrizione effettuata il: "),
+            MessageLookupByLibrary.simpleMessage("Iscrizione effettuata il:"),
         "enrollings": MessageLookupByLibrary.simpleMessage("Seguiti"),
         "enter_answer":
             MessageLookupByLibrary.simpleMessage("Inserisci una risposta"),

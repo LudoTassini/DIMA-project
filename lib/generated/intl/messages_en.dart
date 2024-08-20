@@ -166,7 +166,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Embed from YouTube"),
         "english": MessageLookupByLibrary.simpleMessage("English"),
         "enroll_in": MessageLookupByLibrary.simpleMessage("Enroll in Course"),
-        "enrolled_on": MessageLookupByLibrary.simpleMessage("Enrolled on: "),
+        "enrolled_on": MessageLookupByLibrary.simpleMessage("Enrolled on:"),
         "enrollings": MessageLookupByLibrary.simpleMessage("Enrollings"),
         "enter_answer":
             MessageLookupByLibrary.simpleMessage("Enter the answer"),
