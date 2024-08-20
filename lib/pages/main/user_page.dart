@@ -72,28 +72,34 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     super.dispose();
   }
 
-  void _updateUserPage() {
-    setState(() {});
+  void _updateUserPage({required var localizedText}) {
+    setState(() {
+      languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
+      languages.removeWhere((x) => x.label == localizedText.other);
+
+      themes = buildThemesList(localizedText: localizedText);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    var localizedText = getAppLocalizations(context)!;
 
     languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
     languages.removeWhere((x) => x.label == localizedText.other);
 
     themes = buildThemesList(localizedText: localizedText);
 
+    final user = getUserFromAppState(context: context)!;
+    final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
+
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: SingleChildScrollView(
         child: Consumer<UserAppState>(
           builder: (context, userAppState, _) {
-            final user = getUserFromAppState(context: context)!;
-            final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
             return Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -144,13 +150,13 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
-                              child: Text(
-                                localizedText.full_name_visible,
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )
+                                child: Text(
+                                  localizedText.full_name_visible,
+                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
                             ),
                             BloqoSwitch(value: fullNameVisible),
                           ],
@@ -167,78 +173,78 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                   settingIcon: Icons.settings_applications_rounded,
                   onPressed: () {
                     widget.onPush(SettingPage(
-                      settingTitle: localizedText.application_settings_title,
-                      settingDescription: localizedText.application_settings_description,
-                      settingType: BloqoSettingType.application,
-                      forms: [
-                        Row(
-                            children: [
-                              Expanded(
-                                  child: LayoutBuilder(
-                                      builder: (BuildContext context, BoxConstraints constraints) {
-                                        double availableWidth = constraints.maxWidth;
+                        settingTitle: localizedText.application_settings_title,
+                        settingDescription: localizedText.application_settings_description,
+                        settingType: BloqoSettingType.application,
+                        forms: [
+                          Row(
+                              children: [
+                                Expanded(
+                                    child: LayoutBuilder(
+                                        builder: (BuildContext context, BoxConstraints constraints) {
+                                          double availableWidth = constraints.maxWidth;
 
-                                        String languageInitialSelection = languages
-                                            .firstWhere(
-                                                (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
+                                          String languageInitialSelection = languages
+                                              .firstWhere(
+                                                  (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
 
-                                        String themeInitialSelection = themes
-                                            .firstWhere(
-                                                (lang) => lang.value == theme.type.toString()).label;
+                                          String themeInitialSelection = themes
+                                              .firstWhere(
+                                                  (lang) => lang.value == theme.type.toString()).label;
 
-                                        languageController.text = languageInitialSelection;
-                                        themeController.text = themeInitialSelection;
+                                          languageController.text = languageInitialSelection;
+                                          themeController.text = themeInitialSelection;
 
-                                        return Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
-                                                child: BloqoDropdown(
-                                                    controller: languageController,
-                                                    dropdownMenuEntries: languages,
-                                                    initialSelection: languageInitialSelection,
-                                                    width: availableWidth,
-                                                    label: localizedText.language
+                                          return Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                                                  child: BloqoDropdown(
+                                                      controller: languageController,
+                                                      dropdownMenuEntries: languages,
+                                                      initialSelection: languageInitialSelection,
+                                                      width: availableWidth,
+                                                      label: localizedText.language
+                                                  ),
                                                 ),
-                                              ),
-                                              BloqoDropdown(
-                                                  controller: themeController,
-                                                  dropdownMenuEntries: themes,
-                                                  initialSelection: themeInitialSelection,
-                                                  width: availableWidth,
-                                                  label: localizedText.theme
-                                              )
-                                            ]
-                                        );
-                                      }
-                                  )
-                              )
-                            ]
-                        ),
-                      ],
-                      controllers: [
-                        languageController,
-                        themeController
-                      ],
-                      onSettingsUpdated: () => _updateUserPage()
+                                                BloqoDropdown(
+                                                    controller: themeController,
+                                                    dropdownMenuEntries: themes,
+                                                    initialSelection: themeInitialSelection,
+                                                    width: availableWidth,
+                                                    label: localizedText.theme
+                                                )
+                                              ]
+                                          );
+                                        }
+                                    )
+                                )
+                              ]
+                          ),
+                        ],
+                        controllers: [
+                          languageController,
+                          themeController
+                        ],
+                        onSettingsUpdated: () => _updateUserPage(localizedText: localizedText)
                     ));
                   },
                 ),
                 BloqoSetting(
                   onPressed: () {
                     showBloqoConfirmationAlert(
-                      context: context,
-                      title: localizedText.warning,
-                      description: localizedText.logout_confirmation,
-                      confirmationFunction: () async {
-                        await _tryLogout(
-                            context: context,
-                            localizedText: localizedText
-                        );
-                      },
-                      backgroundColor: theme.colors.leadingColor
+                        context: context,
+                        title: localizedText.warning,
+                        description: localizedText.logout_confirmation,
+                        confirmationFunction: () async {
+                          await _tryLogout(
+                              context: context,
+                              localizedText: localizedText
+                          );
+                        },
+                        backgroundColor: theme.colors.leadingColor
                     );
                   },
                   settingTitle: localizedText.sign_out_title,

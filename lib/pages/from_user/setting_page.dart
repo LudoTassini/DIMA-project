@@ -229,6 +229,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
     }
 
     widget.onSettingsUpdated?.call();
+
+    Navigator.of(context).pop();
   }
 
 }

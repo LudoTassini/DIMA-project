@@ -49,29 +49,18 @@ Future<void> main() async {
   // Run app
   runApp(
     Phoenix(
-      child: GlobalLoaderOverlay(
-        useDefaultLoading: false,
-        overlayWidgetBuilder: (_) {
-          return Center(
-            child: LoadingAnimationWidget.prograssiveDots(
-              color: const Color(0xFF442367),
-              size: 100,
-            ),
-          );
-        },
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
-            ChangeNotifierProvider(create: (_) => UserAppState()),
-            ChangeNotifierProvider(create: (_) => LearnCourseAppState()),
-            ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
-            ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
-            ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
-          ],
-          child: const BloqoApp(),
-        ),
-      )
-    ),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
+          ChangeNotifierProvider(create: (_) => UserAppState()),
+          ChangeNotifierProvider(create: (_) => LearnCourseAppState()),
+          ChangeNotifierProvider(create: (_) => EditorCourseAppState()),
+          ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
+          ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
+        ],
+        child: const BloqoApp(),
+      ),
+    )
   );
 }
 
@@ -115,6 +104,21 @@ class _BloqoAppState extends State<BloqoApp> {
 
   @override
   Widget build(BuildContext context) {
+    return GlobalLoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (_) {
+        return Center(
+          child: LoadingAnimationWidget.prograssiveDots(
+            color: getAppThemeFromAppState(context: context).colors.leadingColor,
+            size: 100,
+          ),
+        );
+      },
+      child: _buildAppContent(context),
+    );
+  }
+
+  Widget _buildAppContent(BuildContext context) {
     return Consumer<ApplicationSettingsAppState>(
       builder: (context, applicationSettingsAppState, _) {
         if (_isLoading) {
