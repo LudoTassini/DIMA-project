@@ -1,5 +1,5 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
 class BloqoNavBar extends StatelessWidget {
@@ -15,14 +15,15 @@ class BloqoNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BottomNavigationBar(
       onTap: (index) {
         onItemTapped(index);
       },
       currentIndex: currentIndex,
-      selectedItemColor: BloqoColors.russianViolet,
-      unselectedItemColor: BloqoColors.seasalt,
-      backgroundColor: BloqoColors.darkFuchsia,
+      selectedItemColor: theme.colors.leadingColor,
+      unselectedItemColor: theme.colors.highContrastColor,
+      backgroundColor: theme.colors.trailingColor,
       elevation: 20,
       type: BottomNavigationBarType.fixed,
       iconSize: 30.0,

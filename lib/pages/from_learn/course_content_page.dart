@@ -1,10 +1,11 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
-import 'package:bloqo/model/courses/bloqo_block.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_block_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/pages/from_learn/section_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +19,16 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/bloqo_qr_code_type.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
+
+import '../from_any/qr_code_page.dart';
 
 class CourseContentPage extends StatefulWidget {
 
@@ -37,7 +40,7 @@ class CourseContentPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoSection? sectionToComplete;
+  final BloqoSectionData? sectionToComplete;
   final bool isCourseCompleted;
 
 
@@ -54,9 +57,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     // FIXME
-    void initializeSectionsToShowMap(List<BloqoChapter> chapters, List<dynamic> chaptersCompleted) {
+    void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
         if (!chaptersCompleted.contains(chapter.id)) {
           _showSectionsMap[chapter.id] = true;
@@ -83,7 +87,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
           getLearnCourseChaptersCompletedFromAppState(context: context)?? []);
     }
 
-    BloqoUser user = getUserFromAppState(context: context)!;
+    BloqoUserData user = getUserFromAppState(context: context)!;
     bool isClickable = false;
 
     return BloqoMainContainer(
@@ -94,9 +98,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
               return Consumer<LearnCourseAppState>(
                 builder: (context, learnCourseAppState, _) {
 
-                  BloqoCourse course = getLearnCourseFromAppState(context: context)!;
-                  List<BloqoChapter> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
-                  Map<String, List<BloqoSection>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
+                  BloqoCourseData course = getLearnCourseFromAppState(context: context)!;
+                  List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
+                  Map<String, List<BloqoSectionData>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
                   Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
                   List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
                   List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
@@ -112,23 +116,63 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  20, 4, 0, 0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  localizedText.description,
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .displayLarge
-                                      ?.copyWith(
-                                    color: BloqoColors.seasalt,
-                                    fontSize: 24,
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        20, 10, 0, 0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        localizedText.description,
+                                        style: Theme.of(context).textTheme.displayLarge
+                                            ?.copyWith(
+                                          color: theme.colors.highContrastColor,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20, 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: theme.colors.inBetweenColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.qr_code_2,
+                                          color: theme.colors.highContrastColor,
+                                          size: 32,
+                                        ),
+                                        onPressed: () async {
+                                          context.loaderOverlay.show();
+                                          try{
+                                            BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
+                                            if (!context.mounted) return;
+                                            context.loaderOverlay.hide();
+                                            widget.onPush(
+                                                QrCodePage(
+                                                    qrCodeTitle: course.name,
+                                                    qrCodeContent: "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}"
+                                                )
+                                            );
+                                          } on BloqoException catch (e) {
+                                            if (!context.mounted) return;
+                                            context.loaderOverlay.hide();
+                                            showBloqoErrorAlert(
+                                              context: context,
+                                              title: localizedText.error_title,
+                                              description: e.message,
+                                            );
+                                          }
+                                        }
+                                      ),
+                                    ),
+                                  )
+                                ]
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
@@ -139,7 +183,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   course.description!,
                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                     fontWeight: FontWeight.w400,
-                                    color: BloqoColors.seasalt,
+                                    color: theme.colors.highContrastColor,
                                     fontSize: 16,
                                   ),
                                 )
@@ -157,7 +201,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                       .textTheme
                                       .displayLarge
                                       ?.copyWith(
-                                    color: BloqoColors.seasalt,
+                                    color: theme.colors.highContrastColor,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -197,7 +241,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           .textTheme
                                                           .displayMedium
                                                           ?.copyWith(
-                                                        color: BloqoColors.secondaryText,
+                                                        color: theme.colors.secondaryText,
                                                         fontSize: 18,
                                                       ),
                                                     ),
@@ -212,16 +256,16 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               textAlign: TextAlign.start,
                                                               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                                 fontSize: 14,
-                                                                color: BloqoColors.success,
+                                                                color: theme.colors.success,
                                                                 fontWeight: FontWeight.w600,
                                                               ),
                                                             ),
                                                           ),
-                                                          const Padding(
-                                                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                                                          Padding(
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                                                             child: Icon(
                                                               Icons.check,
-                                                              color: BloqoColors.success,
+                                                              color: theme.colors.success,
                                                               size: 24,
                                                             ),
                                                           ),
@@ -237,7 +281,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             textAlign: TextAlign.start,
                                                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                               fontSize: 14,
-                                                              color: BloqoColors.secondaryText,
+                                                              color: theme.colors.secondaryText,
                                                               fontWeight: FontWeight.w600,
                                                             ),
                                                           ),
@@ -263,7 +307,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             .textTheme
                                                             .displayLarge
                                                             ?.copyWith(
-                                                          color: BloqoColors.russianViolet,
+                                                          color: theme.colors.leadingColor,
                                                           fontSize: 24,
                                                         ),
                                                       ),
@@ -286,7 +330,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         child: Text(
                                                           chapter.description!,
                                                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                            color: BloqoColors.primaryText,
+                                                            color: theme.colors.primaryText,
                                                           ),
                                                         ),
                                                       ),
@@ -347,15 +391,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               children: [
                                                                 Text(
                                                                   localizedText.collapse,
-                                                                  style: const TextStyle(
-                                                                    color: BloqoColors.secondaryText,
+                                                                  style: TextStyle(
+                                                                    color: theme.colors.secondaryText,
                                                                     fontSize: 14,
                                                                     fontWeight: FontWeight.w600,
                                                                   ),
                                                                 ),
-                                                                const Icon(
+                                                                Icon(
                                                                   Icons.keyboard_arrow_up_sharp,
-                                                                  color: BloqoColors.secondaryText,
+                                                                  color: theme.colors.secondaryText,
                                                                   size: 25,
                                                                 ),
                                                               ],
@@ -386,15 +430,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               children: [
                                                                 Text(
                                                                   localizedText.view_more,
-                                                                  style: const TextStyle(
-                                                                    color: BloqoColors.secondaryText,
+                                                                  style: TextStyle(
+                                                                    color: theme.colors.secondaryText,
                                                                     fontSize: 14,
                                                                     fontWeight: FontWeight.w600,
                                                                   ),
                                                                 ),
-                                                                const Icon(
+                                                                Icon(
                                                                   Icons.keyboard_arrow_right_sharp,
-                                                                  color: BloqoColors.secondaryText,
+                                                                  color: theme.colors.secondaryText,
                                                                   size: 25,
                                                                 ),
                                                               ],
@@ -415,50 +459,35 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
                                     Padding(
                                       padding: const EdgeInsetsDirectional.fromSTEB(
-                                          25, 15, 25, 10),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          25, 50, 25, 10),
+                                      child: Wrap(
+                                        spacing: 10.0,
+                                        runSpacing: 10.0,
                                         children: [
                                           Column(
                                             children: [
                                               Align(
-                                                alignment: Alignment.topLeft,
+                                                alignment: Alignment.center,
                                                 child: Text(
-                                                  localizedText.enrolled_on,
+                                                  "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
                                                   style: Theme
                                                       .of(context)
                                                       .textTheme
                                                       .displaySmall
                                                       ?.copyWith(
-                                                    color: BloqoColors.seasalt,
+                                                    color: theme.colors.highContrastColor,
                                                     fontSize: 16,
                                                   ),
                                                 ),
                                               ),
-                                              Align(
-                                                alignment: Alignment.topLeft,
-                                                child:
-                                                  Text(
-                                                    DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate()),
-                                                    style: Theme
-                                                        .of(context)
-                                                        .textTheme
-                                                        .displaySmall
-                                                        ?.copyWith(
-                                                      color: BloqoColors.seasalt,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                              ),
                                             ],
                                           ),
-                                          const SizedBox(width: 20), // Add some space between the text and the button
+
                                           Expanded(
                                             child: Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
                                               child: BloqoFilledButton(
-                                                color: BloqoColors.error,
+                                                color: theme.colors.error,
                                                 onPressed: () {
                                                   showBloqoConfirmationAlert(
                                                       context: context,
@@ -472,7 +501,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           enrolledUserId: user.id
                                                         );
                                                       },
-                                                      backgroundColor: BloqoColors.error
+                                                      backgroundColor: theme.colors.error
                                                   );
                                                 },
                                                 text: localizedText.unsubscribe,
@@ -535,7 +564,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   );
                               },
                             height: 60,
-                            color: BloqoColors.success,
+                            color: theme.colors.success,
                             text: sectionsCompleted.isEmpty ? localizedText.start_learning
                                 : localizedText.continue_learning,
                             fontSize: 24,
@@ -562,10 +591,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try{
-      List<BloqoUserCourseEnrolled>? courses = getUserCoursesEnrolledFromAppState(context: context);
-      BloqoPublishedCourse publishedCourseToUpdate = await getPublishedCourseFromCourseId(
+      List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
           localizedText: localizedText, courseId: courseId);
-      BloqoUserCourseEnrolled courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
       await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
@@ -588,17 +617,17 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
   }
 
-  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSection section,
+  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSectionData section,
     required String courseName}) async {
     context.loaderOverlay.show();
     try {
 
-      List<BloqoBlock> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
+      List<BloqoBlockData> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
       if(!context.mounted) return;
 
       context.loaderOverlay.hide();
 
-      BloqoChapter chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
+      BloqoChapterData chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
               (chapter) => chapter.sections.contains(section.id)).first;
 
       widget.onPush(

@@ -1,4 +1,4 @@
-import 'package:bloqo/model/bloqo_user_course_created.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,20 +6,20 @@ import 'package:provider/provider.dart';
 
 class UserCoursesCreatedAppState with ChangeNotifier{
 
-  List<BloqoUserCourseCreated>? _userCourses;
+  List<BloqoUserCourseCreatedData>? _userCourses;
 
-  List<BloqoUserCourseCreated>? _get() {
+  List<BloqoUserCourseCreatedData>? _get() {
     return _userCourses;
   }
 
-  void _set(List<BloqoUserCourseCreated> userCourses){
+  void _set(List<BloqoUserCourseCreatedData> userCourses){
     _userCourses = userCourses;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  void _addUserCourseCreated(BloqoUserCourseCreated userCourseCreated){
+  void _addUserCourseCreated(BloqoUserCourseCreatedData userCourseCreated){
     if (_userCourses != null) {
       _userCourses!.add(userCourseCreated);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -28,7 +28,7 @@ class UserCoursesCreatedAppState with ChangeNotifier{
     }
   }
 
-  void _deleteUserCourseCreated(BloqoUserCourseCreated userCourseCreated){
+  void _deleteUserCourseCreated(BloqoUserCourseCreatedData userCourseCreated){
     if (_userCourses != null) {
       _userCourses!.remove(userCourseCreated);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,15 +75,15 @@ class UserCoursesCreatedAppState with ChangeNotifier{
 
 }
 
-void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreated> courses}){
+void saveUserCoursesCreatedToAppState({required BuildContext context, required List<BloqoUserCourseCreatedData> courses}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false)._set(courses);
 }
 
-List<BloqoUserCourseCreated>? getUserCoursesCreatedFromAppState({required BuildContext context}){
+List<BloqoUserCourseCreatedData>? getUserCoursesCreatedFromAppState({required BuildContext context}){
   return Provider.of<UserCoursesCreatedAppState>(context, listen: false)._get();
 }
 
-void addUserCourseCreatedToAppState({required BuildContext context, required BloqoUserCourseCreated userCourseCreated}){
+void addUserCourseCreatedToAppState({required BuildContext context, required BloqoUserCourseCreatedData userCourseCreated}){
   if(Provider.of<UserCoursesCreatedAppState>(context, listen: false)._get() == null){
     Provider.of<UserCoursesCreatedAppState>(context, listen: false)._set([userCourseCreated]);
   }
@@ -93,7 +93,7 @@ void addUserCourseCreatedToAppState({required BuildContext context, required Blo
   }
 }
 
-void deleteUserCourseCreatedFromAppState({required BuildContext context, required BloqoUserCourseCreated userCourseCreated}){
+void deleteUserCourseCreatedFromAppState({required BuildContext context, required BloqoUserCourseCreatedData userCourseCreated}){
   Provider.of<UserCoursesCreatedAppState>(context, listen: false)._deleteUserCourseCreated(userCourseCreated);
 }
 

@@ -1,19 +1,19 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/app_state/user_courses_enrolled_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/custom/bloqo_rating_bar.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/model/bloqo_review.dart';
-import 'package:bloqo/model/bloqo_user.dart';
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_published_course.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -28,8 +28,8 @@ class ReviewPage extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoUserCourseEnrolled courseToReview;
-  final BloqoReview? userReview;
+  final BloqoUserCourseEnrolledData courseToReview;
+  final BloqoReviewData? userReview;
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
@@ -68,6 +68,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     final formKeyAnswerTitle = GlobalKey<FormState>();
     final formKeyAnswerReview = GlobalKey<FormState>();
@@ -88,7 +89,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                       child: Text(
                         widget.courseToReview.courseName,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 30),
                       ),
                     ),
@@ -98,13 +99,13 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                       child: Text(
                         !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: BloqoColors.seasalt,
-                            fontSize: 24),
+                            color: theme.colors.highContrastColor,
+                            fontSize: 20),
                       ),
                     ),
 
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
                       child: Row(
                         children: [
                           BloqoRatingBar(
@@ -120,7 +121,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                     ),
 
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
                       child: Form(
                         key: formKeyAnswerTitle,
                         child: BloqoTextField(
@@ -135,7 +136,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                     ),
 
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
                       child: Form(
                         key: formKeyAnswerReview,
                         child: BloqoTextField(
@@ -160,14 +161,16 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                             : BloqoFilledButton(
                               onPressed: () async {
                                 await _tryPublishReview(
+                                  context: context,
                                   controllerTitle: controllerTitle,
                                   controllerReview: controllerReview,
                                   rating: selectedRating,
                                   userCourseEnrolled: widget.courseToReview
                                 );
                               },
-                              color: BloqoColors.russianViolet,
+                              color: theme.colors.leadingColor,
                               text: localizedText.publish,
+                              icon: Icons.comment
                             ),
                       ),
                     ),
@@ -186,14 +189,11 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
   @override
   bool get wantKeepAlive => true;
 
-  //FIXME: lato DB funziona tuttto, però a livello grafico fa una cosa strana dopo aver pubblicato una review
-  // FIXME: (nulla di grave, forse ho messo troppe hide? perlomeno non si impalla)
 
-  //FIXME:
-  Future<void> _tryPublishReview({required TextEditingController controllerTitle, required TextEditingController controllerReview,
-    required int rating, required BloqoUserCourseEnrolled userCourseEnrolled}) async {
+  Future<void> _tryPublishReview({required BuildContext context, required TextEditingController controllerTitle, required TextEditingController controllerReview,
+    required int rating, required BloqoUserCourseEnrolledData userCourseEnrolled}) async {
 
-    BloqoUser myself = getUserFromAppState(context: context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
 
     final localizedText = getAppLocalizations(context)!;
     final loaderOverlay = context.loaderOverlay;
@@ -201,7 +201,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
     try {
 
-      BloqoReview reviewToPublish = BloqoReview(
+      BloqoReviewData reviewToPublish = BloqoReviewData(
         authorUsername: myself.username,
         authorId: myself.id,
         rating: rating,
@@ -211,24 +211,21 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
       );
 
       await publishReview(localizedText: localizedText, review: reviewToPublish);
-      loaderOverlay.hide();
 
-      BloqoPublishedCourse publishedCourse =
+      BloqoPublishedCourseData publishedCourse =
       await getPublishedCourseFromPublishedCourseId(
         localizedText: localizedText,
         publishedCourseId: widget.courseToReview.publishedCourseId,
       );
-      loaderOverlay.hide();
 
       List<dynamic> reviewsIds = publishedCourse.reviews;
-      List<BloqoReview> reviews = [];
+      List<BloqoReviewData> reviews = [];
       double newRating = 0;
 
       if(reviewsIds.isNotEmpty) {
         // potrebbero non esserci reviews
         reviews = await getReviewsFromIds(
             localizedText: localizedText, reviewsIds: reviewsIds);
-        loaderOverlay.hide();
         for (var review in reviews) {
           newRating += review.rating;
         }
@@ -246,7 +243,6 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
         publishedCourseId: widget.courseToReview.publishedCourseId,
         newRating: newRating,
       );
-      loaderOverlay.hide();
 
       if (!context.mounted) return;
       await updateUserCourseEnrolledRated(
@@ -254,7 +250,6 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
           userId: myself.id,
           publishedCourseId: publishedCourse.publishedCourseId
       );
-      loaderOverlay.hide();
 
       if (!context.mounted) return;
       setState(() {
@@ -269,20 +264,17 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
       updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: userCourseEnrolled); }
 
       if (!context.mounted) return;
+
+      loaderOverlay.hide();
+
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(
-          context: context,
-          child: Text(
-              localizedText.published
-          ),
-          backgroundColor: BloqoColors.success,
-        ),
+        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
       );
 
-
     } on BloqoException catch (e) {
-      if (!mounted) return; // Use mounted instead of context.mounted
-      loaderOverlay.hide(); // Hide the overlay
+      if (!mounted) return;
+      loaderOverlay.hide();
       showBloqoErrorAlert(
         context: context,
         title: localizedText.error_title,

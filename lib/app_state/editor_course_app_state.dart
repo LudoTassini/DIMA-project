@@ -3,56 +3,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-import '../model/courses/bloqo_block.dart';
-import '../model/courses/bloqo_chapter.dart';
-import '../model/courses/bloqo_course.dart';
-import '../model/courses/bloqo_section.dart';
+import '../model/courses/bloqo_block_data.dart';
+import '../model/courses/bloqo_chapter_data.dart';
+import '../model/courses/bloqo_course_data.dart';
+import '../model/courses/bloqo_section_data.dart';
 
 class EditorCourseAppState with ChangeNotifier{
 
-  BloqoCourse? _course;
-  List<BloqoChapter>? _chapters;
-  Map<String, List<BloqoSection>>? _sections;
-  Map<String, List<BloqoBlock>>? _blocks;
+  BloqoCourseData? _course;
+  List<BloqoChapterData>? _chapters;
+  Map<String, List<BloqoSectionData>>? _sections;
+  Map<String, List<BloqoBlockData>>? _blocks;
   bool _fromHome = false;
 
-  BloqoCourse? _getCourse() {
+  BloqoCourseData? _getCourse() {
     return _course;
   }
 
-  BloqoChapter? _getChapterFromId(String chapterId){
+  BloqoChapterData? _getChapterFromId(String chapterId){
     return _chapters?.where((chapter) => chapter.id == chapterId).first;
   }
 
-  BloqoSection? _getSectionFromId(String chapterId, String sectionId){
+  BloqoSectionData? _getSectionFromId(String chapterId, String sectionId){
     return _sections?[chapterId]?.where((section) => section.id == sectionId).first;
   }
 
-  BloqoBlock? _getBlockFromId(String sectionId, String blockId){
+  BloqoBlockData? _getBlockFromId(String sectionId, String blockId){
     return _blocks?[sectionId]?.where((block) => block.id == blockId).first;
   }
 
-  List<BloqoChapter>? _getChapters(){
+  List<BloqoChapterData>? _getChapters(){
     return _chapters;
   }
 
-  Map<String, List<BloqoSection>>? _getSections(){
+  Map<String, List<BloqoSectionData>>? _getSections(){
     return _sections;
   }
 
-  Map<String, List<BloqoBlock>>? _getBlocks(){
+  Map<String, List<BloqoBlockData>>? _getBlocks(){
     return _blocks;
   }
 
-  List<BloqoSection>? _getSectionsFromChapter(String chapterId){
+  List<BloqoSectionData>? _getSectionsFromChapter(String chapterId){
     return _sections?[chapterId];
   }
 
-  List<BloqoBlock>? _getBlocksFromSection(String sectionId){
+  List<BloqoBlockData>? _getBlocksFromSection(String sectionId){
     return _blocks?[sectionId];
   }
 
-  void _set(BloqoCourse? course, List<BloqoChapter>? chapters, Map<String, List<BloqoSection>>? sections, Map<String, List<BloqoBlock>>? blocks){
+  void _set(BloqoCourseData? course, List<BloqoChapterData>? chapters, Map<String, List<BloqoSectionData>>? sections, Map<String, List<BloqoBlockData>>? blocks){
     _course = course;
     _chapters = chapters;
     _sections = sections;
@@ -62,7 +62,7 @@ class EditorCourseAppState with ChangeNotifier{
     });
   }
 
-  void _addChapter(BloqoChapter chapter) {
+  void _addChapter(BloqoChapterData chapter) {
     if (_chapters != null) {
       _chapters!.add(chapter);
       _course!.chapters.add(chapter.id);
@@ -73,7 +73,7 @@ class EditorCourseAppState with ChangeNotifier{
     }
   }
 
-  void _addSection(String chapterId, BloqoSection section) {
+  void _addSection(String chapterId, BloqoSectionData section) {
     if (_chapters != null && _sections != null) {
       _chapters!.where((chapter) => chapter.id == chapterId).first.sections.add(section.id);
 
@@ -89,7 +89,7 @@ class EditorCourseAppState with ChangeNotifier{
     }
   }
 
-  void _addBlock(String chapterId, String sectionId, BloqoBlock block) {
+  void _addBlock(String chapterId, String sectionId, BloqoBlockData block) {
     if (_sections != null && _blocks != null) {
       _sections![chapterId]!.where((section) => section.id == sectionId).first.blocks.add(block.id);
 
@@ -176,7 +176,7 @@ class EditorCourseAppState with ChangeNotifier{
     }
   }
 
-  void _updateBlock(String sectionId, BloqoBlock block) {
+  void _updateBlock(String sectionId, BloqoBlockData block) {
     if (_blocks != null && _blocks!.containsKey(sectionId)) {
       final sectionBlocks = _blocks![sectionId];
       final index = sectionBlocks!.indexWhere((blck) => blck.id == block.id);
@@ -208,58 +208,58 @@ class EditorCourseAppState with ChangeNotifier{
 
 }
 
-BloqoCourse? getEditorCourseFromAppState({required BuildContext context}){
+BloqoCourseData? getEditorCourseFromAppState({required BuildContext context}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getCourse();
 }
 
-BloqoChapter? getEditorCourseChapterFromAppState({required BuildContext context, required String chapterId}){
+BloqoChapterData? getEditorCourseChapterFromAppState({required BuildContext context, required String chapterId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getChapterFromId(chapterId);
 }
 
-BloqoSection? getEditorCourseSectionFromAppState({required BuildContext context, required String chapterId, required String sectionId}){
+BloqoSectionData? getEditorCourseSectionFromAppState({required BuildContext context, required String chapterId, required String sectionId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getSectionFromId(chapterId, sectionId);
 }
 
-BloqoBlock? getEditorCourseBlockFromAppState({required BuildContext context, required String sectionId, required String blockId}){
+BloqoBlockData? getEditorCourseBlockFromAppState({required BuildContext context, required String sectionId, required String blockId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getBlockFromId(sectionId, blockId);
 }
 
-List<BloqoChapter>? getEditorCourseChaptersFromAppState({required BuildContext context}){
+List<BloqoChapterData>? getEditorCourseChaptersFromAppState({required BuildContext context}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getChapters();
 }
 
-List<BloqoSection>? getEditorCourseChapterSectionsFromAppState({required BuildContext context, required String chapterId}){
+List<BloqoSectionData>? getEditorCourseChapterSectionsFromAppState({required BuildContext context, required String chapterId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getSectionsFromChapter(chapterId);
 }
 
-List<BloqoBlock>? getEditorCourseSectionBlocksFromAppState({required BuildContext context, required String sectionId}){
+List<BloqoBlockData>? getEditorCourseSectionBlocksFromAppState({required BuildContext context, required String sectionId}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getBlocksFromSection(sectionId);
 }
 
-Map<String, List<BloqoSection>>? getEditorCourseSectionsFromAppState({required BuildContext context}){
+Map<String, List<BloqoSectionData>>? getEditorCourseSectionsFromAppState({required BuildContext context}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getSections();
 }
 
-Map<String, List<BloqoBlock>>? getEditorCourseBlocksFromAppState({required BuildContext context}){
+Map<String, List<BloqoBlockData>>? getEditorCourseBlocksFromAppState({required BuildContext context}){
   return Provider.of<EditorCourseAppState>(context, listen: false)._getBlocks();
 }
 
-void saveEditorCourseToAppState({required BuildContext context, required BloqoCourse course, required List<BloqoChapter> chapters, required Map<String, List<BloqoSection>> sections, required Map<String, List<BloqoBlock>> blocks, bool comingFromHome = false}){
+void saveEditorCourseToAppState({required BuildContext context, required BloqoCourseData course, required List<BloqoChapterData> chapters, required Map<String, List<BloqoSectionData>> sections, required Map<String, List<BloqoBlockData>> blocks, bool comingFromHome = false}){
   Provider.of<EditorCourseAppState>(context, listen: false)._set(course, chapters, sections, blocks);
   if(comingFromHome) {
     Provider.of<EditorCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
   }
 }
 
-void addChapterToEditorCourseAppState({required BuildContext context, required BloqoChapter chapter}){
+void addChapterToEditorCourseAppState({required BuildContext context, required BloqoChapterData chapter}){
   Provider.of<EditorCourseAppState>(context, listen: false)._addChapter(chapter);
 }
 
-void addSectionToEditorCourseAppState({required BuildContext context, required String chapterId, required BloqoSection section}){
+void addSectionToEditorCourseAppState({required BuildContext context, required String chapterId, required BloqoSectionData section}){
   Provider.of<EditorCourseAppState>(context, listen: false)._addSection(chapterId, section);
 }
 
-void addBlockToEditorCourseAppState({required BuildContext context, required String chapterId, required String sectionId, required BloqoBlock block}){
+void addBlockToEditorCourseAppState({required BuildContext context, required String chapterId, required String sectionId, required BloqoBlockData block}){
   Provider.of<EditorCourseAppState>(context, listen: false)._addBlock(chapterId, sectionId, block);
 }
 
@@ -271,7 +271,7 @@ void updateEditorCourseSectionNameInAppState({required BuildContext context, req
   Provider.of<EditorCourseAppState>(context, listen: false)._updateSectionName(chapterId, sectionId, newName);
 }
 
-void updateEditorCourseBlockInAppState({required BuildContext context, required String sectionId, required BloqoBlock block}){
+void updateEditorCourseBlockInAppState({required BuildContext context, required String sectionId, required BloqoBlockData block}){
   Provider.of<EditorCourseAppState>(context, listen: false)._updateBlock(sectionId, block);
 }
 

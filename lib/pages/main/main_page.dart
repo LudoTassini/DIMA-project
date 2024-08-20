@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../app_state/user_app_state.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
-import '../../model/bloqo_user.dart';
+import '../../model/bloqo_user_data.dart';
 import '../../utils/constants.dart';
 import '../from_any/notifications_page.dart';
 import 'editor_page.dart';
@@ -49,12 +49,47 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _startNotificationTimers();
+  }
+
+  @override
   void dispose() {
     _notificationTimer?.cancel();
     _firstNotificationTimer?.cancel();
     _pageController.dispose();
     _canPopNotifier.dispose();
     super.dispose();
+  }
+
+  void _startNotificationTimers() {
+    var localizedText = getAppLocalizations(context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
+
+    _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+
+    _notificationTimer = Timer.periodic(
+        const Duration(seconds: Constants.notificationCheckSeconds), (timer) async {
+      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+    });
+  }
+
+  Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
+    if (!mounted) return;
+    try {
+      List<BloqoNotificationData> notifications = await getNotificationsFromUserId(
+          localizedText: localizedText, userId: userId);
+      int newNotificationCount = notifications.length;
+      if (mounted) {
+        setState(() {
+          notificationCount = newNotificationCount;
+        });
+      }
+    } catch (_) {
+    }
   }
 
   void _onItemTapped(int index) {
@@ -124,7 +159,7 @@ class _MainPageState extends State<MainPage> {
 
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoUser myself = getUserFromAppState(context: context)!;
+    BloqoUserData myself = getUserFromAppState(context: context)!;
 
     _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
       await _checkForNotifications(localizedText: localizedText, userId: myself.id);
@@ -181,8 +216,8 @@ class _MainPageState extends State<MainPage> {
       _buildNavigator(_navigatorKeys[0], HomePage(onPush: (newPage) => _pushNewPage(_navigatorKeys[0], newPage), onNavigateToPage: _navigateToPage)),
       _buildNavigator(_navigatorKeys[1], LearnPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[1], newPage), onNavigateToPage: _navigateToPage)),
       _buildNavigator(_navigatorKeys[2], SearchPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[2], newPage), onNavigateToPage: _navigateToPage)),
-      _buildNavigator(_navigatorKeys[3], EditorPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[3], newPage))),
-      _buildNavigator(_navigatorKeys[4], UserPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[4], newPage))),
+      _buildNavigator(_navigatorKeys[3], EditorPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[3], newPage), onNavigateToPage: _navigateToPage)),
+      _buildNavigator(_navigatorKeys[4], UserPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[4], newPage), onNavigateToPage: _navigateToPage)),
     ];
   }
 
@@ -198,19 +233,6 @@ class _MainPageState extends State<MainPage> {
         NavigatorObserverWithNotifier(_canPopNotifier),
       ],
     );
-  }
-
-  Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
-    try {
-      List<
-          BloqoNotificationData> notifications = await getNotificationsFromUserId(
-          localizedText: localizedText, userId: userId);
-      int newNotificationCount = notifications.length;
-      setState(() {
-        notificationCount = newNotificationCount;
-      });
-    }
-    on Exception catch (_) {}
   }
 
 }

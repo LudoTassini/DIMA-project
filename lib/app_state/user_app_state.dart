@@ -1,21 +1,40 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/bloqo_user.dart';
+import '../model/bloqo_user_data.dart';
 
 class UserAppState with ChangeNotifier{
 
-  BloqoUser? _user;
+  BloqoUserData? _user;
 
-  BloqoUser? _get() {
+  BloqoUserData? _get() {
     return _user;
   }
 
-  void _set(BloqoUser user){
+  void _set(BloqoUserData user){
     _user = user;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
+  }
+
+  void _addFollowing(String newId){
+    if(_user != null){
+      _user!.following.add(newId);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  void _removeFollowing(String oldId){
+    if(_user != null){
+      _user!.following.remove(oldId);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
   void _updateFullName(String newFullName){
@@ -44,13 +63,14 @@ class UserAppState with ChangeNotifier{
       });
     }
   }
+
 }
 
-void saveUserToAppState({required BuildContext context, required BloqoUser user}){
+void saveUserToAppState({required BuildContext context, required BloqoUserData user}){
   Provider.of<UserAppState>(context, listen: false)._set(user);
 }
 
-BloqoUser? getUserFromAppState({required BuildContext context}){
+BloqoUserData? getUserFromAppState({required BuildContext context}){
   return Provider.of<UserAppState>(context, listen: false)._get();
 }
 
@@ -64,4 +84,12 @@ void updateUserFullNameVisibilityInAppState({required BuildContext context, requ
 
 void updateUserPictureUrlInAppState({required BuildContext context, required String newUrl}){
   Provider.of<UserAppState>(context, listen: false)._updatePictureUrl(newUrl);
+}
+
+void addFollowingToUserAppState({required BuildContext context, required String newFollowing}){
+  Provider.of<UserAppState>(context, listen: false)._addFollowing(newFollowing);
+}
+
+void removeFollowingFromUserAppState({required BuildContext context, required String oldFollowing}){
+  Provider.of<UserAppState>(context, listen: false)._removeFollowing(oldFollowing);
 }

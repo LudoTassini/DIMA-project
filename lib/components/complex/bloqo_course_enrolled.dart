@@ -1,20 +1,26 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_progress_bar.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_review.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../app_state/application_settings_app_state.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../pages/from_learn/review_page.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
+import '../custom/bloqo_certificate.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrolled extends StatefulWidget {
-  final BloqoUserCourseEnrolled? course;
+  final BloqoUserCourseEnrolledData? course;
   final EdgeInsetsDirectional padding;
   final bool showCompleted;
   final bool showInProgress;
@@ -42,20 +48,22 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
     super.build(context);
 
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     return Padding(
         padding: widget.padding,
         child: ElevatedButton(
           style: ButtonStyle(
             padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
             shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
-              side: const BorderSide(
-              color: BloqoColors.russianViolet,
-              width: 3,
-              ),
-            )),
+              side: BorderSide(
+                color: theme.colors.leadingColor,
+                width: 3,
+                ),
+              )
+            ),
           ),
           onPressed: widget.onPressed,
           child: Column(
@@ -78,12 +86,12 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                const Padding(
-                                  padding:EdgeInsetsDirectional
+                                Padding(
+                                  padding: const EdgeInsetsDirectional
                                       .fromSTEB(0,0,5,0),
                                   child: Icon(
                                     Icons.menu_book_rounded,
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     size: 24,
                                   ),
                                 ),
@@ -107,12 +115,12 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional
+                                Padding(
+                                  padding: const EdgeInsetsDirectional
                                       .fromSTEB(0,0,5,0),
                                   child: Icon(
                                     Icons.person,
-                                    color: BloqoColors.russianViolet,
+                                    color: theme.colors.leadingColor,
                                     size: 24,
                                   ),
                                 ),
@@ -135,12 +143,12 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  const Padding(
-                                    padding: EdgeInsetsDirectional
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional
                                         .fromSTEB(0,0,5,0),
                                     child: Icon(
                                       Icons.bookmark_outlined,
-                                      color: BloqoColors.russianViolet,
+                                      color: theme.colors.leadingColor,
                                       size: 24,
                                     ),
                                   ),
@@ -158,17 +166,16 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                         ],
                       ),
                   ),
-                ),
-                const Column(
+                ), Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional
+                      padding: const EdgeInsetsDirectional
                           .fromSTEB(0, 0, 10, 0),
                       child: Icon(
                         Icons.play_circle,
-                        color: BloqoColors.russianViolet,
+                        color: theme.colors.leadingColor,
                         size: 24,
                       ),
                     ),
@@ -207,15 +214,17 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
               ),
 
               if(widget.showCompleted)
-                Flexible(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
-                        child:
+                Align(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: 10,
+                        runSpacing: 5,
+                        children: [
                           widget.course!.isRated ? BloqoFilledButton(
-                            color: BloqoColors.rated,
+                            color: theme.colors.inactive,
                             onPressed: () async {
                                 await _goToReviewPage(
                                   context: context,
@@ -228,7 +237,7 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                             height: 32,
                           )
                           :  BloqoFilledButton(
-                              color: BloqoColors.rate,
+                              color: theme.colors.rate,
                               onPressed: () async {
                                 await _goToReviewPage(
                                   context: context,
@@ -240,21 +249,31 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                               fontSize: 16,
                               height: 32,
                             ),
+                            BloqoFilledButton(
+                              color: theme.colors.success,
+                              onPressed: () async {
+                                String myFullName = getUserFromAppState(context: context)!.fullName;
+                                ui.Image certificateImage = await getCertificateImage(
+                                  context: context,
+                                  fullName: myFullName,
+                                  courseName: widget.course!.courseName,
+                                );
+                                final byteData = await certificateImage.toByteData(format: ui.ImageByteFormat.png);
+                                final pngBytes = byteData!.buffer.asUint8List();
+
+                                final directory = (await getApplicationDocumentsDirectory()).path;
+                                final imgFile = File('$directory/certificate.png');
+                                imgFile.writeAsBytes(pngBytes);
+
+                                Share.shareXFiles([XFile('$directory/certificate.png')]);
+                              },
+                              text: localizedText.get_certificate,
+                              fontSize: 16,
+                              height: 32,
                           ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: BloqoFilledButton(
-                          color: BloqoColors.success,
-                          onPressed: () {
-                            //TODO:
-                          },
-                          text: 'Get Certificate',
-                          fontSize: 16,
-                          height: 32,
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                  )
                 ),
               ],
         ),
@@ -265,18 +284,18 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _goToReviewPage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolled course}) async {
+  Future<void> _goToReviewPage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolledData course}) async {
     context.loaderOverlay.show();
     try {
 
-      BloqoReview? userReview;
-      BloqoUser user = getUserFromAppState(context: context)!;
+      BloqoReviewData? userReview;
+      BloqoUserData user = getUserFromAppState(context: context)!;
 
       if (course.isRated) {
-        BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(
+        BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
             localizedText: localizedText, publishedCourseId: course.publishedCourseId);
         List reviewsIds = publishedCourse.reviews;
-        List<BloqoReview> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
+        List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
 
         userReview = reviews.where((review) => review.authorId == user.id).first; //error
       } else {

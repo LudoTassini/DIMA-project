@@ -2,10 +2,10 @@ import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 import '../popups/bloqo_confirmation_alert.dart';
@@ -25,7 +25,7 @@ class BloqoCourseCreated extends StatelessWidget {
     this.showPublishedOptions = false,
   });
 
-  final BloqoUserCourseCreated course;
+  final BloqoUserCourseCreatedData course;
   final Function() onPressed;
   final Function()? onPublish;
   final Function()? onViewStatistics;
@@ -38,16 +38,17 @@ class BloqoCourseCreated extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
       padding: padding,
       child: ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-          backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+          backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
           shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
-              color: BloqoColors.russianViolet,
+            side: BorderSide(
+              color: theme.colors.leadingColor,
               width: 3,
             ),
           )),
@@ -68,11 +69,11 @@ class BloqoCourseCreated extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.only(right: 5),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
                               child: Icon(
                                 Icons.menu_book_rounded,
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 size: 24,
                               ),
                             ),
@@ -102,7 +103,7 @@ class BloqoCourseCreated extends StatelessWidget {
                   ),
                   Icon(
                     showEditOptions ? Icons.edit_square : Icons.play_circle,
-                    color: BloqoColors.russianViolet,
+                    color: theme.colors.leadingColor,
                     size: 24,
                   ),
                 ],
@@ -117,7 +118,7 @@ class BloqoCourseCreated extends StatelessWidget {
                     runSpacing: 10,
                     children: [
                       BloqoFilledButton(
-                        color: BloqoColors.error,
+                        color: theme.colors.error,
                         onPressed: () {
                           showBloqoConfirmationAlert(
                               context: context,
@@ -129,7 +130,7 @@ class BloqoCourseCreated extends StatelessWidget {
                                     localizedText: localizedText
                                 );
                               },
-                              backgroundColor: BloqoColors.error
+                              backgroundColor: theme.colors.error
                           );
                         },
                         text: localizedText.delete,
@@ -137,7 +138,7 @@ class BloqoCourseCreated extends StatelessWidget {
                         height: 32,
                       ),
                       BloqoFilledButton(
-                        color: BloqoColors.success,
+                        color: theme.colors.success,
                         onPressed: onPublish ?? () {},
                         text: localizedText.publish,
                         fontSize: 16,
@@ -159,7 +160,7 @@ class BloqoCourseCreated extends StatelessWidget {
                     runSpacing: 5,
                     children: [
                       BloqoFilledButton(
-                        color: BloqoColors.chineseViolet,
+                        color: theme.colors.inBetweenColor,
                         text: localizedText.get_qr_code,
                         fontSize: 16,
                         height: 32,
@@ -167,14 +168,14 @@ class BloqoCourseCreated extends StatelessWidget {
                         onPressed: onGetQrCode ?? () {}
                       ),
                       BloqoFilledButton(
-                        color: BloqoColors.russianViolet,
+                        color: theme.colors.leadingColor,
                         onPressed: onViewStatistics ?? () {},
                         text: localizedText.view_statistics,
                         fontSize: 16,
                         height: 32,
                       ),
                       BloqoFilledButton(
-                        color: BloqoColors.error,
+                        color: theme.colors.error,
                         onPressed: onDismiss ?? () {},
                         text: localizedText.dismiss,
                         fontSize: 16,
@@ -195,7 +196,7 @@ class BloqoCourseCreated extends StatelessWidget {
   Future<void> _tryDeleteCourse({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      BloqoCourse courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
+      BloqoCourseData courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
       await deleteUserCourseCreated(localizedText: localizedText, courseId: course.courseId);
       await deleteCourse(localizedText: localizedText, course: courseToDelete);
       if (!context.mounted) return;

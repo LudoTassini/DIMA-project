@@ -1,7 +1,7 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/courses/bloqo_block_data.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 import '../buttons/bloqo_filled_button.dart';
@@ -16,7 +16,7 @@ class BloqoOpenQuestionQuiz extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoBlock block;
+  final BloqoBlockData block;
 
   @override
   State<BloqoOpenQuestionQuiz> createState() => _BloqoOpenQuestionQuizState();
@@ -43,6 +43,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     String correctAnswer = _extractAnswer(widget.block.content);
     String question = _extractQuestion(widget.block.content);
@@ -61,7 +62,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
               Text(
                 localizedText.quiz,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
                 ),
@@ -75,7 +76,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
                       child: Text(
                         isAnswerCorrect ? localizedText.correct : localizedText.wrong,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: isAnswerCorrect ? BloqoColors.success : BloqoColors.error,
+                          color: isAnswerCorrect ? theme.colors.success : theme.colors.error,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -94,7 +95,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
               Text(
                 question,
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  color: BloqoColors.primaryText,
+                  color: theme.colors.primaryText,
                 ),
               ),
             ],
@@ -132,18 +133,19 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
                   controller: controller,
                   correctAnswer: correctAnswer,
                   flags: flags,
-                  localizedText: localizedText
+                  localizedText: localizedText,
+                  theme: theme
                 );
               },
-              color: BloqoColors.russianViolet,
+              color: theme.colors.leadingColor,
               text: localizedText.confirm,
           )
           : Container(
             decoration: BoxDecoration(
-              color: BloqoColors.seasalt,
+              color: theme.colors.highContrastColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: BloqoColors.success,
+                color: theme.colors.success,
                 width: 3,
               ),
             ),
@@ -152,7 +154,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
               child: Text(
                 localizedText.correct,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.success,
+                  color: theme.colors.success,
                   fontWeight: FontWeight.w500
                 ),
               ),
@@ -212,7 +214,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
   }
 
   void _checkAnswer({required TextEditingController controller, required String correctAnswer, required String flags,
-    required var localizedText}) {
+    required var localizedText, required var theme}) {
     setState(() {
       if (_checkConditions(controller.text.trim(), correctAnswer, flags)) {
         isAnswerCorrect = true;
@@ -227,8 +229,8 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
             isAnswerCorrect ? localizedText.correct
                 : localizedText.wrong
         ),
-        backgroundColor: isAnswerCorrect ? BloqoColors.success
-            : BloqoColors.error,
+        backgroundColor: isAnswerCorrect ? theme.colors.success
+            : theme.colors.error,
       ),
     );
   }

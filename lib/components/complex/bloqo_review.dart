@@ -1,66 +1,62 @@
-import 'package:bloqo/model/bloqo_review.dart';
+import 'package:bloqo/app_state/application_settings_app_state.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../../style/bloqo_colors.dart';
-import '../../utils/localization.dart';
 
-class BloqoReviewComponent extends StatelessWidget{
-  const BloqoReviewComponent({
+class BloqoReview extends StatelessWidget{
+  const BloqoReview({
     super.key,
     required this.review
   });
 
-  final BloqoReview review;
+  final BloqoReviewData review;
 
   @override
   Widget build(BuildContext context) {
+
+    var theme = getAppThemeFromAppState(context: context);
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
       child: Container(
         decoration: BoxDecoration(
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: BloqoColors.russianViolet,
+            color: theme.colors.leadingColor,
             width: 3,
           ),
         ),
-        //padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
                 children: [
                   Text(
                     review.authorUsername,
                     textAlign: TextAlign.start,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       fontSize: 14,
-                      color: BloqoColors.primaryText,
+                      color: theme.colors.primaryText,
                     ),
                   ),
                   const Spacer(), // This will push the RatingBarIndicator to the right
                   RatingBarIndicator(
                     rating: review.rating.toDouble(),
-                    itemBuilder: (context, index) => const Icon(
+                    itemBuilder: (context, index) => Icon(
                       Icons.star,
-                      color: BloqoColors.tertiary,
+                      color: theme.colors.tertiary,
                     ),
                     itemCount: 5,
                     itemSize: 24,
                     direction: Axis.horizontal,
                   ),
                 ],
-              )
+              ),
 
-            ),
-
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-              child: Row(
+              Row(
                 children: [
                   Text(
                     review.commentTitle,
@@ -68,33 +64,32 @@ class BloqoReviewComponent extends StatelessWidget{
                     style: Theme.of(context).textTheme
                         .displayMedium?.copyWith(
                       fontSize: 18,
-                      color: BloqoColors.primaryText,
+                      color: theme.colors.primaryText,
                     ),
                   ),
                 ],
               ),
-            ),
 
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 4, 10, 10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  review.comment,
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme
-                      .displayMedium?.copyWith(
-                    fontSize: 14,
-                    color: BloqoColors.secondaryText,
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    review.comment,
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme
+                        .displayMedium?.copyWith(
+                      fontSize: 14,
+                      color: theme.colors.secondaryText,
+                    ),
                   ),
                 ),
-              ),
 
-            ),
-
-          ],
-        ),
-      ),
+              )
+            ]
+          )
+        )
+      )
     );
   }
 }

@@ -11,16 +11,16 @@ import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/bloqo_user_course_enrolled.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../utils/constants.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/shared_preferences.dart';
 import '../../utils/text_validator.dart';
 import '../main/main_page.dart';
@@ -57,6 +57,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -87,7 +88,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         localizedText.welcome,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                         )
                       ),
                       Form(
@@ -125,13 +126,13 @@ class _WelcomePageState extends State<WelcomePage> {
                                   email: emailController.text,
                                   password: passwordController.text);
                           },
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                           text: localizedText.login,
                         ),
                       ),
                       BloqoTextButton(
                         text: localizedText.forgot_password,
-                        color: BloqoColors.russianViolet,
+                        color: theme.colors.leadingColor,
                         onPressed: () {
                           //TODO
                         },
@@ -146,7 +147,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Text(
                     localizedText.new_here,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: BloqoColors.seasalt,
+                      color: theme.colors.highContrastColor,
                       fontSize: 35,
                     ),
                   ),
@@ -161,7 +162,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           )
                         );
                       },
-                      color: BloqoColors.russianViolet,
+                      color: theme.colors.leadingColor,
                       text: localizedText.register_now,
                       fontSize: 35,
                       height: 82,
@@ -187,19 +188,19 @@ class _WelcomePageState extends State<WelcomePage> {
         password: password);
 
       // gets user data
-      BloqoUser user = await getUserFromEmail(
+      BloqoUserData user = await getUserFromEmail(
           localizedText: localizedText, email: email);
 
       // saves on the shared preferences that the user is logged in along with some data
-      addSharedPreferences(
+      addUserSharedPreferences(
         id: user.id,
         email: email,
         password: password
       );
 
-      List<BloqoUserCourseEnrolled> userCoursesEnrolled = await getUserCoursesEnrolled(
+      List<BloqoUserCourseEnrolledData> userCoursesEnrolled = await getUserCoursesEnrolled(
           localizedText: localizedText, user: user);
-      List<BloqoUserCourseCreated> userCoursesCreated = await getUserCoursesCreated(
+      List<BloqoUserCourseCreatedData> userCoursesCreated = await getUserCoursesCreated(
           localizedText: localizedText, user: user);
 
       if (!context.mounted) return;

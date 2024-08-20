@@ -1,8 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
 import '../buttons/bloqo_filled_button.dart';
 
 class BloqoAudioPlayer extends StatefulWidget {
@@ -56,13 +56,14 @@ class _BloqoAudioPlayerState extends State<BloqoAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
         padding: widget.padding,
         child: Center(
           child: BloqoFilledButton(
               icon: isPlaying ? Icons.pause : Icons.play_arrow,
               onPressed: _playPause,
-              color: BloqoColors.russianViolet,
+              color: theme.colors.leadingColor,
               text: isPlaying ? localizedText.pause_audio : localizedText.play_audio
           ),
         )

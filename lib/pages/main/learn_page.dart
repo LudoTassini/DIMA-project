@@ -1,10 +1,12 @@
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:bloqo/pages/from_learn/course_content_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bloqo/utils/constants.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../../app_state/application_settings_app_state.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
@@ -13,10 +15,9 @@ import '../../components/complex/bloqo_course_enrolled.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/courses/bloqo_chapter.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/courses/bloqo_chapter_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
 
@@ -35,11 +36,12 @@ class LearnPage extends StatefulWidget {
   State<LearnPage> createState() => _LearnPageState();
 }
 
-class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<LearnPage>{
+class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<LearnPage>{
 
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int completedCoursesDisplayed;
+  late Ticker _ticker;
 
   @override
   void initState() {
@@ -52,15 +54,16 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     completedCoursesDisplayed = Constants.coursesToShowAtFirst;
 
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      if(context.mounted) {
-        _checkHomePrivilege(context);
-      }
+    _ticker = createTicker((Duration elapsed) {
+      _checkHomePrivilege(context);
     });
+
+    _ticker.start();
   }
 
   @override
   void dispose() {
+    _ticker.dispose();
     tabController.dispose();
     super.dispose();
   }
@@ -68,12 +71,12 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Future<void> _checkHomePrivilege(BuildContext context) async {
     if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
-      BloqoCourse? course = getLearnCourseFromAppState(context: context);
-      List<BloqoUserCourseEnrolled>? userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context);
-      BloqoUserCourseEnrolled? userCourseEnrolled = userCoursesEnrolled?.firstWhere((x) => x.courseId == course?.id);
+      BloqoCourseData? course = getLearnCourseFromAppState(context: context);
+      List<BloqoUserCourseEnrolledData>? userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context);
+      BloqoUserCourseEnrolledData? userCourseEnrolled = userCoursesEnrolled?.firstWhere((x) => x.courseId == course?.id);
       String? sectionToCompleteId = userCourseEnrolled?.sectionToComplete;
       bool isCourseCompleted = userCourseEnrolled!.isCompleted;
-      BloqoSection? sectionToComplete;
+      BloqoSectionData? sectionToComplete;
       if(!isCourseCompleted) {
         sectionToComplete = await getSectionFromId(localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
       }
@@ -99,6 +102,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     void loadMoreInProgressCourses() {
       setState(() {
@@ -116,9 +120,11 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<UserCoursesEnrolledAppState>(
         builder: (context, userCoursesEnrolledAppState, _) {
-          List<BloqoUserCourseEnrolled> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
-          List<BloqoUserCourseEnrolled> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
-          List<BloqoUserCourseEnrolled> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
+          List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
+          List<BloqoUserCourseEnrolledData> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
+          List<BloqoUserCourseEnrolledData> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
+          inProgressCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+          completedCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
           return Column(
             children: [
               TabBar(
@@ -140,7 +146,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                           child: Text(
                             localizedText.learn_page_header_1,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -157,7 +163,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                         children: List.generate(
                                           inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
                                               (index) {
-                                            BloqoUserCourseEnrolled course = inProgressCourses[index];
+                                            BloqoUserCourseEnrolledData course = inProgressCourses[index];
                                             if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
                                               return BloqoCourseEnrolled(
                                                   course: course,
@@ -182,8 +188,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                     if (inProgressCoursesDisplayed < inProgressCourses.length)
                                       BloqoTextButton(
                                           onPressed: loadMoreInProgressCourses,
-                                          text: localizedText.load_more_courses,
-                                          color: BloqoColors.russianViolet
+                                          text: localizedText.load_more,
+                                          color: theme.colors.leadingColor
                                       ),
                                     if (inProgressCourses.isEmpty)
                                       Padding(
@@ -194,7 +200,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             Text(
                                               localizedText.learn_page_no_in_progress_courses,
                                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                color: BloqoColors.primaryText,
+                                                color: theme.colors.primaryText,
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -202,7 +208,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                               padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                               child: BloqoFilledButton(
                                                 onPressed: () => widget.onNavigateToPage(2),
-                                                color: BloqoColors.russianViolet,
+                                                color: theme.colors.leadingColor,
                                                 text: localizedText.take_me_there_button,
                                                 fontSize: 16,
                                               ),
@@ -224,7 +230,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                             localizedText.learn_page_header_2,
                             textAlign: TextAlign.end,
                             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                             ),
@@ -241,7 +247,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                       children: List.generate(
                                         completedCoursesDisplayed > completedCourses.length ? completedCourses.length : completedCoursesDisplayed,
                                             (index) {
-                                          BloqoUserCourseEnrolled course = completedCourses[index];
+                                          BloqoUserCourseEnrolledData course = completedCourses[index];
                                           if(index != (completedCoursesDisplayed > completedCourses.length ? completedCourses.length : completedCoursesDisplayed) - 1) {
                                             return BloqoCourseEnrolled(
                                                 course: course,
@@ -272,8 +278,8 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                   if (completedCoursesDisplayed < completedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreCompletedCourses,
-                                        text: localizedText.load_more_courses,
-                                        color: BloqoColors.russianViolet
+                                        text: localizedText.load_more,
+                                        color: theme.colors.leadingColor
                                     ),
                                   if (completedCourses.isEmpty && inProgressCourses.isEmpty)
                                     Padding(
@@ -284,7 +290,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                           Text(
                                             localizedText.learn_page_no_in_progress_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -292,7 +298,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                             child: BloqoFilledButton(
                                               onPressed: () => widget.onNavigateToPage(2),
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -309,7 +315,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                           Text(
                                             localizedText.learn_page_no_completed_courses,
                                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: BloqoColors.primaryText,
+                                              color: theme.colors.primaryText,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -317,7 +323,7 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
                                             padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                             child: BloqoFilledButton(
                                               onPressed: () { tabController.animateTo(0); },
-                                              color: BloqoColors.russianViolet,
+                                              color: theme.colors.leadingColor,
                                               text: localizedText.take_me_there_button,
                                               fontSize: 16,
                                             ),
@@ -346,13 +352,13 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
   bool get wantKeepAlive => true;
 
   Future<void> _goToCoursePage({ required BuildContext context, required var localizedText,
-    required BloqoUserCourseEnrolled userCourseEnrolled }) async {
+    required BloqoUserCourseEnrolledData userCourseEnrolled }) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourse? learnCourse = getLearnCourseFromAppState(context: context);
+      BloqoCourseData? learnCourse = getLearnCourseFromAppState(context: context);
       String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
       bool isCourseCompleted = userCourseEnrolled.isCompleted;
-      BloqoSection? sectionToComplete;
+      BloqoSectionData? sectionToComplete;
 
       // Fetch the sectionToComplete if the course is not completed
       if (!isCourseCompleted && sectionToCompleteId != null) {
@@ -371,17 +377,17 @@ class _LearnPageState extends State<LearnPage> with SingleTickerProviderStateMix
           ),
         );
       } else {
-        BloqoCourse course = await getCourseFromId(
+        BloqoCourseData course = await getCourseFromId(
           localizedText: localizedText,
           courseId: userCourseEnrolled.courseId,
         );
-        List<BloqoChapter> chapters = await getChaptersFromIds(
+        List<BloqoChapterData> chapters = await getChaptersFromIds(
           localizedText: localizedText,
           chapterIds: course.chapters,
         );
-        Map<String, List<BloqoSection>> sections = {};
+        Map<String, List<BloqoSectionData>> sections = {};
         for (String chapterId in course.chapters) {
-          List<BloqoSection> chapterSections = await getSectionsFromIds(
+          List<BloqoSectionData> chapterSections = await getSectionsFromIds(
             localizedText: localizedText,
             sectionIds: chapters.firstWhere((chapter) => chapter.id == chapterId).sections,
           );

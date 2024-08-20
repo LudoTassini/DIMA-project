@@ -1,6 +1,7 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
-import 'package:bloqo/model/courses/bloqo_chapter.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +14,9 @@ import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/forms/bloqo_text_field.dart';
 import '../../components/popups/bloqo_error_alert.dart';
-import '../../model/bloqo_user_course_created.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../model/courses/bloqo_section.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/user_courses/bloqo_user_course_created_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
+import '../../model/courses/bloqo_section_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
@@ -64,13 +64,14 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
             builder: (context, editorCourseAppState, _){
-              BloqoCourse course = getEditorCourseFromAppState(context: context)!;
-              BloqoChapter chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-              List<BloqoSection> sections = getEditorCourseChapterSectionsFromAppState(context: context, chapterId: widget.chapterId) ?? [];
+              BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
+              BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
+              List<BloqoSectionData> sections = getEditorCourseChapterSectionsFromAppState(context: context, chapterId: widget.chapterId) ?? [];
               if(firstBuild) {
                 chapterNameController.text = chapter.name;
                 if (chapter.description != null) {
@@ -123,7 +124,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                   child: Text(
                                                     localizedText.sections_header,
                                                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                      color: BloqoColors.russianViolet,
+                                                      color: theme.colors.leadingColor,
                                                       fontSize: 30,
                                                     ),
                                                   ),
@@ -135,7 +136,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                 child: Text(
                                                   localizedText.edit_chapter_page_no_sections,
                                                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: BloqoColors.primaryText,
+                                                    color: theme.colors.primaryText,
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -146,7 +147,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                 children: List.generate(
                                                     sections.length,
                                                         (index) {
-                                                      BloqoSection section = sections[index];
+                                                      BloqoSectionData section = sections[index];
                                                       if (index < sections.length - 1) {
                                                         return BloqoEditableSection(
                                                             course: course,
@@ -177,7 +178,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                               Padding(
                                                 padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                                 child: BloqoFilledButton(
-                                                  color: BloqoColors.russianViolet,
+                                                  color: theme.colors.leadingColor,
                                                   onPressed: () async {
                                                   context.loaderOverlay.show();
                                                     try {
@@ -217,7 +218,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                         child: BloqoFilledButton(
-                          color: BloqoColors.russianViolet,
+                          color: theme.colors.leadingColor,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {
@@ -256,16 +257,16 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _addSection({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required List<BloqoSection> sections}) async {
+  Future<void> _addSection({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required List<BloqoSectionData> sections}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoSection section = await saveNewSection(localizedText: localizedText, sectionNumber: chapter.sections.length + 1);
+    BloqoSectionData section = await saveNewSection(localizedText: localizedText, sectionNumber: chapter.sections.length + 1);
 
     if(!context.mounted) return;
     addSectionToEditorCourseAppState(context: context, chapterId: chapter.id, section: section);
 
     updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: 1);
-    BloqoUserCourseCreated updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
+    BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     await saveUserCourseCreatedChanges(
@@ -277,7 +278,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     _saveChanges(context: context, course: course, chapter: chapter, sections: sections);
   }
 
-  Future<void> _saveChanges({required BuildContext context, required BloqoCourse course, required BloqoChapter chapter, required List<BloqoSection> sections}) async {
+  Future<void> _saveChanges({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required List<BloqoSectionData> sections}) async {
     var localizedText = getAppLocalizations(context)!;
     chapter.name = chapterNameController.text;
     if(chapter.name == ""){

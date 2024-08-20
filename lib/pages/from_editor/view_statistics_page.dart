@@ -1,15 +1,20 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
+import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/pages/from_any/user_profile_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
-import '../../components/complex/bloqo_review_component.dart';
+import '../../components/complex/bloqo_review.dart';
 import '../../components/containers/bloqo_seasalt_container.dart';
-import '../../model/bloqo_review.dart';
-import '../../style/bloqo_colors.dart';
+import '../../components/popups/bloqo_error_alert.dart';
+import '../../model/courses/published_courses/bloqo_review_data.dart';
+import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
 
 class ViewStatisticsPage extends StatefulWidget {
@@ -17,11 +22,15 @@ class ViewStatisticsPage extends StatefulWidget {
   const ViewStatisticsPage({
     super.key,
     required this.publishedCourse,
-    required this.reviews
+    required this.reviews,
+    required this.onPush,
+    required this.onNavigateToPage
   });
 
-  final BloqoPublishedCourse publishedCourse;
-  final List<BloqoReview> reviews;
+  final BloqoPublishedCourseData publishedCourse;
+  final List<BloqoReviewData> reviews;
+  final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<ViewStatisticsPage> createState() => _ViewStatisticsPageState();
@@ -42,6 +51,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
   Widget build(BuildContext context) {
     super.build(context);
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1, -1),
         child: SingleChildScrollView(
@@ -58,7 +68,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                           widget.publishedCourse.courseName,
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 36,
                           ),
                         ),
@@ -79,15 +89,15 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                           Text(
                             localizedText.by,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: BloqoColors.seasalt,
+                              color: theme.colors.highContrastColor,
                               fontSize: 16,
                             ),
                           ),
                           BloqoTextButton(
                             text: widget.publishedCourse.authorUsername,
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             onPressed: () async {
-                              // TODO
+                              await _tryGoToProfilePage(context: context, localizedText: localizedText);
                             },
                             fontSize: 16,
                           ),
@@ -96,9 +106,9 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                     ),
                     RatingBarIndicator(
                       rating: widget.publishedCourse.rating,
-                      itemBuilder: (context, index) => const Icon(
+                      itemBuilder: (context, index) => Icon(
                         Icons.star,
-                        color: BloqoColors.tertiary,
+                        color: theme.colors.tertiary,
                       ),
                       itemCount: 5,
                       itemSize: 24,
@@ -119,7 +129,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                             child: Text(
                               localizedText.statistics,
                               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: BloqoColors.russianViolet,
+                                color: theme.colors.leadingColor,
                                 fontSize: 30,
                               ),
                             ),
@@ -134,23 +144,33 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                               ),
                             ),
                             Expanded(
-                              child: Text(
-                                localizedText.users_enrolled
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                child: Text(
+                                  localizedText.users_enrolled
+                                )
                               )
                             )
                           ]
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.publishedCourse.numberOfCompletions.toString(),
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
+                              child: Text(
+                                widget.publishedCourse.numberOfCompletions.toString(),
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                   fontWeight: FontWeight.bold
+                                ),
                               ),
                             ),
                             Expanded(
-                              child: Text(
-                                localizedText.users_completed
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                child: Text(
+                                  localizedText.users_completed,
+                                )
                               )
                             )
                           ]
@@ -170,7 +190,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                       child: Text(
                         localizedText.reviews,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: BloqoColors.seasalt,
+                          color: theme.colors.highContrastColor,
                           fontSize: 24,
                         ),
                       ),
@@ -181,7 +201,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                         Text(
                           widget.publishedCourse.rating.toDouble().toString(),
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
                           ),
@@ -191,9 +211,9 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                           padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                           child: RatingBarIndicator(
                             rating: widget.publishedCourse.rating,
-                            itemBuilder: (context, index) => const Icon(
+                            itemBuilder: (context, index) => Icon(
                               Icons.star,
-                              color: BloqoColors.tertiary,
+                              color: theme.colors.tertiary,
                             ),
                             itemCount: 5,
                             itemSize: 24,
@@ -203,7 +223,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                         Text(
                           '(${widget.publishedCourse.reviews.length.toString()})',
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
                           ),
@@ -226,7 +246,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                           child: Text(
                             localizedText.no_reviews_yet,
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: BloqoColors.russianViolet,
+                              color: theme.colors.primaryText,
                               fontSize: 15,
                             ),
                           ),
@@ -244,8 +264,8 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                       _reviewsDisplayed > widget.publishedCourse.reviews.length ?
                       widget.publishedCourse.reviews.length : _reviewsDisplayed,
                           (index) {
-                        BloqoReview review = widget.reviews[index];
-                        return BloqoReviewComponent(
+                        BloqoReviewData review = widget.reviews[index];
+                        return BloqoReview(
                           review: review,
                         );
                       },
@@ -261,8 +281,8 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                         _reviewsDisplayed > widget.publishedCourse.reviews.length ?
                         widget.publishedCourse.reviews.length : _reviewsDisplayed,
                             (index) {
-                          BloqoReview review = widget.reviews[index];
-                          return BloqoReviewComponent(
+                          BloqoReviewData review = widget.reviews[index];
+                          return BloqoReview(
                             review: review,
                           );
                         },
@@ -270,8 +290,8 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
 
                       BloqoTextButton(
                           onPressed: loadMoreReviews,
-                          text: localizedText.load_more_reviews,
-                          color: BloqoColors.russianViolet
+                          text: localizedText.load_more,
+                          color: theme.colors.leadingColor
                       ),
                     ],
                   ),
@@ -294,7 +314,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                               .textTheme
                               .displaySmall
                               ?.copyWith(
-                            color: BloqoColors.seasalt,
+                            color: theme.colors.highContrastColor,
                             fontSize: 16,
                           ),
                         )
@@ -312,5 +332,32 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _tryGoToProfilePage({required BuildContext context, required var localizedText}) async {
+    context.loaderOverlay.show();
+    try{
+      BloqoUserData author = await getUserFromId(localizedText: localizedText, id: widget.publishedCourse.authorId);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: author.id);
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(
+          UserProfilePage(
+              onPush: widget.onPush,
+              onNavigateToPage: widget.onNavigateToPage,
+              author: author,
+              publishedCourses: publishedCourses
+          )
+      );
+    }
+    on BloqoException catch(e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
 
 }

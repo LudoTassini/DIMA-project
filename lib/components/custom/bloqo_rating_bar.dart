@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
+import '../../app_state/application_settings_app_state.dart';
 
 class BloqoRatingBar extends StatelessWidget {
   final int rating;
@@ -14,6 +14,7 @@ class BloqoRatingBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
@@ -25,7 +26,7 @@ class BloqoRatingBar extends StatelessWidget {
           },
           icon: Icon(
             index < rating ? Icons.star : Icons.star_border,
-            color: BloqoColors.tertiary,
+            color: theme.colors.tertiary,
             size: 40,
           ),
         );

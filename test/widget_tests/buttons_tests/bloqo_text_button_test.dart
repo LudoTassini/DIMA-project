@@ -14,7 +14,7 @@ void main() {
       builder: (BuildContext context) {
         return Scaffold(
           body: BloqoTextButton(
-            color: BloqoColors.russianViolet,
+            color: BloqoColors.leadingColor,
             text: "Test",
             onPressed: () {
               tapped = true;

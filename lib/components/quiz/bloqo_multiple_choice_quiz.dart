@@ -1,7 +1,7 @@
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
-import '../../model/courses/bloqo_block.dart';
-import '../../style/bloqo_colors.dart';
+import '../../app_state/application_settings_app_state.dart';
+import '../../model/courses/bloqo_block_data.dart';
 import '../../utils/localization.dart';
 import '../buttons/bloqo_filled_button.dart';
 import '../custom/bloqo_snack_bar.dart';
@@ -14,7 +14,7 @@ class BloqoMultipleChoiceQuiz extends StatefulWidget {
   });
 
   final void Function(Widget) onPush;
-  final BloqoBlock block;
+  final BloqoBlockData block;
 
   @override
   State<BloqoMultipleChoiceQuiz> createState() => _BloqoMultipleChoiceQuizState();
@@ -41,6 +41,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
 
     final question = _extractQuestion(widget.block.content);
     final List<String> possibleAnswers = _extractPossibleAnswers(widget.block.content);
@@ -59,7 +60,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
               Text(
                 localizedText.quiz,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
                 ),
@@ -73,7 +74,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                       child: Text(
                         isAnswerCorrect ? localizedText.correct : localizedText.wrong,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: isAnswerCorrect ? BloqoColors.success : BloqoColors.error,
+                          color: isAnswerCorrect ? theme.colors.success : theme.colors.error,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -93,7 +94,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                 child: Text(
                   question,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    color: BloqoColors.primaryText,
+                    color: theme.colors.primaryText,
                   ),
                 ),
               ),
@@ -105,7 +106,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           children: [
             BloqoSeasaltContainer(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 10),
-              borderColor: BloqoColors.russianViolet,
+              borderColor: theme.colors.leadingColor,
               borderWidth: 3,
               borderRadius: 10,
               child: isSingleCorrectAnswer
@@ -124,18 +125,19 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                       _checkAnswer(
                         correctAnswers: correctAnswers,
                         localizedText: localizedText,
+                        theme: theme
                       );
                     });
                   },
-                  color: BloqoColors.russianViolet,
+                  color: theme.colors.leadingColor,
                   text: localizedText.confirm,
                 )
                     : Container(
                   decoration: BoxDecoration(
-                    color: BloqoColors.seasalt,
+                    color: theme.colors.highContrastColor,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: BloqoColors.success,
+                      color: theme.colors.success,
                       width: 3,
                     ),
                   ),
@@ -144,7 +146,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                     child: Text(
                       localizedText.correct,
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: BloqoColors.success,
+                        color: theme.colors.success,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -220,7 +222,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
     );
   }
 
-  void _checkAnswer({required List<String> correctAnswers, required var localizedText}) {
+  void _checkAnswer({required List<String> correctAnswers, required var localizedText, required var theme}) {
     if (correctAnswers.length == 1) {
       isAnswerCorrect = selectedRadioAnswer == correctAnswers.first;
     } else {
@@ -235,8 +237,8 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
             isAnswerCorrect ? localizedText.correct
             : localizedText.wrong
           ),
-          backgroundColor: isAnswerCorrect ? BloqoColors.success
-          : BloqoColors.error,
+          backgroundColor: isAnswerCorrect ? theme.colors.success
+          : theme.colors.error,
       ),
     );
   }

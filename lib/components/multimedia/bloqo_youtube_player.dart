@@ -2,7 +2,7 @@ import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../../style/bloqo_colors.dart';
+import '../../app_state/application_settings_app_state.dart';
 
 class BloqoYouTubePlayer extends StatefulWidget {
   const BloqoYouTubePlayer({
@@ -54,6 +54,7 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
   @override
   Widget build(BuildContext context) {
     var localizationText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return Padding(
       padding: widget.padding,
       child: LayoutBuilder(
@@ -101,7 +102,7 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
                 child: Text(
                     localizationText.invalid_link,
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: BloqoColors.error,
+                        color: theme.colors.error,
                         fontWeight: FontWeight.w500
                     )
                 )

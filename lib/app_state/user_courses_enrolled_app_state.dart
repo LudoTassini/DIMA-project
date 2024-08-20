@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/bloqo_user_course_enrolled.dart';
+import '../model/user_courses/bloqo_user_course_enrolled_data.dart';
 
 class UserCoursesEnrolledAppState with ChangeNotifier{
 
-  List<BloqoUserCourseEnrolled>? _userCourses;
+  List<BloqoUserCourseEnrolledData>? _userCourses;
 
-  List<BloqoUserCourseEnrolled>? _get() {
+  List<BloqoUserCourseEnrolledData>? _get() {
     return _userCourses;
   }
 
-  void _set(List<BloqoUserCourseEnrolled> userCourses){
+  void _set(List<BloqoUserCourseEnrolledData> userCourses){
     _userCourses = userCourses;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  void _deleteUserCourseEnrolled(BloqoUserCourseEnrolled userCourseEnrolled){
+  void _deleteUserCourseEnrolled(BloqoUserCourseEnrolledData userCourseEnrolled){
     if (_userCourses != null) {
       _userCourses!.remove(userCourseEnrolled);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -26,7 +26,7 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
     }
   }
 
-  void _updateCourse(BloqoUserCourseEnrolled userCourse) {
+  void _updateCourse(BloqoUserCourseEnrolledData userCourse) {
     final index = _userCourses!.indexWhere((x) => x.courseId == userCourse.courseId &&
         x.enrolledUserId == userCourse.enrolledUserId);
 
@@ -41,18 +41,18 @@ class UserCoursesEnrolledAppState with ChangeNotifier{
 
 }
 
-void saveUserCoursesEnrolledToAppState({required BuildContext context, required List<BloqoUserCourseEnrolled> courses}){
+void saveUserCoursesEnrolledToAppState({required BuildContext context, required List<BloqoUserCourseEnrolledData> courses}){
   Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._set(courses);
 }
 
-void updateUserCoursesEnrolledToAppState({required BuildContext context, required BloqoUserCourseEnrolled userCourseEnrolled}){
+void updateUserCoursesEnrolledToAppState({required BuildContext context, required BloqoUserCourseEnrolledData userCourseEnrolled}){
   Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._updateCourse(userCourseEnrolled);
 }
 
-List<BloqoUserCourseEnrolled>? getUserCoursesEnrolledFromAppState({required BuildContext context}){
+List<BloqoUserCourseEnrolledData>? getUserCoursesEnrolledFromAppState({required BuildContext context}){
   return Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._get();
 }
 
-void deleteUserCourseEnrolledFromAppState({required BuildContext context, required BloqoUserCourseEnrolled userCourseEnrolled}){
+void deleteUserCourseEnrolledFromAppState({required BuildContext context, required BloqoUserCourseEnrolledData userCourseEnrolled}){
   Provider.of<UserCoursesEnrolledAppState>(context, listen: false)._deleteUserCourseEnrolled(userCourseEnrolled);
 }

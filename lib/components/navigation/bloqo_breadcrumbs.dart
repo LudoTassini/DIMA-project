@@ -1,6 +1,6 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
 import '../buttons/bloqo_text_button.dart';
 
 class BloqoBreadcrumbs extends StatelessWidget {
@@ -15,6 +15,9 @@ class BloqoBreadcrumbs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var theme = getAppThemeFromAppState(context: context);
+
     List<Widget> breadcrumbWidgets = [];
 
     for (int i = 0; i < breadcrumbs.length; i++) {
@@ -26,13 +29,13 @@ class BloqoBreadcrumbs extends StatelessWidget {
           child: Text(
             breadcrumbs[i],
             style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                color: BloqoColors.seasalt, fontWeight: FontWeight.w500),
+                color: theme.colors.highContrastColor, fontWeight: FontWeight.w500),
           ),
         ));
       } else {
         breadcrumbWidgets.add(BloqoTextButton(
           text: breadcrumbs[i],
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
           fontSize: 20,
           onPressed: () {
             int popCount = breadcrumbs.length - i - 1;
@@ -44,12 +47,12 @@ class BloqoBreadcrumbs extends StatelessWidget {
       }
 
       if (i < breadcrumbs.length - 1) {
-        breadcrumbWidgets.add(const Baseline(
+        breadcrumbWidgets.add(Baseline(
           baseline: 27.0,
           baselineType: TextBaseline.alphabetic,
           child: Icon(
             Icons.chevron_right,
-            color: BloqoColors.seasalt,
+            color: theme.colors.highContrastColor,
           ),
         ));
       }

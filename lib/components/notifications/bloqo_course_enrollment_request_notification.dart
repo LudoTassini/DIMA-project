@@ -1,25 +1,25 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
-import 'package:bloqo/model/bloqo_published_course.dart';
-import 'package:bloqo/model/bloqo_user_course_enrolled.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../model/bloqo_user.dart';
-import '../../model/courses/bloqo_course.dart';
-import '../../style/bloqo_colors.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/uuid.dart';
 import '../custom/bloqo_snack_bar.dart';
 import '../popups/bloqo_error_alert.dart';
 
-class BloqoCourseEnrollmentRequest extends StatefulWidget {
-  const BloqoCourseEnrollmentRequest({
+class BloqoCourseEnrollmentRequestNotification extends StatefulWidget {
+  const BloqoCourseEnrollmentRequestNotification({
     super.key,
     required this.notification,
     required this.onNotificationHandled,
@@ -29,14 +29,15 @@ class BloqoCourseEnrollmentRequest extends StatefulWidget {
   final VoidCallback onNotificationHandled;
 
   @override
-  State<BloqoCourseEnrollmentRequest> createState() => _BloqoCourseEnrollmentRequestState();
+  State<BloqoCourseEnrollmentRequestNotification> createState() => _BloqoCourseEnrollmentRequestNotificationState();
 }
 
-class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequest> {
+class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEnrollmentRequestNotification> {
 
   @override
   Widget build(BuildContext context) {
     var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
     return BloqoSeasaltContainer(
       child: FutureBuilder<List<Object>>(
         future: _getRequiredData(
@@ -48,7 +49,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: LoadingAnimationWidget.prograssiveDots(
-                color: BloqoColors.russianViolet,
+                color: theme.colors.leadingColor,
                 size: 100,
               ),
             );
@@ -58,13 +59,13 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                 child: Text(
                   "Error",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: BloqoColors.error,
+                    color: theme.colors.error,
                   ),
                 ),
               );
             } else {
-              BloqoUser applicant = snapshot.data![0] as BloqoUser;
-              BloqoCourse course = snapshot.data![1] as BloqoCourse;
+              BloqoUserData applicant = snapshot.data![0] as BloqoUserData;
+              BloqoCourseData course = snapshot.data![1] as BloqoCourseData;
               return Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -128,7 +129,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                   runSpacing: 10,
                                   children: [
                                     BloqoFilledButton(
-                                      color: BloqoColors.success,
+                                      color: theme.colors.success,
                                       onPressed: () async {
                                         await showBloqoConfirmationAlert(
                                             context: context,
@@ -146,8 +147,8 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                                 BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                               );
                                             },
-                                            backgroundColor: BloqoColors.russianViolet,
-                                            confirmationColor: BloqoColors.success
+                                            backgroundColor: theme.colors.leadingColor,
+                                            confirmationColor: theme.colors.success
                                         );
                                       },
                                       text: localizedText.accept,
@@ -155,7 +156,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                       height: 32,
                                     ),
                                     BloqoFilledButton(
-                                      color: BloqoColors.error,
+                                      color: theme.colors.error,
                                       onPressed: () async {
                                         await showBloqoConfirmationAlert(
                                             context: context,
@@ -168,7 +169,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
                                                 BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
                                               );
                                             },
-                                            backgroundColor: BloqoColors.error
+                                            backgroundColor: theme.colors.error
                                         );
                                       },
                                       text: localizedText.deny,
@@ -192,7 +193,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
               child: Text(
                 "Error",
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: BloqoColors.error,
+                  color: theme.colors.error,
                 ),
               ),
             );
@@ -208,9 +209,9 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
     required String publishedCourseId,
   }) async {
     try {
-      BloqoUser applicant = await getUserFromId(localizedText: localizedText, id: applicantId);
-      BloqoPublishedCourse publishedCourse = await getPublishedCourseFromPublishedCourseId(localizedText: localizedText, publishedCourseId: publishedCourseId);
-      BloqoCourse privateCourse = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
+      BloqoUserData applicant = await getUserFromId(localizedText: localizedText, id: applicantId);
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(localizedText: localizedText, publishedCourseId: publishedCourseId);
+      BloqoCourseData privateCourse = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
       return [applicant, privateCourse];
     } on Exception catch (_) {
       return [];
@@ -221,20 +222,20 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentRequ
     required BuildContext context,
     required var localizedText,
     required String applicantId,
-    required BloqoCourse originalCourse
+    required BloqoCourseData originalCourse
   }) async {
     context.loaderOverlay.show();
     try{
       await saveNewUserCourseEnrolled(localizedText: localizedText, course: originalCourse, publishedCourseId: widget.notification.privatePublishedCourseId!, userId: applicantId);
       await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
-      BloqoUser courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
+      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
       BloqoNotificationData notification = BloqoNotificationData(
         id: uuid(),
         userId: applicantId,
         type: BloqoNotificationType.courseEnrollmentAccepted.toString(),
         timestamp: Timestamp.now(),
         privateCourseName: originalCourse.name,
-        privateCourseAuthorUsername: courseAuthor.username
+        privateCourseAuthorId: courseAuthor.id
       );
       await pushNotification(localizedText: localizedText, notification: notification);
       if (!context.mounted) return;

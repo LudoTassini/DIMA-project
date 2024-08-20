@@ -1,14 +1,15 @@
 import 'dart:io';
 
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/complex/bloqo_setting.dart';
+import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
-import 'package:bloqo/pages/from_any/qr_code_page.dart';
-import 'package:bloqo/utils/bloqo_qr_code_type.dart';
+import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
+import 'package:bloqo/style/themes/bloqo_theme.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
+import '../../components/complex/bloqo_user_details.dart';
 import '../../components/containers/bloqo_main_container.dart';
-import '../../components/containers/bloqo_seasalt_container.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/auth.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/constants.dart';
@@ -35,10 +35,12 @@ import '../from_user/setting_page.dart';
 class UserPage extends StatefulWidget {
   const UserPage({
     super.key,
-    required this.onPush
+    required this.onPush,
+    required this.onNavigateToPage
   });
 
   final void Function(Widget) onPush;
+  final void Function(int) onNavigateToPage;
 
   @override
   State<UserPage> createState() => _UserPageState();
@@ -46,240 +48,78 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<UserPage> {
 
-  String? url;
   final formKeyFullName = GlobalKey<FormState>();
   late TextEditingController fullNameController;
+  late TextEditingController languageController;
+  late TextEditingController themeController;
+
+  late List<DropdownMenuEntry<String>> languages;
+  late List<DropdownMenuEntry<String>> themes;
 
   @override
   void initState() {
     super.initState();
     fullNameController = TextEditingController();
+    languageController = TextEditingController();
+    themeController = TextEditingController();
   }
 
   @override
   void dispose() {
+    themeController.dispose();
+    languageController.dispose();
     fullNameController.dispose();
     super.dispose();
+  }
+
+  void _updateUserPage({required var localizedText}) {
+    setState(() {
+      languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
+      languages.removeWhere((x) => x.label == localizedText.other);
+
+      themes = buildThemesList(localizedText: localizedText);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
+    var localizedText = getAppLocalizations(context)!;
+
+    languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
+    languages.removeWhere((x) => x.label == localizedText.other);
+
+    themes = buildThemesList(localizedText: localizedText);
+
+    final user = getUserFromAppState(context: context)!;
+    final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: SingleChildScrollView(
         child: Consumer<UserAppState>(
           builder: (context, userAppState, _) {
-            final user = getUserFromAppState(context: context)!;
-            if(user.pictureUrl != "none"){
-              url = user.pictureUrl;
-            }
-            final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
             return Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                BloqoSeasaltContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Stack(
-                            alignment: const AlignmentDirectional(0, 1),
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 1.0,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: url != null
-                                      ? FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/portrait_placeholder.png",
-                                    image: url!,
-                                    fit: BoxFit.cover,
-                                    placeholderFit: BoxFit.cover,
-                                  )
-                                      : Image.asset(
-                                    "assets/images/portrait_placeholder.png",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment: const AlignmentDirectional(1, 1),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: BloqoColors.russianViolet,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(8),
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(0),
-                                    ),
-                                  ),
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    visualDensity: VisualDensity.compact,
-                                    icon: const Icon(
-                                      Icons.camera_alt,
-                                      color: BloqoColors.seasalt,
-                                      size: 22,
-                                    ),
-                                    onPressed: () async {
-                                      final newUrl = await _askUserForAnImage(
-                                        context: context,
-                                        localizedText: localizedText,
-                                        userId: user.id
-                                      );
-                                      if(newUrl != null) {
-                                        if(!context.mounted) return;
-                                        updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 0, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              user.fullName,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                color: BloqoColors.secondaryText,
-                                                fontSize: 16,
-                                                letterSpacing: 0,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Text(
-                                              user.username,
-                                              textAlign: TextAlign.start,
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                color: BloqoColors.primaryText,
-                                                fontSize: 22,
-                                                letterSpacing: 0,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: const AlignmentDirectional(1, 0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: BloqoColors.russianViolet,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.qr_code_2,
-                                            color: BloqoColors.seasalt,
-                                            size: 32,
-                                          ),
-                                          onPressed: () {
-                                            _showUserQrCode(
-                                              username: user.username,
-                                              userId: user.id,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                                  child: Wrap(
-                                    spacing: 15.0,
-                                    runSpacing: 10.0,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                                              child: Text(
-                                                localizedText.followers,
-                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  fontSize: 14,
-                                                  letterSpacing: 0,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              user.followers.toString(),
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                fontSize: 18,
-                                                letterSpacing: 0,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                                              child: Text(
-                                                localizedText.following,
-                                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                  fontSize: 14,
-                                                  letterSpacing: 0,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              user.following.toString(),
-                                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                fontSize: 18,
-                                                letterSpacing: 0,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                BloqoUserDetails(
+                  user: user,
+                  isFullNameVisible: true,
+                  showFollowingOptions: false,
+                  onPush: widget.onPush,
+                  onNavigateToPage: widget.onNavigateToPage,
+                  onReplacePicture: () async {
+                    final newUrl = await _askUserForAnImage(
+                        context: context,
+                        localizedText: localizedText,
+                        userId: user.id
+                    );
+                    if(newUrl != null) {
+                      if(!context.mounted) return;
+                      updateUserPictureUrlInAppState(context: context, newUrl: newUrl);
+                    }
+                  },
                 ),
                 BloqoSetting(
                   settingTitle: localizedText.account_settings_title,
@@ -310,13 +150,13 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
-                              child: Text(
-                                localizedText.full_name_visible,
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )
+                                child: Text(
+                                  localizedText.full_name_visible,
+                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
                             ),
                             BloqoSwitch(value: fullNameVisible),
                           ],
@@ -327,37 +167,84 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                     ));
                   },
                 ),
-                /*BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(onPush: widget.onPush)),
-                  settingTitle: localizedText.notification_settings_title,
-                  settingDescription: localizedText.notification_settings_description,
-                  settingIcon: Icons.edit_notifications,
-                ), TODO */
                 BloqoSetting(
-                  onPressed: () => widget.onPush(SettingPage(
-                    settingTitle: localizedText.external_accounts_title,
-                    settingDescription: localizedText.external_accounts_description,
-                    settingType: BloqoSettingType.external,
-                    controllers: const [/* TODO */],
-                    forms: const [/* TODO */],
-                  )),
-                  settingTitle: localizedText.external_accounts_title,
-                  settingDescription: localizedText.external_accounts_description,
-                  settingIcon: Icons.app_registration,
+                  settingTitle: localizedText.application_settings_title,
+                  settingDescription: localizedText.application_settings_description,
+                  settingIcon: Icons.settings_applications_rounded,
+                  onPressed: () {
+                    widget.onPush(SettingPage(
+                        settingTitle: localizedText.application_settings_title,
+                        settingDescription: localizedText.application_settings_description,
+                        settingType: BloqoSettingType.application,
+                        forms: [
+                          Row(
+                              children: [
+                                Expanded(
+                                    child: LayoutBuilder(
+                                        builder: (BuildContext context, BoxConstraints constraints) {
+                                          double availableWidth = constraints.maxWidth;
+
+                                          String languageInitialSelection = languages
+                                              .firstWhere(
+                                                  (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
+
+                                          String themeInitialSelection = themes
+                                              .firstWhere(
+                                                  (lang) => lang.value == theme.type.toString()).label;
+
+                                          languageController.text = languageInitialSelection;
+                                          themeController.text = themeInitialSelection;
+
+                                          return Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                                                  child: BloqoDropdown(
+                                                      controller: languageController,
+                                                      dropdownMenuEntries: languages,
+                                                      initialSelection: languageInitialSelection,
+                                                      width: availableWidth,
+                                                      label: localizedText.language
+                                                  ),
+                                                ),
+                                                BloqoDropdown(
+                                                    controller: themeController,
+                                                    dropdownMenuEntries: themes,
+                                                    initialSelection: themeInitialSelection,
+                                                    width: availableWidth,
+                                                    label: localizedText.theme
+                                                )
+                                              ]
+                                          );
+                                        }
+                                    )
+                                )
+                              ]
+                          ),
+                        ],
+                        controllers: [
+                          languageController,
+                          themeController
+                        ],
+                        onSettingsUpdated: () => _updateUserPage(localizedText: localizedText)
+                    ));
+                  },
                 ),
                 BloqoSetting(
                   onPressed: () {
                     showBloqoConfirmationAlert(
-                      context: context,
-                      title: localizedText.warning,
-                      description: localizedText.logout_confirmation,
-                      confirmationFunction: () async {
-                        await _tryLogout(
-                            context: context,
-                            localizedText: localizedText
-                        );
-                      },
-                      backgroundColor: BloqoColors.russianViolet
+                        context: context,
+                        title: localizedText.warning,
+                        description: localizedText.logout_confirmation,
+                        confirmationFunction: () async {
+                          await _tryLogout(
+                              context: context,
+                              localizedText: localizedText
+                          );
+                        },
+                        backgroundColor: theme.colors.leadingColor
                     );
                   },
                   settingTitle: localizedText.sign_out_title,
@@ -378,9 +265,8 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Future<void> _tryLogout({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await checkConnectivity(localizedText: localizedText);
       await logout(localizedText: localizedText);
-      await deleteSharedPreferences();
+      await deleteUserSharedPreferences();
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       Phoenix.rebirth(context);
@@ -397,13 +283,6 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
 
   @override
   bool get wantKeepAlive => true;
-
-  void _showUserQrCode({required String username, required String userId}){
-    widget.onPush(QrCodePage(
-        qrCodeTitle: username,
-        qrCodeContent: "${BloqoQrCodeType.user.name}_$userId"
-    ));
-  }
 
   Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String userId}) async {
     PermissionStatus permissionStatus = await requestPhotoLibraryPermission();

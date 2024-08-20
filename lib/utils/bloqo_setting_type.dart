@@ -1,6 +1,5 @@
 enum BloqoSettingType{
   account,
-  notification,
-  external,
+  application,
   logout
 }

@@ -1,8 +1,7 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 
-import '../../style/bloqo_colors.dart';
-
-class BloqoMainContainer extends StatelessWidget{
+class BloqoMainContainer extends StatefulWidget {
   const BloqoMainContainer({
     super.key,
     required this.child,
@@ -13,23 +12,31 @@ class BloqoMainContainer extends StatelessWidget{
   final AlignmentGeometry alignment;
 
   @override
+  State<BloqoMainContainer> createState() => _BloqoMainContainerState();
+
+}
+
+class _BloqoMainContainerState extends State<BloqoMainContainer> {
+
+  @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return Container(
-        decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            BloqoColors.russianViolet,
-            BloqoColors.darkFuchsia
+            theme.colors.leadingColor,
+            theme.colors.trailingColor
           ],
-          stops: [0, 1],
-          begin: AlignmentDirectional(0, -1),
-          end: AlignmentDirectional(0, 1),
+          stops: const [0, 1],
+          begin: const AlignmentDirectional(0, -1),
+          end: const AlignmentDirectional(0, 1),
         ),
       ),
-      alignment: alignment,
+      alignment: widget.alignment,
       child: SafeArea(
         bottom: false,
-        child: child
+        child: widget.child
       )
     );
   }

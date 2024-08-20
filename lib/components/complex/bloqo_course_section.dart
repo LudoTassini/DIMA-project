@@ -1,7 +1,7 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/learn_course_app_state.dart';
-import 'package:bloqo/model/courses/bloqo_section.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
-import '../../style/bloqo_colors.dart';
 import '../../utils/localization.dart';
 
 class BloqoCourseSection extends StatelessWidget{
@@ -15,7 +15,7 @@ class BloqoCourseSection extends StatelessWidget{
   });
 
   final Function() onPressed;
-  final BloqoSection section;
+  final BloqoSectionData section;
   final int index;
   final bool isClickable;
   final bool isInLearnPage;
@@ -23,6 +23,8 @@ class BloqoCourseSection extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
+
     List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
 
     return Padding(
@@ -31,11 +33,11 @@ class BloqoCourseSection extends StatelessWidget{
           ? ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-          backgroundColor: WidgetStateProperty.resolveWith((states) => BloqoColors.seasalt),
+          backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
           shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
-              color: BloqoColors.russianViolet,
+            side: BorderSide(
+              color: theme.colors.leadingColor,
               width: 3,
             ),
           )),
@@ -45,10 +47,10 @@ class BloqoCourseSection extends StatelessWidget{
       )
           : Container(
         decoration: BoxDecoration(
-          color: BloqoColors.seasalt,
+          color: theme.colors.highContrastColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: BloqoColors.russianViolet,
+            color: theme.colors.leadingColor,
             width: 3,
           ),
         ),
@@ -59,6 +61,7 @@ class BloqoCourseSection extends StatelessWidget{
   }
 
   Widget _buildContent(BuildContext context, var localizedText, List<dynamic> sectionsCompleted) {
+    var theme = getAppThemeFromAppState(context: context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -85,7 +88,7 @@ class BloqoCourseSection extends StatelessWidget{
                             .displayMedium
                             ?.copyWith(
                           fontSize: 14,
-                          color: BloqoColors.secondaryText,
+                          color: theme.colors.secondaryText,
                         ),
                       ),
                     ),
@@ -101,7 +104,7 @@ class BloqoCourseSection extends StatelessWidget{
                             .displayMedium
                             ?.copyWith(
                           fontSize: 20,
-                          color: BloqoColors.primaryText,
+                          color: theme.colors.primaryText,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -122,15 +125,15 @@ class BloqoCourseSection extends StatelessWidget{
                                 .displayMedium
                                 ?.copyWith(
                               fontSize: 16,
-                              color: BloqoColors.success,
+                              color: theme.colors.success,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                             child: Icon(
                               Icons.check,
-                              color: BloqoColors.success,
+                              color: theme.colors.success,
                               size: 24,
                             ),
                           ),
@@ -153,7 +156,7 @@ class BloqoCourseSection extends StatelessWidget{
                                 .displayMedium
                                 ?.copyWith(
                               fontSize: 16,
-                              color: BloqoColors.secondaryText,
+                              color: theme.colors.secondaryText,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -169,11 +172,11 @@ class BloqoCourseSection extends StatelessWidget{
             ),
 
             isInLearnPage & isClickable ?
-            const Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 5, 5, 5),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 5, 5),
               child: Icon(
                 Icons.play_circle,
-                color: BloqoColors.russianViolet,
+                color: theme.colors.leadingColor,
                 size: 24,
               ),
             )
