@@ -338,5 +338,8 @@
   "date": "Date",
   "application_settings_title": "Application Settings",
   "application_settings_description": "Modify your experience with bloQo to best use the application.",
-  "language": "Language"
+  "language": "Language",
+  "theme": "Theme",
+  "purple_orchid": "Purple Orchid",
+  "ocean_cornflower": "Ocean Cornflower"
 }

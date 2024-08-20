@@ -3,7 +3,7 @@ import 'dart:ui';
 import '../model/bloqo_user_data.dart';
 import '../model/user_courses/bloqo_user_course_created_data.dart';
 import '../model/user_courses/bloqo_user_course_enrolled_data.dart';
-import '../style/bloqo_theme.dart';
+import '../style/themes/bloqo_theme.dart';
 
 class BloqoStartupInformation{
 

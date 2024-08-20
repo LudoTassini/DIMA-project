@@ -14,11 +14,11 @@ import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
+import '../../style/themes/bloqo_theme.dart';
 import '../../utils/bloqo_setting_type.dart';
 import '../../utils/localization.dart';
 
 class SettingPage extends StatefulWidget {
-
   const SettingPage({
     super.key,
     required this.settingTitle,
@@ -26,6 +26,7 @@ class SettingPage extends StatefulWidget {
     required this.forms,
     required this.controllers,
     required this.settingType,
+    this.onSettingsUpdated,
   });
 
   final String settingTitle;
@@ -33,6 +34,7 @@ class SettingPage extends StatefulWidget {
   final List<Widget> forms;
   final List<dynamic> controllers;
   final BloqoSettingType settingType;
+  final VoidCallback? onSettingsUpdated;
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -194,12 +196,25 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           }
           break;
         case BloqoSettingType.application:
-          String choice = controllers[0].text;
+
+          String languageChoice = controllers[0].text;
+          String themeChoice = controllers[1].text;
+
           List<DropdownMenuEntry<String>> languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
           languages.removeWhere((x) => x.label == localizedText.other);
-          String newLanguageCode = languages.firstWhere((lang) => lang.label == choice).value.substring(("BloqoLanguageTagValue.").length).substring(0, 2);
+          String newLanguageCode = languages.firstWhere((lang) => lang.label == languageChoice).value.substring(("BloqoLanguageTagValue.").length).substring(0, 2);
+
+          List<DropdownMenuEntry<String>> themes = buildThemesList(localizedText: localizedText);
+          String newTheme = themes.firstWhere((th) => th.label == themeChoice).value;
+
           saveLanguageCode(newLanguageCode: newLanguageCode);
+          saveAppTheme(newTheme: newTheme);
+
           updateLanguageInAppState(context: context, newLanguageCode: newLanguageCode);
+          updateAppThemeInAppState(context: context, newTheme: getAppThemeBasedOnStringType(stringType: newTheme));
+
+          setState(() {});
+
           break;
         default:
           break;
@@ -212,7 +227,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           throw BloqoException(message: localizedText.generic_error);
       }
     }
-    Navigator.of(context).pop();
+
+    widget.onSettingsUpdated?.call();
   }
 
 }

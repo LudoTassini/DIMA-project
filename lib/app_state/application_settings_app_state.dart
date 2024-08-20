@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../style/bloqo_theme.dart';
+import '../style/themes/bloqo_theme.dart';
+import '../style/themes/purple_orchid_theme.dart';
 
 class ApplicationSettingsAppState with ChangeNotifier{
 
   Locale _locale = const Locale("en");
-  BloqoAppTheme _theme = LilacOrchidTheme();
+  BloqoAppTheme _theme = PurpleOrchidTheme();
 
   Locale _getLocale() => _locale;
 

@@ -332,7 +332,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Il tuo dispositivo non è connesso alla rete Internet. Assicurati che il tuo dispositivo sia connesso alla rete e riprova."),
         "new_course": MessageLookupByLibrary.simpleMessage("Nuovo Corso"),
         "new_here": MessageLookupByLibrary.simpleMessage("Prima volta?"),
-        "no": MessageLookupByLibrary.simpleMessage("No "),
+        "no": MessageLookupByLibrary.simpleMessage("No"),
         "no_answers_error": MessageLookupByLibrary.simpleMessage(
             "Non puoi salvare un quiz a scelta multipla senza scelte!"),
         "no_correct_answer_error": MessageLookupByLibrary.simpleMessage(
@@ -353,6 +353,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "notification_settings_title": MessageLookupByLibrary.simpleMessage(
             "Impostazioni delle notifiche"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifiche"),
+        "ocean_cornflower":
+            MessageLookupByLibrary.simpleMessage("Fiordaliso oceano"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "okay": MessageLookupByLibrary.simpleMessage("Okay!"),
         "one_hour_less": MessageLookupByLibrary.simpleMessage("1 ora o meno"),
@@ -394,6 +396,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "published_courses_by_author":
             MessageLookupByLibrary.simpleMessage("Corsi creati da "),
         "published_on": MessageLookupByLibrary.simpleMessage("Pubblicato il: "),
+        "purple_orchid": MessageLookupByLibrary.simpleMessage("Orchidea viola"),
         "question": MessageLookupByLibrary.simpleMessage("Domanda"),
         "question_not_empty_error": MessageLookupByLibrary.simpleMessage(
             "Non puoi salvare un quiz con una domanda vuota!"),
@@ -478,6 +481,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "technology": MessageLookupByLibrary.simpleMessage("Tecnologia"),
         "text": MessageLookupByLibrary.simpleMessage("Testo"),
         "text_block": MessageLookupByLibrary.simpleMessage("Blocco di Testo"),
+        "theme": MessageLookupByLibrary.simpleMessage("Tema"),
         "three_hours_more": MessageLookupByLibrary.simpleMessage("3 ore o più"),
         "title": MessageLookupByLibrary.simpleMessage("Titolo"),
         "trim_extra_whitespaces": MessageLookupByLibrary.simpleMessage(

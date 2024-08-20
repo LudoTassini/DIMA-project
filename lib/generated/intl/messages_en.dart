@@ -348,6 +348,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "notification_settings_title":
             MessageLookupByLibrary.simpleMessage("Notification Settings"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+        "ocean_cornflower":
+            MessageLookupByLibrary.simpleMessage("Ocean Cornflower"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "okay": MessageLookupByLibrary.simpleMessage("Okay!"),
         "one_hour_less": MessageLookupByLibrary.simpleMessage("1 hour or less"),
@@ -389,6 +391,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "published_courses_by_author":
             MessageLookupByLibrary.simpleMessage("Courses created by "),
         "published_on": MessageLookupByLibrary.simpleMessage("Published on: "),
+        "purple_orchid": MessageLookupByLibrary.simpleMessage("Purple Orchid"),
         "question": MessageLookupByLibrary.simpleMessage("Question"),
         "question_not_empty_error": MessageLookupByLibrary.simpleMessage(
             "You cannot submit a quiz with an empty question!"),
@@ -471,6 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "technology": MessageLookupByLibrary.simpleMessage("Technology"),
         "text": MessageLookupByLibrary.simpleMessage("Text"),
         "text_block": MessageLookupByLibrary.simpleMessage("Text Block"),
+        "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "three_hours_more":
             MessageLookupByLibrary.simpleMessage("3 hours or more"),
         "title": MessageLookupByLibrary.simpleMessage("Title"),

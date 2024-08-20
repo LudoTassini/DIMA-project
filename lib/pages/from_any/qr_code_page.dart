@@ -34,13 +34,20 @@ class QrCodePage extends StatelessWidget {
               ),
             )
           ),
-          BloqoSeasaltContainer(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: QrImageView(
-                data: qrCodeContent,
-                version: QrVersions.auto,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
               ),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: QrImageView(
+                  data: qrCodeContent,
+                  version: QrVersions.auto,
+                ),
+              )
             )
           )
         ],

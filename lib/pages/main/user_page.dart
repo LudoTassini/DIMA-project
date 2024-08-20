@@ -8,6 +8,7 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
+import 'package:bloqo/style/themes/bloqo_theme.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
@@ -50,19 +51,29 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   final formKeyFullName = GlobalKey<FormState>();
   late TextEditingController fullNameController;
   late TextEditingController languageController;
+  late TextEditingController themeController;
+
+  late List<DropdownMenuEntry<String>> languages;
+  late List<DropdownMenuEntry<String>> themes;
 
   @override
   void initState() {
     super.initState();
     fullNameController = TextEditingController();
     languageController = TextEditingController();
+    themeController = TextEditingController();
   }
 
   @override
   void dispose() {
+    themeController.dispose();
     languageController.dispose();
     fullNameController.dispose();
     super.dispose();
+  }
+
+  void _updateUserPage() {
+    setState(() {});
   }
 
   @override
@@ -71,8 +82,10 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
 
-    List<DropdownMenuEntry<String>> languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
+    languages = buildTagList(type: BloqoCourseTagType.language, localizedText: localizedText, withNone: false);
     languages.removeWhere((x) => x.label == localizedText.other);
+
+    themes = buildThemesList(localizedText: localizedText);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -164,33 +177,38 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                                   child: LayoutBuilder(
                                       builder: (BuildContext context, BoxConstraints constraints) {
                                         double availableWidth = constraints.maxWidth;
-                                        String initialSelection = languages
+
+                                        String languageInitialSelection = languages
                                             .firstWhere(
                                                 (lang) => lang.value.toLowerCase().startsWith(getLanguageFromAppState(context: context).languageCode, ("BloqoLanguageTagValue.").length)).label;
-                                        languageController.text = initialSelection;
+
+                                        String themeInitialSelection = themes
+                                            .firstWhere(
+                                                (lang) => lang.value == theme.type.toString()).label;
+
+                                        languageController.text = languageInitialSelection;
+                                        themeController.text = themeInitialSelection;
+
                                         return Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      localizedText.language,
-                                                      textAlign: TextAlign.start,
-                                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                        color: theme.colors.leadingColor
-                                                      )
-                                                    )
-                                                  ]
-                                                )
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                                                child: BloqoDropdown(
+                                                    controller: languageController,
+                                                    dropdownMenuEntries: languages,
+                                                    initialSelection: languageInitialSelection,
+                                                    width: availableWidth,
+                                                    label: localizedText.language
+                                                ),
                                               ),
                                               BloqoDropdown(
-                                                  controller: languageController,
-                                                  dropdownMenuEntries: languages,
-                                                  initialSelection: initialSelection,
-                                                  width: availableWidth
+                                                  controller: themeController,
+                                                  dropdownMenuEntries: themes,
+                                                  initialSelection: themeInitialSelection,
+                                                  width: availableWidth,
+                                                  label: localizedText.theme
                                               )
                                             ]
                                         );
@@ -201,8 +219,10 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
                         ),
                       ],
                       controllers: [
-                        languageController
+                        languageController,
+                        themeController
                       ],
+                      onSettingsUpdated: () => _updateUserPage()
                     ));
                   },
                 ),
@@ -240,7 +260,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     context.loaderOverlay.show();
     try{
       await logout(localizedText: localizedText);
-      await deleteSharedPreferences();
+      await deleteUserSharedPreferences();
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       Phoenix.rebirth(context);

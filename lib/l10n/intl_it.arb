@@ -104,7 +104,7 @@
   "error_invalid_date_format": "Formato non valido.",
   "error_date_out_of_range": "Fuori dall'intervallo valido.",
   "yes": "Sì",
-  "no": "No ",
+  "no": "No",
   "home": "Home",
   "learn": "Impara",
   "editor": "Crea",
@@ -337,5 +337,8 @@
   "date": "Data",
   "application_settings_title": "Impostazioni dell'applicazione",
   "application_settings_description": "Modifica la tua esperienza con bloQo per trarre il meglio dall'uso dell'applicazione.",
-  "language": "Lingua"
+  "language": "Lingua",
+  "theme": "Tema",
+  "purple_orchid": "Orchidea viola",
+  "ocean_cornflower": "Fiordaliso oceano"
 }

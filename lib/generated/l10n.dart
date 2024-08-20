@@ -3199,6 +3199,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Theme`
+  String get theme {
+    return Intl.message(
+      'Theme',
+      name: 'theme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purple Orchid`
+  String get purple_orchid {
+    return Intl.message(
+      'Purple Orchid',
+      name: 'purple_orchid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ocean Cornflower`
+  String get ocean_cornflower {
+    return Intl.message(
+      'Ocean Cornflower',
+      name: 'ocean_cornflower',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

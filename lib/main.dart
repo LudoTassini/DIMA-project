@@ -7,7 +7,8 @@ import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:bloqo/pages/main/main_page.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
-import 'package:bloqo/style/bloqo_theme.dart';
+import 'package:bloqo/style/themes/bloqo_theme.dart';
+import 'package:bloqo/style/themes/purple_orchid_theme.dart';
 import 'package:bloqo/utils/auth.dart';
 import 'package:bloqo/utils/bloqo_startup_information.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
@@ -143,7 +144,7 @@ class _BloqoAppState extends State<BloqoApp> {
   Widget _buildWelcomeScreen() {
     return MaterialApp(
       title: 'bloQo',
-      theme: LilacOrchidTheme().getThemeData(),
+      theme: getAppThemeFromAppState(context: context).getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),
@@ -154,7 +155,7 @@ class _BloqoAppState extends State<BloqoApp> {
   Widget _buildMainScreen() {
     return MaterialApp(
       title: 'bloQo',
-      theme: LilacOrchidTheme().getThemeData(),
+      theme: getAppThemeFromAppState(context: context).getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),
@@ -169,7 +170,7 @@ class _BloqoAppState extends State<BloqoApp> {
       return BloqoStartupInformation(
         isLoggedIn: false,
         locale: const Locale('en'),
-        theme: LilacOrchidTheme()
+        theme: PurpleOrchidTheme()
       );
     }
 
@@ -179,7 +180,7 @@ class _BloqoAppState extends State<BloqoApp> {
       return BloqoStartupInformation(
         isLoggedIn: false,
         locale: const Locale('en'),
-        theme: LilacOrchidTheme()
+        theme: PurpleOrchidTheme()
       );
     }
 
@@ -250,15 +251,10 @@ class _BloqoAppState extends State<BloqoApp> {
   Future<BloqoAppTheme> _getInitTheme({required BuildContext context}) async {
     String? savedTheme = await readAppTheme();
     if (savedTheme != null) {
-      switch(savedTheme){
-        case BloqoAppThemeType.lilacOrchid:
-          return LilacOrchidTheme();
-        default:
-          return LilacOrchidTheme();
-      }
+      return getAppThemeBasedOnStringType(stringType: savedTheme);
     }
     else{
-      return LilacOrchidTheme();
+      return PurpleOrchidTheme();
     }
   }
 

@@ -49,11 +49,10 @@ Future<void> addUserSharedPreferences({required String id, required String email
   await prefs.setString(sharedPassword, password);
 }
 
-Future<void> deleteSharedPreferences() async {
+Future<void> deleteUserSharedPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.remove(sharedLogged);
   await prefs.remove(sharedUserEmail);
   await prefs.remove(sharedUserID);
   await prefs.remove(sharedPassword);
-  await prefs.remove(languageCode);
 }

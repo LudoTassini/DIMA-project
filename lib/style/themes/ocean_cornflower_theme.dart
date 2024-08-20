@@ -1,36 +1,25 @@
 import 'package:flutter/material.dart';
 
-import 'bloqo_colors.dart';
+import '../bloqo_colors.dart';
+import 'bloqo_theme.dart';
 
-enum BloqoAppThemeType {
-  lilacOrchid,
-}
-
-abstract class BloqoAppTheme {
-
-  abstract BloqoAppThemeType type;
-  abstract BloqoColors colors;
-  ThemeData getThemeData();
-
-}
-
-class LilacOrchidTheme extends BloqoAppTheme{
+class OceanCornflowerTheme extends BloqoAppTheme{
 
   @override
   late BloqoAppThemeType type;
   @override
   late BloqoColors colors;
 
-  LilacOrchidTheme(){
-    type = BloqoAppThemeType.lilacOrchid;
+  OceanCornflowerTheme(){
+    type = BloqoAppThemeType.oceanCornflower;
     colors = BloqoColors(
-      highContrastColor: const Color(0xFFF7F9F9),
-      leadingColor: const Color(0xFF442367),
-      inBetweenColor: const Color(0xFF745575),
-      trailingColor: const Color(0xFF953A5C),
+      highContrastColor: const Color(0xFF224A4A),
+      leadingColor: const Color(0xFF0CD6D8),
+      inBetweenColor: const Color(0xFF00A5D6),
+      trailingColor: const Color(0xFF4873F3),
       inactiveTracker: const Color(0xFFE0E3E7),
-      primaryText: const Color(0xFF14181B),
-      secondaryText: const Color(0xFF57636C),
+      primaryText: const Color(0xFFF7F9F9),
+      secondaryText: const Color(0xFFB1B1B1),
       tertiary: const Color(0xFFEE8b60),
       error: const Color(0xFFFA2B36),
       warning: const Color(0xFFD5A203),
@@ -48,35 +37,41 @@ class LilacOrchidTheme extends BloqoAppTheme{
   ThemeData getThemeData() {
 
     final TextTheme textTheme = TextTheme(
-      displayLarge: const TextStyle(
+      displayLarge: TextStyle(
         fontSize: 40,
         fontWeight: FontWeight.bold,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      displayMedium: const TextStyle(
+      displayMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+          color: colors.primaryText
       ),
-      displaySmall: const TextStyle(
+      displaySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      bodyLarge: const TextStyle(
+      bodyLarge: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      bodyMedium: const TextStyle(
+      bodyMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      bodySmall: const TextStyle(
+      bodySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
       labelMedium: TextStyle(
         fontSize: 18,
@@ -84,10 +79,11 @@ class LilacOrchidTheme extends BloqoAppTheme{
         fontFamily: 'Readex Pro',
         color: colors.leadingColor,
       ),
-      titleSmall: const TextStyle(
+      titleSmall: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
     );
 
@@ -252,4 +248,3 @@ class LilacOrchidTheme extends BloqoAppTheme{
   }
 
 }
-
