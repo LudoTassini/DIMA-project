@@ -6,6 +6,7 @@ import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -88,6 +89,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters) {
       _showSectionsMap[chapters[0].id] = true;
@@ -193,7 +195,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                         color: theme.colors.tertiary,
                       ),
                       itemCount: 5,
-                      itemSize: 24,
+                      itemSize: !isTablet ? 24 : 35,
                       direction: Axis.horizontal,
                     ),
                   ],
@@ -513,7 +515,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               color: theme.colors.tertiary,
                                             ),
                                             itemCount: 5,
-                                            itemSize: 24,
+                                            itemSize: !isTablet ? 22 : 29,
                                             direction: Axis.horizontal,
                                           ),
                                         ),
@@ -721,11 +723,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 title: localizedText.error_title,
                                 description: localizedText.creator_cannot_subscribe);
                           },
-                          height: 60,
                           color: theme.colors.secondaryText,
                           text: localizedText.enroll_in,
                           icon: Icons.add,
-                          fontSize: 24,
+                          fontSize: !isTablet ? 24 : 26,
+                          height: !isTablet ? 60 : 64,
                         ),
                       )
 
@@ -749,11 +751,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 backgroundColor: theme.colors.error
                             );
                       },
-                      height: 60,
                       color: theme.colors.error,
                       text: localizedText.unsubscribe,
                       icon: Icons.close_sharp,
-                      fontSize: 24,
+                      fontSize: !isTablet ? 24 : 26,
+                      height: !isTablet ? 60 : 64,
                     ),
                   )))
                 ],

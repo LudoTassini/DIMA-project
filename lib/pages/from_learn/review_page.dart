@@ -7,6 +7,7 @@ import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -69,6 +70,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     final formKeyAnswerTitle = GlobalKey<FormState>();
     final formKeyAnswerReview = GlobalKey<FormState>();
@@ -81,100 +83,105 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                      child: Text(
-                        widget.courseToReview.courseName,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: theme.colors.highContrastColor,
-                            fontSize: 30),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                      child: Text(
-                        !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: theme.colors.highContrastColor,
-                            fontSize: 20),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                      child: Row(
-                        children: [
-                          BloqoRatingBar(
-                            rating: selectedRating,  // Set the initial rating
-                            onRatingChanged: isRated ? null : (rating) {
-                              setState(() {
-                                selectedRating = rating;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                      child: Form(
-                        key: formKeyAnswerTitle,
-                        child: BloqoTextField(
-                          controller: controllerTitle, // Pre-populated text
-                          formKey: formKeyAnswerTitle,
-                          labelText: localizedText.title,
-                          hintText: localizedText.review_title,
-                          maxInputLength: Constants.maxReviewTitleLength,
-                          isDisabled: isRated,  // Disable if already rated
+                child: Padding(
+                  padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                        child: Text(
+                          widget.courseToReview.courseName,
+                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              color: theme.colors.highContrastColor,
+                              fontSize: 30),
                         ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                      child: Form(
-                        key: formKeyAnswerReview,
-                        child: BloqoTextField(
-                          controller: controllerReview,  // Pre-populated text
-                          formKey: formKeyAnswerReview,
-                          labelText: localizedText.review,
-                          hintText: localizedText.your_review,
-                          maxInputLength: Constants.maxReviewLength,
-                          isTextArea: true, // Allow multiline input
-                          isDisabled: isRated,  // Disable if already rated
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                        child: Text(
+                          !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
+                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              color: theme.colors.highContrastColor,
+                              fontSize: 20),
                         ),
                       ),
-                    ),
 
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15),
-                        child: isRated
-                            ? Container()
-
-                            : BloqoFilledButton(
-                              onPressed: () async {
-                                await _tryPublishReview(
-                                  context: context,
-                                  controllerTitle: controllerTitle,
-                                  controllerReview: controllerReview,
-                                  rating: selectedRating,
-                                  userCourseEnrolled: widget.courseToReview
-                                );
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Row(
+                          children: [
+                            BloqoRatingBar(
+                              rating: selectedRating,  // Set the initial rating
+                              onRatingChanged: isRated ? null : (rating) {
+                                setState(() {
+                                  selectedRating = rating;
+                                });
                               },
-                              color: theme.colors.leadingColor,
-                              text: localizedText.publish,
-                              icon: Icons.comment
                             ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                        child: Form(
+                          key: formKeyAnswerTitle,
+                          child: BloqoTextField(
+                            controller: controllerTitle, // Pre-populated text
+                            formKey: formKeyAnswerTitle,
+                            labelText: localizedText.title,
+                            hintText: localizedText.review_title,
+                            maxInputLength: Constants.maxReviewTitleLength,
+                            isDisabled: isRated,  // Disable if already rated
+                          ),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Form(
+                          key: formKeyAnswerReview,
+                          child: BloqoTextField(
+                            controller: controllerReview,  // Pre-populated text
+                            formKey: formKeyAnswerReview,
+                            labelText: localizedText.review,
+                            hintText: localizedText.your_review,
+                            maxInputLength: Constants.maxReviewLength,
+                            isTextArea: true, // Allow multiline input
+                            isDisabled: isRated,  // Disable if already rated
+                          ),
+                        ),
+                      ),
+
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15),
+                          child: isRated
+                              ? Container()
+
+                              : BloqoFilledButton(
+                                  fontSize: !isTablet ? 20 : 26,
+                                  height: !isTablet ? 48 : 64,
+                                  onPressed: () async {
+                                    await _tryPublishReview(
+                                      context: context,
+                                      controllerTitle: controllerTitle,
+                                      controllerReview: controllerReview,
+                                      rating: selectedRating,
+                                      userCourseEnrolled: widget.courseToReview
+                                    );
+                                  },
+                                  color: theme.colors.leadingColor,
+                                  text: localizedText.publish,
+                                  icon: Icons.comment
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,8 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
@@ -84,7 +87,9 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                     ]),
                     Expanded(
                         child: SingleChildScrollView(
-                            child: Column(
+                            child: Padding(
+                              padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                              child: Column(
                                 children: [
                                   Form(
                                       key: formKeyCourseName,
@@ -205,14 +210,17 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                       )
                                   )
                                 ]
-                            )
-                        )
+                            ),
+                          ),
+                        ),
                     ),
                     if(editable)
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                         child: BloqoFilledButton(
                           color: theme.colors.leadingColor,
+                          fontSize: !isTablet ? 20 : 26,
+                          height: !isTablet ? 48 : 64,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {
