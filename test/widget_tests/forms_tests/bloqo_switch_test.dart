@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 void main() {
 
-  Widget buildTestWidget(Toggle toggle) {
+  Widget buildTestWidget({required Toggle toggle, bool editable = true}) {
     return MaterialApp(
         localizationsDelegates: getLocalizationDelegates(),
         supportedLocales: getSupportedLocales(),
@@ -21,6 +21,7 @@ void main() {
                 return Scaffold(
                   body: BloqoSwitch(
                     value: toggle,
+                    editable: editable,
                   ),
                 );
               }
@@ -30,29 +31,29 @@ void main() {
   }
 
   testWidgets('Switch form present (initial value: true)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: true)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true)));
     expect(find.byType(BloqoSwitch), findsOneWidget);
   });
 
   testWidgets('Switch form present (initial value: false)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: false)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false)));
     expect(find.byType(BloqoSwitch), findsOneWidget);
   });
 
   testWidgets('Switch form shows initial value "true"', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: true)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true)));
     final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
     expect(foundWidget.value.get(), isTrue);
   });
 
   testWidgets('Switch form shows initial value "false"', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: false)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false)));
     final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
     expect(foundWidget.value.get(), isFalse);
   });
 
   testWidgets('Switch form toggles (initial value: true)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: true)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true)));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
@@ -60,7 +61,7 @@ void main() {
   });
 
   testWidgets('Switch form toggles (initial value: false)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: false)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false)));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
@@ -68,7 +69,7 @@ void main() {
   });
 
   testWidgets('Switch form toggles twice (initial value: true)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: true)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true)));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     await tester.tap(find.byType(Switch));
@@ -78,7 +79,7 @@ void main() {
   });
 
   testWidgets('Switch form toggles twice (initial value: false)', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: false)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false)));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     await tester.tap(find.byType(Switch));
@@ -89,7 +90,7 @@ void main() {
 
   testWidgets('Switch form resets (initial value: true)', (WidgetTester tester) async {
     final toggle = Toggle(initialValue: true);
-    await tester.pumpWidget(buildTestWidget(toggle));
+    await tester.pumpWidget(buildTestWidget(toggle: toggle));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     expect(toggle.get(), isFalse);
@@ -100,7 +101,7 @@ void main() {
 
   testWidgets('Switch form resets (initial value: false)', (WidgetTester tester) async {
     final toggle = Toggle(initialValue: false);
-    await tester.pumpWidget(buildTestWidget(toggle));
+    await tester.pumpWidget(buildTestWidget(toggle: toggle));
     await tester.tap(find.byType(Switch));
     await tester.pump();
     expect(toggle.get(), isTrue);
@@ -110,12 +111,29 @@ void main() {
   });
 
   testWidgets('Switch form shows "Yes" if value is true', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: true)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true)));
     expect(find.text(getAppLocalizations(tester.element(find.byType(BloqoSwitch)))!.yes), findsOneWidget);
   });
 
   testWidgets('Switch form shows "No" if value is false', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget(Toggle(initialValue: false)));
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false)));
     expect(find.text(getAppLocalizations(tester.element(find.byType(BloqoSwitch)))!.no), findsOneWidget);
   });
+
+  testWidgets('Switch form does not change if it is not editable (initial value: false)', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: false), editable: false));
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
+    expect(foundWidget.value.get(), isFalse);
+  });
+
+  testWidgets('Switch form does not change if it is not editable (initial value: true)', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(toggle: Toggle(initialValue: true), editable: false));
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    final foundWidget = tester.firstWidget<BloqoSwitch>(find.byType(BloqoSwitch));
+    expect(foundWidget.value.get(), isTrue);
+  });
+
 }

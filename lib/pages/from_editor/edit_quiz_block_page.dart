@@ -439,7 +439,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                   )
                                                 ),
                                                 BloqoSwitch(
-                                                  value: trimToggle
+                                                  value: trimToggle,
+                                                  editable: editable,
                                                 )
                                               ]
                                             ),
@@ -456,7 +457,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     )
                                                   ),
                                                   BloqoSwitch(
-                                                      value: ignoreCaseToggle
+                                                    value: ignoreCaseToggle,
+                                                    editable: editable,
                                                   )
                                                 ]
                                             )

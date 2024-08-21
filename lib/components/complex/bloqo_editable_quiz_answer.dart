@@ -94,7 +94,8 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                     hintText: localizedText.enter_answer_here,
                     maxInputLength: Constants.maxQuizAnswerLength,
                     isTextArea: true,
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 5, 15)
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 5, 15),
+                    isDisabled: !editable
                   )
                 ),
                 Wrap(
@@ -111,7 +112,8 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                     ),
                     BloqoSwitch(
                       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                      value: toggle
+                      value: toggle,
+                      editable: editable,
                     )
                   ]
                 )
