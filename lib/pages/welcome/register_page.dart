@@ -69,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                 child: Text(
                   'bloQo',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -79,6 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
               BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 40),
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                     child: Column(

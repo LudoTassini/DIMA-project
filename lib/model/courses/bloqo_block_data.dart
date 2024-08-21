@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -233,13 +232,8 @@ Future<List<BloqoBlockData>> getBlocksFromIds({required var localizedText, requi
       blocks.add(block);
     }
     return blocks;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -256,13 +250,8 @@ Future<BloqoBlockData> saveNewBlock({required var localizedText, required BloqoB
     await checkConnectivity(localizedText: localizedText);
     await ref.doc().set(block);
     return block;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -290,13 +279,8 @@ Future<void> deleteBlock({required var localizedText, required String courseId, 
         }
       }
     }
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -335,14 +319,7 @@ Future<void> saveBlockChanges({required var localizedText, required BloqoBlockDa
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedBlock.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedBlock.toFirestore());
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  } catch (e) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
@@ -366,12 +343,8 @@ Future<void> saveBlockAudioUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -394,12 +367,8 @@ Future<void> saveBlockImageUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -422,12 +391,8 @@ Future<void> saveBlockVideoUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -450,12 +415,8 @@ Future<void> saveBlockMultipleChoiceQuiz({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -478,12 +439,8 @@ Future<void> saveBlockOpenQuestionQuiz({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -492,11 +449,7 @@ Future<void> deleteFile({required var localizedText, required String filePath}) 
     await checkConnectivity(localizedText: localizedText);
     final ref = FirebaseStorage.instance.ref().child(filePath);
     await ref.delete();
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

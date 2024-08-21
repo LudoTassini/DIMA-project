@@ -1,6 +1,5 @@
 import 'package:bloqo/utils/connectivity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../utils/bloqo_exception.dart';
 
@@ -70,13 +69,8 @@ Future<List<BloqoReviewData>> getReviewsFromIds({required var localizedText, req
       reviews.add(review);
     }
     return reviews;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -85,12 +79,7 @@ Future<void> publishReview({required var localizedText, required BloqoReviewData
     await checkConnectivity(localizedText: localizedText);
     var ref = BloqoReviewData.getRef();
     await ref.doc().set(review);
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

@@ -32,6 +32,9 @@ Future<void> login({required var localizedText, required String email, required 
             message: localizedText.login_credentials_error);
     }
   }
+  on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
 }
 
 Future<void> logout({required var localizedText}) async {
@@ -46,5 +49,8 @@ Future<void> logout({required var localizedText}) async {
       default:
         throw BloqoException(message: localizedText.generic_error);
     }
+  }
+  on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

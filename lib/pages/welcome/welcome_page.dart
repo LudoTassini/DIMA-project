@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -130,13 +129,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           text: localizedText.login,
                         ),
                       ),
-                      BloqoTextButton(
-                        text: localizedText.forgot_password,
-                        color: theme.colors.leadingColor,
-                        onPressed: () {
-                          //TODO
-                        },
-                      )
                     ]
                   ),
                 ),

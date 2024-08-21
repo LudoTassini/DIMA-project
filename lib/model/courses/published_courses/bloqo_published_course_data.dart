@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../utils/bloqo_exception.dart';
 import '../../../utils/connectivity.dart';
@@ -105,13 +104,9 @@ Future<BloqoPublishedCourseData> getPublishedCourseFromPublishedCourseId({requir
     var docSnapshot = querySnapshot.docs.first;
     BloqoPublishedCourseData publishedCourse = docSnapshot.data();
     return publishedCourse;
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  }
+  on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -123,13 +118,8 @@ Future<BloqoPublishedCourseData> getPublishedCourseFromCourseId({required var lo
     var docSnapshot = querySnapshot.docs.first;
     BloqoPublishedCourseData publishedCourse = docSnapshot.data();
     return publishedCourse;
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -146,13 +136,8 @@ Future<List<BloqoPublishedCourseData>> getPublishedCoursesFromAuthorId({
       publishedCourses.add(doc.data());
     }
     return publishedCourses;
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -161,13 +146,8 @@ Future<void> publishCourse({required var localizedText, required BloqoPublishedC
     await checkConnectivity(localizedText: localizedText);
     var ref = BloqoPublishedCourseData.getRef();
     await ref.doc().set(publishedCourse);
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -185,13 +165,8 @@ Future<void> addReviewToPublishedCourse({required var localizedText, required St
 
     await ref.doc(docSnapshot.id).update(updatedCourse.toFirestore());
 
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
@@ -213,13 +188,8 @@ Future<List<BloqoPublishedCourseData>> getCoursesFromSearch({
     } else {
       return [];
     }
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 
 }
@@ -231,14 +201,7 @@ Future<void> savePublishedCourseChanges({required var localizedText, required Bl
     QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: updatedPublishedCourse.publishedCourseId).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedPublishedCourse.toFirestore());
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  } catch (e) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
@@ -249,12 +212,7 @@ Future<void> deletePublishedCourse({required var localizedText, required String 
     await checkConnectivity(localizedText: localizedText);
     QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
     await querySnapshot.docs[0].reference.delete();
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
