@@ -56,9 +56,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
     if(isTablet && !_initialized){
       setState(() {
-        _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirstTablet;
-        _coursesCreatedDisplayed = Constants.coursesToShowAtFirstTablet;
-        _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+        _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirstTabletHomepage;
+        _coursesCreatedDisplayed = Constants.coursesToShowAtFirstTabletHomepage;
+        _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletHomepage;
         _initialized = true;
         }
       );

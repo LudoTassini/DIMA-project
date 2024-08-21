@@ -11,7 +11,6 @@ import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
 import 'package:bloqo/style/themes/bloqo_theme.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
 import 'package:bloqo/utils/check_device.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';

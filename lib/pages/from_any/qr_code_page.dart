@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
-import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
+import 'package:bloqo/utils/check_device.dart';
+import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -19,6 +20,8 @@ class QrCodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -35,7 +38,7 @@ class QrCodePage extends StatelessWidget {
             )
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: !isTablet ? const EdgeInsets.all(20) : const EdgeInsets.all(60),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,

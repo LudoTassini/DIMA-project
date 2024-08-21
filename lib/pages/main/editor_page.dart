@@ -102,9 +102,9 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
 
     if(isTablet && !initialized){
       setState(() {
-        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
-        publishedCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
-        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletLearnPage;
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        publishedCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
         initialized = true;
       }
       );
@@ -643,6 +643,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                   },
                   text: localizedText.new_course,
                   icon: Icons.add,
+                  fontSize: !isTablet ? 20 : 26,
+                  height: !isTablet ? 48 : 64,
                 ),
               ),
             ],

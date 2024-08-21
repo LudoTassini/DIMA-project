@@ -111,9 +111,9 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
 
     if(isTablet && !initialized){
       setState(() {
-        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
-        completedCoursesDisplayed = Constants.coursesToShowAtFirstTabletLearnPage;
-        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        completedCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletHomepage;
         initialized = true;
       }
       );

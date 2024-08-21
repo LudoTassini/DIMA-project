@@ -1,6 +1,7 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -28,8 +29,11 @@ class BloqoUserDetailsShort extends StatelessWidget{
     if(user.pictureUrl != "none"){
       url = user.pictureUrl;
     }
+
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: ElevatedButton(
@@ -114,7 +118,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                       textAlign: TextAlign.start,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                         color: theme.colors.secondaryText,
-                                        fontSize: 14,
+                                        fontSize: !isTablet ? 14 : 16,
                                         letterSpacing: 0,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -124,7 +128,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     textAlign: TextAlign.start,
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                       color: theme.colors.primaryText,
-                                      fontSize: 18,
+                                      fontSize: !isTablet ? 18 : 20,
                                       letterSpacing: 0,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -152,14 +156,14 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     child: Text(
                                       localizedText.followers,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                        fontSize: 14
+                                        fontSize: !isTablet ? 14 : 16,
                                       )
                                     )
                                   ),
                                   Text(
                                     user.followers.length.toString(),
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      fontSize: 18,
+                                      fontSize: !isTablet ? 18 : 20,
                                     ),
                                   ),
                                 ],
@@ -176,14 +180,14 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     child: Text(
                                       localizedText.following,
                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                          fontSize: 14
+                                          fontSize: !isTablet ? 14 : 16,
                                       )
                                     )
                                   ),
                                   Text(
                                     user.following.length.toString(),
                                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      fontSize: 18,
+                                      fontSize: !isTablet ? 18 : 20,
                                     ),
                                   ),
                                 ],

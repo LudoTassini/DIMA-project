@@ -26,10 +26,10 @@ class Constants{
 
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
-  static const int coursesToShowAtFirstTablet = 4;
-  static const int coursesToShowAtFirstTabletLearnPage = 8;
-  static const int coursesToFurtherLoadAtRequestTablet = 4;
-  static const int coursesToFurtherLoadAtRequestTabletLearnPage = 8;
+  static const int coursesToShowAtFirstTabletHomepage = 4;
+  static const int coursesToShowAtFirstTablet = 8;
+  static const int coursesToFurtherLoadAtRequestTabletHomepage = 4;
+  static const int coursesToFurtherLoadAtRequestTablet = 8;
 
   static const int usersToShowAtFirst = 10;
   static const int usersToFurtherLoadAtRequest = 10;

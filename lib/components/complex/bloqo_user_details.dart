@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_app_state.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -46,6 +47,8 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
   @override
   Widget build(BuildContext context) {
     String? url;
+    bool isTablet = checkDevice(context);
+
     if(widget.user.pictureUrl != "none"){
       url = widget.user.pictureUrl;
     }
@@ -95,12 +98,12 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                             ),
                           ),
                           child: widget.onReplacePicture != null ? IconButton(
-                            padding: EdgeInsets.zero,
+                            padding: !isTablet ? EdgeInsets.zero : const EdgeInsets.all(5),
                             visualDensity: VisualDensity.compact,
                             icon: Icon(
                               Icons.camera_alt,
                               color: theme.colors.highContrastColor,
-                              size: 22,
+                              size: !isTablet ? 22 : 40,
                             ),
                             onPressed: widget.onReplacePicture
                           ) : Container(),
@@ -134,7 +137,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           textAlign: TextAlign.start,
                                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                             color: theme.colors.secondaryText,
-                                            fontSize: 16,
+                                            fontSize: !isTablet ? 16 : 22,
                                             letterSpacing: 0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -144,7 +147,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                         textAlign: TextAlign.start,
                                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                           color: theme.colors.primaryText,
-                                          fontSize: 22,
+                                          fontSize: !isTablet ? 22 : 30,
                                           letterSpacing: 0,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -164,7 +167,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                     icon: Icon(
                                       Icons.qr_code_2,
                                       color: theme.colors.highContrastColor,
-                                      size: 32,
+                                      size: !isTablet ? 32 : 55,
                                     ),
                                     onPressed: () {
                                       _showUserQrCode(
@@ -194,6 +197,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           child: BloqoTextButton(
                                               text: localizedText.followers,
                                               color: theme.colors.primaryText,
+                                              fontSize: !isTablet ? 18 : 20,
                                               onPressed: () {
                                                 widget.onPush(UserListPage(
                                                   reference: widget.user,
@@ -207,7 +211,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                       Text(
                                         widget.user.followers.length.toString(),
                                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                          fontSize: 18,
+                                          fontSize: !isTablet ? 18 : 20,
                                         ),
                                       ),
                                     ],
@@ -224,6 +228,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                           child: BloqoTextButton(
                                               text: localizedText.following,
                                               color: theme.colors.primaryText,
+                                              fontSize: !isTablet ? 18 : 20,
                                               onPressed: () {
                                                 widget.onPush(UserListPage(
                                                   reference: widget.user,
@@ -237,7 +242,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                       Text(
                                         widget.user.following.length.toString(),
                                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                          fontSize: 18,
+                                          fontSize: !isTablet ? 18 : 20
                                         ),
                                       ),
                                     ],

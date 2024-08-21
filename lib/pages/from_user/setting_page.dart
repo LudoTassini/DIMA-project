@@ -3,6 +3,7 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +17,7 @@ import '../../model/bloqo_user_data.dart';
 import '../../model/courses/tags/bloqo_course_tag.dart';
 import '../../style/themes/bloqo_theme.dart';
 import '../../utils/bloqo_setting_type.dart';
+import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
 class SettingPage extends StatefulWidget {
@@ -46,6 +48,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Column(
@@ -53,54 +57,57 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.settingTitle,
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: theme.colors.highContrastColor,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w600,
+            child: Padding(
+              padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.settingTitle,
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              color: theme.colors.highContrastColor,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.settingDescription,
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: theme.colors.highContrastColor,
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.settingDescription,
+                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              color: theme.colors.highContrastColor,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                BloqoSeasaltContainer(
-                  child: Column(
-                    children: List.generate(
-                      widget.forms.length,
-                          (index) => Padding(
-                        padding: index == widget.forms.length - 1
-                            ? const EdgeInsets.all(20)
-                            : const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                        child: widget.forms[index],
+                  BloqoSeasaltContainer(
+                    child: Column(
+                      children: List.generate(
+                        widget.forms.length,
+                            (index) => Padding(
+                          padding: index == widget.forms.length - 1
+                              ? const EdgeInsets.all(20)
+                              : const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                          child: widget.forms[index],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Row(
@@ -134,6 +141,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
                       }
                     },
                     text: localizedText.save_settings,
+                    fontSize: !isTablet ? 20 : 26,
+                    height: !isTablet ? 48 : 64,
                   ),
                 ),
               ),

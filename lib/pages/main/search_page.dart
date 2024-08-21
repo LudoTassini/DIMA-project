@@ -513,6 +513,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         color: theme.colors.error,
                         onPressed: () => _resetSearchCriteria(localizedText: localizedText),
                         text: localizedText.reset_search_criteria,
+                        fontSize: !isTablet ? 14 : 20,
                       )
                     )
                   )
@@ -520,7 +521,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
               )
             ),
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+              padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
+                : const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 10),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -538,6 +540,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         color: theme.colors.inBetweenColor,
                         icon: Icons.qr_code_2,
                         text: localizedText.scan_qr_code,
+                        fontSize: !isTablet ? 20 : 26,
+                        height: !isTablet ? 48 : 64,
                       ),
                     ),
                   ),
@@ -549,7 +553,9 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                         onPressed: () async { await _goToSearchResultsPage(localizedText: localizedText, context: context); },
                         color: theme.colors.leadingColor,
                         text: localizedText.search,
-                        icon: Icons.search
+                        icon: Icons.search,
+                        fontSize: !isTablet ? 20 : 26,
+                        height: !isTablet ? 48 : 64,
                       ),
                     ),
                   ),
