@@ -1,5 +1,5 @@
 import 'package:bloqo/components/buttons/bloqo_text_button.dart';
-import 'package:bloqo/style/bloqo_colors.dart';
+import 'package:bloqo/style/themes/purple_orchid_theme.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +14,7 @@ void main() {
       builder: (BuildContext context) {
         return Scaffold(
           body: BloqoTextButton(
-            color: BloqoColors.leadingColor,
+            color: PurpleOrchidTheme().colors.leadingColor,
             text: "Test",
             onPressed: () {
               tapped = true;
