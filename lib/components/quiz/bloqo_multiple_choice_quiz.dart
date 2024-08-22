@@ -9,11 +9,9 @@ import '../custom/bloqo_snack_bar.dart';
 class BloqoMultipleChoiceQuiz extends StatefulWidget {
   const BloqoMultipleChoiceQuiz({
     super.key,
-    required this.onPush,
     required this.block,
   });
 
-  final void Function(Widget) onPush;
   final BloqoBlockData block;
 
   @override
@@ -114,7 +112,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                   : _buildCheckboxes(possibleAnswers: possibleAnswers),
             ),
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
               child: Align(
                 alignment: Alignment.center,
                 child: !isAnswerGiven || !isAnswerCorrect

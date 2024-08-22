@@ -27,6 +27,7 @@ class _BloqoAudioPlayerState extends State<BloqoAudioPlayer> {
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
+    _audioPlayer.setSource(UrlSource(widget.url));
 
     // Listen for completion event
     _audioPlayer.onPlayerComplete.listen((event) {
@@ -46,7 +47,7 @@ class _BloqoAudioPlayerState extends State<BloqoAudioPlayer> {
     if (isPlaying) {
       await _audioPlayer.pause();
     } else {
-      await _audioPlayer.play(UrlSource(widget.url));
+      await _audioPlayer.resume();
     }
     setState(() {
       isPlaying = !isPlaying;

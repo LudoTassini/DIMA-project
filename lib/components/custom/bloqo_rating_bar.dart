@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app_state/application_settings_app_state.dart';
 
-class BloqoRatingBar extends StatelessWidget {
+class BloqoRatingBar extends StatefulWidget {
   final int rating;
   final ValueChanged<int>? onRatingChanged;
 
@@ -13,6 +13,21 @@ class BloqoRatingBar extends StatelessWidget {
   });
 
   @override
+  State<BloqoRatingBar> createState() => _BloqoRatingBarState();
+
+}
+
+class _BloqoRatingBarState extends State<BloqoRatingBar> {
+
+  late int rating;
+
+  @override
+  void initState(){
+    super.initState();
+    rating = widget.rating;
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = getAppThemeFromAppState(context: context);
     return Row(
@@ -20,9 +35,12 @@ class BloqoRatingBar extends StatelessWidget {
       children: List.generate(5, (index) {
         return IconButton(
           onPressed: () {
-            if (onRatingChanged != null) {
-              onRatingChanged!(index + 1); // Notify the parent about the selected rating
+            if (widget.onRatingChanged != null) {
+              widget.onRatingChanged!(index + 1); // Notify the parent about the selected rating
             }
+            setState(() {
+              rating = index + 1;
+            });
           },
           icon: Icon(
             index < rating ? Icons.star : Icons.star_border,

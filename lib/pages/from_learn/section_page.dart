@@ -151,7 +151,6 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                         child: Column(
                           children: [
                             BloqoOpenQuestionQuiz(
-                              onPush: widget.onPush,
                               block: block
                             ),
 
@@ -166,7 +165,6 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       child: Column(
                         children: [
                           BloqoMultipleChoiceQuiz(
-                              onPush: widget.onPush,
                               block: block
                           ),
 
