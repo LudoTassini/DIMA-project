@@ -548,7 +548,10 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
   Future<void> _tryDeleteFile({required BuildContext context, required var localizedText, required String filePath, required String courseId, required String sectionId, required BloqoBlockData block}) async {
     context.loaderOverlay.show();
     try {
-      await deleteFile(localizedText: localizedText, filePath: filePath);
+      var firestore = getFirestoreFromAppState(context: context);
+      var storage = getStorageFromAppState(context: context);
+
+      await deleteFile(storage: storage, localizedText: localizedText, filePath: filePath);
 
       block.type = null;
       block.name = getNameBasedOnBlockSuperType(localizedText: localizedText,
@@ -556,6 +559,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
       block.content = "";
 
       await saveBlockChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedBlock: block,
       );
@@ -567,8 +571,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
       updateEditorCourseBlockInAppState(
           context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText,
-          updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();
@@ -587,11 +594,14 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     context.loaderOverlay.show();
     try {
 
+      var firestore = getFirestoreFromAppState(context: context);
+
       block.name = getNameBasedOnBlockSuperType(localizedText: localizedText,
           superType: BloqoBlockSuperType.multimedia);
       block.content = "";
 
       await saveBlockChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedBlock: block,
       );
@@ -603,8 +613,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
       updateEditorCourseBlockInAppState(
           context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText,
-          updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();
@@ -625,7 +638,10 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     block.type = blockType.toString();
     block.name = getNameBasedOnBlockType(localizedText: localizedText, type: blockType);
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     await saveBlockChanges(
+      firestore: firestore,
       localizedText: localizedText,
       updatedBlock: block,
     );
@@ -634,7 +650,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
     updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-    await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+    await saveUserCourseCreatedChanges(
+        firestore: firestore,
+        localizedText: localizedText,
+        updatedUserCourseCreated: userCourseCreated
+    );
   }
 
   Future<String?> _askUserForAnAudio({
@@ -655,8 +675,14 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
         context.loaderOverlay.show();
 
         try {
+
+          var firestore = getFirestoreFromAppState(context: context);
+          var storage = getStorageFromAppState(context: context);
+
           final audio = File(pickedFile.path!);
           final url = await uploadBlockAudio(
+            firestore: firestore,
+            storage: storage,
             localizedText: localizedText,
             audio: audio,
             courseId: courseId,
@@ -699,8 +725,13 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
         context.loaderOverlay.show();
 
         try {
+          var firestore = getFirestoreFromAppState(context: context);
+          var storage = getStorageFromAppState(context: context);
+
           final image = File(pickedFile.path);
           final url = await uploadBlockImage(
+              firestore: firestore,
+              storage: storage,
               localizedText: localizedText,
               image: image,
               courseId: courseId,
@@ -740,8 +771,13 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
         context.loaderOverlay.show();
 
         try {
+          var firestore = getFirestoreFromAppState(context: context);
+          var storage = getStorageFromAppState(context: context);
+
           final video = File(pickedFile.path);
           final url = await uploadBlockVideo(
+            firestore: firestore,
+            storage: storage,
             localizedText: localizedText,
             video: video,
             courseId: courseId,
@@ -773,8 +809,15 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     context.loaderOverlay.show();
     
     try {
-        
-      await saveBlockVideoUrl(localizedText: localizedText, videoUrl: "yt:$videoUrl", blockId: block.id);
+
+      var firestore = getFirestoreFromAppState(context: context);
+
+      await saveBlockVideoUrl(
+          firestore: firestore,
+          localizedText: localizedText,
+          videoUrl: "yt:$videoUrl",
+          blockId: block.id
+      );
 
       block.content = videoUrl;
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaVideo);
@@ -782,7 +825,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
 
       if (!context.mounted) return;
       BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: updatedUserCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: updatedUserCourseCreated
+      );
       
       if (!context.mounted) return;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);

@@ -610,8 +610,9 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     context.loaderOverlay.show();
     try {
       final query = _buildQuery();
+      var firestore = getFirestoreFromAppState(context: context);
       List<BloqoPublishedCourseData> coursesFromSearch = await getCoursesFromSearch(
-          localizedText: localizedText, query: query);
+          firestore: firestore, localizedText: localizedText, query: query);
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(SearchResultsPage(

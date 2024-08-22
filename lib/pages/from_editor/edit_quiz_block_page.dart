@@ -559,13 +559,24 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizMultipleChoice);
       block.type = BloqoBlockType.quizMultipleChoice.toString();
 
-      await saveBlockMultipleChoiceQuiz(localizedText: localizedText, blockId: block.id, content: content);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      await saveBlockMultipleChoiceQuiz(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockId: block.id,
+          content: content
+      );
 
       if (!context.mounted) return;
       BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();
@@ -609,13 +620,24 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizOpenQuestion);
       block.type = BloqoBlockType.quizOpenQuestion.toString();
 
-      await saveBlockOpenQuestionQuiz(localizedText: localizedText, blockId: block.id, content: content);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      await saveBlockOpenQuestionQuiz(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockId: block.id,
+          content: content
+      );
 
       if (!context.mounted) return;
       BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../utils/bloqo_exception.dart';
-import '../../utils/connectivity.dart';
 import '../bloqo_user_data.dart';
 import '../courses/bloqo_course_data.dart';
 
@@ -52,16 +51,19 @@ class BloqoUserCourseCreatedData {
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("user_course_created").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("user_course_created").withConverter(
       fromFirestore: BloqoUserCourseCreatedData.fromFirestore,
       toFirestore: (BloqoUserCourseCreatedData userCourse, _) => userCourse.toFirestore(),
     );
   }
 }
 
-Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({required var localizedText, required BloqoCourseData course}) async {
+Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoCourseData course
+}) async {
   try {
     BloqoUserCourseCreatedData userCourseCreated = BloqoUserCourseCreatedData(
       courseId: course.id,
@@ -72,8 +74,7 @@ Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({required var locali
       published: false,
       lastUpdated: Timestamp.now()
     );
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     await ref.doc().set(userCourseCreated);
     return userCourseCreated;
   } on Exception catch (_) {
@@ -82,10 +83,13 @@ Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({required var locali
 }
 
 // FIXME: limitare a tre corsi
-Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({required var localizedText, required BloqoUserData user}) async {
+Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoUserData user
+}) async {
   try {
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
     List<BloqoUserCourseCreatedData> userCourses = [];
     for(var doc in querySnapshot.docs) {
@@ -98,8 +102,10 @@ Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({required var loc
 }
 
 // FIXME: limitare a tre corsi
-Future<List<BloqoUserCourseCreatedData>> silentGetUserCoursesCreated({required BloqoUserData user}) async {
-  var ref = BloqoUserCourseCreatedData.getRef();
+Future<List<BloqoUserCourseCreatedData>> silentGetUserCoursesCreated({
+  required BloqoUserData user
+}) async {
+  var ref = BloqoUserCourseCreatedData.getRef(firestore: FirebaseFirestore.instance);
   var querySnapshot = await ref.where("author_id", isEqualTo: user.id).orderBy("last_updated", descending: true).get();
   List<BloqoUserCourseCreatedData> userCourses = [];
   for(var doc in querySnapshot.docs) {
@@ -108,10 +114,13 @@ Future<List<BloqoUserCourseCreatedData>> silentGetUserCoursesCreated({required B
   return userCourses;
 }
 
-Future<void> deleteUserCourseCreated({required var localizedText, required String courseId}) async {
+Future<void> deleteUserCourseCreated({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String courseId
+}) async {
   try {
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
     await querySnapshot.docs[0].reference.delete();
   } on Exception catch (_) {
@@ -119,10 +128,13 @@ Future<void> deleteUserCourseCreated({required var localizedText, required Strin
   }
 }
 
-Future<void> deleteChapterFromUserCourseCreated({required var localizedText, required String courseId}) async {
+Future<void> deleteChapterFromUserCourseCreated({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String courseId
+}) async {
   try {
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
     BloqoUserCourseCreatedData userCourseCreated = querySnapshot.docs[0].data();
     userCourseCreated.numChaptersCreated--;
@@ -132,10 +144,13 @@ Future<void> deleteChapterFromUserCourseCreated({required var localizedText, req
   }
 }
 
-Future<void> deleteSectionFromUserCourseCreated({required var localizedText, required String courseId}) async {
+Future<void> deleteSectionFromUserCourseCreated({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String courseId
+}) async {
   try {
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("course_id", isEqualTo: courseId).get();
     BloqoUserCourseCreatedData userCourseCreated = querySnapshot.docs[0].data();
     userCourseCreated.numSectionsCreated--;
@@ -145,11 +160,14 @@ Future<void> deleteSectionFromUserCourseCreated({required var localizedText, req
   }
 }
 
-Future<void> saveUserCourseCreatedChanges({required var localizedText, required BloqoUserCourseCreatedData updatedUserCourseCreated}) async {
+Future<void> saveUserCourseCreatedChanges({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoUserCourseCreatedData updatedUserCourseCreated
+}) async {
   try {
     updatedUserCourseCreated.lastUpdated = Timestamp.now();
-    var ref = BloqoUserCourseCreatedData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserCourseCreatedData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("course_id", isEqualTo: updatedUserCourseCreated.courseId).get();
     if (querySnapshot.docs.isEmpty) {
       throw BloqoException(message: localizedText.course_not_found);

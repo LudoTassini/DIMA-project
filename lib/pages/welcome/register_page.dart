@@ -21,7 +21,9 @@ import '../../utils/uuid.dart';
 import '../main/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({
+    super.key,
+  });
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -241,11 +243,14 @@ class _RegisterPageState extends State<RegisterPage> {
           usernameValidator(username: user.username, localizedText: localizedText) == null &&
           fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
 
-        if(await isUsernameAlreadyTaken(localizedText: localizedText, username: user.username)){
+        var firestore = getFirestoreFromAppState(context: context);
+        var auth = getAuthFromAppState(context: context);
+
+        if(await isUsernameAlreadyTaken(firestore: firestore, localizedText: localizedText, username: user.username)){
           throw BloqoException(message: localizedText.username_already_taken);
         }
 
-        await registerNewUser(localizedText: localizedText, user: user, password: password);
+        await registerNewUser(firestore: firestore, auth: auth, localizedText: localizedText, user: user, password: password);
 
         if(!context.mounted) return;
         saveUserToAppState(context: context, user: user);

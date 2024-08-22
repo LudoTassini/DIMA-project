@@ -227,6 +227,8 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
       final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
 
+      var firestore = getFirestoreFromAppState(context: context);
+
       // Update sections completed in both the course enrollment and app state
       if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
@@ -237,6 +239,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
         // Perform async operations and check if context is still mounted afterward
         await updateUserCourseEnrolledCompletedSections(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,
@@ -258,6 +261,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
             // Perform async operations and check if context is still mounted afterward
             await updateUserCourseEnrolledCompletedChapters(
+              firestore: firestore,
               localizedText: localizedText,
               courseId: course.id,
               enrolledUserId: user.id,
@@ -272,6 +276,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
         courseEnrolled.isCompleted = true;
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledStatusCompleted(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,
@@ -282,12 +287,17 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       // Otherwise set the new sectionToComplete
       else {
         String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
-        BloqoSectionData sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        BloqoSectionData sectionToComplete = await getSectionFromId(
+            firestore: firestore,
+            localizedText: localizedText,
+            sectionId: nextSectionToComplete!
+        );
 
         if (!context.mounted) return;
 
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledNewSectionToComplete(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,

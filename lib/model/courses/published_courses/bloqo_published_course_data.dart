@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../utils/bloqo_exception.dart';
-import '../../../utils/connectivity.dart';
 
 class BloqoPublishedCourseData {
   final String publishedCourseId;
@@ -87,19 +86,21 @@ class BloqoPublishedCourseData {
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("published_courses").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("published_courses").withConverter(
       fromFirestore: BloqoPublishedCourseData.fromFirestore,
       toFirestore: (BloqoPublishedCourseData course, _) => course.toFirestore(),
     );
   }
 }
 
-Future<BloqoPublishedCourseData> getPublishedCourseFromPublishedCourseId({required var localizedText, required String publishedCourseId}) async {
+Future<BloqoPublishedCourseData> getPublishedCourseFromPublishedCourseId({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String publishedCourseId
+}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourseData.getRef();
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
     var docSnapshot = querySnapshot.docs.first;
     BloqoPublishedCourseData publishedCourse = docSnapshot.data();
@@ -110,10 +111,13 @@ Future<BloqoPublishedCourseData> getPublishedCourseFromPublishedCourseId({requir
   }
 }
 
-Future<BloqoPublishedCourseData> getPublishedCourseFromCourseId({required var localizedText, required String courseId}) async {
+Future<BloqoPublishedCourseData> getPublishedCourseFromCourseId({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String courseId
+}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourseData.getRef();
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("original_course_id", isEqualTo: courseId).get();
     var docSnapshot = querySnapshot.docs.first;
     BloqoPublishedCourseData publishedCourse = docSnapshot.data();
@@ -124,12 +128,12 @@ Future<BloqoPublishedCourseData> getPublishedCourseFromCourseId({required var lo
 }
 
 Future<List<BloqoPublishedCourseData>> getPublishedCoursesFromAuthorId({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String authorId,
 }) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourseData.getRef();
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("author_id", isEqualTo: authorId).get();
     List<BloqoPublishedCourseData> publishedCourses = [];
     for(var doc in querySnapshot.docs){
@@ -141,21 +145,28 @@ Future<List<BloqoPublishedCourseData>> getPublishedCoursesFromAuthorId({
   }
 }
 
-Future<void> publishCourse({required var localizedText, required BloqoPublishedCourseData publishedCourse}) async {
+Future<void> publishCourse({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoPublishedCourseData publishedCourse
+}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourseData.getRef();
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     await ref.doc().set(publishedCourse);
   } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> addReviewToPublishedCourse({required var localizedText, required String reviewId, required String publishedCourseId,
-  required double newRating}) async {
+Future<void> addReviewToPublishedCourse({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String reviewId,
+  required String publishedCourseId,
+  required double newRating
+}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoPublishedCourseData.getRef();
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
     var docSnapshot = querySnapshot.docs.first;
 
@@ -171,11 +182,11 @@ Future<void> addReviewToPublishedCourse({required var localizedText, required St
 }
 
 Future<List<BloqoPublishedCourseData>> getCoursesFromSearch({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required Query<Map<String, dynamic>>? query,
 }) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
     if (query != null) {
       var querySnapshot = await query.get();
 
@@ -194,10 +205,13 @@ Future<List<BloqoPublishedCourseData>> getCoursesFromSearch({
 
 }
 
-Future<void> savePublishedCourseChanges({required var localizedText, required BloqoPublishedCourseData updatedPublishedCourse}) async {
+Future<void> savePublishedCourseChanges({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoPublishedCourseData updatedPublishedCourse
+}) async {
   try {
-    var ref = BloqoPublishedCourseData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: updatedPublishedCourse.publishedCourseId).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedPublishedCourse.toFirestore());
@@ -206,10 +220,13 @@ Future<void> savePublishedCourseChanges({required var localizedText, required Bl
   }
 }
 
-Future<void> deletePublishedCourse({required var localizedText, required String publishedCourseId}) async {
+Future<void> deletePublishedCourse({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required String publishedCourseId
+}) async {
   try {
-    var ref = BloqoPublishedCourseData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoPublishedCourseData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("published_course_id", isEqualTo: publishedCourseId).get();
     await querySnapshot.docs[0].reference.delete();
   } on Exception catch (_) {

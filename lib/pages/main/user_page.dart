@@ -265,7 +265,8 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Future<void> _tryLogout({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await logout(localizedText: localizedText);
+      var auth = getAuthFromAppState(context: context);
+      await logout(auth: auth, localizedText: localizedText);
       await deleteUserSharedPreferences();
       if(!context.mounted) return;
       context.loaderOverlay.hide();
@@ -291,10 +292,14 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
           source: ImageSource.gallery);
       if (pickedFile != null) {
         if(!context.mounted) return null;
+        var firestore = getFirestoreFromAppState(context: context);
+        var storage = getStorageFromAppState(context: context);
         context.loaderOverlay.show();
         try {
           final image = File(pickedFile.path);
           final url = await uploadProfilePicture(
+              firestore: firestore,
+              storage: storage,
               localizedText: localizedText,
               image: image,
               userId: userId

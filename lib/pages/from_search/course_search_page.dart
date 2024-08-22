@@ -775,10 +775,19 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try {
       BloqoUserData? user = getUserFromAppState(context: context);
+      var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
-          localizedText: localizedText, courseId: course.id);
-        BloqoUserCourseEnrolledData userCourseEnrolled = await saveNewUserCourseEnrolled(localizedText: localizedText,
-            course: course, publishedCourseId: publishedCourseId, userId: user!.id);
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.id
+      );
+        BloqoUserCourseEnrolledData userCourseEnrolled = await saveNewUserCourseEnrolled(
+            firestore: firestore,
+            localizedText: localizedText,
+            course: course,
+            publishedCourseId: publishedCourseId,
+            userId: user!.id
+        );
         if(!context.mounted) return;
         saveLearnCourseToAppState(
             context: context,
@@ -798,7 +807,12 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         }
         saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
         publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments + 1;
-        savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
+        await savePublishedCourseChanges(
+            firestore: firestore,
+            localizedText: localizedText,
+            updatedPublishedCourse: publishedCourseToUpdate
+        );
+        if(!context.mounted) return;
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
     } on BloqoException catch (e) {
@@ -817,14 +831,28 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
-          localizedText: localizedText, courseId: courseId);
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: courseId
+      );
       BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
+      await deleteUserCourseEnrolled(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: courseId,
+          enrolledUserId: enrolledUserId
+      );
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
       publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
-      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
+      await savePublishedCourseChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedPublishedCourse: publishedCourseToUpdate
+      );
+      if(!context.mounted) return;
       context.loaderOverlay.hide();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -845,8 +873,13 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   Future<void> _goToUserCoursesPage({required BuildContext context, required var localizedText, required String authorId}) async {
     context.loaderOverlay.show();
     try {
-      BloqoUserData? courseAuthor = await getUserFromId(localizedText: localizedText, id: authorId);
-      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: authorId);
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoUserData? courseAuthor = await getUserFromId(firestore: firestore, localizedText: localizedText, id: authorId);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(
+          firestore: firestore,
+          localizedText: localizedText,
+          authorId: authorId
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
@@ -876,7 +909,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   }) async {
     context.loaderOverlay.show();
     try {
+      var firestore = getFirestoreFromAppState(context: context);
       BloqoNotificationData? oldNotification = await getNotificationFromPublishedCourseIdAndApplicantId(
+          firestore: firestore,
           localizedText: localizedText,
           publishedCourseId: publishedCourseId,
           applicantId: applicantId
@@ -890,7 +925,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           privatePublishedCourseId: publishedCourseId,
           applicantId: applicantId
         );
-        await pushNotification(localizedText: localizedText, notification: newNotification);
+        await pushNotification(
+            firestore: firestore,
+            localizedText: localizedText,
+            notification: newNotification
+        );
         if(!context.mounted) return;
         context.loaderOverlay.hide();
         ScaffoldMessenger.of(context).showSnackBar(

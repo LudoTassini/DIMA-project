@@ -196,9 +196,25 @@ class BloqoCourseCreated extends StatelessWidget {
   Future<void> _tryDeleteCourse({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      BloqoCourseData courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
-      await deleteUserCourseCreated(localizedText: localizedText, courseId: course.courseId);
-      await deleteCourse(localizedText: localizedText, course: courseToDelete);
+      var firestore = getFirestoreFromAppState(context: context);
+      var storage = getStorageFromAppState(context: context);
+
+      BloqoCourseData courseToDelete = await getCourseFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.courseId
+      );
+      await deleteUserCourseCreated(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.courseId
+      );
+      await deleteCourse(
+          firestore: firestore,
+          storage: storage,
+          localizedText: localizedText,
+          course: courseToDelete
+      );
       if (!context.mounted) return;
       String? courseIdAppState = getEditorCourseFromAppState(context: context)?.id;
       if(courseIdAppState != null && course.courseId == courseIdAppState){

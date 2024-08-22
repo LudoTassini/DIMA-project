@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
@@ -80,8 +81,9 @@ class _MainPageState extends State<MainPage> {
   Future<void> _checkForNotifications({required var localizedText, required String userId}) async {
     if (!mounted) return;
     try {
+      var firestore = getFirestoreFromAppState(context: context);
       List<BloqoNotificationData> notifications = await getNotificationsFromUserId(
-          localizedText: localizedText, userId: userId);
+          firestore: firestore, localizedText: localizedText, userId: userId);
       int newNotificationCount = notifications.length;
       if (mounted) {
         setState(() {

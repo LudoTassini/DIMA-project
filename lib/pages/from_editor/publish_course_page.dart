@@ -454,12 +454,20 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
           rating: 0
       );
 
-      await publishCourse(
-          localizedText: localizedText, publishedCourse: publishedCourse);
+      var firestore = getFirestoreFromAppState(context: context);
 
-      await updateCourseStatus(localizedText: localizedText,
+      await publishCourse(
+          firestore: firestore,
+          localizedText: localizedText,
+          publishedCourse: publishedCourse
+      );
+
+      await updateCourseStatus(
+          firestore: firestore,
+          localizedText: localizedText,
           courseId: userCourseCreated.courseId,
-          published: true);
+          published: true
+      );
 
       if (!context.mounted) return;
 
@@ -474,8 +482,11 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
           courseId: userCourseCreated.courseId,
           published: true);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText,
-          updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       List<dynamic> followerIds = getUserFromAppState(context: context)!.followers;
@@ -488,7 +499,11 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
           courseAuthorId: myself.id,
           courseName: userCourseCreated.courseName
         );
-        await pushNotification(localizedText: localizedText, notification: notification);
+        await pushNotification(
+            firestore: firestore,
+            localizedText: localizedText,
+            notification: notification
+        );
       }
 
       if (!context.mounted) return;

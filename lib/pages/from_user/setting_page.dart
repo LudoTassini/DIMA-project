@@ -3,7 +3,6 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -153,7 +152,6 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
     required List<dynamic> controllers,
   }) async {
     var localizedText = getAppLocalizations(context)!;
-    await checkConnectivity(localizedText: localizedText);
     if (!context.mounted) return;
     try {
       switch (settingType) {
@@ -170,7 +168,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           final bool oldFullNameVisible = user.isFullNameVisible;
 
           if (newFullName != oldFullName || newFullNameVisible != oldFullNameVisible) {
-            var ref = BloqoUserData.getRef();
+            var firestore = getFirestoreFromAppState(context: context);
+            var ref = BloqoUserData.getRef(firestore: firestore);
             var querySnapshot = await ref.where("id", isEqualTo: user.id).get();
 
             if (querySnapshot.docs.isNotEmpty) {

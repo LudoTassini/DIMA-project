@@ -132,13 +132,35 @@ class BloqoEditableBlock extends StatelessWidget {
   Future<void> _tryDeleteBlock({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteBlock(localizedText: localizedText, blockId: block.id, courseId: course.id);
-      await deleteBlockFromSection(localizedText: localizedText, sectionId: section.id, blockId: block.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      var storage = getStorageFromAppState(context: context);
+
+      await deleteBlock(
+          firestore: firestore,
+          storage: storage,
+          localizedText: localizedText,
+          blockId: block.id,
+          courseId: course.id
+      );
+      await deleteBlockFromSection(
+          firestore: firestore,
+          localizedText: localizedText,
+          sectionId: section.id,
+          blockId: block.id
+      );
       if (!context.mounted) return;
       BloqoUserCourseCreatedData updatedUserCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((c) => c.courseId == course.id).first;
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: updatedUserCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: updatedUserCourseCreated
+      );
       if(block.number < section.blocks.length){
-        await reorderBlocks(localizedText: localizedText, blockIds: section.blocks);
+        await reorderBlocks(
+            firestore: firestore,
+            localizedText: localizedText,
+            blockIds: section.blocks
+        );
       }
       if (!context.mounted) return;
       deleteBlockFromEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id, blockId: block.id);

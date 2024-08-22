@@ -201,6 +201,8 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
     try {
 
+      var firestore = getFirestoreFromAppState(context: context);
+
       BloqoReviewData reviewToPublish = BloqoReviewData(
         authorUsername: myself.username,
         authorId: myself.id,
@@ -210,10 +212,15 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
         comment: controllerReview.text,
       );
 
-      await publishReview(localizedText: localizedText, review: reviewToPublish);
+      await publishReview(
+          firestore: firestore,
+          localizedText: localizedText,
+          review: reviewToPublish
+      );
 
       BloqoPublishedCourseData publishedCourse =
       await getPublishedCourseFromPublishedCourseId(
+        firestore: firestore,
         localizedText: localizedText,
         publishedCourseId: widget.courseToReview.publishedCourseId,
       );
@@ -223,9 +230,11 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
       double newRating = 0;
 
       if(reviewsIds.isNotEmpty) {
-        // potrebbero non esserci reviews
         reviews = await getReviewsFromIds(
-            localizedText: localizedText, reviewsIds: reviewsIds);
+            firestore: firestore,
+            localizedText: localizedText,
+            reviewsIds: reviewsIds
+        );
         for (var review in reviews) {
           newRating += review.rating;
         }
@@ -238,6 +247,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
       if (!context.mounted) return;
       await addReviewToPublishedCourse(
+        firestore: firestore,
         localizedText: localizedText,
         reviewId: reviewToPublish.id,
         publishedCourseId: widget.courseToReview.publishedCourseId,
@@ -246,6 +256,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
 
       if (!context.mounted) return;
       await updateUserCourseEnrolledRated(
+          firestore: firestore,
           localizedText: localizedText,
           userId: myself.id,
           publishedCourseId: publishedCourse.publishedCourseId

@@ -129,11 +129,33 @@ class BloqoEditableSection extends StatelessWidget {
   Future<void> _tryDeleteSection({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await deleteSection(localizedText: localizedText, section: section, courseId: course.id);
-      await deleteSectionFromChapter(localizedText: localizedText, chapterId: chapter.id, sectionId: section.id);
-      await deleteSectionFromUserCourseCreated(localizedText: localizedText, courseId: course.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      var storage = getStorageFromAppState(context: context);
+
+      await deleteSection(
+          firestore: firestore,
+          storage: storage,
+          localizedText: localizedText,
+          section: section,
+          courseId: course.id
+      );
+      await deleteSectionFromChapter(
+          firestore: firestore,
+          localizedText: localizedText,
+          chapterId: chapter.id,
+          sectionId: section.id
+      );
+      await deleteSectionFromUserCourseCreated(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.id
+      );
       if(section.number < chapter.sections.length){
-        await reorderSections(localizedText: localizedText, sectionIds: chapter.sections);
+        await reorderSections(
+            firestore: firestore,
+            localizedText: localizedText,
+            sectionIds: chapter.sections
+        );
       }
       if (!context.mounted) return;
       deleteSectionFromEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id);

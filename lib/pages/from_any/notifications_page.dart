@@ -28,6 +28,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
     BloqoUserData user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    var firestore = getFirestoreFromAppState(context: context);
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
@@ -37,7 +38,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
       ),
       body: BloqoMainContainer(
         child: FutureBuilder<List<BloqoNotificationData>>(
-          future: getNotificationsFromUserId(localizedText: localizedText, userId: user.id),
+          future: getNotificationsFromUserId(firestore: firestore, localizedText: localizedText, userId: user.id),
           builder: (BuildContext context, AsyncSnapshot<List<BloqoNotificationData>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(

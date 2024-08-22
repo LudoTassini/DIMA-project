@@ -293,7 +293,13 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
   Future<void> _tryFollow({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await followUser(localizedText: localizedText, userToFollowId: widget.user.id, myUserId: getUserFromAppState(context: context)!.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await followUser(
+          firestore: firestore,
+          localizedText: localizedText,
+          userToFollowId: widget.user.id,
+          myUserId: getUserFromAppState(context: context)!.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       addFollowingToUserAppState(context: context, newFollowing: widget.user.id);
@@ -319,7 +325,13 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
   Future<void> _tryUnfollow({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await unfollowUser(localizedText: localizedText, userToUnfollowId: widget.user.id, myUserId: getUserFromAppState(context: context)!.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await unfollowUser(
+          firestore: firestore,
+          localizedText: localizedText,
+          userToUnfollowId: widget.user.id,
+          myUserId: getUserFromAppState(context: context)!.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       removeFollowingFromUserAppState(context: context, oldFollowing: widget.user.id);

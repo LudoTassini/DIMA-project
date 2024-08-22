@@ -144,20 +144,39 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
     required BloqoPublishedCourseData publishedCourse}) async {
     context.loaderOverlay.show();
     try {
-      BloqoCourseData courseSelected = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
-      List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: courseSelected.chapters);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      BloqoCourseData courseSelected = await getCourseFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: publishedCourse.originalCourseId
+      );
+      List<BloqoChapterData> chapters = await getChaptersFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          chapterIds: courseSelected.chapters
+      );
       Map<String, List<BloqoSectionData>> sections = {};
       for(String chapterId in courseSelected.chapters) {
         List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+            firestore: firestore,
             localizedText: localizedText,
-            sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+            sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections
+        );
         sections[chapterId] = chapterSections;
       }
-      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: courseSelected.authorId);
+      BloqoUserData courseAuthor = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: courseSelected.authorId
+      );
       List<BloqoReviewData> reviews = [];
       if(publishedCourse.reviews.isNotEmpty) {
         reviews = await getReviewsFromIds(
-            localizedText: localizedText, reviewsIds: publishedCourse.reviews);
+            firestore: firestore,
+            localizedText: localizedText,
+            reviewsIds: publishedCourse.reviews
+        );
       }
       if(!context.mounted) return;
       context.loaderOverlay.hide();
