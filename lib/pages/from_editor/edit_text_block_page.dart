@@ -113,6 +113,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                                 keyboardType: TextInputType.multiline,
                                 padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                 isTextArea: true,
+                                isDisabled: !editable,
                               ),
                             ),
                           ],
