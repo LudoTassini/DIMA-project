@@ -8,6 +8,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/quiz/bloqo_open_question_quiz.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -236,6 +237,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
       final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
       final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
 
       // Update sections completed in both the course enrollment and app state
       if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
@@ -286,6 +288,9 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           courseId: course.id,
           enrolledUserId: user.id,
         );
+
+        publishedCourse.numberOfCompletions = publishedCourse.numberOfCompletions + 1;
+        await savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourse);
 
         if (!context.mounted) return;
       }

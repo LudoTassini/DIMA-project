@@ -341,5 +341,6 @@
   "language": "Language",
   "theme": "Theme",
   "purple_orchid": "Purple Orchid",
-  "ocean_cornflower": "Ocean Cornflower"
+  "ocean_cornflower": "Ocean Cornflower",
+  "course_completed": "You already completed the course, so you cannot unsubscribe to it."
 }

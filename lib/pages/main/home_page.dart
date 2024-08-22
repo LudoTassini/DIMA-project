@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       });
     }
 
+    //FIXME: mostra 5 corsi
     void loadMoreCreatedCourses() {
       setState(() {
         _coursesCreatedDisplayed += _coursesToFurtherLoadAtRequest;

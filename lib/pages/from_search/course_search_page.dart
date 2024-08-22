@@ -814,32 +814,53 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     }
   }
 
-  Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText, required String
-    courseId, required String enrolledUserId}) async {
+  Future<void> _tryDeleteUserCourseEnrolled({required BuildContext context, required var localizedText,
+    required String courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
-    try{
+    try {
       List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
-          localizedText: localizedText, courseId: courseId);
-      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
-      if (!context.mounted) return;
-      deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
-      publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
-      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
-      context.loaderOverlay.hide();
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+        localizedText: localizedText,
+        courseId: courseId,
       );
-    }
-    on BloqoException catch (e) {
+      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+
+      if (courseToRemove.isCompleted) {
+        if (!context.mounted) return;
+        context.loaderOverlay.hide();
+        showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: localizedText.course_completed,
+        );
+      } else {
+        await deleteUserCourseEnrolled(
+          localizedText: localizedText,
+          courseId: courseId,
+          enrolledUserId: enrolledUserId,
+        );
+        if (!context.mounted) return;
+
+        deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
+        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
+        savePublishedCourseChanges(
+          localizedText: localizedText,
+          updatedPublishedCourse: publishedCourseToUpdate,
+        );
+
+        context.loaderOverlay.hide();
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+        );
+      }
+    } on BloqoException catch (e) {
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
-          context: context,
-          title: localizedText.error_title,
-          description: e.message
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
       );
     }
   }
