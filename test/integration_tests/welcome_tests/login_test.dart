@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:bloqo/main.dart' as app;
 
-import '../utils/mock_external_services.dart';
+import '../../mocks/mock_external_services.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

@@ -4,6 +4,7 @@ import 'package:bloqo/components/complex/bloqo_user_details_short.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/style/themes/purple_orchid_theme.dart';
 import 'package:bloqo/utils/localization.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -46,6 +47,7 @@ void main() {
                       following: []
                   );
                   saveUserToAppState(context: context, user: user);
+                  updateFirestoreInAppState(context: context, firestore: FakeFirebaseFirestore());
                   return Scaffold(
                     body: BloqoUserDetailsShort(
                       user: user,

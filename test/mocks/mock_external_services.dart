@@ -1,5 +1,11 @@
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/model/courses/tags/bloqo_difficulty_tag.dart';
+import 'package:bloqo/model/courses/tags/bloqo_duration_tag.dart';
+import 'package:bloqo/model/courses/tags/bloqo_language_tag.dart';
+import 'package:bloqo/model/courses/tags/bloqo_modality_tag.dart';
+import 'package:bloqo/model/courses/tags/bloqo_subject_tag.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_enrolled_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +22,7 @@ class MockExternalServices {
   final BloqoUserCourseCreatedData testCourseCreated;
   final BloqoUserCourseEnrolledData testCourseEnrolled;
   final BloqoNotificationData testNotification;
+  final BloqoPublishedCourseData testPublishedCourse;
 
   MockExternalServices()
       : fakeFirestore = FakeFirebaseFirestore(),
@@ -62,6 +69,22 @@ class MockExternalServices {
           privatePublishedCourseId: "test",
           applicantId: "test",
         ),
+        testPublishedCourse = BloqoPublishedCourseData(
+          publishedCourseId: "test",
+          originalCourseId: "test",
+          courseName: "test",
+          authorUsername: "test",
+          authorId: "test",
+          isPublic: true,
+          publicationDate: Timestamp.now(),
+          language: BloqoLanguageTagValue.other.toString(),
+          modality: BloqoModalityTagValue.lessonsOnly.toString(),
+          subject: BloqoSubjectTagValue.other.toString(),
+          difficulty: BloqoDifficultyTagValue.forEveryone.toString(),
+          duration: BloqoDurationTagValue.lessThanOneHour.toString(),
+          reviews: [],
+          rating: 0
+        ),
 
         mockFirebaseAuth = MockFirebaseAuth(
           mockUser: MockUser(
@@ -76,6 +99,7 @@ class MockExternalServices {
     await fakeFirestore.collection('users').doc('test').set(testUser.toFirestore());
     await fakeFirestore.collection('user_course_created').doc('test').set(testCourseCreated.toFirestore());
     await fakeFirestore.collection('user_course_enrolled').doc('test').set(testCourseEnrolled.toFirestore());
+    await fakeFirestore.collection('published_courses').doc('test').set(testPublishedCourse.toFirestore());
     await fakeFirestore.collection('notifications').doc('test').set(testNotification.toFirestore());
   }
 }

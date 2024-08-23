@@ -609,8 +609,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   Future<void> _goToSearchResultsPage({required var localizedText, required BuildContext context}) async {
     context.loaderOverlay.show();
     try {
-      final query = _buildQuery();
       var firestore = getFirestoreFromAppState(context: context);
+      final query = _buildQuery(firestore: firestore);
       List<BloqoPublishedCourseData> coursesFromSearch = await getCoursesFromSearch(
           firestore: firestore, localizedText: localizedText, query: query);
       if(!context.mounted) return;
@@ -630,8 +630,8 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     }
   }
 
-  Query<Map<String, dynamic>>? _buildQuery() {
-    final collection = FirebaseFirestore.instance.collection('published_courses');
+  Query<Map<String, dynamic>>? _buildQuery({required FirebaseFirestore firestore}) {
+    final collection = firestore.collection('published_courses');
     final localizedText = getAppLocalizations(context)!;
     Query<Map<String, dynamic>> query = collection;
 
