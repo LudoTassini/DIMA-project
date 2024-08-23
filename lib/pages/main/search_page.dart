@@ -136,144 +136,309 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                       )
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                    child: Form(
-                      key: formKeyCourseName,
-                      child: BloqoTextField(
-                        formKey: formKeyCourseName,
-                        controller: courseNameController,
-                        labelText: localizedText.course_name,
-                        hintText: localizedText.course_name_hint,
-                        maxInputLength: Constants.maxCourseNameLength,
-                      )
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                    child: Form(
-                      key: formKeyAuthorUsername,
-                      child: BloqoTextField(
-                        formKey: formKeyAuthorUsername,
-                        controller: authorUsernameController,
-                        labelText: localizedText.author_username,
-                        hintText: localizedText.author_username_hint,
-                        maxInputLength: Constants.maxUsernameLength,
-                      )
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                    child: Form(
-                        key: formKeyMinimumPublicationDate,
-                        child: BloqoTextField(
-                          formKey: formKeyMinimumPublicationDate,
-                          controller: minimumPublicationDateController,
-                          labelText: localizedText.minimum_publication_date,
-                          hintText: localizedText.minimum_publication_date_hint,
-                          keyboardType: TextInputType.datetime,
-                          maxInputLength: 10,
-                          onTap: () async {
-                            // Below line stops keyboard from appearing
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            // Show Date Picker Here
-                            DateTime? picked = await _selectDate(localizedText: localizedText);
-                            setState(() {
-                              if(picked == null){
-                                minimumPublicationDateController.text = "";
+
+                  !isTablet ? Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                        child: Form(
+                          key: formKeyCourseName,
+                          child: BloqoTextField(
+                            formKey: formKeyCourseName,
+                            controller: courseNameController,
+                            labelText: localizedText.course_name,
+                            hintText: localizedText.course_name_hint,
+                            maxInputLength: Constants.maxCourseNameLength,
+                          )
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Form(
+                          key: formKeyAuthorUsername,
+                          child: BloqoTextField(
+                            formKey: formKeyAuthorUsername,
+                            controller: authorUsernameController,
+                            labelText: localizedText.author_username,
+                            hintText: localizedText.author_username_hint,
+                            maxInputLength: Constants.maxUsernameLength,
+                          )
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Form(
+                            key: formKeyMinimumPublicationDate,
+                            child: BloqoTextField(
+                              formKey: formKeyMinimumPublicationDate,
+                              controller: minimumPublicationDateController,
+                              labelText: localizedText.minimum_publication_date,
+                              hintText: localizedText.minimum_publication_date_hint,
+                              keyboardType: TextInputType.datetime,
+                              maxInputLength: 10,
+                              onTap: () async {
+                                // Below line stops keyboard from appearing
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                // Show Date Picker Here
+                                DateTime? picked = await _selectDate(localizedText: localizedText);
+                                setState(() {
+                                  if(picked == null){
+                                    minimumPublicationDateController.text = "";
+                                  }
+                                  else{
+                                    minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                                  }
+                                });
                               }
-                              else{
-                                minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                            )
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                        child: Form(
+                            key: formKeyMaximumPublicationDate,
+                            child: BloqoTextField(
+                              formKey: formKeyMaximumPublicationDate,
+                              controller: maximumPublicationDateController,
+                              labelText: localizedText.maximum_publication_date,
+                              hintText: localizedText.maximum_publication_date_hint,
+                              keyboardType: TextInputType.datetime,
+                              maxInputLength: 10,
+                              onTap: () async {
+                                // Below line stops keyboard from appearing
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                // Show Date Picker Here
+                                DateTime? picked = await _selectDate(localizedText: localizedText);
+                                setState(() {
+                                  if(picked == null){
+                                    maximumPublicationDateController.text = "";
+                                  }
+                                  else{
+                                    maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                                  }
+                                });
                               }
-                            });
-                          }
-                        )
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                    child: Form(
-                        key: formKeyMaximumPublicationDate,
-                        child: BloqoTextField(
-                          formKey: formKeyMaximumPublicationDate,
-                          controller: maximumPublicationDateController,
-                          labelText: localizedText.maximum_publication_date,
-                          hintText: localizedText.maximum_publication_date_hint,
-                          keyboardType: TextInputType.datetime,
-                          maxInputLength: 10,
-                          onTap: () async {
-                            // Below line stops keyboard from appearing
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            // Show Date Picker Here
-                            DateTime? picked = await _selectDate(localizedText: localizedText);
-                            setState(() {
-                              if(picked == null){
-                                maximumPublicationDateController.text = "";
-                              }
-                              else{
-                                maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
-                              }
-                            });
-                          }
-                        )
-                    ),
-                  ),
-                  BloqoSeasaltContainer(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                              child: Text(
-                                localizedText.show_public_courses,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: theme.colors.leadingColor,
-                                    fontWeight: FontWeight.w600
+                            )
+                        ),
+                      ),
+                      BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                  child: Text(
+                                    localizedText.show_public_courses,
+                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        color: theme.colors.leadingColor,
+                                        fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              BloqoSwitch(
+                                value: publicCoursesToggle,
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                  child: Text(
+                                    localizedText.show_private_courses,
+                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        color: theme.colors.leadingColor,
+                                        fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              BloqoSwitch(
+                                value: privateCoursesToggle,
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+
+                  : Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5),
+                                child: Form(
+                                  key: formKeyCourseName,
+                                  child: BloqoTextField(
+                                    formKey: formKeyCourseName,
+                                    controller: courseNameController,
+                                    labelText: localizedText.course_name,
+                                    hintText: localizedText.course_name_hint,
+                                    maxInputLength: Constants.maxCourseNameLength,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          BloqoSwitch(
-                            value: publicCoursesToggle,
-                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  BloqoSeasaltContainer(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                              child: Text(
-                                localizedText.show_private_courses,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: theme.colors.leadingColor,
-                                  fontWeight: FontWeight.w600
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Form(
+                                  key: formKeyAuthorUsername,
+                                  child: BloqoTextField(
+                                    formKey: formKeyAuthorUsername,
+                                    controller: authorUsernameController,
+                                    labelText: localizedText.author_username,
+                                    hintText: localizedText.author_username_hint,
+                                    maxInputLength: Constants.maxUsernameLength,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          BloqoSwitch(
-                            value: privateCoursesToggle,
-                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 5, 0),
-                          )
-                        ],
-                      ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5),
+                                child: Form(
+                                  key: formKeyMinimumPublicationDate,
+                                  child: BloqoTextField(
+                                    formKey: formKeyMinimumPublicationDate,
+                                    controller: minimumPublicationDateController,
+                                    labelText: localizedText.minimum_publication_date,
+                                    hintText: localizedText.minimum_publication_date_hint,
+                                    keyboardType: TextInputType.datetime,
+                                    maxInputLength: 10,
+                                    onTap: () async {
+                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      DateTime? picked = await _selectDate(localizedText: localizedText);
+                                      if (picked == null) {
+                                        minimumPublicationDateController.text = "";
+                                      } else {
+                                        minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Form(
+                                  key: formKeyMaximumPublicationDate,
+                                  child: BloqoTextField(
+                                    formKey: formKeyMaximumPublicationDate,
+                                    controller: maximumPublicationDateController,
+                                    labelText: localizedText.maximum_publication_date,
+                                    hintText: localizedText.maximum_publication_date_hint,
+                                    keyboardType: TextInputType.datetime,
+                                    maxInputLength: 10,
+                                    onTap: () async {
+                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      DateTime? picked = await _selectDate(localizedText: localizedText);
+                                      if (picked == null) {
+                                        maximumPublicationDateController.text = "";
+                                      } else {
+                                        maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: BloqoSeasaltContainer(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 15, 0),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                          child: Text(
+                                            localizedText.show_public_courses,
+                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                      ),
+                                      BloqoSwitch(
+                                        value: publicCoursesToggle,
+                                        padding: const EdgeInsetsDirectional.all(0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: BloqoSeasaltContainer(
+                                padding: const EdgeInsetsDirectional.fromSTEB(15, 20, 10, 0),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                                          child: Text(
+                                            localizedText.show_private_courses,
+                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                      ),
+                                      BloqoSwitch(
+                                        value: privateCoursesToggle,
+                                        padding: const EdgeInsetsDirectional.all(0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
+
+
                   BloqoSeasaltContainer(
                       padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                       child: Padding(

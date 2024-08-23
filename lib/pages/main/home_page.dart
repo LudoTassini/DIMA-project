@@ -70,7 +70,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       });
     }
 
-    //FIXME: mostra 5 corsi
     void loadMoreCreatedCourses() {
       setState(() {
         _coursesCreatedDisplayed += _coursesToFurtherLoadAtRequest;
@@ -273,7 +272,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: List.generate(
-                            userCoursesCreated.length,
+                            _coursesCreatedDisplayed > userCoursesCreated.length ? userCoursesCreated.length : _coursesCreatedDisplayed,
                                 (index) {
                               BloqoUserCourseCreatedData? course = userCoursesCreated[index];
                               return BloqoCourseCreated(
