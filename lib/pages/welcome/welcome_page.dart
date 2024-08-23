@@ -203,6 +203,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
       List<BloqoUserCourseEnrolledData> userCoursesEnrolled = await getUserCoursesEnrolled(
           firestore: firestore, localizedText: localizedText, user: user);
+
       List<BloqoUserCourseCreatedData> userCoursesCreated = await getUserCoursesCreated(
           firestore: firestore, localizedText: localizedText, user: user);
 
