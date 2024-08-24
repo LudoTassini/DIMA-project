@@ -69,17 +69,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                         aspectRatio: 1.0,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: url != null
-                              ? FadeInImage.assetNetwork(
-                            placeholder: "assets/images/portrait_placeholder.png",
-                            image: url,
-                            fit: BoxFit.cover,
-                            placeholderFit: BoxFit.cover,
-                          )
-                              : Image.asset(
-                            "assets/images/portrait_placeholder.png",
-                            fit: BoxFit.cover,
-                          ),
+                          child: _getProfilePicture(context: context, url: url)
                         ),
                       ),
                       Align(
@@ -352,6 +342,26 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
         description: e.message,
       );
     }
+  }
+
+  Widget _getProfilePicture({required BuildContext context, required String? url}){
+    if(getFromTestFromAppState(context: context) && url == "assets/tests/test.png"){
+      return Image.asset(
+        "assets/tests/test.png",
+        fit: BoxFit.cover,
+      );
+    }
+    return url != null
+        ? FadeInImage.assetNetwork(
+      placeholder: "assets/images/portrait_placeholder.png",
+      image: url,
+      fit: BoxFit.cover,
+      placeholderFit: BoxFit.cover,
+    )
+        : Image.asset(
+      "assets/images/portrait_placeholder.png",
+      fit: BoxFit.cover,
+    );
   }
 
 }

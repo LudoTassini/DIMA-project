@@ -267,7 +267,10 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     try{
       var auth = getAuthFromAppState(context: context);
       await logout(auth: auth, localizedText: localizedText);
-      await deleteUserSharedPreferences();
+      if(!context.mounted) return;
+      if(!getFromTestFromAppState(context: context)) {
+        await deleteUserSharedPreferences();
+      }
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       Phoenix.rebirth(context);
@@ -286,6 +289,9 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   bool get wantKeepAlive => true;
 
   Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String userId}) async {
+    if(getFromTestFromAppState(context: context)){
+      return 'assets/tests/test.png';
+    }
     PermissionStatus permissionStatus = await requestPhotoLibraryPermission();
     if(permissionStatus.isGranted) {
       final pickedFile = await ImagePicker().pickImage(

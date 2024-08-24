@@ -108,6 +108,9 @@ flutter:
      - assets/images/bloqo_logo_partial.png
      - assets/images/bloqo_splashscreen.png
      - assets/images/portrait_placeholder.png
+     - assets/tests/test.png
+     - assets/tests/test.mov
+     - assets/tests/test.wav
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

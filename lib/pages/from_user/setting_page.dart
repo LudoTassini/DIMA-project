@@ -206,8 +206,10 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           List<DropdownMenuEntry<String>> themes = buildThemesList(localizedText: localizedText);
           String newTheme = themes.firstWhere((th) => th.label == themeChoice).value;
 
-          saveLanguageCode(newLanguageCode: newLanguageCode);
-          saveAppTheme(newTheme: newTheme);
+          if(!getFromTestFromAppState(context: context)) {
+            saveLanguageCode(newLanguageCode: newLanguageCode);
+            saveAppTheme(newTheme: newTheme);
+          }
 
           updateLanguageInAppState(context: context, newLanguageCode: newLanguageCode);
           updateAppThemeInAppState(context: context, newTheme: getAppThemeBasedOnStringType(stringType: newTheme));

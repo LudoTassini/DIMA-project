@@ -1,6 +1,7 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/complex/bloqo_search_result_course.dart';
+import 'package:bloqo/components/complex/bloqo_user_details.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/utils/bloqo_external_services.dart';
@@ -130,7 +131,7 @@ void main() {
     await binding.setSurfaceSize(null);
   });
 
-  testWidgets('Users can search courses, select one and enroll in it', (WidgetTester tester) async {
+  testWidgets('Users can search courses, select one and enroll in it test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
     MockExternalServices mockExternalServices = MockExternalServices();
@@ -175,7 +176,51 @@ void main() {
     await binding.setSurfaceSize(null);
   });
 
-  testWidgets('Users can search courses, select one in which they are enrolled and unsubscribe from it', (WidgetTester tester) async {
+  testWidgets('Users can search courses, select one and view the courses made by the same author test', (WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    MockExternalServices mockExternalServices = MockExternalServices();
+    await mockExternalServices.prepare();
+
+    await app.main(externalServices: BloqoExternalServices(
+        firestore: mockExternalServices.fakeFirestore,
+        auth: mockExternalServices.mockFirebaseAuth,
+        storage: mockExternalServices.mockFirebaseStorage
+    ));
+    await tester.pumpAndSettle();
+
+    // Enter email and password
+    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
+    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
+    await tester.pumpAndSettle();
+
+    // Tap the login button
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Search"));
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoSearchResultCourse), findsAtLeast(1));
+
+    await tester.tap(find.byType(BloqoSearchResultCourse).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RatingBarIndicator), findsAtLeast(2));
+
+    await tester.tap(find.byType(BloqoTextButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoUserDetails), findsOne);
+    expect(find.byType(BloqoSearchResultCourse), findsAtLeast(1));
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can search courses, select one in which they are enrolled and unsubscribe from it test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
     MockExternalServices mockExternalServices = MockExternalServices();
@@ -223,7 +268,7 @@ void main() {
     await binding.setSurfaceSize(null);
   });
 
-  testWidgets('Users can search courses, select a private one and ask for enrollment', (WidgetTester tester) async {
+  testWidgets('Users can search courses, select a private one and ask for enrollment test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
     MockExternalServices mockExternalServices = MockExternalServices();
@@ -272,9 +317,15 @@ void main() {
 
     expect(find.text("Request Access"), findsOne);
 
+    expect(find.byType(SnackBar), findsOne);
+
     await tester.runAsync(() async {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 3));
     });
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsNothing);
 
     await tester.tap(find.byType(BloqoFilledButton));
     await tester.pumpAndSettle();
