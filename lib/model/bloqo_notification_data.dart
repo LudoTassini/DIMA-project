@@ -65,6 +65,7 @@ class BloqoNotificationData{
       "applicant_id": applicantId,
       "private_course_name": privateCourseName,
       "private_course_author_username": privateCourseAuthorId,
+      "private_course_author_id": privateCourseAuthorId,
       "course_author_id": courseAuthorId,
       "course_name": courseName
     };

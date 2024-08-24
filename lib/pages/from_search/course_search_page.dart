@@ -254,7 +254,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
                           child: Align(
                             alignment: Alignment.topLeft,
-                            child: widget.course.description != ''
+                            child: widget.course.description != null && widget.course.description != ''
                                 ? Text(
                               widget.course.description!,
                               style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -342,7 +342,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                                         Padding(
                                           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                                          child: chapter.description != ''
+                                          child: chapter.description != null && chapter.description != ''
                                               ? Padding(
                                             padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
                                             child: Row(

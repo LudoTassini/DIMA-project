@@ -26,7 +26,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   int _selectedPageIndex = 0;
   late PageController _pageController;
   final ValueNotifier<bool> _canPopNotifier = ValueNotifier(false);
@@ -68,6 +67,9 @@ class _MainPageState extends State<MainPage> {
     var localizedText = getAppLocalizations(context)!;
     BloqoUserData myself = getUserFromAppState(context: context)!;
 
+    _firstNotificationTimer?.cancel();
+    _notificationTimer?.cancel();
+
     _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
       await _checkForNotifications(localizedText: localizedText, userId: myself.id);
     });
@@ -91,6 +93,7 @@ class _MainPageState extends State<MainPage> {
         });
       }
     } catch (_) {
+      // Handle error if necessary
     }
   }
 
@@ -118,7 +121,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _updateCanPop() {
-    if(context.mounted) {
+    if (context.mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _canPopNotifier.value =
             _navigatorKeys[_selectedPageIndex].currentState?.canPop() ?? false;
@@ -135,12 +138,19 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void didUpdateWidget(MainPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     late String title;
     if (!context.mounted) return const Text("Error");
+    BloqoUserData myself = getUserFromAppState(context: context)!;
+    var localizedText = getAppLocalizations(context)!;
     switch (_selectedPageIndex) {
       case 0:
-        title = "${AppLocalizations.of(context)!.home_page_title}, ${getUserFromAppState(context: context)!.username}!";
+        title = "${AppLocalizations.of(context)!.home_page_title}, ${myself.username}!";
         break;
       case 1:
         title = AppLocalizations.of(context)!.learn_page_title;
@@ -159,43 +169,34 @@ class _MainPageState extends State<MainPage> {
         break;
     }
 
-    var localizedText = getAppLocalizations(context)!;
-
-    BloqoUserData myself = getUserFromAppState(context: context)!;
-
-    _firstNotificationTimer = Timer(const Duration(seconds: 0), () async {
-      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
-    });
-
-    _notificationTimer = Timer.periodic(
-        const Duration(seconds: Constants.notificationCheckSeconds), (timer) async {
-      await _checkForNotifications(localizedText: localizedText, userId: myself.id);
-    });
-
     return ValueListenableBuilder<bool>(
       valueListenable: _canPopNotifier,
       builder: (context, canPop, child) {
         return Scaffold(
           appBar: BloqoAppBar.get(
-            context: context,
-            title: title,
-            canPop: canPop,
-            onPop: canPop
-                ? () {
-              _navigatorKeys[_selectedPageIndex]
-                  .currentState
-                  ?.pop();
-              _updateCanPop();
-            }
-                : null,
-            onNotificationIconPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const NotificationsPage(),
-                ),
-              );
-            },
-            notificationCount: notificationCount
+              context: context,
+              title: title,
+              canPop: canPop,
+              onPop: canPop
+                  ? () {
+                _navigatorKeys[_selectedPageIndex].currentState?.pop();
+                _updateCanPop();
+              }
+                  : null,
+              onNotificationIconPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => NotificationsPage(
+                      onNotificationRemoved: () {
+                        WidgetsBinding.instance.addPostFrameCallback((_) async {
+                          await _checkForNotifications(localizedText: localizedText, userId: myself.id);
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+              notificationCount: notificationCount
           ),
           bottomNavigationBar: BloqoNavBar(
             currentIndex: _selectedPageIndex,
@@ -236,7 +237,6 @@ class _MainPageState extends State<MainPage> {
       ],
     );
   }
-
 }
 
 class NavigatorObserverWithNotifier extends NavigatorObserver {
@@ -244,27 +244,33 @@ class NavigatorObserverWithNotifier extends NavigatorObserver {
 
   NavigatorObserverWithNotifier(this.canPopNotifier);
 
+  void _updateCanPopState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      canPopNotifier.value = navigator?.canPop() ?? false;
+    });
+  }
+
   @override
   void didPop(Route route, Route? previousRoute) {
-    canPopNotifier.value = navigator?.canPop() ?? false;
+    _updateCanPopState();
     super.didPop(route, previousRoute);
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    canPopNotifier.value = navigator?.canPop() ?? false;
+    _updateCanPopState();
     super.didPush(route, previousRoute);
   }
 
   @override
   void didRemove(Route route, Route? previousRoute) {
-    canPopNotifier.value = navigator?.canPop() ?? false;
+    _updateCanPopState();
     super.didRemove(route, previousRoute);
   }
 
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
-    canPopNotifier.value = navigator?.canPop() ?? false;
+    _updateCanPopState();
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 }

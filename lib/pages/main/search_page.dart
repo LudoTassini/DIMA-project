@@ -179,7 +179,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               minimumPublicationDateController.text = "";
                             }
                             else{
-                              minimumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                              minimumPublicationDateController.text = DateFormat("dd/MM/yyyy").format(picked);
                             }
                           });
                         }
@@ -207,7 +207,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                               maximumPublicationDateController.text = "";
                             }
                             else{
-                              maximumPublicationDateController.text = DateFormat("yyyy/MM/dd").format(picked);
+                              maximumPublicationDateController.text = DateFormat("dd/MM/yyyy").format(picked);
                             }
                           });
                         }
@@ -669,11 +669,11 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     }
 
     if (minimumPublicationDateController.text.isNotEmpty) {
-      DateTime minDate = DateFormat("yyyy/MM/dd").parse(minimumPublicationDateController.text);
+      DateTime minDate = DateFormat('dd/MM/yyyy').parse(minimumPublicationDateController.text);
       query = query.where('publication_date', isGreaterThanOrEqualTo: minDate);
     }
     if (maximumPublicationDateController.text.isNotEmpty) {
-      DateTime maxDate = DateFormat("yyyy/MM/dd").parse(maximumPublicationDateController.text);
+      DateTime maxDate = DateFormat('dd/MM/yyyy').parse(maximumPublicationDateController.text);
       query = query.where('publication_date', isLessThanOrEqualTo: maxDate);
     }
 

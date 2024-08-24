@@ -1,5 +1,4 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
-import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 

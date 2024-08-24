@@ -46,7 +46,7 @@ void main() {
     expect(find.byIcon(Icons.arrow_back), findsOne);
 
     await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
