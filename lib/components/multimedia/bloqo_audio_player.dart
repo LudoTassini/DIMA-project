@@ -26,7 +26,11 @@ class _BloqoAudioPlayerState extends State<BloqoAudioPlayer> {
   @override
   void initState() {
     super.initState();
+    if(widget.url.startsWith("assets")){
+      return;
+    }
     _audioPlayer = AudioPlayer();
+
     _audioPlayer.setSource(UrlSource(widget.url));
 
     // Listen for completion event
@@ -39,7 +43,9 @@ class _BloqoAudioPlayerState extends State<BloqoAudioPlayer> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    if(!widget.url.startsWith("assets")){
+      _audioPlayer.dispose();
+    }
     super.dispose();
   }
 

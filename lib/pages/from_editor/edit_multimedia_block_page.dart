@@ -439,7 +439,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(20),
-                                    child: Image.network(widget.block.content),
+                                    child: _getImage(url: widget.block.content)
                                   ),
                                   if(editable)
                                     Padding(
@@ -492,7 +492,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                               ),
                               !widget.block.content.startsWith("yt:") ? BloqoVideoPlayer(
                                 url: widget.block.content
-                              ) : BloqoYouTubePlayer(url: widget.block.content.substring(3)),
+                              ) : BloqoYouTubePlayer(url: _getYouTubeUrl(str: widget.block.content)),
                               if(editable)
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
@@ -663,6 +663,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
     required String courseId,
     required String blockId,
   }) async {
+
+    if(getFromTestFromAppState(context: context)){
+      return "assets/tests/test.wav";
+    }
+
     final pickedFileResult = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3', 'wav', 'm4a'],
@@ -713,6 +718,10 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
   }
 
   Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String courseId, required String blockId}) async {
+    if(getFromTestFromAppState(context: context)){
+      return "assets/tests/test.png";
+    }
+
     PermissionStatus permissionStatus = await Permission.photos.request();
 
     if (permissionStatus.isGranted) {
@@ -759,6 +768,11 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
   }
 
   Future<String?> _askUserForAVideo({required BuildContext context, required var localizedText, required String courseId, required String blockId}) async {
+
+    if(getFromTestFromAppState(context: context)){
+      return "assets/tests/test.mov";
+    }
+
     PermissionStatus permissionStatus = await Permission.photos.request();
 
     if (permissionStatus.isGranted) {
@@ -819,7 +833,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           blockId: block.id
       );
 
-      block.content = videoUrl;
+      block.content = "yt:$videoUrl";
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.multimediaVideo);
       block.type = BloqoBlockType.multimediaVideo.toString();
 
@@ -848,6 +862,21 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
         title: localizedText.error_title,
         description: e.message,
       );
+    }
+  }
+
+  Widget _getImage({required String url}){
+    return url == "assets/tests/test.png" ?
+      Image.asset(url) :
+      Image.network(widget.block.content);
+  }
+
+  String _getYouTubeUrl({required String str}){
+    if(str.startsWith("yt:")){
+      return str.substring(3);
+    }
+    else{
+      return str;
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -22,16 +23,24 @@ class _BloqoVideoPlayerState extends State<BloqoVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    videoPlayerController.initialize().then((_) {
-      setState(() {}); // Ensures the widget rebuilds once the video is initialized
-    });
+    if(widget.url.startsWith("assets")){
+      videoPlayerController = VideoPlayerController.asset(widget.url);
+    }
+    else {
+      videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      videoPlayerController.initialize().then((_) {
+        setState(() {}); // Ensures the widget rebuilds once the video is initialized
+      });
+    }
     videoPlayerController.setLooping(true);
   }
 
   @override
   void dispose() {
-    videoPlayerController.dispose();
+    if(!widget.url.startsWith("assets")) {
+      videoPlayerController.dispose();
+    }
     super.dispose();
   }
 
@@ -39,10 +48,14 @@ class _BloqoVideoPlayerState extends State<BloqoVideoPlayer> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        var theme = getAppThemeFromAppState(context: context);
+
         if (!videoPlayerController.value.isInitialized) {
-          return const Padding(
-              padding: EdgeInsets.all(20),
-              child: Center(child: CircularProgressIndicator())
+          return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(child: CircularProgressIndicator(
+                color: theme.colors.leadingColor
+              ))
           );
         }
 

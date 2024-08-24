@@ -61,7 +61,12 @@ class BloqoPopupMenuFilledButton extends StatelessWidget {
                 child: BloqoFilledButton(
                   color: colors[index],
                   text: texts[index],
-                  onPressed: onPressedList[index],
+                  onPressed: () {
+                    // Close the menu
+                    Navigator.pop(context);
+                    // Call the original onPressed function
+                    onPressedList[index]();
+                  },
                   icon: icons?[index],
                 ),
               ),
