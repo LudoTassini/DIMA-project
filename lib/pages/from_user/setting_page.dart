@@ -4,7 +4,6 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/check_device.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -162,7 +161,6 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
     required List<dynamic> controllers,
   }) async {
     var localizedText = getAppLocalizations(context)!;
-    await checkConnectivity(localizedText: localizedText);
     if (!context.mounted) return;
     try {
       switch (settingType) {
@@ -179,7 +177,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           final bool oldFullNameVisible = user.isFullNameVisible;
 
           if (newFullName != oldFullName || newFullNameVisible != oldFullNameVisible) {
-            var ref = BloqoUserData.getRef();
+            var firestore = getFirestoreFromAppState(context: context);
+            var ref = BloqoUserData.getRef(firestore: firestore);
             var querySnapshot = await ref.where("id", isEqualTo: user.id).get();
 
             if (querySnapshot.docs.isNotEmpty) {
@@ -216,8 +215,10 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
           List<DropdownMenuEntry<String>> themes = buildThemesList(localizedText: localizedText);
           String newTheme = themes.firstWhere((th) => th.label == themeChoice).value;
 
-          saveLanguageCode(newLanguageCode: newLanguageCode);
-          saveAppTheme(newTheme: newTheme);
+          if(!getFromTestFromAppState(context: context)) {
+            saveLanguageCode(newLanguageCode: newLanguageCode);
+            saveAppTheme(newTheme: newTheme);
+          }
 
           updateLanguageInAppState(context: context, newLanguageCode: newLanguageCode);
           updateAppThemeInAppState(context: context, newTheme: getAppThemeBasedOnStringType(stringType: newTheme));

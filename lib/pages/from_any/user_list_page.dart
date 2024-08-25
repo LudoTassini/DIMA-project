@@ -45,11 +45,13 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
       });
     }
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     return BloqoMainContainer(
       child: FutureBuilder(
         future: widget.followers
-            ? getUsersFromUserIds(localizedText: localizedText, userIds: widget.reference.followers)
-            : getUsersFromUserIds(localizedText: localizedText, userIds: widget.reference.following),
+            ? getUsersFromUserIds(firestore: firestore, localizedText: localizedText, userIds: widget.reference.followers)
+            : getUsersFromUserIds(firestore: firestore, localizedText: localizedText, userIds: widget.reference.following),
         builder: (BuildContext context, AsyncSnapshot<List<BloqoUserData>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(

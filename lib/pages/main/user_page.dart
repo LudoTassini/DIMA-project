@@ -267,8 +267,12 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   Future<void> _tryLogout({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await logout(localizedText: localizedText);
-      await deleteUserSharedPreferences();
+      var auth = getAuthFromAppState(context: context);
+      await logout(auth: auth, localizedText: localizedText);
+      if(!context.mounted) return;
+      if(!getFromTestFromAppState(context: context)) {
+        await deleteUserSharedPreferences();
+      }
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       Phoenix.rebirth(context);
@@ -287,16 +291,23 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
   bool get wantKeepAlive => true;
 
   Future<String?> _askUserForAnImage({required BuildContext context, required var localizedText, required String userId}) async {
+    if(getFromTestFromAppState(context: context)){
+      return 'assets/tests/test.png';
+    }
     PermissionStatus permissionStatus = await requestPhotoLibraryPermission();
     if(permissionStatus.isGranted) {
       final pickedFile = await ImagePicker().pickImage(
           source: ImageSource.gallery);
       if (pickedFile != null) {
         if(!context.mounted) return null;
+        var firestore = getFirestoreFromAppState(context: context);
+        var storage = getStorageFromAppState(context: context);
         context.loaderOverlay.show();
         try {
           final image = File(pickedFile.path);
           final url = await uploadProfilePicture(
+              firestore: firestore,
+              storage: storage,
               localizedText: localizedText,
               image: image,
               userId: userId

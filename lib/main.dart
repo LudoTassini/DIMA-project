@@ -10,8 +10,12 @@ import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/style/themes/bloqo_theme.dart';
 import 'package:bloqo/style/themes/purple_orchid_theme.dart';
 import 'package:bloqo/utils/auth.dart';
+import 'package:bloqo/utils/bloqo_external_services.dart';
 import 'package:bloqo/utils/bloqo_startup_information.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,7 +32,7 @@ import 'app_state/user_courses_created_app_state.dart';
 import 'app_state/user_courses_enrolled_app_state.dart';
 import 'utils/firebase_options.dart';
 
-Future<void> main() async {
+Future<void> main({BloqoExternalServices? externalServices}) async {
   // Ensure WidgetsFlutterBinding is initialized before changing some preferences
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -41,10 +45,22 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Initialize Firebase app
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  bool fromTest = false;
+
+  // Initialize Firebase app only if no firestore instance is passed
+  if (externalServices == null) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    externalServices = BloqoExternalServices(
+        firestore: FirebaseFirestore.instance,
+        auth: FirebaseAuth.instance,
+        storage: FirebaseStorage.instance
+    );
+  }
+  else{
+    fromTest = true;
+  }
 
   // Run app
   runApp(
@@ -58,7 +74,7 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => UserCoursesEnrolledAppState()),
           ChangeNotifierProvider(create: (_) => UserCoursesCreatedAppState()),
         ],
-        child: const BloqoApp(),
+        child: BloqoApp(fromTest: fromTest, externalServices: externalServices),
       ),
     )
   );
@@ -67,7 +83,12 @@ Future<void> main() async {
 class BloqoApp extends StatefulWidget {
   const BloqoApp({
     super.key,
+    required this.fromTest,
+    required this.externalServices,
   });
+
+  final bool fromTest;
+  final BloqoExternalServices externalServices;
 
   @override
   State<BloqoApp> createState() => _BloqoAppState();
@@ -84,6 +105,14 @@ class _BloqoAppState extends State<BloqoApp> {
   }
 
   Future<void> _initializeApp() async {
+
+    if(widget.fromTest) {
+      updateFromTestInAppState(context: context);
+    }
+    updateFirestoreInAppState(context: context, firestore: widget.externalServices.firestore);
+    updateAuthInAppState(context: context, auth: widget.externalServices.auth);
+    updateStorageInAppState(context: context, storage: widget.externalServices.storage);
+
     final startupInfo = await _getStartupInformation(context: context);
     if (!mounted) return;
 
@@ -100,6 +129,7 @@ class _BloqoAppState extends State<BloqoApp> {
       saveUserCoursesEnrolledToAppState(context: context, courses: startupInfo.userCoursesEnrolled!);
       saveUserCoursesCreatedToAppState(context: context, courses: startupInfo.userCoursesCreated!);
     }
+
   }
 
   @override
@@ -221,6 +251,10 @@ class _BloqoAppState extends State<BloqoApp> {
   }
 
   Future<bool> _checkIfUserIsLoggedIn() async {
+    if(widget.fromTest){
+      return false;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(sharedLogged) ?? false) {
       try {
@@ -237,6 +271,10 @@ class _BloqoAppState extends State<BloqoApp> {
   }
 
   Future<Locale> _getInitLanguage({required BuildContext context}) async {
+    if(widget.fromTest){
+      return const Locale('en');
+    }
+
     Locale? savedLocale = await readLanguageCode();
     if (savedLocale != null) {
       return savedLocale;
@@ -253,6 +291,9 @@ class _BloqoAppState extends State<BloqoApp> {
   }
 
   Future<BloqoAppTheme> _getInitTheme({required BuildContext context}) async {
+    if(widget.fromTest){
+      return PurpleOrchidTheme();
+    }
     String? savedTheme = await readAppTheme();
     if (savedTheme != null) {
       return getAppThemeBasedOnStringType(stringType: savedTheme);

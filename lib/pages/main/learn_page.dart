@@ -81,8 +81,9 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       String? sectionToCompleteId = userCourseEnrolled?.sectionToComplete;
       bool isCourseCompleted = userCourseEnrolled!.isCompleted;
       BloqoSectionData? sectionToComplete;
+      var firestore = getFirestoreFromAppState(context: context);
       if(!isCourseCompleted) {
-        sectionToComplete = await getSectionFromId(localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
+        sectionToComplete = await getSectionFromId(firestore: firestore, localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
       }
       if (course != null && !isCourseCompleted) {
         widget.onPush(
@@ -438,9 +439,12 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       bool isCourseCompleted = userCourseEnrolled.isCompleted;
       BloqoSectionData? sectionToComplete;
 
+      var firestore = getFirestoreFromAppState(context: context);
+
       // Fetch the sectionToComplete if the course is not completed
       if (!isCourseCompleted && sectionToCompleteId != null) {
         sectionToComplete = await getSectionFromId(
+          firestore: firestore,
           localizedText: localizedText,
           sectionId: sectionToCompleteId,
         );
@@ -448,7 +452,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
         // Navigate to the course content page if the learnCourse is already set
-
+        context.loaderOverlay.hide();
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
@@ -461,16 +465,19 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       else {
         // Load the course data and navigate to the course content page
         BloqoCourseData course = await getCourseFromId(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: userCourseEnrolled.courseId,
         );
         List<BloqoChapterData> chapters = await getChaptersFromIds(
+          firestore: firestore,
           localizedText: localizedText,
           chapterIds: course.chapters,
         );
         Map<String, List<BloqoSectionData>> sections = {};
         for (String chapterId in course.chapters) {
           List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+            firestore: firestore,
             localizedText: localizedText,
             sectionIds: chapters.firstWhere((chapter) => chapter.id == chapterId).sections,
           );

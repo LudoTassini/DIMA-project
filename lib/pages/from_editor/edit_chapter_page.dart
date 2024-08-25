@@ -268,7 +268,13 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   Future<void> _addSection({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required List<BloqoSectionData> sections}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoSectionData section = await saveNewSection(localizedText: localizedText, sectionNumber: chapter.sections.length + 1);
+    var firestore = getFirestoreFromAppState(context: context);
+
+    BloqoSectionData section = await saveNewSection(
+        firestore: firestore,
+        localizedText: localizedText,
+        sectionNumber: chapter.sections.length + 1
+    );
 
     if(!context.mounted) return;
     addSectionToEditorCourseAppState(context: context, chapterId: chapter.id, section: section);
@@ -278,6 +284,7 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     await saveUserCourseCreatedChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedUserCourseCreated: updatedUserCourseCreated
     );
@@ -294,7 +301,10 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     }
     chapter.description = chapterDescriptionController.text;
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     await saveChapterChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedChapter: chapter
     );

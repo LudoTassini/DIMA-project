@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
+import 'package:bloqo/components/custom/bloqo_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/application_settings_app_state.dart';
@@ -196,9 +197,25 @@ class BloqoCourseCreated extends StatelessWidget {
   Future<void> _tryDeleteCourse({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      BloqoCourseData courseToDelete = await getCourseFromId(localizedText: localizedText, courseId: course.courseId);
-      await deleteUserCourseCreated(localizedText: localizedText, courseId: course.courseId);
-      await deleteCourse(localizedText: localizedText, course: courseToDelete);
+      var firestore = getFirestoreFromAppState(context: context);
+      var storage = getStorageFromAppState(context: context);
+
+      BloqoCourseData courseToDelete = await getCourseFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.courseId
+      );
+      await deleteUserCourseCreated(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: course.courseId
+      );
+      await deleteCourse(
+          firestore: firestore,
+          storage: storage,
+          localizedText: localizedText,
+          course: courseToDelete
+      );
       if (!context.mounted) return;
       String? courseIdAppState = getEditorCourseFromAppState(context: context)?.id;
       if(courseIdAppState != null && course.courseId == courseIdAppState){
@@ -206,6 +223,7 @@ class BloqoCourseCreated extends StatelessWidget {
       }
       deleteUserCourseCreatedFromAppState(context: context, userCourseCreated: course);
       context.loaderOverlay.hide();
+      showBloqoSnackBar(context: context, text: localizedText.done);
     }
     on BloqoException catch (e) {
       if (!context.mounted) return;

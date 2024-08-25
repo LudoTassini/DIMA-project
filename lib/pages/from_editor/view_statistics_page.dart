@@ -342,8 +342,18 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
   Future<void> _tryGoToProfilePage({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      BloqoUserData author = await getUserFromId(localizedText: localizedText, id: widget.publishedCourse.authorId);
-      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: author.id);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      BloqoUserData author = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: widget.publishedCourse.authorId
+      );
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(
+          firestore: firestore,
+          localizedText: localizedText,
+          authorId: author.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(

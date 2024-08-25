@@ -34,8 +34,9 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
     return BloqoSeasaltContainer(
       child: FutureBuilder<BloqoUserData?>(
         future: _getRequiredData(
-            localizedText: localizedText,
-            courseAuthorId: widget.notification.courseAuthorId!
+          context: context,
+          localizedText: localizedText,
+          courseAuthorId: widget.notification.courseAuthorId!
         ),
         builder: (BuildContext context, AsyncSnapshot<BloqoUserData?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -159,11 +160,17 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
   }
 
   Future<BloqoUserData?> _getRequiredData({
+    required BuildContext context,
     required var localizedText,
     required String courseAuthorId,
   }) async {
     try {
-      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: courseAuthorId);
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoUserData courseAuthor = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: courseAuthorId
+      );
       return courseAuthor;
     } on Exception catch (_) {
       return null;
@@ -176,7 +183,12 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
   }) async {
     context.loaderOverlay.show();
     try{
-      await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await deleteNotification(
+          firestore: firestore,
+          localizedText: localizedText,
+          notificationId: widget.notification.id
+      );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onNotificationHandled();

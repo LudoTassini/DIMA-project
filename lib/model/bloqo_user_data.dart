@@ -1,4 +1,3 @@
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -56,9 +55,8 @@ class BloqoUserData{
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("users").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("users").withConverter(
       fromFirestore: BloqoUserData.fromFirestore,
       toFirestore: (BloqoUserData user, _) => user.toFirestore(),
     );
@@ -66,11 +64,11 @@ class BloqoUserData{
 
 }
 
-Future<void> registerNewUser({required var localizedText, required BloqoUserData user, required String password}) async {
+Future<void> registerNewUser({required FirebaseFirestore firestore, required FirebaseAuth auth, required var localizedText, required BloqoUserData user, required String password}) async {
   try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    await auth.createUserWithEmailAndPassword(
         email: user.email, password: password);
-    var ref = BloqoUserData.getRef();
+    var ref = BloqoUserData.getRef(firestore: firestore);
     await ref.doc().set(user);
   } on FirebaseAuthException catch (e) {
     switch(e.code){
@@ -82,47 +80,38 @@ Future<void> registerNewUser({required var localizedText, required BloqoUserData
         throw BloqoException(message: localizedText.register_error);
     }
   }
+  on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
+  }
 }
 
-Future<BloqoUserData> getUserFromEmail({required var localizedText, required String email}) async {
+Future<BloqoUserData> getUserFromEmail({required FirebaseFirestore firestore, required var localizedText, required String email}) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("email", isEqualTo: email).get();
     BloqoUserData user = querySnapshot.docs.first.data();
     return user;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<List<BloqoUserData>> getUsersFromUserIds({required var localizedText, required List<dynamic> userIds}) async {
+Future<List<BloqoUserData>> getUsersFromUserIds({required FirebaseFirestore firestore, required var localizedText, required List<dynamic> userIds}) async {
   try {
     List<BloqoUserData> users = [];
     for(String userId in userIds){
-      BloqoUserData user = await getUserFromId(localizedText: localizedText, id: userId);
+      BloqoUserData user = await getUserFromId(firestore: firestore, localizedText: localizedText, id: userId);
       users.add(user);
     }
     return users;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> followUser({required var localizedText, required String userToFollowId, required String myUserId}) async {
+Future<void> followUser({required FirebaseFirestore firestore, required var localizedText, required String userToFollowId, required String myUserId}) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: userToFollowId).get();
     BloqoUserData userToFollow = querySnapshot.docs.first.data();
     userToFollow.followers.add(myUserId);
@@ -131,20 +120,14 @@ Future<void> followUser({required var localizedText, required String userToFollo
     BloqoUserData myself = querySnapshot.docs.first.data();
     myself.following.add(userToFollowId);
     await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> unfollowUser({required var localizedText, required String userToUnfollowId, required String myUserId}) async {
+Future<void> unfollowUser({required FirebaseFirestore firestore, required var localizedText, required String userToUnfollowId, required String myUserId}) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: userToUnfollowId).get();
     BloqoUserData userToUnfollow = querySnapshot.docs.first.data();
     userToUnfollow.followers.remove(myUserId);
@@ -153,24 +136,19 @@ Future<void> unfollowUser({required var localizedText, required String userToUnf
     BloqoUserData myself = querySnapshot.docs.first.data();
     myself.following.remove(userToUnfollowId);
     await ref.doc(querySnapshot.docs.first.id).update(myself.toFirestore());
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveProfilePictureUrl({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String userId,
   required String pictureUrl,
 }) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: userId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -180,20 +158,15 @@ Future<void> saveProfilePictureUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 
-Future<bool> isUsernameAlreadyTaken({required var localizedText, required String username}) async {
+Future<bool> isUsernameAlreadyTaken({required FirebaseFirestore firestore, required var localizedText, required String username}) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("username", isEqualTo: username).get();
     if (querySnapshot.docs.length != 0) {
       return true;
@@ -201,35 +174,24 @@ Future<bool> isUsernameAlreadyTaken({required var localizedText, required String
     else {
       return false;
     }
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<BloqoUserData> getUserFromId({required var localizedText, required String id}) async {
+Future<BloqoUserData> getUserFromId({required FirebaseFirestore firestore, required var localizedText, required String id}) async {
   try {
-    var ref = BloqoUserData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoUserData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: id).get();
     BloqoUserData user = querySnapshot.docs.first.data();
     return user;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<BloqoUserData> silentGetUserFromId({required String id}) async {
-  var ref = BloqoUserData.getRef();
+  var ref = BloqoUserData.getRef(firestore: FirebaseFirestore.instance);
   var querySnapshot = await ref.where("id", isEqualTo: id).get();
   BloqoUserData user = querySnapshot.docs.first.data();
   return user;

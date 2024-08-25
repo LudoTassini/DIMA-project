@@ -1,6 +1,4 @@
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../utils/bloqo_exception.dart';
 
@@ -49,9 +47,8 @@ class BloqoReviewData{
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("reviews").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("reviews").withConverter(
       fromFirestore: BloqoReviewData.fromFirestore,
       toFirestore: (BloqoReviewData review, _) => review.toFirestore(),
     );
@@ -59,38 +56,34 @@ class BloqoReviewData{
 
 }
 
-Future<List<BloqoReviewData>> getReviewsFromIds({required var localizedText, required List<dynamic> reviewsIds}) async {
+Future<List<BloqoReviewData>> getReviewsFromIds({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required List<dynamic> reviewsIds
+}) async {
   try {
-    var ref = BloqoReviewData.getRef();
+    var ref = BloqoReviewData.getRef(firestore: firestore);
     List<BloqoReviewData> reviews = [];
     for(var reviewId in reviewsIds) {
-      await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: reviewId).get();
       BloqoReviewData review = querySnapshot.docs.first.data();
       reviews.add(review);
     }
     return reviews;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> publishReview({required var localizedText, required BloqoReviewData review}) async {
+Future<void> publishReview({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoReviewData review
+}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    var ref = BloqoReviewData.getRef();
+    var ref = BloqoReviewData.getRef(firestore: firestore);
     await ref.doc().set(review);
-  } on FirebaseException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

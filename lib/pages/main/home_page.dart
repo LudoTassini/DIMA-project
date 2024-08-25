@@ -364,12 +364,16 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Future<void> _createNewCourse({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try {
+      var firestore = getFirestoreFromAppState(context: context);
+
       BloqoCourseData course = await saveNewCourse(
+          firestore: firestore,
           localizedText: localizedText,
           authorId: getUserFromAppState(context: context)!.id
       );
 
       BloqoUserCourseCreatedData userCourseCreated = await saveNewUserCourseCreated(
+          firestore: firestore,
           localizedText: localizedText,
           course: course
       );
@@ -405,18 +409,29 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         context.loaderOverlay.hide();
         widget.onNavigateToPage(3);
       } else {
+        var firestore = getFirestoreFromAppState(context: context);
         BloqoCourseData course = await getCourseFromId(
-            localizedText: localizedText, courseId: userCourseCreated.courseId);
-        List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+            firestore: firestore,
+            localizedText: localizedText,
+            courseId: userCourseCreated.courseId
+        );
+        List<BloqoChapterData> chapters = await getChaptersFromIds(
+            firestore: firestore,
+            localizedText: localizedText,
+            chapterIds: course.chapters
+        );
         Map<String, List<BloqoSectionData>> sections = {};
         Map<String, List<BloqoBlockData>> blocks = {};
         for(String chapterId in course.chapters) {
           List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+              firestore: firestore,
               localizedText: localizedText,
-              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections
+          );
           sections[chapterId] = chapterSections;
           for(BloqoSectionData section in chapterSections){
             List<BloqoBlockData> sectionBlocks = await getBlocksFromIds(
+                firestore: firestore,
                 localizedText: localizedText,
                 blockIds: section.blocks
             );
@@ -449,14 +464,24 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         context.loaderOverlay.hide();
         widget.onNavigateToPage(1);
       } else {
+        var firestore = getFirestoreFromAppState(context: context);
         BloqoCourseData course = await getCourseFromId(
-            localizedText: localizedText, courseId: userCourseEnrolled.courseId);
-        List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: userCourseEnrolled.courseId
+        );
+        List<BloqoChapterData> chapters = await getChaptersFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          chapterIds: course.chapters
+        );
         Map<String, List<BloqoSectionData>> sections = {};
         for(String chapterId in course.chapters) {
           List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+              firestore: firestore,
               localizedText: localizedText,
-              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections);
+              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections
+          );
           sections[chapterId] = chapterSections;
         }
         if (!context.mounted) return;

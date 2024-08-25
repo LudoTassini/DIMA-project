@@ -4,7 +4,7 @@ import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../../utils/localization.dart';
+import 'localization.dart';
 
 class BloqoCertificate extends StatelessWidget {
   const BloqoCertificate({

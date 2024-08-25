@@ -16,7 +16,7 @@ import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../pages/from_learn/review_page.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/localization.dart';
-import '../custom/bloqo_certificate.dart';
+import '../../utils/bloqo_certificate.dart';
 import '../popups/bloqo_error_alert.dart';
 
 class BloqoCourseEnrolled extends StatefulWidget {
@@ -298,11 +298,20 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
       BloqoReviewData? userReview;
       BloqoUserData user = getUserFromAppState(context: context)!;
 
+      var firestore = getFirestoreFromAppState(context: context);
+
       if (course.isRated) {
         BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
-            localizedText: localizedText, publishedCourseId: course.publishedCourseId);
+          firestore: firestore,
+          localizedText: localizedText,
+          publishedCourseId: course.publishedCourseId
+        );
         List reviewsIds = publishedCourse.reviews;
-        List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: reviewsIds);
+        List<BloqoReviewData> reviews = await getReviewsFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          reviewsIds: reviewsIds
+        );
 
         userReview = reviews.where((review) => review.authorId == user.id).first; //error
       } else {

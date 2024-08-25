@@ -214,7 +214,12 @@ class BloqoUserDetailsShort extends StatelessWidget{
   Future<void> _tryGoToProfilePage({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: user.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(
+          firestore: firestore,
+          localizedText: localizedText,
+          authorId: user.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       onPush(

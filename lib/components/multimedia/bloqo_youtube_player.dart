@@ -27,25 +27,32 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
   @override
   void initState() {
     super.initState();
-    String? initialVideoId = YoutubePlayer.convertUrlToId(widget.url);
-    if(initialVideoId != null) {
+    String? videoId = YoutubePlayer.convertUrlToId(widget.url);
+    if (videoId != null) {
       youTubePlayerController = YoutubePlayerController(
-        initialVideoId: YoutubePlayer.convertUrlToId(initialVideoId)!,
+        initialVideoId: videoId,
         flags: const YoutubePlayerFlags(
-            autoPlay: false,
-            mute: false,
-            showLiveFullscreenButton: false
+          autoPlay: false,
+          mute: false,
+          showLiveFullscreenButton: false,
         ),
-      );
-    }
-    else{
-      shouldShowError = true;
+      )..addListener(() {
+        if (youTubePlayerController.value.hasError) {
+          setState(() {
+            shouldShowError = true;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        shouldShowError = true;
+      });
     }
   }
 
   @override
   void dispose() {
-    if(!shouldShowError) {
+    if (!shouldShowError) {
       youTubePlayerController.dispose();
     }
     super.dispose();
@@ -68,47 +75,53 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
           }
 
           return Center(
-            child: !shouldShowError ? AspectRatio(
-              aspectRatio: aspectRatio,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    shouldPlay = !shouldPlay;
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shadowColor: Colors.transparent,
-                ),
+            child: !shouldShowError
+                ? AspectRatio(
+                aspectRatio: aspectRatio,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     YoutubePlayer(controller: youTubePlayerController),
                     if (!shouldPlay)
-                      Container(
-                        color: Colors.black54,
-                        child: const Center(
-                          child: Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                            size: 50,
+                      GestureDetector(
+                        onTap: () {
+                          if (youTubePlayerController.value.isPlaying) {
+                            youTubePlayerController.pause();
+                            setState(() {
+                              shouldPlay = false;
+                            });
+                          } else {
+                            youTubePlayerController.play();
+                            setState(() {
+                              shouldPlay = true;
+                            });
+                          }
+                        },
+                        child: Container(
+                          color: Colors.black54,
+                          child: const Center(
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                              size: 50,
+                            ),
                           ),
                         ),
                       ),
                   ],
-                )
-              )
-          ) : Center(
-                child: Text(
-                    localizationText.invalid_link,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: theme.colors.error,
-                        fontWeight: FontWeight.w500
-                    )
-                )
+              ),
+            )
+            : Center(
+              child: Text(
+                localizationText.invalid_link,
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: theme.colors.error,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           );
-        }
+        },
       ),
     );
   }

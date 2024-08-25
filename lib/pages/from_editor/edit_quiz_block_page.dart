@@ -48,8 +48,8 @@ class EditQuizBlockPage extends StatefulWidget {
 
 class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKeepAliveClientMixin<EditQuizBlockPage> {
 
-  bool firstBuild = true;
-  bool callbackAdded = false;
+  late bool firstBuild;
+  late bool callbackAdded;
 
   final formKeyMultipleChoiceQuestion = GlobalKey<FormState>();
   final formKeyOpenQuestion = GlobalKey<FormState>();
@@ -70,6 +70,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   @override
   void initState() {
     super.initState();
+    firstBuild = true;
+    callbackAdded = false;
     quizTypeController = TextEditingController();
     multipleChoiceQuestionController = TextEditingController();
     openQuestionController = TextEditingController();
@@ -77,7 +79,9 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   }
 
   void _onQuizTypeChanged() {
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
   }
 
   void initializeAnswers(String answerSingleString) {
@@ -142,7 +146,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
           BloqoBlockData block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
           List<DropdownMenuEntry<String>> quizTypes = buildQuizTypesList(localizedText: localizedText);
 
-          if(firstBuild && block.type != null) {
+          if(firstBuild && block.type != null && multipleChoiceControllers.isEmpty) {
 
             quizTypeController.text = quizTypes.where((entry) => entry.label ==
                 BloqoBlockTypeExtension.fromString(block.type!)!.quizShortText(
@@ -195,9 +199,9 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
               }
             }
 
-            firstBuild = false;
-
           }
+
+          firstBuild = false;
 
           if(!callbackAdded){
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -220,7 +224,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                  padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
                     child: Column(
                       children: [
                         if(editable)
@@ -446,7 +450,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     )
                                                   ),
                                                   BloqoSwitch(
-                                                    value: trimToggle
+                                                    value: trimToggle,
+                                                    editable: editable,
                                                   )
                                                 ]
                                               ),
@@ -463,7 +468,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                       )
                                                     ),
                                                     BloqoSwitch(
-                                                        value: ignoreCaseToggle
+                                                      value: ignoreCaseToggle,
+                                                      editable: editable,
                                                     )
                                                   ]
                                               )
@@ -496,7 +502,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                             )
                         ),
                       ],
-                    ),
+                    )
                   ),
                 ),
               ),
@@ -567,13 +573,24 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizMultipleChoice);
       block.type = BloqoBlockType.quizMultipleChoice.toString();
 
-      await saveBlockMultipleChoiceQuiz(localizedText: localizedText, blockId: block.id, content: content);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      await saveBlockMultipleChoiceQuiz(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockId: block.id,
+          content: content
+      );
 
       if (!context.mounted) return;
       BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();
@@ -617,13 +634,24 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
       block.name = getNameBasedOnBlockType(localizedText: localizedText, type: BloqoBlockType.quizOpenQuestion);
       block.type = BloqoBlockType.quizOpenQuestion.toString();
 
-      await saveBlockOpenQuestionQuiz(localizedText: localizedText, blockId: block.id, content: content);
+      var firestore = getFirestoreFromAppState(context: context);
+
+      await saveBlockOpenQuestionQuiz(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockId: block.id,
+          content: content
+      );
 
       if (!context.mounted) return;
       BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
       updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-      await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+      await saveUserCourseCreatedChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedUserCourseCreated: userCourseCreated
+      );
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();

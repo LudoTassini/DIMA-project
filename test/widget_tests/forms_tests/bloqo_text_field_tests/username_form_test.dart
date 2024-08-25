@@ -1,9 +1,11 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/text_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   // Initializing BloqoTextField outside the testWidgets function
@@ -18,26 +20,31 @@ void main() {
     return MaterialApp(
       localizationsDelegates: getLocalizationDelegates(),
       supportedLocales: getSupportedLocales(),
-      home: Builder(
-        builder: (BuildContext context) {
-          var localizedText = getAppLocalizations(context)!;
-          return Scaffold(
-            body: Form(
-              key: formKey,
-              child: BloqoTextField(
-                formKey: formKey,
-                controller: controller,
-                labelText: localizedText.username,
-                hintText: localizedText.username_hint,
-                maxInputLength: Constants.maxUsernameLength,
-                validator: (username) {
-                  return usernameValidator(username: username, localizedText: localizedText);
-                },
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
+        ],
+        child: Builder(
+          builder: (BuildContext context) {
+            var localizedText = getAppLocalizations(context)!;
+            return Scaffold(
+              body: Form(
+                key: formKey,
+                child: BloqoTextField(
+                  formKey: formKey,
+                  controller: controller,
+                  labelText: localizedText.username,
+                  hintText: localizedText.username_hint,
+                  maxInputLength: Constants.maxUsernameLength,
+                  validator: (username) {
+                    return usernameValidator(username: username, localizedText: localizedText);
+                  },
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
+      )
     );
   }
 

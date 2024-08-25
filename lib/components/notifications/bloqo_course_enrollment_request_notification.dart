@@ -41,6 +41,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
     return BloqoSeasaltContainer(
       child: FutureBuilder<List<Object>>(
         future: _getRequiredData(
+          context: context,
           localizedText: localizedText,
           applicantId: widget.notification.applicantId!,
           publishedCourseId: widget.notification.privatePublishedCourseId!,
@@ -204,14 +205,28 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
   }
 
   Future<List<Object>> _getRequiredData({
+    required BuildContext context,
     required var localizedText,
     required String applicantId,
     required String publishedCourseId,
   }) async {
     try {
-      BloqoUserData applicant = await getUserFromId(localizedText: localizedText, id: applicantId);
-      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(localizedText: localizedText, publishedCourseId: publishedCourseId);
-      BloqoCourseData privateCourse = await getCourseFromId(localizedText: localizedText, courseId: publishedCourse.originalCourseId);
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoUserData applicant = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: applicantId
+      );
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
+          firestore: firestore,
+          localizedText: localizedText,
+          publishedCourseId: publishedCourseId
+      );
+      BloqoCourseData privateCourse = await getCourseFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: publishedCourse.originalCourseId
+      );
       return [applicant, privateCourse];
     } on Exception catch (_) {
       return [];
@@ -226,9 +241,24 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
   }) async {
     context.loaderOverlay.show();
     try{
-      await saveNewUserCourseEnrolled(localizedText: localizedText, course: originalCourse, publishedCourseId: widget.notification.privatePublishedCourseId!, userId: applicantId);
-      await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
-      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: originalCourse.authorId);
+      var firestore = getFirestoreFromAppState(context: context);
+      await saveNewUserCourseEnrolled(
+          firestore: firestore,
+          localizedText: localizedText,
+          course: originalCourse,
+          publishedCourseId: widget.notification.privatePublishedCourseId!,
+          userId: applicantId
+      );
+      await deleteNotification(
+          firestore: firestore,
+          localizedText: localizedText,
+          notificationId: widget.notification.id
+      );
+      BloqoUserData courseAuthor = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: originalCourse.authorId
+      );
       BloqoNotificationData notification = BloqoNotificationData(
         id: uuid(),
         userId: applicantId,
@@ -237,7 +267,11 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
         privateCourseName: originalCourse.name,
         privateCourseAuthorId: courseAuthor.id
       );
-      await pushNotification(localizedText: localizedText, notification: notification);
+      await pushNotification(
+          firestore: firestore,
+          localizedText: localizedText,
+          notification: notification
+      );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onNotificationHandled();
@@ -259,7 +293,12 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
   }) async {
     context.loaderOverlay.show();
     try{
-      await deleteNotification(localizedText: localizedText, notificationId: widget.notification.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await deleteNotification(
+          firestore: firestore,
+          localizedText: localizedText,
+          notificationId: widget.notification.id
+      );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onNotificationHandled();

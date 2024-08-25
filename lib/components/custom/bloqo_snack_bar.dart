@@ -15,3 +15,9 @@ class BloqoSnackBar {
     );
   }
 }
+
+showBloqoSnackBar({required BuildContext context, required String text}){
+  ScaffoldMessenger.of(context).showSnackBar(
+    BloqoSnackBar.get(context: context, child: Text(text)),
+  );
+}

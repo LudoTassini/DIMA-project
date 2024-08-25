@@ -118,6 +118,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                                   keyboardType: TextInputType.multiline,
                                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                   isTextArea: true,
+                                  isDisabled: !editable,
                                 ),
                               ),
                             ],
@@ -150,7 +151,7 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                           ),
                         ),
                       ],
-                    ),
+                    )
                   ),
                 ),
               ),
@@ -205,7 +206,10 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
     block.content = textController.text;
     block.type = BloqoBlockType.text.toString();
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     await saveBlockChanges(
+      firestore: firestore,
       localizedText: localizedText,
       updatedBlock: block,
     );
@@ -214,6 +218,10 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
     BloqoUserCourseCreatedData userCourseCreated = getUserCoursesCreatedFromAppState(context: context)!.where((course) => course.courseId == courseId).first;
     updateEditorCourseBlockInAppState(context: context, sectionId: sectionId, block: block);
 
-    await saveUserCourseCreatedChanges(localizedText: localizedText, updatedUserCourseCreated: userCourseCreated);
+    await saveUserCourseCreatedChanges(
+        firestore: firestore,
+        localizedText: localizedText,
+        updatedUserCourseCreated: userCourseCreated
+    );
   }
 }

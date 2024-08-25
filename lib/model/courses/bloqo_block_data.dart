@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/bloqo_exception.dart';
-import '../../utils/connectivity.dart';
 import '../../utils/uuid.dart';
 
 class BloqoBlockData{
@@ -51,9 +49,8 @@ class BloqoBlockData{
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("blocks").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("blocks").withConverter(
       fromFirestore: BloqoBlockData.fromFirestore,
       toFirestore: (BloqoBlockData block, _) => block.toFirestore(),
     );
@@ -222,28 +219,31 @@ List<DropdownMenuEntry<String>> buildQuizTypesList({required var localizedText, 
   return dropdownMenuEntries;
 }
 
-Future<List<BloqoBlockData>> getBlocksFromIds({required var localizedText, required List<dynamic> blockIds}) async {
+Future<List<BloqoBlockData>> getBlocksFromIds({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required List<dynamic> blockIds
+}) async {
   try {
-    var ref = BloqoBlockData.getRef();
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     List<BloqoBlockData> blocks = [];
     for(String blockId in blockIds) {
-      await checkConnectivity(localizedText: localizedText);
       var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
       BloqoBlockData block = querySnapshot.docs.first.data();
       blocks.add(block);
     }
     return blocks;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<BloqoBlockData> saveNewBlock({required var localizedText, required BloqoBlockSuperType blockSuperType, required int blockNumber}) async {
+Future<BloqoBlockData> saveNewBlock({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoBlockSuperType blockSuperType,
+  required int blockNumber
+}) async {
   try {
     BloqoBlockData block = BloqoBlockData(
       id: uuid(),
@@ -252,60 +252,57 @@ Future<BloqoBlockData> saveNewBlock({required var localizedText, required BloqoB
       name: getNameBasedOnBlockSuperType(localizedText: localizedText, superType: blockSuperType),
       content: "",
     );
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     await ref.doc().set(block);
     return block;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> deleteBlock({required var localizedText, required String courseId, required String blockId}) async {
+Future<void> deleteBlock({
+  required FirebaseFirestore firestore,
+  required FirebaseStorage storage,
+  required var localizedText,
+  required String courseId,
+  required String blockId
+}) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     BloqoBlockData blockToDelete = querySnapshot.docs[0].data();
     String? type = blockToDelete.type;
     await querySnapshot.docs[0].reference.delete();
     if(type != null) {
       if(type == BloqoBlockType.multimediaAudio.toString()){
-        await deleteFile(localizedText: localizedText,
+        await deleteFile(storage: storage, localizedText: localizedText,
             filePath: 'audios/courses/$courseId/$blockId');
       }
       else if(type == BloqoBlockType.multimediaImage.toString()){
-        await deleteFile(localizedText: localizedText,
+        await deleteFile(storage: storage, localizedText: localizedText,
             filePath: 'images/courses/$courseId/$blockId');
       }
       else if(type == BloqoBlockType.multimediaVideo.toString()) {
         if(!blockToDelete.content.startsWith("yt")) {
-          await deleteFile(localizedText: localizedText,
+          await deleteFile(storage: storage, localizedText: localizedText,
               filePath: 'videos/courses/$courseId/$blockId');
         }
       }
     }
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> reorderBlocks({required var localizedText, required List<dynamic> blockIds}) async {
-  var ref = BloqoBlockData.getRef();
+Future<void> reorderBlocks({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required List<dynamic> blockIds
+}) async {
+  var ref = BloqoBlockData.getRef(firestore: firestore);
   Map<String, BloqoBlockData> blocks = {};
 
   for (String blockId in blockIds) {
-    await checkConnectivity(localizedText: localizedText);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
 
     if (querySnapshot.docs.isNotEmpty) {
@@ -323,38 +320,33 @@ Future<void> reorderBlocks({required var localizedText, required List<dynamic> b
     var block = sortedBlocks[i].value;
 
     block.number = i + 1;
-    await checkConnectivity(localizedText: localizedText);
     await ref.doc(documentId).update({'number': block.number});
   }
 }
 
-Future<void> saveBlockChanges({required var localizedText, required BloqoBlockData updatedBlock}) async {
+Future<void> saveBlockChanges({
+  required FirebaseFirestore firestore,
+  required var localizedText,
+  required BloqoBlockData updatedBlock
+}) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: updatedBlock.id).get();
     DocumentSnapshot docSnapshot = querySnapshot.docs.first;
     await ref.doc(docSnapshot.id).update(updatedBlock.toFirestore());
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  } catch (e) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveBlockAudioUrl({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String blockId,
   required String audioUrl
 }) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -366,23 +358,19 @@ Future<void> saveBlockAudioUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveBlockImageUrl({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String blockId,
   required String imageUrl
 }) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -394,23 +382,19 @@ Future<void> saveBlockImageUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveBlockVideoUrl({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String blockId,
   required String videoUrl
 }) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -422,23 +406,19 @@ Future<void> saveBlockVideoUrl({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveBlockMultipleChoiceQuiz({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String blockId,
   required String content
 }) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -450,23 +430,19 @@ Future<void> saveBlockMultipleChoiceQuiz({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<void> saveBlockOpenQuestionQuiz({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String blockId,
   required String content
 }) async {
   try {
-    var ref = BloqoBlockData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoBlockData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("id", isEqualTo: blockId).get();
     if (querySnapshot.docs.isNotEmpty) {
       var documentId = querySnapshot.docs[0].id;
@@ -478,25 +454,16 @@ Future<void> saveBlockOpenQuestionQuiz({
     } else {
       throw BloqoException(message: localizedText.generic_error);
     }
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> deleteFile({required var localizedText, required String filePath}) async {
+Future<void> deleteFile({required FirebaseStorage storage, required var localizedText, required String filePath}) async {
   try {
-    await checkConnectivity(localizedText: localizedText);
-    final ref = FirebaseStorage.instance.ref().child(filePath);
+    final ref = storage.ref().child(filePath);
     await ref.delete();
-  } on FirebaseException catch (e) {
-    if (e.code == "unavailable" || e.code == "network-request-failed") {
-      throw BloqoException(message: localizedText.network_error);
-    } else {
-      throw BloqoException(message: localizedText.generic_error);
-    }
+  } on Exception catch (_) {
+    throw BloqoException(message: localizedText.generic_error);
   }
 }

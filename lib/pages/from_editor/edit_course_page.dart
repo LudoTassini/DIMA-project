@@ -261,7 +261,13 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   Future<void> _addChapter({required BuildContext context, required BloqoCourseData course, required List<BloqoChapterData> chapters}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoChapterData chapter = await saveNewChapter(localizedText: localizedText, chapterNumber: course.chapters.length + 1);
+    var firestore = getFirestoreFromAppState(context: context);
+
+    BloqoChapterData chapter = await saveNewChapter(
+        firestore: firestore,
+        localizedText: localizedText,
+        chapterNumber: course.chapters.length + 1
+    );
 
     if(!context.mounted) return;
     addChapterToEditorCourseAppState(context: context, chapter: chapter);
@@ -282,12 +288,16 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
 
     updatedUserCourseCreated.courseName = course.name;
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     await saveCourseChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedCourse: course
     );
 
     await saveUserCourseCreatedChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedUserCourseCreated: updatedUserCourseCreated
     );

@@ -1,30 +1,37 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
+import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:bloqo/components/popups/bloqo_error_alert.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   // Helper function to build the test app
   Widget buildTestWidget() {
-    return MaterialApp(
-      localizationsDelegates: getLocalizationDelegates(),
-      supportedLocales: getSupportedLocales(),
-      home: Scaffold(
-        body: Builder(
-          builder: (BuildContext context) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  showBloqoErrorAlert(
-                    context: context,
-                    title: 'Test Title',
-                    description: 'Test Description',
-                  );
-                },
-                child: const Text('Show Alert'),
-              ),
-            );
-          },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: getLocalizationDelegates(),
+        supportedLocales: getSupportedLocales(),
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showBloqoErrorAlert(
+                      context: context,
+                      title: 'Test Title',
+                      description: 'Test Description',
+                    );
+                  },
+                  child: const Text('Show Alert'),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

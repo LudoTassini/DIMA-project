@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:bloqo/components/buttons/bloqo_text_button.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -27,7 +26,9 @@ import '../../utils/text_validator.dart';
 import '../main/main_page.dart';
 
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({super.key});
+  const WelcomePage({
+    super.key,
+  });
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
@@ -137,13 +138,6 @@ class _WelcomePageState extends State<WelcomePage> {
                             text: localizedText.login,
                           ),
                         ),
-                        BloqoTextButton(
-                          text: localizedText.forgot_password,
-                          color: theme.colors.leadingColor,
-                          onPressed: () {
-                            //TODO
-                          },
-                        )
                       ]
                     ),
                   ),
@@ -190,27 +184,37 @@ class _WelcomePageState extends State<WelcomePage> {
     context.loaderOverlay.show();
     try {
 
+      var firestore = getFirestoreFromAppState(context: context);
+      var auth = getAuthFromAppState(context: context);
+
       // logs in
       await login(
         localizedText: localizedText,
         email: email,
-        password: password);
+        password: password,
+        auth: auth
+      );
 
       // gets user data
       BloqoUserData user = await getUserFromEmail(
-          localizedText: localizedText, email: email);
+          firestore: firestore, localizedText: localizedText, email: email);
 
       // saves on the shared preferences that the user is logged in along with some data
-      addUserSharedPreferences(
-        id: user.id,
-        email: email,
-        password: password
-      );
+
+      if (!context.mounted) return;
+      if(!getFromTestFromAppState(context: context)) {
+        addUserSharedPreferences(
+            id: user.id,
+            email: email,
+            password: password
+        );
+      }
 
       List<BloqoUserCourseEnrolledData> userCoursesEnrolled = await getUserCoursesEnrolled(
-          localizedText: localizedText, user: user);
+          firestore: firestore, localizedText: localizedText, user: user);
+
       List<BloqoUserCourseCreatedData> userCoursesCreated = await getUserCoursesCreated(
-          localizedText: localizedText, user: user);
+          firestore: firestore, localizedText: localizedText, user: user);
 
       if (!context.mounted) return;
 

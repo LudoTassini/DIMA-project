@@ -11,11 +11,9 @@ class BloqoOpenQuestionQuiz extends StatefulWidget {
 
   const BloqoOpenQuestionQuiz({
     super.key,
-    required this.onPush,
     required this.block
   });
 
-  final void Function(Widget) onPush;
   final BloqoBlockData block;
 
   @override
@@ -182,15 +180,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
     final match = answerRegExp.firstMatch(text);
 
     if (match != null) {
-      String flags = match.group(1) ?? '';
       String answer = match.group(2) ?? '';
-      // Determine if we need to trim the answer
-      if (flags.isNotEmpty) {
-        if (flags[0] == 'y') {
-          answer = answer.trim();
-        }
-      }
-      // Return the answer considering the case sensitivity flag
       return answer;
     } else {
       return '';
@@ -205,18 +195,28 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
 
 
   bool _checkConditions(String userAnswer, String correctAnswer, String flags) {
+
+    String answerToCheck = userAnswer;
+
+    // Determine if we need to trim extra whitespaces
+    if (flags.isNotEmpty && flags[0] == 'y') {
+      answerToCheck = answerToCheck.trim();
+      correctAnswer = correctAnswer.trim();
+    }
+
     // Determine if we need to ignore case
     if (flags.isNotEmpty && flags[1] == 'y') {
-      return userAnswer.toLowerCase() == correctAnswer.toLowerCase();
-    } else {
-      return userAnswer == correctAnswer;
+      answerToCheck = answerToCheck.toLowerCase();
+      correctAnswer = correctAnswer.toLowerCase();
     }
+
+    return answerToCheck == correctAnswer;
   }
 
   void _checkAnswer({required TextEditingController controller, required String correctAnswer, required String flags,
     required var localizedText, required var theme}) {
     setState(() {
-      if (_checkConditions(controller.text.trim(), correctAnswer, flags)) {
+      if (_checkConditions(controller.text, correctAnswer, flags)) {
         isAnswerCorrect = true;
       } else {
         isAnswerCorrect = false;

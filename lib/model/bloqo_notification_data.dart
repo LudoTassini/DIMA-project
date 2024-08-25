@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/bloqo_exception.dart';
-import '../utils/connectivity.dart';
 import '../utils/constants.dart';
 
 class BloqoNotificationData{
@@ -67,14 +65,14 @@ class BloqoNotificationData{
       "applicant_id": applicantId,
       "private_course_name": privateCourseName,
       "private_course_author_username": privateCourseAuthorId,
+      "private_course_author_id": privateCourseAuthorId,
       "course_author_id": courseAuthorId,
       "course_name": courseName
     };
   }
 
-  static getRef() {
-    var db = FirebaseFirestore.instance;
-    return db.collection("notifications").withConverter(
+  static getRef({required FirebaseFirestore firestore}) {
+    return firestore.collection("notifications").withConverter(
       fromFirestore: BloqoNotificationData.fromFirestore,
       toFirestore: (BloqoNotificationData notification, _) => notification.toFirestore(),
     );
@@ -88,10 +86,9 @@ enum BloqoNotificationType{
   newCourseFromFollowedUser
 }
 
-Future<List<BloqoNotificationData>> getNotificationsFromUserId({required var localizedText, required String userId}) async {
+Future<List<BloqoNotificationData>> getNotificationsFromUserId({required FirebaseFirestore firestore, required var localizedText, required String userId}) async {
   try {
-    var ref = BloqoNotificationData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoNotificationData.getRef(firestore: firestore);
 
     var querySnapshot = await ref
         .where("user_id", isEqualTo: userId)
@@ -105,27 +102,19 @@ Future<List<BloqoNotificationData>> getNotificationsFromUserId({required var loc
       notifications.add(notification);
     }
     return notifications;
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-  on Exception catch (_) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
 
 Future<BloqoNotificationData?> getNotificationFromPublishedCourseIdAndApplicantId({
+  required FirebaseFirestore firestore,
   required var localizedText,
   required String publishedCourseId,
   required String applicantId
 }) async {
   try {
-    var ref = BloqoNotificationData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoNotificationData.getRef(firestore: firestore);
     var querySnapshot = await ref.where("private_published_course_id", isEqualTo: publishedCourseId).where("applicant_id", isEqualTo: applicantId).get();
     if(querySnapshot.docs.length == 0){
       return null;
@@ -134,52 +123,26 @@ Future<BloqoNotificationData?> getNotificationFromPublishedCourseIdAndApplicantI
       BloqoNotificationData notification = querySnapshot.docs[0].data();
       return notification;
     }
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-  on Exception catch (_) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> pushNotification({required var localizedText, required BloqoNotificationData notification}) async {
+Future<void> pushNotification({required FirebaseFirestore firestore, required var localizedText, required BloqoNotificationData notification}) async {
   try {
-    var ref = BloqoNotificationData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoNotificationData.getRef(firestore: firestore);
     await ref.doc().set(notification);
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-  on Exception catch (_) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }
 
-Future<void> deleteNotification({required var localizedText, required String notificationId}) async {
+Future<void> deleteNotification({required FirebaseFirestore firestore, required var localizedText, required String notificationId}) async {
   try {
-    var ref = BloqoNotificationData.getRef();
-    await checkConnectivity(localizedText: localizedText);
+    var ref = BloqoNotificationData.getRef(firestore: firestore);
     QuerySnapshot querySnapshot = await ref.where("id", isEqualTo: notificationId).get();
     await querySnapshot.docs[0].reference.delete();
-  } on FirebaseAuthException catch (e) {
-    switch (e.code) {
-      case "network-request-failed":
-        throw BloqoException(message: localizedText.network_error);
-      default:
-        throw BloqoException(message: localizedText.generic_error);
-    }
-  }
-  on Exception catch (_) {
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 }

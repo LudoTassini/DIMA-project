@@ -61,8 +61,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    print("loaded page");
-
     // FIXME
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {
@@ -152,26 +150,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                           size: 32,
                                         ),
                                         onPressed: () async {
-                                          context.loaderOverlay.show();
-                                          try{
-                                            BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
-                                            if (!context.mounted) return;
-                                            context.loaderOverlay.hide();
-                                            widget.onPush(
-                                                QrCodePage(
-                                                    qrCodeTitle: course.name,
-                                                    qrCodeContent: "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}"
-                                                )
-                                            );
-                                          } on BloqoException catch (e) {
-                                            if (!context.mounted) return;
-                                            context.loaderOverlay.hide();
-                                            showBloqoErrorAlert(
-                                              context: context,
-                                              title: localizedText.error_title,
-                                              description: e.message,
-                                            );
-                                          }
+                                          await _tryGoToCourseQrCodePage(context: context, localizedText: localizedText, course: course);
                                         }
                                       ),
                                     ),
@@ -663,14 +642,28 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     context.loaderOverlay.show();
     try{
       List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
-          localizedText: localizedText, courseId: courseId);
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: courseId
+      );
       BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
-      await deleteUserCourseEnrolled(localizedText: localizedText, courseId: courseId, enrolledUserId: enrolledUserId);
+      await deleteUserCourseEnrolled(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: courseId,
+          enrolledUserId: enrolledUserId
+      );
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
       publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
-      savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourseToUpdate);
+      await savePublishedCourseChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedPublishedCourse: publishedCourseToUpdate
+      );
+      if(!context.mounted) return;
       context.loaderOverlay.hide();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -692,8 +685,13 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     required String courseName}) async {
     context.loaderOverlay.show();
     try {
+      var firestore = getFirestoreFromAppState(context: context);
 
-      List<BloqoBlockData> blocks = await getBlocksFromIds(localizedText: localizedText, blockIds: section.blocks);
+      List<BloqoBlockData> blocks = await getBlocksFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockIds: section.blocks
+      );
       if(!context.mounted) return;
 
       context.loaderOverlay.hide();
@@ -713,6 +711,30 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
 
     } on BloqoException catch (e) {
       if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
+  }
+
+  Future<void> _tryGoToCourseQrCodePage({required BuildContext context, required var localizedText, required BloqoCourseData course}) async {
+    context.loaderOverlay.show();
+    try{
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(firestore: firestore, localizedText: localizedText, courseId: course.id);
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(
+          QrCodePage(
+              qrCodeTitle: course.name,
+              qrCodeContent: "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}"
+          )
+      );
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
         context: context,

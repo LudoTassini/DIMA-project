@@ -22,7 +22,9 @@ import '../../utils/uuid.dart';
 import '../main/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({
+    super.key,
+  });
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -72,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                 child: Text(
                   'bloQo',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -81,84 +83,83 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
               ),
-
               Padding(
                 padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                : Constants.tabletPaddingWelcomePages,
-                child:
-                  BloqoSeasaltContainer(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                            child: Text(
-                                localizedText.register_thank_you,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                  color: theme.colors.leadingColor,
-                                  fontSize: 25,
-                                )
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                            child: Text(
-                              localizedText.register_explanation,
+                    : Constants.tabletPaddingWelcomePages,
+                child: BloqoSeasaltContainer(
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 40),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                          child: Text(
+                              localizedText.register_thank_you,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                 color: theme.colors.leadingColor,
-                                fontWeight: FontWeight.w500,
-                              ),
+                                fontSize: 25,
+                              )
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                          child: Text(
+                            localizedText.register_explanation,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              color: theme.colors.leadingColor,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Form(
-                            key: formKeyEmail,
-                            child: BloqoTextField(
-                              formKey: formKeyEmail,
-                              controller: emailController,
-                              labelText: localizedText.email,
-                              hintText: localizedText.email_hint,
-                              maxInputLength: Constants.maxEmailLength,
-                              validator: (String? value) { return emailValidator(email: value, localizedText: localizedText); },
-                              keyboardType: TextInputType.emailAddress,
-                            ),
+                        ),
+                        Form(
+                          key: formKeyEmail,
+                          child: BloqoTextField(
+                            formKey: formKeyEmail,
+                            controller: emailController,
+                            labelText: localizedText.email,
+                            hintText: localizedText.email_hint,
+                            maxInputLength: Constants.maxEmailLength,
+                            validator: (String? value) { return emailValidator(email: value, localizedText: localizedText); },
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          Form(
-                            key: formKeyPassword,
-                            child: BloqoTextField(
-                              formKey: formKeyPassword,
-                              controller: passwordController,
-                              labelText: localizedText.password,
-                              hintText: localizedText.password_hint,
-                              maxInputLength: Constants.maxPasswordLength,
-                              validator: (String? value) { return passwordValidator(password: value, localizedText: localizedText); },
-                            ),
+                        ),
+                        Form(
+                          key: formKeyPassword,
+                          child: BloqoTextField(
+                            formKey: formKeyPassword,
+                            controller: passwordController,
+                            labelText: localizedText.password,
+                            hintText: localizedText.password_hint,
+                            maxInputLength: Constants.maxPasswordLength,
+                            validator: (String? value) { return passwordValidator(password: value, localizedText: localizedText); },
                           ),
-                          Form(
-                            key: formKeyUsername,
-                            child: BloqoTextField(
-                              formKey: formKeyUsername,
-                              controller: usernameController,
-                              labelText: localizedText.username,
-                              hintText: localizedText.username_hint,
-                              maxInputLength: Constants.maxUsernameLength,
-                              validator: (String? value) { return usernameValidator(username: value, localizedText: localizedText); }
-                            ),
+                        ),
+                        Form(
+                          key: formKeyUsername,
+                          child: BloqoTextField(
+                            formKey: formKeyUsername,
+                            controller: usernameController,
+                            labelText: localizedText.username,
+                            hintText: localizedText.username_hint,
+                            maxInputLength: Constants.maxUsernameLength,
+                            validator: (String? value) { return usernameValidator(username: value, localizedText: localizedText); }
                           ),
-                          Form(
-                            key: formKeyFullName,
-                            child: BloqoTextField(
-                              formKey: formKeyFullName,
-                              controller: fullNameController,
-                              labelText: localizedText.full_name,
-                              hintText: localizedText.full_name_hint,
-                              maxInputLength: Constants.maxFullNameLength,
-                              validator: (String? value) { return fullNameValidator(fullName: value, localizedText: localizedText); }
-                            ),
+                        ),
+                        Form(
+                          key: formKeyFullName,
+                          child: BloqoTextField(
+                            formKey: formKeyFullName,
+                            controller: fullNameController,
+                            labelText: localizedText.full_name,
+                            hintText: localizedText.full_name_hint,
+                            maxInputLength: Constants.maxFullNameLength,
+                            validator: (String? value) { return fullNameValidator(fullName: value, localizedText: localizedText); }
                           ),
+                        ),
                         Padding(
                           padding:
                           const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
@@ -217,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-                ),
+                )
               ),
             ],
           )
@@ -249,11 +250,14 @@ class _RegisterPageState extends State<RegisterPage> {
           usernameValidator(username: user.username, localizedText: localizedText) == null &&
           fullNameValidator(fullName: user.fullName, localizedText: localizedText) == null) {
 
-        if(await isUsernameAlreadyTaken(localizedText: localizedText, username: user.username)){
+        var firestore = getFirestoreFromAppState(context: context);
+        var auth = getAuthFromAppState(context: context);
+
+        if(await isUsernameAlreadyTaken(firestore: firestore, localizedText: localizedText, username: user.username)){
           throw BloqoException(message: localizedText.username_already_taken);
         }
 
-        await registerNewUser(localizedText: localizedText, user: user, password: password);
+        await registerNewUser(firestore: firestore, auth: auth, localizedText: localizedText, user: user, password: password);
 
         if(!context.mounted) return;
         saveUserToAppState(context: context, user: user);

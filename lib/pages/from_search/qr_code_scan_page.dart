@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
@@ -73,7 +74,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
             child: QRView(
               key: qrKey,
               onQRViewCreated: (qrc) async {
-                await _onQRViewCreated(qrc);
+                await _onQRViewCreated(context: context, controller: qrc);
               },
             ),
           ),
@@ -85,7 +86,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _onQRViewCreated(QRViewController controller) async {
+  Future<void> _onQRViewCreated({required BuildContext context, required QRViewController controller}) async {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
       if (isProcessing) return;
@@ -93,6 +94,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
       isProcessing = true;
       final code = scanData.code;
 
+      if(!context.mounted) return;
       if (code!.startsWith("course_")) {
         await _tryGoToCoursePage(
             context: context,
@@ -113,18 +115,37 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     context.loaderOverlay.show();
     try {
       controller?.pauseCamera();
+      var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromPublishedCourseId(
-          localizedText: localizedText, publishedCourseId: publishedCourseId);
-      BloqoCourseData course = await getCourseFromId(localizedText: localizedText,
-          courseId: publishedCourse.originalCourseId);
-      List<BloqoChapterData> chapters = await getChaptersFromIds(localizedText: localizedText, chapterIds: course.chapters);
+          firestore: firestore,
+          localizedText: localizedText,
+          publishedCourseId: publishedCourseId
+      );
+      BloqoCourseData course = await getCourseFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          courseId: publishedCourse.originalCourseId
+      );
+      List<BloqoChapterData> chapters = await getChaptersFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          chapterIds: course.chapters
+      );
       Map<String, List<BloqoSectionData>> sections = {};
       for (BloqoChapterData chapter in chapters) {
-        List<BloqoSectionData> chapterSections = await getSectionsFromIds(localizedText: localizedText, sectionIds: chapter.sections);
+        List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+            firestore: firestore,
+            localizedText: localizedText,
+            sectionIds: chapter.sections
+        );
         sections[chapter.id] = chapterSections;
       }
-      BloqoUserData courseAuthor = await getUserFromId(localizedText: localizedText, id: publishedCourse.authorId);
-      List<BloqoReviewData> reviews = await getReviewsFromIds(localizedText: localizedText, reviewsIds: publishedCourse.reviews);
+      BloqoUserData courseAuthor = await getUserFromId(firestore: firestore, localizedText: localizedText, id: publishedCourse.authorId);
+      List<BloqoReviewData> reviews = await getReviewsFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          reviewsIds: publishedCourse.reviews
+      );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(
@@ -159,8 +180,17 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     context.loaderOverlay.show();
     try {
       controller?.pauseCamera();
-      BloqoUserData user = await getUserFromId(localizedText: localizedText, id: userId);
-      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(localizedText: localizedText, authorId: userId);
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoUserData user = await getUserFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          id: userId
+      );
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(
+          firestore: firestore,
+          localizedText: localizedText,
+          authorId: userId
+      );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       widget.onPush(

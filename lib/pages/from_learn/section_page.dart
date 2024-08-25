@@ -152,30 +152,28 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                         );
                       }
 
-                      if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
-                        return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                            child: Column(
-                              children: [
-                                BloqoOpenQuestionQuiz(
-                                  onPush: widget.onPush,
-                                  block: block
-                                ),
+                  if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
+                    return BloqoSeasaltContainer(
+                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                        child: Column(
+                          children: [
+                            BloqoOpenQuestionQuiz(
+                              block: block
+                            ),
 
                             ],
                           ),
                         );
                       }
 
-                      if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
-                        return BloqoSeasaltContainer(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                          child: Column(
-                            children: [
-                              BloqoMultipleChoiceQuiz(
-                                  onPush: widget.onPush,
-                                  block: block
-                              ),
+                  if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
+                    return BloqoSeasaltContainer(
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                      child: Column(
+                        children: [
+                          BloqoMultipleChoiceQuiz(
+                              block: block
+                          ),
 
                             ],
                           ),
@@ -236,19 +234,26 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       final chapters = getLearnCourseChaptersFromAppState(context: context)!;
       var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
       final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
+
+      var firestore = getFirestoreFromAppState(context: context);
+
       final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
-      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
+
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(firestore: firestore, localizedText: localizedText, courseId: course.id);
 
       // Update sections completed in both the course enrollment and app state
       if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
         courseEnrolled.sectionsCompleted!.add(section.id);
-        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
 
+        if (!context.mounted) return;
+
+        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
 
         // Perform async operations and check if context is still mounted afterward
         await updateUserCourseEnrolledCompletedSections(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,
@@ -265,11 +270,15 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           if (!chaptersCompleted!.contains(widget.chapter.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
             courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
+
+            if (!context.mounted) return;
+
             updateLearnCourseChaptersCompletedFromAppState(context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
             updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
 
             // Perform async operations and check if context is still mounted afterward
             await updateUserCourseEnrolledCompletedChapters(
+              firestore: firestore,
               localizedText: localizedText,
               courseId: course.id,
               enrolledUserId: user.id,
@@ -282,27 +291,36 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       // If the last chapter is completed, mark the course as completed
       if (chapters.last.sections.lastOrNull == section.id) {
         courseEnrolled.isCompleted = true;
+
+        if (!context.mounted) return;
+
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledStatusCompleted(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,
         );
 
         publishedCourse.numberOfCompletions = publishedCourse.numberOfCompletions + 1;
-        await savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourse);
+        await savePublishedCourseChanges(firestore: firestore, localizedText: localizedText, updatedPublishedCourse: publishedCourse);
 
         if (!context.mounted) return;
       }
       // Otherwise set the new sectionToComplete
       else {
         String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
-        BloqoSectionData sectionToComplete = await getSectionFromId(localizedText: localizedText, sectionId: nextSectionToComplete!);
+        BloqoSectionData sectionToComplete = await getSectionFromId(
+            firestore: firestore,
+            localizedText: localizedText,
+            sectionId: nextSectionToComplete!
+        );
 
         if (!context.mounted) return;
 
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledNewSectionToComplete(
+          firestore: firestore,
           localizedText: localizedText,
           courseId: course.id,
           enrolledUserId: user.id,

@@ -13,7 +13,12 @@ import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user_data.dart';
 
 class NotificationsPage extends StatefulWidget {
-  const NotificationsPage({super.key});
+  const NotificationsPage({
+    super.key,
+    required this.onNotificationRemoved
+  });
+
+  final void Function() onNotificationRemoved;
 
   @override
   State<NotificationsPage> createState() => _NotificationsPageState();
@@ -22,22 +27,30 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> with AutomaticKeepAliveClientMixin<NotificationsPage> {
   List<BloqoNotificationData> notifications = [];
 
+  bool _didRemoveNotifications = false;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     BloqoUserData user = getUserFromAppState(context: context)!;
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    var firestore = getFirestoreFromAppState(context: context);
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
         title: localizedText.notifications,
-        onPop: () => Navigator.of(context).pop(),
+        onPop: () {
+          Navigator.of(context).pop();
+          if(_didRemoveNotifications) {
+            widget.onNotificationRemoved();
+          }
+        },
         canPop: true,
       ),
       body: BloqoMainContainer(
         child: FutureBuilder<List<BloqoNotificationData>>(
-          future: getNotificationsFromUserId(localizedText: localizedText, userId: user.id),
+          future: getNotificationsFromUserId(firestore: firestore, localizedText: localizedText, userId: user.id),
           builder: (BuildContext context, AsyncSnapshot<List<BloqoNotificationData>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -69,6 +82,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                           onNotificationHandled: () {
                             setState(() {
                               notifications.removeAt(index);
+                              _didRemoveNotifications = true;
                             });
                           },
                         );
@@ -79,6 +93,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                           onNotificationHandled: () {
                             setState(() {
                               notifications.removeAt(index);
+                              _didRemoveNotifications = true;
                             });
                           },
                         );
@@ -89,6 +104,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                           onNotificationHandled: () {
                             setState(() {
                               notifications.removeAt(index);
+                              _didRemoveNotifications = true;
                             });
                           },
                         );

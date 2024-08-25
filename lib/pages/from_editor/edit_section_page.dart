@@ -339,7 +339,14 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
   Future<void> _addBlock({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required BloqoSectionData section, required BloqoBlockSuperType blockSuperType}) async {
     var localizedText = getAppLocalizations(context)!;
 
-    BloqoBlockData block = await saveNewBlock(localizedText: localizedText, blockSuperType: blockSuperType, blockNumber: section.blocks.length + 1);
+    var firestore = getFirestoreFromAppState(context: context);
+
+    BloqoBlockData block = await saveNewBlock(
+        firestore: firestore,
+        localizedText: localizedText,
+        blockSuperType: blockSuperType,
+        blockNumber: section.blocks.length + 1
+    );
 
     if(!context.mounted) return;
     addBlockToEditorCourseAppState(context: context, chapterId: chapter.id, sectionId: section.id, block: block);
@@ -348,6 +355,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
     !.firstWhere((userCourse) => userCourse.courseId == course.id);
 
     await saveUserCourseCreatedChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedUserCourseCreated: updatedUserCourseCreated
     );
@@ -359,12 +367,15 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
   Future<void> _saveChanges({required BuildContext context, required BloqoCourseData course, required BloqoChapterData chapter, required BloqoSectionData section}) async {
     var localizedText = getAppLocalizations(context)!;
 
+    var firestore = getFirestoreFromAppState(context: context);
+
     section.name = sectionNameController.text;
     if(section.name == ""){
       section.name = "${localizedText.section} ${section.number}";
     }
 
     await saveSectionChanges(
+        firestore: firestore,
         localizedText: localizedText,
         updatedSection: section
     );

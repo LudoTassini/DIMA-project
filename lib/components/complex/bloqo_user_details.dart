@@ -72,17 +72,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                         aspectRatio: 1.0,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: url != null
-                              ? FadeInImage.assetNetwork(
-                            placeholder: "assets/images/portrait_placeholder.png",
-                            image: url,
-                            fit: BoxFit.cover,
-                            placeholderFit: BoxFit.cover,
-                          )
-                              : Image.asset(
-                            "assets/images/portrait_placeholder.png",
-                            fit: BoxFit.cover,
-                          ),
+                          child: _getProfilePicture(context: context, url: url)
                         ),
                       ),
                       Align(
@@ -298,7 +288,13 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
   Future<void> _tryFollow({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await followUser(localizedText: localizedText, userToFollowId: widget.user.id, myUserId: getUserFromAppState(context: context)!.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await followUser(
+          firestore: firestore,
+          localizedText: localizedText,
+          userToFollowId: widget.user.id,
+          myUserId: getUserFromAppState(context: context)!.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       addFollowingToUserAppState(context: context, newFollowing: widget.user.id);
@@ -324,7 +320,13 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
   Future<void> _tryUnfollow({required BuildContext context, required var localizedText}) async {
     context.loaderOverlay.show();
     try{
-      await unfollowUser(localizedText: localizedText, userToUnfollowId: widget.user.id, myUserId: getUserFromAppState(context: context)!.id);
+      var firestore = getFirestoreFromAppState(context: context);
+      await unfollowUser(
+          firestore: firestore,
+          localizedText: localizedText,
+          userToUnfollowId: widget.user.id,
+          myUserId: getUserFromAppState(context: context)!.id
+      );
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       removeFollowingFromUserAppState(context: context, oldFollowing: widget.user.id);
@@ -345,6 +347,26 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
         description: e.message,
       );
     }
+  }
+
+  Widget _getProfilePicture({required BuildContext context, required String? url}){
+    if(getFromTestFromAppState(context: context) && url == "assets/tests/test.png"){
+      return Image.asset(
+        "assets/tests/test.png",
+        fit: BoxFit.cover,
+      );
+    }
+    return url != null
+        ? FadeInImage.assetNetwork(
+      placeholder: "assets/images/portrait_placeholder.png",
+      image: url,
+      fit: BoxFit.cover,
+      placeholderFit: BoxFit.cover,
+    )
+        : Image.asset(
+      "assets/images/portrait_placeholder.png",
+      fit: BoxFit.cover,
+    );
   }
 
 }
