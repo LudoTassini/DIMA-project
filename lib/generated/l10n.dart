@@ -3229,6 +3229,16 @@ class S {
       args: [],
     );
   }
+
+  /// `You already completed the course, so you cannot unsubscribe to it.`
+  String get course_completed {
+    return Intl.message(
+      'You already completed the course, so you cannot unsubscribe to it.',
+      name: 'course_completed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

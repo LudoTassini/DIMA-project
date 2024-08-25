@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/app_state/user_courses_created_app_state.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,8 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
         alignment: const AlignmentDirectional(-1.0, -1.0),
         child: Consumer<EditorCourseAppState>(
@@ -89,7 +92,9 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                     ]),
                     Expanded(
                         child: SingleChildScrollView(
-                            child: Column(
+                            child: Padding(
+                              padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                              child: Column(
                                 children: [
                                   Form(
                                       key: formKeyChapterName,
@@ -212,13 +217,16 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                   )
                                 ]
                             )
-                        )
+                          )
+                        ),
                     ),
                     if(editable)
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                         child: BloqoFilledButton(
                           color: theme.colors.leadingColor,
+                          fontSize: !isTablet ? 20 : 26,
+                          height: !isTablet ? 48 : 64,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {

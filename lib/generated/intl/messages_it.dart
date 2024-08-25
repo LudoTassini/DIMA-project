@@ -90,6 +90,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "correct_answer":
             MessageLookupByLibrary.simpleMessage("La risposta giusta è: "),
         "course": MessageLookupByLibrary.simpleMessage("Corso"),
+        "course_completed": MessageLookupByLibrary.simpleMessage(
+            "Hai già completato il corso, pertanto non ti puoi disiscrivere."),
         "course_completion_certificate": MessageLookupByLibrary.simpleMessage(
             "Certificato di Completamento del Corso"),
         "course_dismiss_confirmation": MessageLookupByLibrary.simpleMessage(

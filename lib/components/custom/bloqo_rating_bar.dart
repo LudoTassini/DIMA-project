@@ -1,3 +1,4 @@
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 
 import '../../app_state/application_settings_app_state.dart';
@@ -30,6 +31,8 @@ class _BloqoRatingBarState extends State<BloqoRatingBar> {
   @override
   Widget build(BuildContext context) {
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
@@ -45,7 +48,7 @@ class _BloqoRatingBarState extends State<BloqoRatingBar> {
           icon: Icon(
             index < rating ? Icons.star : Icons.star_border,
             color: theme.colors.tertiary,
-            size: 40,
+            size: !isTablet ? 40 : 46,
           ),
         );
       }),

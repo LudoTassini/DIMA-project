@@ -6,6 +6,7 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/pages/welcome/welcome_page.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:bloqo/utils/toggle.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,8 @@ class _RegisterPageState extends State<RegisterPage> {
     final BloqoSwitch visibilitySwitch = BloqoSwitch(value: Toggle(initialValue: true));
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BloqoMainContainer(
@@ -80,7 +83,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
               ),
-              BloqoSeasaltContainer(
+              Padding(
+                padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                    : Constants.tabletPaddingWelcomePages,
+                child: BloqoSeasaltContainer(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 40),
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),

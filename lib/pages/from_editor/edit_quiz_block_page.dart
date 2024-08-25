@@ -5,6 +5,7 @@ import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -132,6 +133,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: Consumer<EditorCourseAppState>(
@@ -220,279 +223,286 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
               ]),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      if(editable)
-                        BloqoSeasaltContainer(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    localizedText.choose_quiz_type,
-                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: theme.colors.leadingColor,
-                                      fontSize: 30,
+                  child: Padding(
+                  padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                    child: Column(
+                      children: [
+                        if(editable)
+                          BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                  child: Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      localizedText.choose_quiz_type,
+                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                        color: theme.colors.leadingColor,
+                                        fontSize: 30,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Row(
-                                  children:[
-                                    Expanded(
-                                        child: Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                            child: LayoutBuilder(
-                                                builder: (BuildContext context, BoxConstraints constraints) {
-                                                  double availableWidth = constraints.maxWidth;
-                                                  return Column(
-                                                      mainAxisSize: MainAxisSize.max,
-                                                      children: [
-                                                        BloqoDropdown(
-                                                            controller: quizTypeController,
-                                                            dropdownMenuEntries: quizTypes,
-                                                            initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
-                                                            width: availableWidth
-                                                        )
-                                                      ]
-                                                  );
-                                                }
-                                            )
-                                        )
-                                    )
-                                  ]
-                              ),
-                            ],
-                          ),
-                        ),
-                      BloqoSeasaltContainer(
-                          child: Column(
-                            children: [
-                              if(quizTypeController.text == BloqoBlockType.quizMultipleChoice.quizShortText(localizedText: localizedText))
-                                Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.enter_question,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Form(
-                                        key: formKeyMultipleChoiceQuestion,
-                                        child: BloqoTextField(
-                                          formKey: formKeyMultipleChoiceQuestion,
-                                          controller: multipleChoiceQuestionController,
-                                          labelText: localizedText.question,
-                                          hintText: localizedText.enter_question_here,
-                                          maxInputLength: Constants.maxQuizQuestionLength,
-                                          isTextArea: true,
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0)
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.enter_possible_answers,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      if(multipleChoiceControllers.isEmpty)
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                                          child: Text(
-                                            localizedText.edit_block_quiz_page_no_answers,
-                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: theme.colors.primaryText,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      if(multipleChoiceControllers.isNotEmpty)
-                                        Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: List.generate(
-                                              multipleChoiceControllers.length,
-                                                  (index) {
-                                                TextEditingController controller = multipleChoiceControllers[index];
-                                                Toggle toggle = multipleChoiceToggles[index];
-                                                return BloqoEditableQuizAnswer(
-                                                    controller: controller,
-                                                    toggle: toggle,
-                                                    answerNumber: index + 1,
-                                                    editable: editable,
-                                                    padding: !editable && index == multipleChoiceControllers.length - 1 ? const EdgeInsetsDirectional.all(15) : const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                                    onDelete: () => _deleteAnswer(index: index)
-                                                );
-                                              }
-                                          ),
-                                        ),
-                                      if(editable)
-                                        Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 30),
-                                            child: BloqoFilledButton(
-                                                color: theme.colors.leadingColor,
-                                                onPressed: () => _addAnswer(),
-                                                text: localizedText.add_answer,
-                                                icon: Icons.add
-                                            )
-                                        ),
-                                      if(editable)
-                                        Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                            child: BloqoFilledButton(
-                                                color: theme.colors.leadingColor,
-                                                onPressed: () async {
-                                                  await _trySaveMultipleChoiceQuizChanges(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      courseId: course.id,
-                                                      sectionId: section.id,
-                                                      block: widget.block
-                                                  );
-                                                },
-                                                text: localizedText.save_quiz_changes,
-                                                icon: Icons.edit
-                                            )
-                                        ),
+                                Row(
+                                    children:[
+                                      Expanded(
+                                          child: Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                              child: LayoutBuilder(
+                                                  builder: (BuildContext context, BoxConstraints constraints) {
+                                                    double availableWidth = constraints.maxWidth;
+                                                    return Column(
+                                                        mainAxisSize: MainAxisSize.max,
+                                                        children: [
+                                                          BloqoDropdown(
+                                                              controller: quizTypeController,
+                                                              dropdownMenuEntries: quizTypes,
+                                                              initialSelection: quizTypeController.text == "" ? quizTypes[0].value : quizTypeController.text,
+                                                              width: availableWidth
+                                                          )
+                                                        ]
+                                                    );
+                                                  }
+                                              )
+                                          )
+                                      )
                                     ]
                                 ),
-                              if(quizTypeController.text == BloqoBlockType.quizOpenQuestion.quizShortText(localizedText: localizedText))
-                                Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.enter_question,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
+                              ],
+                            ),
+                          ),
+                        BloqoSeasaltContainer(
+                            child: Column(
+                              children: [
+                                if(quizTypeController.text == BloqoBlockType.quizMultipleChoice.quizShortText(localizedText: localizedText))
+                                  Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enter_question,
+                                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontSize: 30,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Form(
-                                        key: formKeyOpenQuestion,
-                                        child: BloqoTextField(
-                                            formKey: formKeyOpenQuestion,
-                                            controller: openQuestionController,
+                                        Form(
+                                          key: formKeyMultipleChoiceQuestion,
+                                          child: BloqoTextField(
+                                            formKey: formKeyMultipleChoiceQuestion,
+                                            controller: multipleChoiceQuestionController,
                                             labelText: localizedText.question,
                                             hintText: localizedText.enter_question_here,
                                             maxInputLength: Constants.maxQuizQuestionLength,
                                             isTextArea: true,
                                             padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0)
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.enter_answer,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enter_possible_answers,
+                                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontSize: 30,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Form(
-                                        key: formKeyOpenQuestionAnswer,
-                                        child: BloqoTextField(
-                                          formKey: formKeyOpenQuestionAnswer,
-                                          controller: openQuestionAnswerController,
-                                          labelText: localizedText.answer,
-                                          hintText: localizedText.enter_answer_here,
-                                          maxInputLength: Constants.maxQuizAnswerLength,
-                                          isTextArea: true,
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0)
-                                        )
-                                      ),
-                                      Padding(
-                                        padding: editable ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0) : const EdgeInsetsDirectional.all(20),
-                                        child: Wrap(
-                                          runSpacing: 10,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    localizedText.trim_extra_whitespaces,
-                                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                        color: theme.colors.leadingColor,
-                                                        fontSize: 18,
-                                                        fontWeight: FontWeight.w500
-                                                    )
-                                                  )
-                                                ),
-                                                BloqoSwitch(
-                                                  value: trimToggle,
-                                                  editable: editable,
-                                                )
-                                              ]
+                                        if(multipleChoiceControllers.isEmpty)
+                                          Padding(
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                                            child: Text(
+                                              localizedText.edit_block_quiz_page_no_answers,
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.primaryText,
+                                                fontSize: 14,
+                                              ),
                                             ),
-                                            Row(
+                                          ),
+                                        if(multipleChoiceControllers.isNotEmpty)
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: List.generate(
+                                                multipleChoiceControllers.length,
+                                                    (index) {
+                                                  TextEditingController controller = multipleChoiceControllers[index];
+                                                  Toggle toggle = multipleChoiceToggles[index];
+                                                  return BloqoEditableQuizAnswer(
+                                                      controller: controller,
+                                                      toggle: toggle,
+                                                      answerNumber: index + 1,
+                                                      editable: editable,
+                                                      padding: !editable && index == multipleChoiceControllers.length - 1 ? const EdgeInsetsDirectional.all(15) : const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                                      onDelete: () => _deleteAnswer(index: index)
+                                                  );
+                                                }
+                                            ),
+                                          ),
+                                        if(editable)
+                                          Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 30),
+                                              child: BloqoFilledButton(
+                                                  color: theme.colors.leadingColor,
+                                                  onPressed: () => _addAnswer(),
+                                                  text: localizedText.add_answer,
+                                                  icon: Icons.add
+                                              )
+                                          ),
+                                        if(editable)
+                                          Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                              child: BloqoFilledButton(
+                                                  color: theme.colors.leadingColor,
+                                                  fontSize: !isTablet ? 20 : 26,
+                                                  height: !isTablet ? 48 : 64,
+                                                  onPressed: () async {
+                                                    await _trySaveMultipleChoiceQuizChanges(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        courseId: course.id,
+                                                        sectionId: section.id,
+                                                        block: widget.block
+                                                    );
+                                                  },
+                                                  text: localizedText.save_quiz_changes,
+                                                  icon: Icons.edit
+                                              )
+                                          ),
+                                      ]
+                                  ),
+                                if(quizTypeController.text == BloqoBlockType.quizOpenQuestion.quizShortText(localizedText: localizedText))
+                                  Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enter_question,
+                                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontSize: 30,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Form(
+                                          key: formKeyOpenQuestion,
+                                          child: BloqoTextField(
+                                              formKey: formKeyOpenQuestion,
+                                              controller: openQuestionController,
+                                              labelText: localizedText.question,
+                                              hintText: localizedText.enter_question_here,
+                                              maxInputLength: Constants.maxQuizQuestionLength,
+                                              isTextArea: true,
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0)
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              localizedText.enter_answer,
+                                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                color: theme.colors.leadingColor,
+                                                fontSize: 30,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Form(
+                                          key: formKeyOpenQuestionAnswer,
+                                          child: BloqoTextField(
+                                            formKey: formKeyOpenQuestionAnswer,
+                                            controller: openQuestionAnswerController,
+                                            labelText: localizedText.answer,
+                                            hintText: localizedText.enter_answer_here,
+                                            maxInputLength: Constants.maxQuizAnswerLength,
+                                            isTextArea: true,
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0)
+                                          )
+                                        ),
+                                        Padding(
+                                          padding: editable ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0) : const EdgeInsetsDirectional.all(20),
+                                          child: Wrap(
+                                            runSpacing: 10,
+                                            children: [
+                                              Row(
                                                 children: [
                                                   Expanded(
                                                     child: Text(
-                                                      localizedText.comparison_ignore_case,
+                                                      localizedText.trim_extra_whitespaces,
                                                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                                        color: theme.colors.leadingColor,
-                                                        fontSize: 18,
-                                                        fontWeight: FontWeight.w500
+                                                          color: theme.colors.leadingColor,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.w500
                                                       )
                                                     )
                                                   ),
                                                   BloqoSwitch(
-                                                    value: ignoreCaseToggle,
+                                                    value: trimToggle,
                                                     editable: editable,
                                                   )
                                                 ]
-                                            )
-                                          ]
+                                              ),
+                                              Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        localizedText.comparison_ignore_case,
+                                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                                          color: theme.colors.leadingColor,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.w500
+                                                        )
+                                                      )
+                                                    ),
+                                                    BloqoSwitch(
+                                                      value: ignoreCaseToggle,
+                                                      editable: editable,
+                                                    )
+                                                  ]
+                                              )
+                                            ]
+                                          ),
                                         ),
-                                      ),
-                                      if(editable)
-                                        Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                            child: BloqoFilledButton(
-                                                color: theme.colors.leadingColor,
-                                                onPressed: () async {
-                                                  await _trySaveOpenQuestionQuizChanges(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      courseId: course.id,
-                                                      sectionId: section.id,
-                                                      block: widget.block
-                                                  );
-                                                },
-                                                text: localizedText.save_quiz_changes,
-                                                icon: Icons.edit
-                                            )
-                                        ),
-                                    ]
-                                ),
-                            ]
-                          )
-                      ),
-                    ],
+                                        if(editable)
+                                          Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                              child: BloqoFilledButton(
+                                                  color: theme.colors.leadingColor,
+                                                  fontSize: !isTablet ? 20 : 26,
+                                                  height: !isTablet ? 48 : 64,
+                                                  onPressed: () async {
+                                                    await _trySaveOpenQuestionQuizChanges(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        courseId: course.id,
+                                                        sectionId: section.id,
+                                                        block: widget.block
+                                                    );
+                                                  },
+                                                  text: localizedText.save_quiz_changes,
+                                                  icon: Icons.edit
+                                              )
+                                          ),
+                                      ]
+                                  ),
+                              ]
+                            )
+                        ),
+                      ],
+                    )
                   ),
                 ),
               ),

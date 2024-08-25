@@ -46,6 +46,7 @@ class BloqoProgressBar extends StatelessWidget{
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   fontSize: fontSize,
                   fontFamily: 'Outfit',
+                  color: Colors.black
                 ),
               ),
               barRadius: const Radius.circular(5),

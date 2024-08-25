@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -15,6 +16,7 @@ class BloqoReview extends StatelessWidget{
   Widget build(BuildContext context) {
 
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
@@ -50,7 +52,7 @@ class BloqoReview extends StatelessWidget{
                       color: theme.colors.tertiary,
                     ),
                     itemCount: 5,
-                    itemSize: 24,
+                    itemSize: !isTablet ? 22 : 29,
                     direction: Axis.horizontal,
                   ),
                 ],

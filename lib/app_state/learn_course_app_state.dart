@@ -134,7 +134,7 @@ void saveLearnCourseToAppState({required BuildContext context, required BloqoCou
   Provider.of<LearnCourseAppState>(context, listen: false)._set(course, chapters, sections, enrollmentDate, sectionsCompleted,
       chaptersCompleted, totNumSections);
   if(comingFromHome) {
-    Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(true);
+    Provider.of<LearnCourseAppState>(context, listen: false)._updateComingFromHomePrivilege(comingFromHome);
   }
 }
 

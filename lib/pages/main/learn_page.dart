@@ -19,6 +19,7 @@ import '../../model/courses/bloqo_chapter_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/check_device.dart';
 import '../../utils/localization.dart';
 
 class LearnPage extends StatefulWidget {
@@ -42,6 +43,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   late int inProgressCoursesDisplayed;
   late int completedCoursesDisplayed;
   late Ticker _ticker;
+  late int coursesToFurtherLoadAtRequest;
+  bool initialized = false;
 
   @override
   void initState() {
@@ -53,6 +56,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
     )..addListener(() => setState(() {}));
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     completedCoursesDisplayed = Constants.coursesToShowAtFirst;
+    coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
 
     _ticker = createTicker((Duration elapsed) {
       _checkHomePrivilege(context);
@@ -104,16 +108,27 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
+    if(isTablet && !initialized){
+      setState(() {
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        completedCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletHomepage;
+        initialized = true;
+      }
+      );
+    }
 
     void loadMoreInProgressCourses() {
       setState(() {
-        inProgressCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        inProgressCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
     void loadMoreCompletedCourses() {
       setState(() {
-        completedCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        completedCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
@@ -158,7 +173,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                               child: Column(
                                   children: [
-                                    if (inProgressCourses.isNotEmpty)
+                                    if (inProgressCourses.isNotEmpty && !isTablet)
                                       Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: List.generate(
@@ -186,12 +201,42 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           },
                                         ),
                                       ),
+
+                                    if (inProgressCourses.isNotEmpty && isTablet)
+                                      GridView.builder(
+                                        shrinkWrap: true, // This allows the GridView to adjust its height to fit its content
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, // Number of columns in the grid
+                                          crossAxisSpacing: 10.0, // Spacing between columns
+                                          mainAxisSpacing: 10.0, // Spacing between rows
+                                          childAspectRatio: 6/2, // Aspect ratio for the grid items
+                                        ),
+                                        itemCount: inProgressCoursesDisplayed > inProgressCourses.length
+                                            ? inProgressCourses.length
+                                            : inProgressCoursesDisplayed,
+                                        itemBuilder: (context, index) {
+                                          BloqoUserCourseEnrolledData course = inProgressCourses[index];
+                                          return BloqoCourseEnrolled(
+                                            course: course,
+                                            showInProgress: true,
+                                            onPressed: () async {
+                                              await _goToCoursePage(
+                                                  context: context,
+                                                  localizedText: localizedText,
+                                                  userCourseEnrolled: course
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+
                                     if (inProgressCoursesDisplayed < inProgressCourses.length)
                                       BloqoTextButton(
                                           onPressed: loadMoreInProgressCourses,
                                           text: localizedText.load_more,
                                           color: theme.colors.leadingColor
                                       ),
+
                                     if (inProgressCourses.isEmpty)
                                       Padding(
                                         padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
@@ -242,7 +287,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                             padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                             child: Column(
                                 children: [
-                                  if (completedCourses.isNotEmpty)
+
+                                  if (completedCourses.isNotEmpty && !isTablet)
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: List.generate(
@@ -276,6 +322,37 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                         },
                                       ),
                                     ),
+
+                                  if (completedCourses.isNotEmpty && isTablet)
+                                    GridView.builder(
+                                      shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2, // Number of columns in the grid
+                                        crossAxisSpacing: 10.0,
+                                        mainAxisSpacing: 10.0,
+                                        childAspectRatio: 6/2, // Aspect ratio for the grid items (width/height ratio)
+                                      ),
+                                      itemCount: completedCoursesDisplayed > completedCourses.length
+                                          ? completedCourses.length
+                                          : completedCoursesDisplayed,
+                                      itemBuilder: (context, index) {
+                                        BloqoUserCourseEnrolledData course = completedCourses[index];
+                                        return BloqoCourseEnrolled(
+                                          course: course,
+                                          showCompleted: true,
+                                          onPush: widget.onPush,
+                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0), // Padding for the last item, if needed
+                                          onPressed: () async {
+                                            await _goToCoursePage(
+                                              context: context,
+                                              localizedText: localizedText,
+                                              userCourseEnrolled: course,
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+
                                   if (completedCoursesDisplayed < completedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreCompletedCourses,
@@ -352,9 +429,10 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _goToCoursePage({ required BuildContext context, required var localizedText,
-    required BloqoUserCourseEnrolledData userCourseEnrolled }) async {
+  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolledData userCourseEnrolled,
+  }) async {
     context.loaderOverlay.show();
+
     try {
       BloqoCourseData? learnCourse = getLearnCourseFromAppState(context: context);
       String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
@@ -373,6 +451,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       }
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
+        // Navigate to the course content page if the learnCourse is already set
+
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
@@ -380,7 +460,10 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
             sectionToComplete: sectionToComplete,
           ),
         );
-      } else {
+      }
+
+      else {
+        // Load the course data and navigate to the course content page
         BloqoCourseData course = await getCourseFromId(
           firestore: firestore,
           localizedText: localizedText,
@@ -402,6 +485,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         }
 
         if (!context.mounted) return;
+
+        // Save course data to the app state
         saveLearnCourseToAppState(
           context: context,
           course: course,
@@ -411,8 +496,9 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
           sectionsCompleted: userCourseEnrolled.sectionsCompleted ?? [],
           chaptersCompleted: userCourseEnrolled.chaptersCompleted ?? [],
           totNumSections: userCourseEnrolled.totNumSections,
-          comingFromHome: true,
         );
+
+        // Hide the loader and navigate to the course content page
         context.loaderOverlay.hide();
         widget.onPush(
           CourseContentPage(
@@ -423,6 +509,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         );
       }
     } on BloqoException catch (e) {
+      // Handle exceptions
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(

@@ -1,4 +1,5 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -36,6 +37,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     void loadMoreUsers() {
       setState(() {
@@ -73,41 +75,45 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
               return Align(
                 alignment: Alignment.topLeft,
                 child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            (widget.followers ? localizedText.users_who_follow : localizedText.users_who_are_followed_by) +
-                                widget.reference.username,
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: theme.colors.highContrastColor),
+                  child: Padding(
+                    padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              (widget.followers ? localizedText.users_who_follow : localizedText.users_who_are_followed_by) +
+                                  widget.reference.username,
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: theme.colors.highContrastColor),
+                            ),
                           ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                          _usersDisplayed > users.length ? users.length : _usersDisplayed,
-                              (index) {
-                            BloqoUserData user = users[index];
-                            return BloqoUserDetailsShort(
-                              user: user,
-                              onPush: widget.onPush,
-                              onNavigateToPage: widget.onNavigateToPage,
-                            );
-                          },
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(
+                            _usersDisplayed > users.length ? users.length : _usersDisplayed,
+                                (index) {
+                              BloqoUserData user = users[index];
+                              return BloqoUserDetailsShort(
+                                user: user,
+                                onPush: widget.onPush,
+                                onNavigateToPage: widget.onNavigateToPage,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      if (_usersDisplayed < users.length)
-                        BloqoTextButton(
-                          onPressed: loadMoreUsers,
-                          text: localizedText.load_more,
-                          color: theme.colors.highContrastColor,
-                        ),
-                    ],
+                        if (_usersDisplayed < users.length)
+                          BloqoTextButton(
+                            onPressed: loadMoreUsers,
+                            text: localizedText.load_more,
+                            color: theme.colors.highContrastColor,
+                            fontSize: !isTablet ? 14 : 16,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               );

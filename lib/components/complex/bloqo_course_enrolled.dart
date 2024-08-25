@@ -265,12 +265,19 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                                 final imgFile = File('$directory/certificate.png');
                                 imgFile.writeAsBytes(pngBytes);
 
-                                Share.shareXFiles([XFile('$directory/certificate.png')]);
+                                if (!context.mounted) return;
+                                RenderBox? box = context.findRenderObject() as RenderBox?;
+                                Rect sharePositionOrigin = box!.localToGlobal(Offset.zero) & box.size;
+
+                                Share.shareXFiles(
+                                  [XFile('$directory/certificate.png')],
+                                  sharePositionOrigin: sharePositionOrigin, // Set the share position origin
+                                );
                               },
                               text: localizedText.get_certificate,
                               fontSize: 16,
                               height: 32,
-                          ),
+                            ),
                         ],
                       ),
                   )

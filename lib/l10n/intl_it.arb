@@ -340,5 +340,6 @@
   "language": "Lingua",
   "theme": "Tema",
   "purple_orchid": "Orchidea viola",
-  "ocean_cornflower": "Fiordaliso oceano"
+  "ocean_cornflower": "Fiordaliso oceano",
+  "course_completed": "Hai già completato il corso, pertanto non ti puoi disiscrivere."
 }
