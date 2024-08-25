@@ -8,6 +8,9 @@ import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/quiz/bloqo_open_question_quiz.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
+import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
+import 'package:bloqo/utils/check_device.dart';
+import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -51,6 +54,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -68,116 +72,121 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-
-                  ...List.generate(
-                  widget.blocks.length,
-                  (blockIndex) {
-                    var block = widget.blocks[blockIndex];
-
-                    if (block.type == BloqoBlockType.text.toString()) {
-                      return BloqoSeasaltContainer(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10), //20, 10, 20, 20
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  MarkdownBody(
-                                    data: block.content,
-                                    styleSheet: BloqoMarkdownStyleSheet.get(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    if(block.type == BloqoBlockType.multimediaAudio.toString()) {
-                      return BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20, 0, 20, 20),
-                        child: Column(
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: BloqoAudioPlayer(
-                                      url: block.content
-                                  )
-                              ),
-                            ]
-                        ),
-                      );
-                  }
-
-                  if(block.type == BloqoBlockType.multimediaImage.toString()) {
-                    return BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                        child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Image.network(block.content),
-                                ),
-                            ],
-                        ),
-                    );
-                  }
-
-                  if(block.type == BloqoBlockType.multimediaVideo.toString()) {
-                    return BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20, 0, 20, 20),
-                        child: block.content != "" ?
-                          Column(
-                            children: [
-                              !block.content.startsWith("yt:")
-                                  ? BloqoVideoPlayer(
-                                  url: block.content
-                              )
-                                  : BloqoYouTubePlayer(
-                                  url: block.content.substring(3)
-                              ),
-                            ]
-                        ) : Container()
-                    );
-                  }
-
-                  if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
-                    return BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                        child: Column(
-                          children: [
-                            BloqoOpenQuestionQuiz(
-                              onPush: widget.onPush,
-                              block: block
-                            ),
-
-                        ],
-                      ),
-                    );
-                  }
-
-                  if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
-                    return BloqoSeasaltContainer(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                    Padding(
+                      padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
                       child: Column(
                         children: [
-                          BloqoMultipleChoiceQuiz(
-                              onPush: widget.onPush,
-                              block: block
+                        ...List.generate(
+                      widget.blocks.length,
+                      (blockIndex) {
+                        var block = widget.blocks[blockIndex];
+
+                        if (block.type == BloqoBlockType.text.toString()) {
+                          return BloqoSeasaltContainer(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10), //20, 10, 20, 20
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      MarkdownBody(
+                                        data: block.content,
+                                        styleSheet: BloqoMarkdownStyleSheet.get(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        if(block.type == BloqoBlockType.multimediaAudio.toString()) {
+                          return BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 0, 20, 20),
+                            child: Column(
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: BloqoAudioPlayer(
+                                          url: block.content
+                                      )
+                                  ),
+                                ]
+                            ),
+                          );
+                      }
+
+                      if(block.type == BloqoBlockType.multimediaImage.toString()) {
+                        return BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                            child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Image.network(block.content),
+                                    ),
+                                ],
+                            ),
+                        );
+                      }
+
+                      if(block.type == BloqoBlockType.multimediaVideo.toString()) {
+                        return BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 0, 20, 20),
+                            child: block.content != "" ?
+                              Column(
+                                children: [
+                                  !block.content.startsWith("yt:")
+                                      ? BloqoVideoPlayer(
+                                      url: block.content
+                                  )
+                                      : BloqoYouTubePlayer(
+                                      url: block.content.substring(3)
+                                  ),
+                                ]
+                            ) : Container()
+                        );
+                      }
+
+                      if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
+                        return BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                            child: Column(
+                              children: [
+                                BloqoOpenQuestionQuiz(
+                                  onPush: widget.onPush,
+                                  block: block
+                                ),
+
+                            ],
                           ),
+                        );
+                      }
 
-                        ],
-                      ),
-                    );
-                  }
-                  return const SizedBox();
+                      if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
+                        return BloqoSeasaltContainer(
+                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                          child: Column(
+                            children: [
+                              BloqoMultipleChoiceQuiz(
+                                  onPush: widget.onPush,
+                                  block: block
+                              ),
 
-                  }
+                            ],
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                      }
+                    ),
+                  ],
                 ),
+              ),
 
                 Align(
                   alignment: Alignment.center,
@@ -195,8 +204,8 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       },
                       color: theme.colors.success,
                       text: localizedText.learned,
-                      fontSize: 24,
-                      height: 65,
+                      fontSize: !isTablet ? 24 : 32,
+                      height: !isTablet ? 65 : 75,
                     ),
                   ),
                 ),
@@ -228,6 +237,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
       final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
       final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
 
       // Update sections completed in both the course enrollment and app state
       if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
@@ -278,6 +288,9 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           courseId: course.id,
           enrolledUserId: user.id,
         );
+
+        publishedCourse.numberOfCompletions = publishedCourse.numberOfCompletions + 1;
+        await savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourse);
 
         if (!context.mounted) return;
       }

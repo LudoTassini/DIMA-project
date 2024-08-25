@@ -8,6 +8,7 @@ import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -51,6 +52,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
   late TabController tabController;
   late int inProgressCoursesDisplayed;
   late int publishedCoursesDisplayed;
+  late int coursesToFurtherLoadAtRequest;
+  late bool initialized;
   late Ticker _ticker;
 
   @override
@@ -63,6 +66,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
     )..addListener(() => setState(() {}));
     inProgressCoursesDisplayed = Constants.coursesToShowAtFirst;
     publishedCoursesDisplayed = Constants.coursesToShowAtFirst;
+    coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
+    initialized = false;
 
     _ticker = createTicker((Duration elapsed) {
       _checkHomePrivilege(context);
@@ -93,16 +98,27 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
+    if(isTablet && !initialized){
+      setState(() {
+        inProgressCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        publishedCoursesDisplayed = Constants.coursesToShowAtFirstTablet;
+        coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTablet;
+        initialized = true;
+      }
+      );
+    }
 
     void loadMoreInProgressCourses() {
       setState(() {
-        inProgressCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        inProgressCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
     void loadMorePublishedCourses() {
       setState(() {
-        publishedCoursesDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        publishedCoursesDisplayed += coursesToFurtherLoadAtRequest;
       });
     }
 
@@ -147,7 +163,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                             builder: (context, editorCourseAppState, _){
                               return Column(
                                 children: [
-                                  if (inProgressCourses.isNotEmpty)
+
+                                  if (inProgressCourses.isNotEmpty && !isTablet)
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: List.generate(
@@ -185,6 +202,41 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                         },
                                       ),
                                     ),
+
+                                  if (inProgressCourses.isNotEmpty && isTablet)
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 15), // Padding around the entire GridView
+                                      child: GridView.builder(
+                                        shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, // Number of columns in the grid
+                                          crossAxisSpacing: 10.0, // Spacing between columns
+                                          mainAxisSpacing: 10.0, // Spacing between rows
+                                          childAspectRatio: 6 / 2, // Aspect ratio for the grid items (width/height ratio)
+                                        ),
+                                        itemCount: inProgressCoursesDisplayed > inProgressCourses.length
+                                            ? inProgressCourses.length
+                                            : inProgressCoursesDisplayed,
+                                        itemBuilder: (context, index) {
+                                          BloqoUserCourseCreatedData course = inProgressCourses[index];
+                                          return BloqoCourseCreated(
+                                            course: course,
+                                            onPressed: () async {
+                                              await _goToCoursePage(
+                                                context: context,
+                                                localizedText: localizedText,
+                                                userCourseCreated: course,
+                                              );
+                                            },
+                                            showEditOptions: true,
+                                            onPublish: () => widget.onPush(
+                                              PublishCoursePage(onPush: widget.onPush, courseId: course.courseId),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+
                                   if (inProgressCoursesDisplayed < inProgressCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMoreInProgressCourses,
@@ -242,7 +294,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                         BloqoSeasaltContainer(
                             child: Column(
                                 children: [
-                                  if (publishedCourses.isNotEmpty)
+
+                                  if (publishedCourses.isNotEmpty && !isTablet)
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: List.generate(
@@ -421,6 +474,127 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                         },
                                       ),
                                     ),
+
+                                  if (publishedCourses.isNotEmpty && isTablet)
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 15), // Padding around the entire GridView
+                                      child: GridView.builder(
+                                        shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, // Number of columns in the grid
+                                          crossAxisSpacing: 10.0, // Spacing between columns
+                                          mainAxisSpacing: 10.0, // Spacing between rows
+                                          childAspectRatio: 4 / 2, // Aspect ratio for the grid items (width/height ratio)
+                                        ),
+                                        itemCount: publishedCoursesDisplayed > publishedCourses.length
+                                            ? publishedCourses.length
+                                            : publishedCoursesDisplayed,
+                                        itemBuilder: (context, index) {
+                                          BloqoUserCourseCreatedData course = publishedCourses[index];
+                                          return BloqoCourseCreated(
+                                            course: course,
+                                            onPressed: () async {
+                                              _goToCoursePage(
+                                                context: context,
+                                                localizedText: localizedText,
+                                                userCourseCreated: course,
+                                              );
+                                            },
+                                            showPublishedOptions: true,
+                                            onViewStatistics: () async {
+                                              context.loaderOverlay.show();
+                                              try {
+                                                BloqoPublishedCourseData publishedCourse =
+                                                await getPublishedCourseFromCourseId(
+                                                    localizedText: localizedText,
+                                                    courseId: course.courseId);
+                                                List<BloqoReviewData> reviews = await getReviewsFromIds(
+                                                    localizedText: localizedText,
+                                                    reviewsIds: publishedCourse.reviews);
+                                                if (!context.mounted) return;
+                                                context.loaderOverlay.hide();
+                                                widget.onPush(ViewStatisticsPage(
+                                                  publishedCourse: publishedCourse,
+                                                  reviews: reviews,
+                                                  onPush: widget.onPush,
+                                                  onNavigateToPage: widget.onNavigateToPage,
+                                                ));
+                                              } on BloqoException catch (e) {
+                                                if (!context.mounted) return;
+                                                context.loaderOverlay.hide();
+                                                showBloqoErrorAlert(
+                                                  context: context,
+                                                  title: localizedText.error_title,
+                                                  description: e.message,
+                                                );
+                                              }
+                                            },
+                                            onDismiss: () async {
+                                              await showBloqoConfirmationAlert(
+                                                context: context,
+                                                title: localizedText.warning,
+                                                description: localizedText.course_dismiss_confirmation,
+                                                backgroundColor: theme.colors.error,
+                                                confirmationFunction: () async {
+                                                  context.loaderOverlay.show();
+                                                  try {
+                                                    BloqoPublishedCourseData publishedCourse =
+                                                    await getPublishedCourseFromCourseId(
+                                                        localizedText: localizedText,
+                                                        courseId: course.courseId);
+                                                    if (!context.mounted) return;
+                                                    await _tryDismissCourse(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      publishedCourseId: publishedCourse.publishedCourseId,
+                                                      courseId: course.courseId,
+                                                    );
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      BloqoSnackBar.get(
+                                                          context: context, child: Text(localizedText.done)),
+                                                    );
+                                                  } on BloqoException catch (e) {
+                                                    if (!context.mounted) return;
+                                                    context.loaderOverlay.hide();
+                                                    showBloqoErrorAlert(
+                                                      context: context,
+                                                      title: localizedText.error_title,
+                                                      description: e.message,
+                                                    );
+                                                  }
+                                                },
+                                              );
+                                            },
+                                            onGetQrCode: () async {
+                                              context.loaderOverlay.show();
+                                              try {
+                                                BloqoPublishedCourseData publishedCourse =
+                                                await getPublishedCourseFromCourseId(
+                                                    localizedText: localizedText, courseId: course.courseId);
+                                                if (!context.mounted) return;
+                                                context.loaderOverlay.hide();
+                                                widget.onPush(QrCodePage(
+                                                  qrCodeTitle: course.courseName,
+                                                  qrCodeContent:
+                                                  "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}",
+                                                ));
+                                              } on BloqoException catch (e) {
+                                                if (!context.mounted) return;
+                                                context.loaderOverlay.hide();
+                                                showBloqoErrorAlert(
+                                                  context: context,
+                                                  title: localizedText.error_title,
+                                                  description: e.message,
+                                                );
+                                              }
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+
                                   if (publishedCoursesDisplayed < publishedCourses.length)
                                     BloqoTextButton(
                                         onPressed: loadMorePublishedCourses,
@@ -469,6 +643,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                   },
                   text: localizedText.new_course,
                   icon: Icons.add,
+                  fontSize: !isTablet ? 20 : 26,
+                  height: !isTablet ? 48 : 64,
                 ),
               ),
             ],

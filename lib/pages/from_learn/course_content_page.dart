@@ -25,6 +25,7 @@ import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../utils/bloqo_exception.dart';
 import '../../utils/bloqo_qr_code_type.dart';
+import '../../utils/check_device.dart';
 import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
 
@@ -58,6 +59,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
+    print("loaded page");
 
     // FIXME
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
@@ -213,6 +217,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+
                                     ...List.generate(
                                       chapters.length,
                                         (chapterIndex) {
@@ -288,10 +293,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         ),
                                                       ],
                                                     ),
-
                                                   ],
                                                 ),
-
                                               ),
 
                                               Padding(
@@ -341,8 +344,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                               : const SizedBox.shrink(), // This will take up no space
                                               ),
 
-                                              ... (_showSectionsMap[chapter.id] == true
+                                              ... _showSectionsMap[chapter.id] == true
                                                   ? [
+                                                if (!isTablet)
                                                     ...List.generate(
                                                       sections[chapter.id]!.length,
                                                           (sectionIndex) {
@@ -355,7 +359,42 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           }
                                                         }
 
-                                                        return BloqoCourseSection(
+                                                    return BloqoCourseSection(
+                                                      section: section,
+                                                      index: sectionIndex,
+                                                      isClickable: isClickable,
+                                                      isInLearnPage: true,
+                                                      onPressed: () async {
+                                                        _goToSectionPage(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          section: section,
+                                                          courseName: course.name,
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                )
+                                                else Padding(
+                                                  padding: const EdgeInsets.all(10),
+                                                  child: GridView.builder(
+                                                    shrinkWrap: true,
+                                                    physics: const NeverScrollableScrollPhysics(),
+                                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                      crossAxisCount: 2,
+                                                      crossAxisSpacing: 10.0,
+                                                      mainAxisSpacing: 10.0,
+                                                      childAspectRatio: 5 / 2,
+                                                    ),
+                                                    itemCount: sections[chapter.id]!.length,
+                                                    itemBuilder: (context, sectionIndex) {
+                                                      var section = sections[chapter.id]![sectionIndex];
+                                                      bool isClickable = widget.isCourseCompleted ||
+                                                          (widget.sectionToComplete!.id == section.id);
+
+                                                      return Padding(
+                                                        padding: const EdgeInsets.all(5.0),
+                                                        child: BloqoCourseSection(
                                                           section: section,
                                                           index: sectionIndex,
                                                           isClickable: isClickable,
@@ -368,12 +407,13 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               courseName: course.name,
                                                             );
                                                           },
-                                                        );
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
 
-
-                                                      },
-                                                    ),
-                                                Padding(
+                                              Padding(
                                                   padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
                                                   child: Row(
                                                     mainAxisSize: MainAxisSize.max,
@@ -450,70 +490,101 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                   ),
                                                 ),
                                               ]
-                                            ),
-                                          ],
+                                            ],
                                           ),
                                         );
                                       },
                                     ),
 
                                     Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          25, 50, 25, 10),
-                                      child: Wrap(
-                                        spacing: 10.0,
-                                        runSpacing: 10.0,
+                                      padding: const EdgeInsetsDirectional.fromSTEB(25, 50, 25, 10),
+                                      child: isTablet
+                                          ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Column(
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displaySmall
-                                                      ?.copyWith(
-                                                    color: theme.colors.highContrastColor,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0), // Adjust padding if necessary
-                                              child: BloqoFilledButton(
-                                                color: theme.colors.error,
-                                                onPressed: () {
-                                                  showBloqoConfirmationAlert(
-                                                      context: context,
-                                                      title: localizedText.warning,
-                                                      description: localizedText.unsubscribe_confirmation,
-                                                      confirmationFunction: () async {
-                                                        await _tryDeleteUserCourseEnrolled(
-                                                          context: context,
-                                                          localizedText: localizedText,
-                                                          courseId: course.id,
-                                                          enrolledUserId: user.id
-                                                        );
-                                                      },
-                                                      backgroundColor: theme.colors.error
-                                                  );
-                                                },
-                                                text: localizedText.unsubscribe,
-                                                icon: Icons.close_sharp,
+                                          Flexible(
+                                            fit: FlexFit.loose,  // Adjust the fit
+                                            child: Text(
+                                              "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.highContrastColor,
+                                                fontSize: 16,
                                               ),
                                             ),
                                           ),
+                                          const Padding(
+                                              padding: EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0),
+                                          ),
+                                          Flexible(
+                                            fit: FlexFit.loose,  // Adjust the fit
+                                            child: BloqoFilledButton(
+                                              color: theme.colors.error,
+                                              onPressed: () {
+                                                showBloqoConfirmationAlert(
+                                                  context: context,
+                                                  title: localizedText.warning,
+                                                  description: localizedText.unsubscribe_confirmation,
+                                                  confirmationFunction: () async {
+                                                    await _tryDeleteUserCourseEnrolled(
+                                                      context: context,
+                                                      localizedText: localizedText,
+                                                      courseId: course.id,
+                                                      enrolledUserId: user.id,
+                                                    );
+                                                  },
+                                                  backgroundColor: theme.colors.error,
+                                                );
+                                              },
+                                              text: localizedText.unsubscribe,
+                                              icon: Icons.close_sharp,
+                                              fontSize: 30,
+                                              height: 70,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                          : Wrap(
+                                        spacing: 10.0,
+                                        runSpacing: 10.0,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.highContrastColor,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                          BloqoFilledButton(
+                                            color: theme.colors.error,
+                                            onPressed: () {
+                                              showBloqoConfirmationAlert(
+                                                context: context,
+                                                title: localizedText.warning,
+                                                description: localizedText.unsubscribe_confirmation,
+                                                confirmationFunction: () async {
+                                                  await _tryDeleteUserCourseEnrolled(
+                                                    context: context,
+                                                    localizedText: localizedText,
+                                                    courseId: course.id,
+                                                    enrolledUserId: user.id,
+                                                  );
+                                                },
+                                                backgroundColor: theme.colors.error,
+                                              );
+                                            },
+                                            text: localizedText.unsubscribe,
+                                            icon: Icons.close_sharp,
+                                            fontSize: 20, // Adjusted for non-tablet size
+                                            height: 48,    // Adjusted for non-tablet size
+                                          ),
                                         ],
                                       ),
+                                    )
 
-
-                                    ),
                                   ],
                                 ),
                               ],
@@ -563,12 +634,12 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                     courseName: course.name,
                                   );
                               },
-                            height: 60,
                             color: theme.colors.success,
                             text: sectionsCompleted.isEmpty ? localizedText.start_learning
                                 : localizedText.continue_learning,
-                            fontSize: 24,
                             icon: Icons.lightbulb,
+                            fontSize: !isTablet ? 24 : 34,
+                            height: !isTablet ? 60 : 80,
                           ),
                         ),
                       ],

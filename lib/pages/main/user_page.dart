@@ -10,6 +10,7 @@ import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/model/courses/tags/bloqo_course_tag.dart';
 import 'package:bloqo/style/themes/bloqo_theme.dart';
 import 'package:bloqo/utils/bloqo_setting_type.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +95,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
 
     final user = getUserFromAppState(context: context)!;
     final Toggle fullNameVisible = Toggle(initialValue: user.isFullNameVisible);
+    bool isTablet = checkDevice(context);
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),

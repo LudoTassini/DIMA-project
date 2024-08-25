@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Constants{
 
   static const int maxEmailLength = 320;
@@ -24,6 +26,11 @@ class Constants{
 
   static const int coursesToShowAtFirst = 3;
   static const int coursesToFurtherLoadAtRequest = 3;
+  static const int coursesToShowAtFirstTabletHomepage = 4;
+  static const int coursesToShowAtFirstTablet = 8;
+  static const int coursesToFurtherLoadAtRequestTabletHomepage = 4;
+  static const int coursesToFurtherLoadAtRequestTablet = 8;
+
   static const int usersToShowAtFirst = 10;
   static const int usersToFurtherLoadAtRequest = 10;
   static const int reviewsToShowAtFirst = 3;
@@ -40,5 +47,8 @@ class Constants{
 
   static const int maxReviewLength = 300;
   static const int maxReviewTitleLength = 20;
+
+  static const EdgeInsetsDirectional tabletPaddingWelcomePages = EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0);
+  static const EdgeInsetsDirectional tabletPadding = EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0);
 
 }

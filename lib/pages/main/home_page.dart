@@ -21,6 +21,7 @@ import '../../model/courses/bloqo_block_data.dart';
 import '../../model/courses/bloqo_course_data.dart';
 import '../../model/courses/bloqo_section_data.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/check_device.dart';
 import '../../utils/constants.dart';
 import '../../utils/localization.dart';
 
@@ -43,39 +44,59 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
   int _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirst;
   int _coursesCreatedDisplayed = Constants.coursesToShowAtFirst;
+  int _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequest;
+  bool _initialized = false;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
+    if(isTablet && !_initialized){
+      setState(() {
+        _coursesEnrolledInDisplayed = Constants.coursesToShowAtFirstTabletHomepage;
+        _coursesCreatedDisplayed = Constants.coursesToShowAtFirstTabletHomepage;
+        _coursesToFurtherLoadAtRequest = Constants.coursesToFurtherLoadAtRequestTabletHomepage;
+        _initialized = true;
+        }
+      );
+    }
 
     void loadMoreEnrolledCourses() {
       setState(() {
-        _coursesEnrolledInDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        _coursesEnrolledInDisplayed += _coursesToFurtherLoadAtRequest;
       });
     }
 
     void loadMoreCreatedCourses() {
       setState(() {
-        _coursesCreatedDisplayed += Constants.coursesToFurtherLoadAtRequest;
+        _coursesCreatedDisplayed += _coursesToFurtherLoadAtRequest;
       });
     }
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
       child: SingleChildScrollView(
+      child: Padding(
+        padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+            //: Constants.tabletPadding,
+            :const EdgeInsetsDirectional.all(0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-              child: Text(
-                localizedText.homepage_learning,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: theme.colors.highContrastColor,
-                  fontSize: 30,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  localizedText.homepage_learning,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: theme.colors.highContrastColor,
+                    fontSize: 30,
+                  ),
                 ),
               ),
             ),
@@ -110,7 +131,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             ],
                           ),
                         ),
-                      if (userCoursesEnrolled.isNotEmpty)
+
+                      if (userCoursesEnrolled.isNotEmpty && !isTablet)
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: List.generate(
@@ -127,11 +149,45 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                             },
                           ),
                         ),
+
+                      if (userCoursesEnrolled.isNotEmpty && isTablet)
+                        GridView.builder(
+                          key: ValueKey(_coursesEnrolledInDisplayed),
+                          shrinkWrap: true, // This helps in unbounded height cases
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns in the grid
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: 6/2,
+                          ),
+                          itemCount: _coursesEnrolledInDisplayed > userCoursesEnrolled.length
+                              ? userCoursesEnrolled.length
+                              : _coursesEnrolledInDisplayed,
+                          itemBuilder: (context, index) {
+                            BloqoUserCourseEnrolledData course = userCoursesEnrolled[index];
+                            return BloqoCourseEnrolled(
+                              course: course,
+                              showInProgress: true,
+                              onPressed: () async {
+                                await _goToLearnCoursePage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  userCourseEnrolled: course,
+                                );
+                              },
+                            );
+                          },
+                        ),
+
                       if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
-                        BloqoTextButton(
-                          onPressed: loadMoreEnrolledCourses,
-                          text: localizedText.load_more,
-                          color: theme.colors.leadingColor
+                        Padding(
+                          padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                          : const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                          child: BloqoTextButton(
+                            onPressed: loadMoreEnrolledCourses,
+                            text: localizedText.load_more,
+                            color: theme.colors.leadingColor
+                          ),
                         ),
 
                       if (userCoursesEnrolled.isEmpty)
@@ -168,12 +224,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           Flexible(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-              child: Text(
-                localizedText.homepage_editing,
-                textAlign: TextAlign.end,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: theme.colors.highContrastColor,
-                  fontSize: 30,
+              child: Align(
+                alignment: Alignment.topRight,
+                child:Text(
+                  localizedText.homepage_editing,
+                  textAlign: TextAlign.end,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: theme.colors.highContrastColor,
+                    fontSize: 30,
+                  ),
                 ),
               ),
             ),
@@ -209,11 +268,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ),
                         ),
 
-                      if (userCoursesCreated.isNotEmpty)
+                      if (userCoursesCreated.isNotEmpty && !isTablet)
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: List.generate(
-                            userCoursesCreated.length,
+                            _coursesCreatedDisplayed > userCoursesCreated.length ? userCoursesCreated.length : _coursesCreatedDisplayed,
                                 (index) {
                               BloqoUserCourseCreatedData? course = userCoursesCreated[index];
                               return BloqoCourseCreated(
@@ -226,15 +285,38 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ),
                         ),
 
+                      if (userCoursesCreated.isNotEmpty && isTablet)
+                        GridView.builder(
+                          key: ValueKey(_coursesCreatedDisplayed),
+                          shrinkWrap: true, // This helps in unbounded height cases
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns in the grid
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: 8/2,
+                          ),
+                          itemCount: _coursesCreatedDisplayed > userCoursesCreated.length
+                              ? userCoursesCreated.length
+                              : _coursesCreatedDisplayed,
+                          itemBuilder: (context, index) {
+                            BloqoUserCourseCreatedData course = userCoursesCreated[index];
+                            return BloqoCourseCreated(
+                              course: course,
+                              onPressed: () async {
+                                await _goToEditorCoursePage(context: context, localizedText: localizedText,
+                                    userCourseCreated: course); },
+                            );
+                          },
+                        ),
+
                         if (_coursesCreatedDisplayed < userCoursesCreated.length)
-                          TextButton(
-                            onPressed: loadMoreCreatedCourses,
-                            child: Text(
-                              localizedText.load_more,
-                              style: TextStyle(
-                                color: theme.colors.primaryText,
-                                decoration: TextDecoration.underline,
-                              ),
+                          Padding(
+                            padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                            : const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            child: BloqoTextButton(
+                                onPressed: loadMoreCreatedCourses,
+                                text: localizedText.load_more,
+                                color: theme.colors.primaryText
                             ),
                           ),
 
@@ -272,6 +354,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         ],
       ),
     ),
+      ),
     );
   }
 
