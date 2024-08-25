@@ -1,13 +1,12 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/navigation/bloqo_nav_bar.dart';
-import 'package:bloqo/utils/bloqo_external_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:bloqo/main.dart' as app;
 
-import '../../mocks/mock_external_services.dart';
+import '../../utils/routines.dart';
+
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -15,18 +14,7 @@ void main() {
   testWidgets('Register test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
-
-    await app.main(
-      externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage,
-      ),
-    );
-
-    await tester.pumpAndSettle();
+    await initTestApp(tester: tester);
 
     var registerButton = find.byType(BloqoFilledButton, skipOffstage: false).at(1);
     await tester.tap(registerButton);
@@ -50,18 +38,7 @@ void main() {
   testWidgets('Cannot register an user with an email that is already in use test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
-
-    await app.main(
-      externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage,
-      ),
-    );
-
-    await tester.pumpAndSettle();
+    await initTestApp(tester: tester);
 
     var registerButton = find.byType(BloqoFilledButton, skipOffstage: false).at(1);
     await tester.tap(registerButton);
@@ -85,18 +62,7 @@ void main() {
   testWidgets('Cannot register an user with unaccepted data', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
-
-    await app.main(
-      externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage,
-      ),
-    );
-
-    await tester.pumpAndSettle();
+    await initTestApp(tester: tester);
 
     var registerButton = find.byType(BloqoFilledButton, skipOffstage: false).at(1);
     await tester.tap(registerButton);
@@ -120,18 +86,7 @@ void main() {
   testWidgets('Cannot register an user with a username that is already in use test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
-
-    await app.main(
-      externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage,
-      ),
-    );
-
-    await tester.pumpAndSettle();
+    await initTestApp(tester: tester);
 
     var registerButton = find.byType(BloqoFilledButton, skipOffstage: false).at(1);
     await tester.tap(registerButton);

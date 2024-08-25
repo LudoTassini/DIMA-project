@@ -47,8 +47,8 @@ class EditQuizBlockPage extends StatefulWidget {
 
 class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKeepAliveClientMixin<EditQuizBlockPage> {
 
-  bool firstBuild = true;
-  bool callbackAdded = false;
+  late bool firstBuild;
+  late bool callbackAdded;
 
   final formKeyMultipleChoiceQuestion = GlobalKey<FormState>();
   final formKeyOpenQuestion = GlobalKey<FormState>();
@@ -69,6 +69,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   @override
   void initState() {
     super.initState();
+    firstBuild = true;
+    callbackAdded = false;
     quizTypeController = TextEditingController();
     multipleChoiceQuestionController = TextEditingController();
     openQuestionController = TextEditingController();
@@ -76,7 +78,9 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   }
 
   void _onQuizTypeChanged() {
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
   }
 
   void initializeAnswers(String answerSingleString) {
@@ -139,7 +143,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
           BloqoBlockData block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
           List<DropdownMenuEntry<String>> quizTypes = buildQuizTypesList(localizedText: localizedText);
 
-          if(firstBuild && block.type != null) {
+          if(firstBuild && block.type != null && multipleChoiceControllers.isEmpty) {
 
             quizTypeController.text = quizTypes.where((entry) => entry.label ==
                 BloqoBlockTypeExtension.fromString(block.type!)!.quizShortText(
@@ -192,9 +196,9 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
               }
             }
 
-            firstBuild = false;
-
           }
+
+          firstBuild = false;
 
           if(!callbackAdded){
             WidgetsBinding.instance.addPostFrameCallback((_) {

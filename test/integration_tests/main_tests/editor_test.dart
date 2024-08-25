@@ -1,17 +1,16 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_editable_block.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
+import 'package:bloqo/components/complex/bloqo_editable_quiz_answer.dart';
 import 'package:bloqo/components/complex/bloqo_editable_section.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/multimedia/bloqo_audio_player.dart';
-import 'package:bloqo/utils/bloqo_external_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:bloqo/main.dart' as app;
 
-import '../../mocks/mock_external_services.dart';
+import '../../utils/routines.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -20,24 +19,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -54,24 +38,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -84,7 +53,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await binding.setSurfaceSize(null);
   });
@@ -93,24 +62,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -123,7 +77,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -131,7 +85,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await binding.setSurfaceSize(null);
   });
@@ -140,24 +94,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -170,7 +109,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -178,7 +117,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -189,7 +128,7 @@ void main() {
     await tester.tap(find.text("Text Block").first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Text"), findsOne);
 
     await binding.setSurfaceSize(null);
@@ -199,24 +138,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -229,7 +153,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -237,7 +161,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -248,7 +172,7 @@ void main() {
     await tester.tap(find.text("Multimedia Block").first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Multimedia"), findsOne);
 
     await binding.setSurfaceSize(null);
@@ -258,24 +182,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -288,7 +197,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -296,7 +205,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -307,7 +216,7 @@ void main() {
     await tester.tap(find.text("Quiz Block").first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Quiz"), findsOne);
 
     await binding.setSurfaceSize(null);
@@ -317,24 +226,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -347,7 +241,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -355,7 +249,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -370,7 +264,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Text"), findsOne);
 
     await tester.tap(find.byType(BloqoEditableBlock).first);
@@ -391,24 +285,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -421,7 +300,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -429,7 +308,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -444,7 +323,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Multimedia"), findsOne);
 
     await tester.tap(find.byType(BloqoEditableBlock).first);
@@ -479,24 +358,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -509,7 +373,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -517,7 +381,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -532,7 +396,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Multimedia"), findsOne);
 
     await tester.tap(find.byType(BloqoEditableBlock).first);
@@ -559,24 +423,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -589,7 +438,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -597,7 +446,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -612,7 +461,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Multimedia"), findsOne);
 
     await tester.tap(find.byType(BloqoEditableBlock).first);
@@ -643,24 +492,9 @@ void main() {
       WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Editor"));
     await tester.pump();
@@ -673,7 +507,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Chapter 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableChapter), findsOne);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
@@ -681,7 +515,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Section 1"), findsExactly(2));
+    expect(find.byType(BloqoEditableSection), findsOne);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -696,7 +530,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("Block 1"), findsOne);
+    expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Multimedia"), findsOne);
 
     await tester.tap(find.byType(BloqoEditableBlock).first);
@@ -714,7 +548,7 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pump();
 
-    await tester.enterText(find.byType(BloqoTextField).last, 'https://youtu.be/4AoFA19gbLo?si=CrXFZSyhdclC19V9');
+    await tester.enterText(find.byType(BloqoTextField).last, 'yt:test');
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BloqoFilledButton).last);
@@ -724,7 +558,335 @@ void main() {
       await Future.delayed(const Duration(seconds: 1));
     });
 
-    expect(find.byType(CircularProgressIndicator), findsOne);
+    expect(find.text("Oops, we are not able to find that YouTube video. Please try again with another link."), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a quiz block and add a multiple choice question to it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await tester.tap(find.text("Editor"));
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Course"), findsExactly(2));
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableChapter), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableSection), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableSection).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Quiz Block").first);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableBlock), findsOne);
+    expect(find.text("Quiz"), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableBlock).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoDropdown).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Multiple choice").last);
+    await tester.pumpAndSettle();
+
+    final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).first);
+    var dropdownValue = dropdown.controller.text;
+    expect(dropdownValue, "Multiple choice");
+
+    await tester.enterText(find.byType(BloqoTextField).first, '1+1=2?');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pump();
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pump();
+
+    await tester.enterText(find.byType(BloqoTextField).at(1), 'true');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(BloqoTextField).at(2), 'false');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(Switch).first);
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableQuizAnswer), findsExactly(2));
+    expect(find.text("Quiz: Multiple choice"), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a quiz block and remove a choice from a multiple choice question test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await tester.tap(find.text("Editor"));
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Course"), findsExactly(2));
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableChapter), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableSection), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableSection).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Quiz Block").first);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableBlock), findsOne);
+    expect(find.text("Quiz"), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableBlock).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoDropdown).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Multiple choice").last);
+    await tester.pumpAndSettle();
+
+    final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).first);
+    var dropdownValue = dropdown.controller.text;
+    expect(dropdownValue, "Multiple choice");
+
+    await tester.enterText(find.byType(BloqoTextField).first, '1+1=2?');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pump();
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pump();
+
+    await tester.enterText(find.byType(BloqoTextField).at(1), 'true');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(BloqoTextField).at(2), 'false');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(Switch).first);
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableQuizAnswer), findsExactly(2));
+    expect(find.text("Quiz: Multiple choice"), findsOne);
+
+    await tester.tap(find.byIcon(Icons.delete_forever).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("OK").last);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableQuizAnswer), findsExactly(1));
+    expect(find.text("Quiz: Multiple choice"), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a quiz block and add a open question to it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await tester.tap(find.text("Editor"));
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Course"), findsExactly(2));
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableChapter), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableSection), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableSection).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Quiz Block").first);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableBlock), findsOne);
+    expect(find.text("Quiz"), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableBlock).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoDropdown).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Open question").last);
+    await tester.pumpAndSettle();
+
+    final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).first);
+    var dropdownValue = dropdown.controller.text;
+    expect(dropdownValue, "Open question");
+
+    await tester.enterText(find.byType(BloqoTextField).first, '1+1=2?');
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(BloqoTextField).last, '2');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(Switch).first);
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("Quiz: Open question"), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a section and remove a block from it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await tester.tap(find.text("Editor"));
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Course"), findsExactly(2));
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableChapter), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoEditableSection), findsOne);
+
+    await tester.tap(find.byType(BloqoEditableSection).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Quiz Block").first);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableBlock), findsOne);
+
+    await tester.tap(find.byIcon(Icons.delete_forever).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("OK").last);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableBlock), findsNothing);
 
     await binding.setSurfaceSize(null);
   });

@@ -4,14 +4,12 @@ import 'package:bloqo/components/complex/bloqo_setting.dart';
 import 'package:bloqo/components/complex/bloqo_user_details_short.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
-import 'package:bloqo/utils/bloqo_external_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:bloqo/main.dart' as app;
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../mocks/mock_external_services.dart';
+import '../../utils/routines.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -19,24 +17,9 @@ void main() {
   testWidgets('Users can update their profile picture test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -60,24 +43,9 @@ void main() {
   testWidgets('Users can show their QR code test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 2000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -93,24 +61,9 @@ void main() {
   testWidgets('Users can update their account settings test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -132,24 +85,9 @@ void main() {
   testWidgets('Users can update their application settings (language) test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -177,24 +115,9 @@ void main() {
   testWidgets('Users can update their application settings (theme) test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -226,24 +149,9 @@ void main() {
   testWidgets('Users can logout test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -262,24 +170,9 @@ void main() {
   testWidgets('Users can see the users who follow them test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
@@ -295,24 +188,9 @@ void main() {
   testWidgets('Users can see the users who they are following test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1000, 1000));
 
-    MockExternalServices mockExternalServices = MockExternalServices();
-    await mockExternalServices.prepare();
+    await initTestApp(tester: tester);
 
-    await app.main(externalServices: BloqoExternalServices(
-        firestore: mockExternalServices.fakeFirestore,
-        auth: mockExternalServices.mockFirebaseAuth,
-        storage: mockExternalServices.mockFirebaseStorage
-    ));
-    await tester.pumpAndSettle();
-
-    // Enter email and password
-    await tester.enterText(find.byType(BloqoTextField).first, 'test@bloqo.com');
-    await tester.enterText(find.byType(BloqoTextField).last, 'Test123!');
-    await tester.pumpAndSettle();
-
-    // Tap the login button
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
+    await doLogin(tester: tester);
 
     await tester.tap(find.text("Account"));
     await tester.pump();
