@@ -145,7 +145,9 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    ListView(
+                    Padding(
+                    padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
+                    child: ListView(
                       children: [
                         Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
@@ -161,9 +163,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                         BloqoSeasaltContainer(
                           child: Consumer<EditorCourseAppState>(
                             builder: (context, editorCourseAppState, _){
-                              return Padding(
-                                padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
-                                child: Column(
+                              return Column(
                                   children: [
 
                                     if (inProgressCourses.isNotEmpty && !isTablet)
@@ -272,33 +272,33 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                           ],
                                         ),
                                       ),
-                                    ]
-                                ),
-                              );
-                            }
-                          )
-                        )
-                      ],
-                    ),
-                    ListView(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                          child: Text(
-                            localizedText.editor_page_header_2,
-                            textAlign: TextAlign.end,
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: theme.colors.highContrastColor,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w600,
+                                    ],
+                                );
+                              }
                             ),
                           ),
-                        ),
-                        BloqoSeasaltContainer(
-                          child: Padding(
-                            padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
+                      child: ListView(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                            child: Text(
+                              localizedText.editor_page_header_2,
+                              textAlign: TextAlign.end,
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                color: theme.colors.highContrastColor,
+                                fontSize: 30,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          BloqoSeasaltContainer(
                             child: Column(
-                                children: [
+                              children: [
 
                                   if (publishedCourses.isNotEmpty && !isTablet)
                                     Column(
@@ -425,17 +425,18 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                         ],
                                       ),
                                     ),
-                                ]
-                            )
-                          ),
-                        )
-                      ],
-                    ),
+                                  ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
+                  : Constants.tabletPaddingBloqoFilledButton,
                 child: BloqoFilledButton(
                   color: theme.colors.leadingColor,
                   onPressed: () async {
@@ -443,8 +444,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                   },
                   text: localizedText.new_course,
                   icon: Icons.add,
-                  fontSize: !isTablet ? 20 : 26,
-                  height: !isTablet ? 48 : 64,
+                  fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                  height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                 ),
               ),
             ],

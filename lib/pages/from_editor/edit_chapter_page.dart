@@ -222,11 +222,12 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                     ),
                     if(editable)
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                        padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
+                            : Constants.tabletPaddingBloqoFilledButton,
                         child: BloqoFilledButton(
                           color: theme.colors.leadingColor,
-                          fontSize: !isTablet ? 20 : 26,
-                          height: !isTablet ? 48 : 64,
+                          fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                          height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                           onPressed: () async {
                             context.loaderOverlay.show();
                             try {

@@ -189,7 +189,8 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                 Align(
                   alignment: Alignment.center,
                   child:Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                    padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
+                        : Constants.tabletPaddingBloqoFilledButton,
                     child: BloqoFilledButton(
                       onPressed: () async {
                         await _updateEnrolledCourseStatus(

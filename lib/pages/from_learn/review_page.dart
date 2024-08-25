@@ -154,34 +154,34 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                           ),
                         ),
                       ),
-
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15),
-                          child: isRated
-                              ? Container()
-
-                              : BloqoFilledButton(
-                                  fontSize: !isTablet ? 20 : 26,
-                                  height: !isTablet ? 48 : 64,
-                                  onPressed: () async {
-                                    await _tryPublishReview(
-                                      context: context,
-                                      controllerTitle: controllerTitle,
-                                      controllerReview: controllerReview,
-                                      rating: selectedRating,
-                                      userCourseEnrolled: widget.courseToReview
-                                    );
-                                  },
-                                  color: theme.colors.leadingColor,
-                                  text: localizedText.publish,
-                                  icon: Icons.comment
-                                ),
-                        ),
-                      ),
                     ],
                   ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15)
+                    : Constants.tabletPaddingBloqoFilledButton,
+                child: isRated
+                    ? Container()
+
+                    : BloqoFilledButton(
+                    fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                    height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
+                    onPressed: () async {
+                      await _tryPublishReview(
+                          context: context,
+                          controllerTitle: controllerTitle,
+                          controllerReview: controllerReview,
+                          rating: selectedRating,
+                          userCourseEnrolled: widget.courseToReview
+                      );
+                    },
+                    color: theme.colors.leadingColor,
+                    text: localizedText.publish,
+                    icon: Icons.comment
                 ),
               ),
             ),

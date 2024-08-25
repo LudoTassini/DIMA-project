@@ -191,30 +191,40 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                         if (userCoursesEnrolled.isEmpty)
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  localizedText.homepage_no_enrolled_courses,
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: theme.colors.primaryText,
-                                    fontSize: 14,
-                                  ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              localizedText.homepage_no_enrolled_courses,
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.primaryText,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
+                                              child: BloqoFilledButton(
+                                                onPressed: () => widget.onNavigateToPage(2),
+                                                color: theme.colors.leadingColor,
+                                                text: localizedText.take_me_there_button,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                         ),
+                                       ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
-                                  child: BloqoFilledButton(
-                                    onPressed: () => widget.onNavigateToPage(2),
-                                    color: theme.colors.leadingColor,
-                                    text: localizedText.take_me_there_button,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                      ],
-                    ),
                   ),
                 );
               }
@@ -239,7 +249,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               builder: (context, userCoursesCreatedAppState, _) {
                 List<BloqoUserCourseCreatedData> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
                 userCoursesCreated = userCoursesCreated.where((course) => !course.published).toList();
-                return BloqoSeasaltContainer(
+                return  BloqoSeasaltContainer(
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                     child: Column(
@@ -320,28 +330,38 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                           if (userCoursesCreated.isEmpty)
                             Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
                               child: Column(
-                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    localizedText.homepage_no_created_courses,
-                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: theme.colors.primaryText,
-                                    fontSize: 14,
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              localizedText.homepage_no_created_courses,
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.primaryText,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
+                                              child: BloqoFilledButton(
+                                                onPressed: () async { await _createNewCourse(context: context, localizedText: localizedText); },
+                                                color: theme.colors.leadingColor,
+                                                text: localizedText.take_me_there_button,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 5),
-                                  child: BloqoFilledButton(
-                                    onPressed: () async { await _createNewCourse(context: context, localizedText: localizedText); },
-                                    color: theme.colors.leadingColor,
-                                    text: localizedText.take_me_there_button,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                           ),
                         ],
                       ),

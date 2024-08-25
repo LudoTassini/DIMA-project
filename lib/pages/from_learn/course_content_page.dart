@@ -500,7 +500,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 padding: EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0),
                                             ),
                                             Flexible(
-                                              fit: FlexFit.loose,  // Adjust the fit
+                                              fit: FlexFit.loose,
                                               child: BloqoFilledButton(
                                                 color: theme.colors.error,
                                                 onPressed: () {
@@ -527,7 +527,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                             ),
                                           ],
                                         )
-                                            : Wrap(
+                                        : Wrap(
                                           spacing: 10.0,
                                           runSpacing: 10.0,
                                           children: [
@@ -561,8 +561,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                               },
                                               text: localizedText.unsubscribe,
                                               icon: Icons.close_sharp,
-                                              fontSize: 20, // Adjusted for non-tablet size
-                                              height: 48,    // Adjusted for non-tablet size
+                                              fontSize: 20,
+                                              height: 48,
                                             ),
                                           ],
                                         ),
@@ -607,8 +607,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         ),
 
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              20, 0, 20, 20),
+                          padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
+                              : Constants.tabletPaddingBloqoFilledButton,
                           child: BloqoFilledButton(
                             onPressed: () async {
                                   _goToSectionPage(

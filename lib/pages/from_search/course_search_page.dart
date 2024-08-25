@@ -754,7 +754,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                   backgroundColor: theme.colors.error
                               );
                         },
-                        color: theme.colors.error,
+                        color: isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
+                          theme.colors.inactive : theme.colors.leadingColor,
                         text: localizedText.unsubscribe,
                         icon: Icons.close_sharp,
                         fontSize: !isTablet ? 24 : 26,
