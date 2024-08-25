@@ -300,12 +300,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "maximum_publication_date":
             MessageLookupByLibrary.simpleMessage("Maximum publication date"),
         "maximum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("e.g. 2024/01/31"),
+            MessageLookupByLibrary.simpleMessage("e.g. 31/01/2024"),
         "medicine": MessageLookupByLibrary.simpleMessage("Medicine"),
         "minimum_publication_date":
             MessageLookupByLibrary.simpleMessage("Minimum publication date"),
         "minimum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("e.g. 2024/01/01"),
+            MessageLookupByLibrary.simpleMessage("e.g. 01/01/2024"),
         "missing_tag_error": MessageLookupByLibrary.simpleMessage(
             "You need to select a tag for every kind of tag to be able to publish a course!"),
         "modality_tag": MessageLookupByLibrary.simpleMessage("Modality Tag"),

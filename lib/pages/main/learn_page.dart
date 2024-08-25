@@ -170,7 +170,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                         ),
                         BloqoSeasaltContainer(
                           child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                              padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15): Constants.tabletPadding,
                               child: Column(
                                   children: [
                                     if (inProgressCourses.isNotEmpty && !isTablet)
@@ -284,7 +284,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                         ),
                         BloqoSeasaltContainer(
                           child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                            padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15): Constants.tabletPadding,
                             child: Column(
                                 children: [
 

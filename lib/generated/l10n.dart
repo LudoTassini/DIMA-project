@@ -450,10 +450,10 @@ class S {
     );
   }
 
-  /// `e.g. 2024/01/01`
+  /// `e.g. 01/01/2024`
   String get minimum_publication_date_hint {
     return Intl.message(
-      'e.g. 2024/01/01',
+      'e.g. 01/01/2024',
       name: 'minimum_publication_date_hint',
       desc: '',
       args: [],
@@ -470,10 +470,10 @@ class S {
     );
   }
 
-  /// `e.g. 2024/01/31`
+  /// `e.g. 31/01/2024`
   String get maximum_publication_date_hint {
     return Intl.message(
-      'e.g. 2024/01/31',
+      'e.g. 31/01/2024',
       name: 'maximum_publication_date_hint',
       desc: '',
       args: [],

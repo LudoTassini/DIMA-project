@@ -3,6 +3,7 @@ import 'package:bloqo/app_state/user_app_state.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/notifications/bloqo_course_enrollment_request_notification.dart';
 import 'package:bloqo/components/notifications/bloqo_new_course_published_notification.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -11,6 +12,7 @@ import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/notifications/bloqo_course_enrollment_accepted_notification.dart';
 import '../../model/bloqo_notification_data.dart';
 import '../../model/bloqo_user_data.dart';
+import '../../utils/constants.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({
@@ -36,6 +38,8 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     var firestore = getFirestoreFromAppState(context: context);
+    bool isTablet = checkDevice(context);
+
     return Scaffold(
       appBar: BloqoAppBar.get(
         context: context,
@@ -71,46 +75,50 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                   ),
                 );
               } else {
-                return Column(
-                  children: List.generate(
-                    notifications.length,
-                        (index) {
-                      BloqoNotificationData notification = notifications[index];
-                      if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
-                        return BloqoCourseEnrollmentRequestNotification(
-                          notification: notification,
-                          onNotificationHandled: () {
-                            setState(() {
-                              notifications.removeAt(index);
-                              _didRemoveNotifications = true;
-                            });
-                          },
-                        );
-                      }
-                      if(notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
-                        return BloqoCourseEnrollmentAcceptedNotification(
-                          notification: notification,
-                          onNotificationHandled: () {
-                            setState(() {
-                              notifications.removeAt(index);
-                              _didRemoveNotifications = true;
-                            });
-                          },
-                        );
-                      }
-                      if(notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
-                        return BloqoNewCoursePublishedNotification(
-                          notification: notification,
-                          onNotificationHandled: () {
-                            setState(() {
-                              notifications.removeAt(index);
-                              _didRemoveNotifications = true;
-                            });
-                          },
-                        );
-                      }
-                      return Container();
-                    },
+                return Padding(
+                    padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                : Constants.tabletPadding,
+                  child: Column(
+                    children: List.generate(
+                      notifications.length,
+                          (index) {
+                        BloqoNotificationData notification = notifications[index];
+                        if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
+                          return BloqoCourseEnrollmentRequestNotification(
+                            notification: notification,
+                            onNotificationHandled: () {
+                              setState(() {
+                                notifications.removeAt(index);
+                                _didRemoveNotifications = true;
+                              });
+                            },
+                          );
+                        }
+                        if(notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
+                          return BloqoCourseEnrollmentAcceptedNotification(
+                            notification: notification,
+                            onNotificationHandled: () {
+                              setState(() {
+                                notifications.removeAt(index);
+                                _didRemoveNotifications = true;
+                              });
+                            },
+                          );
+                        }
+                        if(notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
+                          return BloqoNewCoursePublishedNotification(
+                            notification: notification,
+                            onNotificationHandled: () {
+                              setState(() {
+                                notifications.removeAt(index);
+                                _didRemoveNotifications = true;
+                              });
+                            },
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
                 );
               }

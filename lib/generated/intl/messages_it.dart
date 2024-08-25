@@ -304,12 +304,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "maximum_publication_date": MessageLookupByLibrary.simpleMessage(
             "Massima data di pubblicazione"),
         "maximum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("es. 2024/01/31"),
+            MessageLookupByLibrary.simpleMessage("es. 31/01/2024"),
         "medicine": MessageLookupByLibrary.simpleMessage("Medicina"),
         "minimum_publication_date": MessageLookupByLibrary.simpleMessage(
             "Minima data di pubblicazione"),
         "minimum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("es. 2024/01/01"),
+            MessageLookupByLibrary.simpleMessage("es. 01/01/2024"),
         "missing_tag_error": MessageLookupByLibrary.simpleMessage(
             "Devi scegliere un tag per ogni tipo di tag per pubblicare il corso!"),
         "modality_tag": MessageLookupByLibrary.simpleMessage("Tag Modalità"),

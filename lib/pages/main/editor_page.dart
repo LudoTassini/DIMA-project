@@ -161,116 +161,119 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                         BloqoSeasaltContainer(
                           child: Consumer<EditorCourseAppState>(
                             builder: (context, editorCourseAppState, _){
-                              return Column(
-                                children: [
+                              return Padding(
+                                padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
+                                child: Column(
+                                  children: [
 
-                                  if (inProgressCourses.isNotEmpty && !isTablet)
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
-                                            (index) {
-                                          BloqoUserCourseCreatedData course = inProgressCourses[index];
-                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                            return BloqoCourseCreated(
-                                                course: course,
-                                                onPressed: () async {
-                                                  await _goToCoursePage(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      userCourseCreated: course);
-                                                },
-                                                showEditOptions: true,
-                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId)),
-                                            );
-                                          }
-                                          else{
-                                            return BloqoCourseCreated(
-                                                course: course,
-                                                padding: const EdgeInsetsDirectional.all(15),
-                                                onPressed: () async {
-                                                  await _goToCoursePage(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      userCourseCreated: course
-                                                  );
-                                                },
-                                                showEditOptions: true,
-                                                onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId,)),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
-
-                                  if (inProgressCourses.isNotEmpty && isTablet)
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 15), // Padding around the entire GridView
-                                      child: GridView.builder(
-                                        shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
-                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2, // Number of columns in the grid
-                                          crossAxisSpacing: 10.0, // Spacing between columns
-                                          mainAxisSpacing: 10.0, // Spacing between rows
-                                          childAspectRatio: 6 / 2, // Aspect ratio for the grid items (width/height ratio)
-                                        ),
-                                        itemCount: inProgressCoursesDisplayed > inProgressCourses.length
-                                            ? inProgressCourses.length
-                                            : inProgressCoursesDisplayed,
-                                        itemBuilder: (context, index) {
-                                          BloqoUserCourseCreatedData course = inProgressCourses[index];
-                                          return BloqoCourseCreated(
-                                            course: course,
-                                            onPressed: () async {
-                                              await _goToCoursePage(
-                                                context: context,
-                                                localizedText: localizedText,
-                                                userCourseCreated: course,
-                                              );
-                                            },
-                                            showEditOptions: true,
-                                            onPublish: () => widget.onPush(
-                                              PublishCoursePage(onPush: widget.onPush, courseId: course.courseId),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-
-                                  if (inProgressCoursesDisplayed < inProgressCourses.length)
-                                    BloqoTextButton(
-                                        onPressed: loadMoreInProgressCourses,
-                                        text: localizedText.load_more,
-                                        color: theme.colors.leadingColor
-                                    ),
-                                  if (inProgressCourses.isEmpty)
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                      child: Column(
+                                    if (inProgressCourses.isNotEmpty && !isTablet)
+                                      Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            localizedText.editor_page_no_in_progress_courses,
-                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: theme.colors.primaryText,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                            child: BloqoFilledButton(
-                                              onPressed: () async {
-                                                await _createNewCourse(context: context, localizedText: localizedText);
-                                              },
-                                              color: theme.colors.leadingColor,
-                                              text: localizedText.take_me_there_button,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
+                                        children: List.generate(
+                                          inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
+                                              (index) {
+                                            BloqoUserCourseCreatedData course = inProgressCourses[index];
+                                            if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
+                                              return BloqoCourseCreated(
+                                                  course: course,
+                                                  onPressed: () async {
+                                                    await _goToCoursePage(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        userCourseCreated: course);
+                                                  },
+                                                  showEditOptions: true,
+                                                  onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId)),
+                                              );
+                                            }
+                                            else{
+                                              return BloqoCourseCreated(
+                                                  course: course,
+                                                  padding: const EdgeInsetsDirectional.all(15),
+                                                  onPressed: () async {
+                                                    await _goToCoursePage(
+                                                        context: context,
+                                                        localizedText: localizedText,
+                                                        userCourseCreated: course
+                                                    );
+                                                  },
+                                                  showEditOptions: true,
+                                                  onPublish: () => widget.onPush(PublishCoursePage(onPush: widget.onPush, courseId: course.courseId,)),
+                                              );
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    )
-                                ]
+
+                                    if (inProgressCourses.isNotEmpty && isTablet)
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 15), // Padding around the entire GridView
+                                        child: GridView.builder(
+                                          shrinkWrap: true, // Ensures the GridView only takes up as much vertical space as needed
+                                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2, // Number of columns in the grid
+                                            crossAxisSpacing: 10.0, // Spacing between columns
+                                            mainAxisSpacing: 10.0, // Spacing between rows
+                                            childAspectRatio: 6 / 2, // Aspect ratio for the grid items (width/height ratio)
+                                          ),
+                                          itemCount: inProgressCoursesDisplayed > inProgressCourses.length
+                                              ? inProgressCourses.length
+                                              : inProgressCoursesDisplayed,
+                                          itemBuilder: (context, index) {
+                                            BloqoUserCourseCreatedData course = inProgressCourses[index];
+                                            return BloqoCourseCreated(
+                                              course: course,
+                                              onPressed: () async {
+                                                await _goToCoursePage(
+                                                  context: context,
+                                                  localizedText: localizedText,
+                                                  userCourseCreated: course,
+                                                );
+                                              },
+                                              showEditOptions: true,
+                                              onPublish: () => widget.onPush(
+                                                PublishCoursePage(onPush: widget.onPush, courseId: course.courseId),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+
+                                    if (inProgressCoursesDisplayed < inProgressCourses.length)
+                                      BloqoTextButton(
+                                          onPressed: loadMoreInProgressCourses,
+                                          text: localizedText.load_more,
+                                          color: theme.colors.leadingColor
+                                      ),
+                                    if (inProgressCourses.isEmpty)
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              localizedText.editor_page_no_in_progress_courses,
+                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                color: theme.colors.primaryText,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
+                                              child: BloqoFilledButton(
+                                                onPressed: () async {
+                                                  await _createNewCourse(context: context, localizedText: localizedText);
+                                                },
+                                                color: theme.colors.leadingColor,
+                                                text: localizedText.take_me_there_button,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]
+                                ),
                               );
                             }
                           )
@@ -292,6 +295,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                           ),
                         ),
                         BloqoSeasaltContainer(
+                          child: Padding(
+                            padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
                             child: Column(
                                 children: [
 
@@ -422,6 +427,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                     ),
                                 ]
                             )
+                          ),
                         )
                       ],
                     ),

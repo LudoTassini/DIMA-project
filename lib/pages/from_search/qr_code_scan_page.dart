@@ -8,6 +8,7 @@ import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:bloqo/pages/from_any/user_profile_page.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -17,6 +18,7 @@ import '../../components/containers/bloqo_main_container.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/courses/published_courses/bloqo_published_course_data.dart';
 import '../../utils/bloqo_exception.dart';
+import '../../utils/constants.dart';
 
 class QrCodeScanPage extends StatefulWidget {
   const QrCodeScanPage({
@@ -67,18 +69,24 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    bool isTablet = checkDevice(context);
+
     return BloqoMainContainer(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: (qrc) async {
-                await _onQRViewCreated(context: context, controller: qrc);
-              },
+      child: Padding(
+        padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+            : Constants.tabletPadding,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: QRView(
+                key: qrKey,
+                onQRViewCreated: (qrc) async {
+                  await _onQRViewCreated(context: context, controller: qrc);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
