@@ -16,7 +16,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Users can search courses test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(1500, 1500));
 
     await initTestApp(tester: tester);
 
@@ -33,7 +33,7 @@ void main() {
   });
 
   testWidgets('Users can search courses and select one test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(1500, 1500));
 
     await initTestApp(tester: tester);
 
@@ -55,7 +55,7 @@ void main() {
   });
 
   testWidgets('Users can search courses, select one and view its QR code test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(1500, 2000));
 
     await initTestApp(tester: tester);
 
@@ -82,7 +82,7 @@ void main() {
   });
 
   testWidgets('Users can search courses, select one and enroll in it test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(1500, 2000));
 
     await initTestApp(tester: tester);
 
@@ -111,7 +111,7 @@ void main() {
   });
 
   testWidgets('Users can search courses, select one and view the courses made by the same author test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(1500, 2000));
 
     await initTestApp(tester: tester);
 
@@ -139,7 +139,7 @@ void main() {
   });
 
   testWidgets('Users can search courses, select one in which they are enrolled and unsubscribe from it test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(1500, 2000));
 
     await initTestApp(tester: tester);
 
@@ -171,7 +171,7 @@ void main() {
   });
 
   testWidgets('Users can search courses, select a private one and ask for enrollment test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(1500, 2000));
 
     await initTestApp(tester: tester);
 
@@ -231,16 +231,16 @@ void main() {
     await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoDropdown).at(4));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text("For everyone").last);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).at(4));
     var dropdownValue = dropdown.controller.text;
     expect(dropdownValue, "For everyone");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(BloqoSearchResultCourse), findsAtLeast(1));
 
@@ -248,7 +248,7 @@ void main() {
   });
 
   testWidgets('Users can select a date while editing filters test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(1500, 1500));
 
     await initTestApp(tester: tester);
 
@@ -287,16 +287,16 @@ void main() {
     await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoDropdown).at(4));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text("For everyone").last);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).at(4));
     var dropdownValue = dropdown.controller.text;
     expect(dropdownValue, "For everyone");
 
     await tester.tap(find.byType(BloqoTextButton).first);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     dropdownValue = dropdown.controller.text;
     expect(dropdownValue, "None");

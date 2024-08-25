@@ -832,14 +832,17 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     required String courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try {
-      List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(context: context);
+      List<
+          BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(
+          context: context);
       var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
           firestore: firestore,
           localizedText: localizedText,
           courseId: courseId
       );
-      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
+      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) =>
+      c.courseId == courseId);
 
       if (courseToRemove.isCompleted) {
         if (!context.mounted) return;
@@ -857,14 +860,16 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
             enrolledUserId: enrolledUserId
         );
         if (!context.mounted) return;
-        deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
-        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
+        deleteUserCourseEnrolledFromAppState(
+            context: context, userCourseEnrolled: courseToRemove);
+        publishedCourseToUpdate.numberOfEnrollments =
+            publishedCourseToUpdate.numberOfEnrollments - 1;
         await savePublishedCourseChanges(
             firestore: firestore,
             localizedText: localizedText,
             updatedPublishedCourse: publishedCourseToUpdate
         );
-        if(!context.mounted) return;
+        if (!context.mounted) return;
         context.loaderOverlay.hide();
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(

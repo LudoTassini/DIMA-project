@@ -160,64 +160,65 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (String? value) { return fullNameValidator(fullName: value, localizedText: localizedText); }
                           ),
                         ),
-                      Padding(
-                        padding:
-                        const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                localizedText.full_name_visible,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  color: theme.colors.leadingColor,
-                                  fontWeight: FontWeight.w500,
+                        Padding(
+                          padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  localizedText.full_name_visible,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    color: theme.colors.leadingColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                            visibilitySwitch,
-                          ],
+                              visibilitySwitch,
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding:
-                        const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 15),
-                        child: BloqoFilledButton(
-                          onPressed: () async {
-                            await _tryRegister(
-                              context: context,
-                              localizedText: localizedText,
-                              email: emailController.text,
-                              password: passwordController.text,
-                              username: usernameController.text,
-                              fullName: fullNameController.text,
-                              isFullNameVisible: visibilitySwitch.value.get());
-                          },
-                          color: theme.colors.leadingColor,
-                          text: localizedText.register,
+                        Padding(
+                          padding:
+                          const EdgeInsetsDirectional.fromSTEB(30, 0, 30, 15),
+                          child: BloqoFilledButton(
+                            onPressed: () async {
+                              await _tryRegister(
+                                context: context,
+                                localizedText: localizedText,
+                                email: emailController.text,
+                                password: passwordController.text,
+                                username: usernameController.text,
+                                fullName: fullNameController.text,
+                                isFullNameVisible: visibilitySwitch.value.get());
+                            },
+                            color: theme.colors.leadingColor,
+                            text: localizedText.register,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                        child: BloqoTextButton(
-                          text: localizedText.back_to_login,
-                          color: theme.colors.leadingColor,
-                          onPressed: () {
-                            if(!context.mounted) return;
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                    const WelcomePage(),
-                                )
-                            );
-                          },
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                          child: BloqoTextButton(
+                            text: localizedText.back_to_login,
+                            color: theme.colors.leadingColor,
+                            onPressed: () {
+                              if(!context.mounted) return;
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                      const WelcomePage(),
+                                  )
+                              );
+                            },
+                          )
                         )
-                      )
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                )
               ),
             ],
           )

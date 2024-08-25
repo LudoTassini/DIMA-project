@@ -234,17 +234,21 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       final chapters = getLearnCourseChaptersFromAppState(context: context)!;
       var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
       final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
-      final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
-      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(localizedText: localizedText, courseId: course.id);
 
       var firestore = getFirestoreFromAppState(context: context);
+
+      final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+
+      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(firestore: firestore, localizedText: localizedText, courseId: course.id);
 
       // Update sections completed in both the course enrollment and app state
       if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
         courseEnrolled.sectionsCompleted!.add(section.id);
-        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
 
+        if (!context.mounted) return;
+
+        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
 
         // Perform async operations and check if context is still mounted afterward
@@ -266,6 +270,9 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
           if (!chaptersCompleted!.contains(widget.chapter.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
 
             courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
+
+            if (!context.mounted) return;
+
             updateLearnCourseChaptersCompletedFromAppState(context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
             updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
 
@@ -284,6 +291,9 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       // If the last chapter is completed, mark the course as completed
       if (chapters.last.sections.lastOrNull == section.id) {
         courseEnrolled.isCompleted = true;
+
+        if (!context.mounted) return;
+
         updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
         await updateUserCourseEnrolledStatusCompleted(
           firestore: firestore,
@@ -293,7 +303,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
         );
 
         publishedCourse.numberOfCompletions = publishedCourse.numberOfCompletions + 1;
-        await savePublishedCourseChanges(localizedText: localizedText, updatedPublishedCourse: publishedCourse);
+        await savePublishedCourseChanges(firestore: firestore, localizedText: localizedText, updatedPublishedCourse: publishedCourse);
 
         if (!context.mounted) return;
       }

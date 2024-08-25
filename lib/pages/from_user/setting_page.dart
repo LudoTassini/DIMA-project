@@ -4,7 +4,6 @@ import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/check_device.dart';
-import 'package:bloqo/utils/connectivity.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

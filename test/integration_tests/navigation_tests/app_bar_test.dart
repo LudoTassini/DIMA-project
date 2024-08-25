@@ -9,7 +9,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Users can navigate back thanks to the app bar', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(1500, 1500));
 
     await initTestApp(tester: tester);
 

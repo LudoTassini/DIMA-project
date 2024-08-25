@@ -7,9 +7,11 @@ import 'package:integration_test/integration_test.dart';
 import '../../utils/routines.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Login test', (WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 1000));
+
     await initTestApp(tester: tester);
 
     await doLogin(tester: tester);

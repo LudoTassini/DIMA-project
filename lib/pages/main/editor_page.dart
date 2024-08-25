@@ -376,93 +376,13 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                             },
                                             showPublishedOptions: true,
                                             onViewStatistics: () async {
-                                              context.loaderOverlay.show();
-                                              try {
-                                                BloqoPublishedCourseData publishedCourse =
-                                                await getPublishedCourseFromCourseId(
-                                                    localizedText: localizedText,
-                                                    courseId: course.courseId);
-                                                List<BloqoReviewData> reviews = await getReviewsFromIds(
-                                                    localizedText: localizedText,
-                                                    reviewsIds: publishedCourse.reviews);
-                                                if (!context.mounted) return;
-                                                context.loaderOverlay.hide();
-                                                widget.onPush(ViewStatisticsPage(
-                                                  publishedCourse: publishedCourse,
-                                                  reviews: reviews,
-                                                  onPush: widget.onPush,
-                                                  onNavigateToPage: widget.onNavigateToPage,
-                                                ));
-                                              } on BloqoException catch (e) {
-                                                if (!context.mounted) return;
-                                                context.loaderOverlay.hide();
-                                                showBloqoErrorAlert(
-                                                  context: context,
-                                                  title: localizedText.error_title,
-                                                  description: e.message,
-                                                );
-                                              }
+                                              await _tryViewStatistics(context: context, localizedText: localizedText, course: course);
                                             },
                                             onDismiss: () async {
-                                              await showBloqoConfirmationAlert(
-                                                context: context,
-                                                title: localizedText.warning,
-                                                description: localizedText.course_dismiss_confirmation,
-                                                backgroundColor: theme.colors.error,
-                                                confirmationFunction: () async {
-                                                  context.loaderOverlay.show();
-                                                  try {
-                                                    BloqoPublishedCourseData publishedCourse =
-                                                    await getPublishedCourseFromCourseId(
-                                                        localizedText: localizedText,
-                                                        courseId: course.courseId);
-                                                    if (!context.mounted) return;
-                                                    await _tryDismissCourse(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      publishedCourseId: publishedCourse.publishedCourseId,
-                                                      courseId: course.courseId,
-                                                    );
-                                                    if (!context.mounted) return;
-                                                    context.loaderOverlay.hide();
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      BloqoSnackBar.get(
-                                                          context: context, child: Text(localizedText.done)),
-                                                    );
-                                                  } on BloqoException catch (e) {
-                                                    if (!context.mounted) return;
-                                                    context.loaderOverlay.hide();
-                                                    showBloqoErrorAlert(
-                                                      context: context,
-                                                      title: localizedText.error_title,
-                                                      description: e.message,
-                                                    );
-                                                  }
-                                                },
-                                              );
+                                              await _askConfirmationAndDismissCourse(context: context, localizedText: localizedText, course: course);
                                             },
                                             onGetQrCode: () async {
-                                              context.loaderOverlay.show();
-                                              try {
-                                                BloqoPublishedCourseData publishedCourse =
-                                                await getPublishedCourseFromCourseId(
-                                                    localizedText: localizedText, courseId: course.courseId);
-                                                if (!context.mounted) return;
-                                                context.loaderOverlay.hide();
-                                                widget.onPush(QrCodePage(
-                                                  qrCodeTitle: course.courseName,
-                                                  qrCodeContent:
-                                                  "${BloqoQrCodeType.course.name}_${publishedCourse.publishedCourseId}",
-                                                ));
-                                              } on BloqoException catch (e) {
-                                                if (!context.mounted) return;
-                                                context.loaderOverlay.hide();
-                                                showBloqoErrorAlert(
-                                                  context: context,
-                                                  title: localizedText.error_title,
-                                                  description: e.message,
-                                                );
-                                              }
+                                              await _tryGoToQrCodePage(context: context, localizedText: localizedText, course: course);
                                             },
                                           );
                                         },

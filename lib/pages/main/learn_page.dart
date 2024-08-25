@@ -452,7 +452,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
         // Navigate to the course content page if the learnCourse is already set
-
+        context.loaderOverlay.hide();
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
