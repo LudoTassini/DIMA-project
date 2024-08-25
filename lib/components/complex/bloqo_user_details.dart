@@ -356,7 +356,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
         fit: BoxFit.cover,
       );
     }
-    return url != null
+    return url != null && url != "none"
         ? FadeInImage.assetNetwork(
       placeholder: "assets/images/portrait_placeholder.png",
       image: url,
