@@ -265,7 +265,7 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                                 final imgFile = File('$directory/certificate.png');
                                 imgFile.writeAsBytes(pngBytes);
 
-                                if (!mounted) return;
+                                if (!context.mounted) return;
                                 RenderBox? box = context.findRenderObject() as RenderBox?;
                                 Rect sharePositionOrigin = box!.localToGlobal(Offset.zero) & box.size;
 

@@ -61,6 +61,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
+    print("loaded page");
+
     // FIXME
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
       for (var chapter in chapters) {

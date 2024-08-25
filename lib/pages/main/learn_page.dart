@@ -428,9 +428,10 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _goToCoursePage({ required BuildContext context, required var localizedText,
-    required BloqoUserCourseEnrolledData userCourseEnrolled }) async {
+  Future<void> _goToCoursePage({required BuildContext context, required var localizedText, required BloqoUserCourseEnrolledData userCourseEnrolled,
+  }) async {
     context.loaderOverlay.show();
+
     try {
       BloqoCourseData? learnCourse = getLearnCourseFromAppState(context: context);
       String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
@@ -446,6 +447,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       }
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
+        // Navigate to the course content page if the learnCourse is already set
+
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
@@ -453,7 +456,10 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
             sectionToComplete: sectionToComplete,
           ),
         );
-      } else {
+      }
+
+      else {
+        // Load the course data and navigate to the course content page
         BloqoCourseData course = await getCourseFromId(
           localizedText: localizedText,
           courseId: userCourseEnrolled.courseId,
@@ -472,6 +478,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         }
 
         if (!context.mounted) return;
+
+        // Save course data to the app state
         saveLearnCourseToAppState(
           context: context,
           course: course,
@@ -481,8 +489,9 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
           sectionsCompleted: userCourseEnrolled.sectionsCompleted ?? [],
           chaptersCompleted: userCourseEnrolled.chaptersCompleted ?? [],
           totNumSections: userCourseEnrolled.totNumSections,
-          comingFromHome: true,
         );
+
+        // Hide the loader and navigate to the course content page
         context.loaderOverlay.hide();
         widget.onPush(
           CourseContentPage(
@@ -493,6 +502,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         );
       }
     } on BloqoException catch (e) {
+      // Handle exceptions
       if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
