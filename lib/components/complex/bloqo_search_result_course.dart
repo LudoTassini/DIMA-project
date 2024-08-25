@@ -135,7 +135,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                               child: Icon(
-                                Icons.public,
+                                course!.isPublic ? Icons.public : Icons.public_off,
                                 color: theme.colors.leadingColor,
                                 size: 24,
                               ),

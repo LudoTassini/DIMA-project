@@ -88,6 +88,8 @@ class MockExternalServices {
           enrollmentDate: Timestamp.now(),
           isRated: false,
           isCompleted: false,
+          sectionName: "test",
+          sectionToComplete: "test"
         ),
         testNotification = BloqoNotificationData(
           id: "test",

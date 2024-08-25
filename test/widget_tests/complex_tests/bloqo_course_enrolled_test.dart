@@ -41,7 +41,9 @@ void main() {
                         totNumSections: 8,
                         enrollmentDate: Timestamp.now(),
                         isCompleted: isCompleted,
-                        isRated: isRated
+                        isRated: isRated,
+                        sectionName: "test",
+                        sectionToComplete: "test"
                     ),
                     onPressed: () {
                       tapped = true;

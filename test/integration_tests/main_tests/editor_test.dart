@@ -933,10 +933,6 @@ void main() {
     await tester.tap(find.text("Published").first);
     await tester.pump(const Duration(seconds: 2));
 
-    await tester.runAsync(() async {
-      await Future.delayed(const Duration(seconds: 3));
-    });
-
     expect(find.text("Dismiss"), findsOne);
 
     await tester.tap(find.byIcon(Icons.qr_code_2).first);
@@ -947,6 +943,196 @@ void main() {
     });
 
     expect(find.byType(QrImageView), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can view the statistics of a published course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester, andComeBack: true);
+
+    await publishCourseAndTest(tester: tester);
+
+    await tester.tap(find.text("Published").first);
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.text("Dismiss"), findsOne);
+
+    await tester.tap(find.text("View statistics").first);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("Statistics"), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can dismiss a published course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester, andComeBack: true);
+
+    await publishCourseAndTest(tester: tester);
+
+    await tester.tap(find.text("Published").first);
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.text("Dismiss"), findsOne);
+
+    await tester.tap(find.text("Dismiss").first);
+    await tester.pump();
+
+    await tester.tap(find.text("OK").first);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("Dismiss"), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can view a published course but cannot modify it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester, andComeBack: true);
+
+    await publishCourseAndTest(tester: tester);
+
+    await tester.tap(find.text("Published").first);
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.text("Dismiss"), findsOne);
+
+    await tester.tap(find.text("Course").last);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoFilledButton), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can modify the name of a course they are creating test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester);
+
+    await tester.enterText(find.byType(BloqoTextField).first, 'title');
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("title"), findsExactly(2));
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can modify the name of a chapter of a course they are creating test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester);
+
+    await createNewChapterAndTest(tester: tester);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(BloqoTextField).first, 'title');
+    await tester.pump();
+
+    await createNewSectionAndTest(tester: tester);
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("title"), findsExactly(2));
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can modify the name of a section of a course they are creating test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester);
+
+    await createNewChapterAndTest(tester: tester);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await createNewSectionAndTest(tester: tester);
+
+    await tester.tap(find.byType(BloqoEditableSection).first);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(BloqoTextField).first, 'title');
+    await tester.pump();
+
+    await tester.tap(find.byType(BloqoFilledButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Text Block").first);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("title"), findsExactly(2));
 
     await binding.setSurfaceSize(null);
   });
