@@ -22,8 +22,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -40,8 +39,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -63,8 +61,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -91,8 +88,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -121,8 +117,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -150,8 +145,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -183,8 +177,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(Switch).first);
     await tester.pump();
@@ -235,8 +228,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoDropdown).at(4));
     await tester.pumpAndSettle();
@@ -262,8 +254,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoTextField).at(2));
     await tester.pumpAndSettle();
@@ -293,8 +284,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoDropdown).at(4));
     await tester.pumpAndSettle();

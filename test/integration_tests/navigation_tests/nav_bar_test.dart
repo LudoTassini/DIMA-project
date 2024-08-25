@@ -15,25 +15,24 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Learn"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Learn");
 
     expect(find.text("Learn"), findsExactly(2));
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
+
     expect(find.text("Search"), findsExactly(3));
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
+
     expect(find.text("Editor"), findsExactly(2));
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
+
     expect(find.text("Account"), findsExactly(1));
 
-    await tester.tap(find.text("Home"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Home");
+
     expect(find.text("Home"), findsExactly(1));
 
     await binding.setSurfaceSize(null);
@@ -46,8 +45,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pumpAndSettle();
@@ -55,6 +53,7 @@ void main() {
 
     await tester.tap(find.text("Search").last);
     await tester.pump();
+
     expect(find.text("Search"), findsExactly(3));
 
     await binding.setSurfaceSize(null);

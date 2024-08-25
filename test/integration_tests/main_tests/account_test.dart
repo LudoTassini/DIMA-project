@@ -21,8 +21,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byIcon(Icons.camera_alt).first);
     await tester.pumpAndSettle();
@@ -47,8 +46,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byIcon(Icons.qr_code_2).first);
     await tester.pumpAndSettle();
@@ -65,8 +63,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoSetting).first);
     await tester.pumpAndSettle();
@@ -89,8 +86,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoSetting).at(1));
     await tester.pumpAndSettle();
@@ -119,8 +115,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoSetting).at(1));
     await tester.pumpAndSettle();
@@ -153,8 +148,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoSetting).last);
     await tester.pumpAndSettle();
@@ -174,8 +168,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoTextButton).first);
     await tester.pumpAndSettle();
@@ -192,8 +185,7 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Account"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Account");
 
     await tester.tap(find.byType(BloqoTextButton).last);
     await tester.pumpAndSettle();

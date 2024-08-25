@@ -1,4 +1,5 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
+import 'package:bloqo/components/complex/bloqo_course_created.dart';
 import 'package:bloqo/components/complex/bloqo_editable_block.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/complex/bloqo_editable_quiz_answer.dart';
@@ -9,6 +10,7 @@ import 'package:bloqo/components/multimedia/bloqo_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../utils/routines.dart';
 
@@ -23,13 +25,9 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
-
-    expect(find.text("Course"), findsExactly(2));
+    await createNewCourseAndTest(tester: tester);
 
     await binding.setSurfaceSize(null);
   });
@@ -42,18 +40,11 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await binding.setSurfaceSize(null);
   });
@@ -66,26 +57,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await binding.setSurfaceSize(null);
   });
@@ -98,26 +79,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -142,26 +113,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -186,26 +147,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -230,26 +181,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -289,26 +230,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -362,26 +293,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -427,26 +348,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -496,26 +407,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -571,26 +472,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -657,26 +548,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -762,26 +643,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -840,26 +711,16 @@ void main() {
 
     await doLogin(tester: tester);
 
-    await tester.tap(find.text("Editor"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Editor");
 
-    await tester.tap(find.byType(BloqoFilledButton).last);
-    await tester.pumpAndSettle();
+    await createNewCourseAndTest(tester: tester);
 
-    expect(find.text("Course"), findsExactly(2));
-
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableChapter), findsOne);
+    await createNewChapterAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableChapter).first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(BloqoFilledButton).first);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(BloqoEditableSection), findsOne);
+    await createNewSectionAndTest(tester: tester);
 
     await tester.tap(find.byType(BloqoEditableSection).first);
     await tester.pumpAndSettle();
@@ -887,6 +748,205 @@ void main() {
     });
 
     expect(find.byType(BloqoEditableBlock), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a chapter and remove a section from it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester);
+
+    await createNewChapterAndTest(tester: tester);
+
+    await tester.tap(find.byType(BloqoEditableChapter).first);
+    await tester.pumpAndSettle();
+
+    await createNewSectionAndTest(tester: tester);
+
+    await tester.tap(find.byIcon(Icons.delete_forever).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("OK").last);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableSection), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can edit a course and remove a chapter from it test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester);
+
+    await createNewChapterAndTest(tester: tester);
+
+    await tester.tap(find.byIcon(Icons.delete_forever).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("OK").last);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoEditableChapter), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can delete a course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1000, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    expect(find.byType(BloqoCourseCreated), findsOne);
+
+    await tester.tap(find.text("Delete").first);
+    await tester.pump();
+
+    await tester.tap(find.text("OK").last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoCourseCreated), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can publish a course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester, andComeBack: true);
+
+    await publishCourseAndTest(tester: tester);
+
+    await tester.tap(find.text("Published").first);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("Dismiss"), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users cannot publish a course if tags are incomplete test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    expect(find.byType(BloqoCourseCreated), findsOne);
+
+    await tester.tap(find.text("Publish").first);
+    await tester.pump();
+
+    var textMap = {
+      0: "English",
+      1: "Education",
+      2: "1 hour or less",
+      3: "Lessons only",
+    };
+
+    for(int i = 0; i < 4; i++){
+      await tester.tap(find.byType(BloqoDropdown).at(i));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(textMap[i]!).last);
+      await tester.pumpAndSettle();
+
+      final dropdown = tester.widget<BloqoDropdown>(find.byType(BloqoDropdown).at(i));
+      var dropdownValue = dropdown.controller.text;
+      expect(dropdownValue, textMap[i]!);
+    }
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pump();
+
+    await tester.tap(find.text("OK").last);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(AlertDialog), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can view the QR code of a published course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 3000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    await createNewCourseAndTest(tester: tester, andComeBack: true);
+
+    await publishCourseAndTest(tester: tester);
+
+    await tester.tap(find.text("Published").first);
+    await tester.pump(const Duration(seconds: 2));
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.text("Dismiss"), findsOne);
+
+    await tester.tap(find.byIcon(Icons.qr_code_2).first);
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(QrImageView), findsOne);
 
     await binding.setSurfaceSize(null);
   });

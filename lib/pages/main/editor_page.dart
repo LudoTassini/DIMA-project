@@ -516,9 +516,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
             );
             if (!context.mounted) return;
             context.loaderOverlay.hide();
-            ScaffoldMessenger.of(context).showSnackBar(
-              BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-            );
+            showBloqoSnackBar(context: context, text: localizedText.done);
           }
           on BloqoException catch (e) {
             if (!context.mounted) return;

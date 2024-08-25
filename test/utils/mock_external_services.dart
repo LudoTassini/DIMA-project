@@ -1,5 +1,6 @@
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
+import 'package:bloqo/model/courses/bloqo_block_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
@@ -30,6 +31,7 @@ class MockExternalServices {
   final BloqoCourseData testCourse;
   final BloqoChapterData testChapter;
   final BloqoSectionData testSection;
+  final BloqoBlockData testBlock1;
   final BloqoReviewData testReview;
 
   final BloqoUserData testUser2;
@@ -193,7 +195,15 @@ class MockExternalServices {
           id: "test",
           number: 1,
           name: "test",
-          blocks: ["test"]
+          blocks: ["test1"]
+        ),
+        testBlock1 = BloqoBlockData(
+          id: "test1",
+          superType: BloqoBlockSuperType.text.toString(),
+          type: BloqoBlockType.text.toString(),
+          name: BloqoBlockSuperType.text.toString(),
+          number: 1,
+          content: "test"
         ),
         testReview = BloqoReviewData(
           authorUsername: "test",
@@ -227,6 +237,7 @@ class MockExternalServices {
     await fakeFirestore.collection('courses').doc('test4').set(testCourse4.toFirestore());
     await fakeFirestore.collection('chapters').doc('test').set(testChapter.toFirestore());
     await fakeFirestore.collection('sections').doc('test').set(testSection.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test1').set(testBlock1.toFirestore());
     await fakeFirestore.collection('notifications').doc('test').set(testNotification.toFirestore());
     await fakeFirestore.collection('reviews').doc('test').set(testReview.toFirestore());
   }
