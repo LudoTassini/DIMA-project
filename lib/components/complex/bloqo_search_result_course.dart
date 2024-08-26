@@ -55,7 +55,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 5),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [

@@ -149,38 +149,48 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ),
 
                         if (userCoursesEnrolled.isNotEmpty && isTablet)
-                          GridView.builder(
-                            key: ValueKey(_coursesEnrolledInDisplayed),
-                            shrinkWrap: true, // This helps in unbounded height cases
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // Number of columns in the grid
-                              crossAxisSpacing: 10.0,
-                              mainAxisSpacing: 10.0,
-                              childAspectRatio: 6/2,
-                            ),
-                            itemCount: _coursesEnrolledInDisplayed > userCoursesEnrolled.length
-                                ? userCoursesEnrolled.length
-                                : _coursesEnrolledInDisplayed,
-                            itemBuilder: (context, index) {
-                              BloqoUserCourseEnrolledData course = userCoursesEnrolled[index];
-                              return BloqoCourseEnrolled(
-                                course: course,
-                                showInProgress: true,
-                                onPressed: () async {
-                                  await _goToLearnCoursePage(
-                                    context: context,
-                                    localizedText: localizedText,
-                                    userCourseEnrolled: course,
+                          LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints) {
+                              double width = constraints.maxWidth / 2;
+                              double height = width / 2.30;
+                              double childAspectRatio = width / height;
+
+                              return GridView.builder(
+                                key: ValueKey(_coursesEnrolledInDisplayed),
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  // Number of columns in the grid
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisSpacing: 10.0,
+                                  childAspectRatio: childAspectRatio, // 6/2
+                                ),
+                                itemCount: _coursesEnrolledInDisplayed >
+                                    userCoursesEnrolled.length
+                                    ? userCoursesEnrolled.length
+                                    : _coursesEnrolledInDisplayed,
+                                itemBuilder: (context, index) {
+                                  BloqoUserCourseEnrolledData course = userCoursesEnrolled[index];
+                                  return BloqoCourseEnrolled(
+                                    course: course,
+                                    showInProgress: true,
+                                    onPressed: () async {
+                                      await _goToLearnCoursePage(
+                                        context: context,
+                                        localizedText: localizedText,
+                                        userCourseEnrolled: course,
+                                      );
+                                    },
                                   );
                                 },
                               );
-                            },
+                            }
                           ),
 
                         if (_coursesEnrolledInDisplayed < userCoursesEnrolled.length)
                           Padding(
-                            padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                            : const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                             child: BloqoTextButton(
                               onPressed: loadMoreEnrolledCourses,
                               text: localizedText.load_more,
@@ -294,37 +304,51 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                           ),
 
                         if (userCoursesCreated.isNotEmpty && isTablet)
-                          GridView.builder(
-                            key: ValueKey(_coursesCreatedDisplayed),
-                            shrinkWrap: true, // This helps in unbounded height cases
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // Number of columns in the grid
-                              crossAxisSpacing: 10.0,
-                              mainAxisSpacing: 10.0,
-                              childAspectRatio: 8/2,
-                            ),
-                            itemCount: _coursesCreatedDisplayed > userCoursesCreated.length
-                                ? userCoursesCreated.length
-                                : _coursesCreatedDisplayed,
-                            itemBuilder: (context, index) {
-                              BloqoUserCourseCreatedData course = userCoursesCreated[index];
-                              return BloqoCourseCreated(
-                                course: course,
-                                onPressed: () async {
-                                  await _goToEditorCoursePage(context: context, localizedText: localizedText,
-                                      userCourseCreated: course); },
+                          LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints) {
+                              double width = constraints.maxWidth / 2;
+                              double height = width / 3.5;
+                              double childAspectRatio = width / height;
+
+                              return GridView.builder(
+                                key: ValueKey(_coursesCreatedDisplayed),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                // This helps in unbounded height cases
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  // Number of columns in the grid
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisSpacing: 10.0,
+                                  childAspectRatio: childAspectRatio, // 4
+                                ),
+                                itemCount: _coursesCreatedDisplayed >
+                                    userCoursesCreated.length
+                                    ? userCoursesCreated.length
+                                    : _coursesCreatedDisplayed,
+                                itemBuilder: (context, index) {
+                                  BloqoUserCourseCreatedData course = userCoursesCreated[index];
+                                  return BloqoCourseCreated(
+                                    course: course,
+                                    onPressed: () async {
+                                      await _goToEditorCoursePage(
+                                          context: context,
+                                          localizedText: localizedText,
+                                          userCourseCreated: course);
+                                    },
+                                  );
+                                },
                               );
                             },
                           ),
 
                           if (_coursesCreatedDisplayed < userCoursesCreated.length)
                             Padding(
-                              padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                              : const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                               child: BloqoTextButton(
                                   onPressed: loadMoreCreatedCourses,
                                   text: localizedText.load_more,
-                                  color: theme.colors.primaryText
+                                  color: theme.colors.leadingColor
                               ),
                             ),
 
