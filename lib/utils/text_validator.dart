@@ -2,7 +2,7 @@ import 'package:bloqo/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? emailValidator({String? email, required AppLocalizations localizedText}){
-  return (email == null || !_validateEmail(email)) ? localizedText.error_enter_valid_email : null;
+  return (email == null || !validateEmail(email)) ? localizedText.error_enter_valid_email : null;
 }
 
 String? passwordValidator({String? password, required AppLocalizations localizedText}){
@@ -10,7 +10,7 @@ String? passwordValidator({String? password, required AppLocalizations localized
   if(password == null){
     return localizedText.error_password_empty;
   }
-  List<bool> results = _validatePassword(password);
+  List<bool> results = validatePassword(password);
   int count = 0;
   for (bool result in results){
     if(result){
@@ -31,7 +31,7 @@ String? usernameValidator({String? username, required AppLocalizations localized
   if (username == null || username.length < Constants.minUsernameLength) {
     return localizedText.error_username_short(Constants.minUsernameLength.toString());
   }
-  if (!_validateUsername(username)){
+  if (!validateUsername(username)){
     return localizedText.error_username_alphanumeric;
   }
   else{
@@ -43,7 +43,7 @@ String? fullNameValidator({String? fullName, required AppLocalizations localized
   if (fullName == null || fullName == ""){
     return localizedText.error_full_name_empty;
   }
-  if (!_validateFullName(fullName)){
+  if (!validateFullName(fullName)){
     return localizedText.error_full_name_alphanumeric;
   }
   else{
@@ -51,7 +51,7 @@ String? fullNameValidator({String? fullName, required AppLocalizations localized
   }
 }
 
-bool _validateEmail(String email){
+bool validateEmail(String email){
   // regex definition
   final RegExp emailRegex = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
@@ -60,7 +60,7 @@ bool _validateEmail(String email){
   return emailRegex.hasMatch(email);
 }
 
-List<bool> _validatePassword(String password) {
+List<bool> validatePassword(String password) {
   // Define regex patterns to match the password requirements
   RegExp specialCharPattern = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
   RegExp numberPattern = RegExp(r'[0-9]');
@@ -105,12 +105,12 @@ String _createPasswordErrorString({required List<bool> validationResults, requir
   return messages.trim();
 }
 
-bool _validateUsername(String username){
+bool validateUsername(String username){
   final RegExp regExp = RegExp(r'^[a-zA-Z0-9]+$');
   return regExp.hasMatch(username);
 }
 
-bool _validateFullName(String fullName) {
-  RegExp regExp = RegExp(r'^[a-zA-Z0-9\s]+$');
+bool validateFullName(String fullName) {
+  RegExp regExp = RegExp(r'^[a-zA-Z\s]+$');
   return regExp.hasMatch(fullName);
 }
