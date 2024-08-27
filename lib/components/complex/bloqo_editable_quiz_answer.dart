@@ -8,8 +8,9 @@ import '../../utils/toggle.dart';
 import '../forms/bloqo_text_field.dart';
 import '../popups/bloqo_confirmation_alert.dart';
 
-class BloqoEditableQuizAnswer extends StatelessWidget {
-  BloqoEditableQuizAnswer({
+class BloqoEditableQuizAnswer extends StatefulWidget {
+
+  const BloqoEditableQuizAnswer({
     super.key,
     required this.controller,
     required this.toggle,
@@ -26,6 +27,13 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
   final Function() onDelete;
   final EdgeInsetsDirectional padding;
 
+  @override
+  State<BloqoEditableQuizAnswer> createState() => _BloqoEditableQuizAnswerState();
+
+}
+
+class _BloqoEditableQuizAnswerState extends State<BloqoEditableQuizAnswer>{
+
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -33,7 +41,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     return Padding(
-        padding: padding,
+        padding: widget.padding,
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -55,13 +63,13 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "${localizedText.answer} $answerNumber",
+                            "${localizedText.answer} ${widget.answerNumber}",
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               color: theme.colors.leadingColor,
                               fontWeight: FontWeight.w600
                             )
                           ),
-                          if(editable)
+                          if(widget.editable)
                             IconButton(
                               padding: const EdgeInsets.only(left: 5.0),
                               visualDensity: VisualDensity.compact,
@@ -75,7 +83,7 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                                     context: context,
                                     title: localizedText.warning,
                                     description: localizedText.delete_answer_confirmation,
-                                    confirmationFunction: onDelete,
+                                    confirmationFunction: widget.onDelete,
                                     backgroundColor: theme.colors.error
                                 );
                               },
@@ -89,13 +97,13 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                   key: formKey,
                   child: BloqoTextField(
                     formKey: formKey,
-                    controller: controller,
+                    controller: widget.controller,
                     labelText: localizedText.answer,
                     hintText: localizedText.enter_answer_here,
                     maxInputLength: Constants.maxQuizAnswerLength,
                     isTextArea: true,
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 5, 15),
-                    isDisabled: !editable
+                    isDisabled: !widget.editable
                   )
                 ),
                 Wrap(
@@ -112,8 +120,8 @@ class BloqoEditableQuizAnswer extends StatelessWidget {
                     ),
                     BloqoSwitch(
                       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
-                      value: toggle,
-                      editable: editable,
+                      value: widget.toggle,
+                      editable: widget.editable,
                     )
                   ]
                 )

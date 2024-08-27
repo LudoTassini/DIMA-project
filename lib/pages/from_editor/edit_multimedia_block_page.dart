@@ -323,7 +323,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                         ),
                         if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && showEmbedFromYouTube)
                           BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 120),
                             child: Column(
                               children: [
                                   Column(
@@ -591,6 +591,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
 
       if (!context.mounted) return;
       context.loaderOverlay.hide();
+      showBloqoSnackBar(context: context, text: localizedText.done);
     } on BloqoException catch (e) {
       if (!context.mounted) return;
       context.loaderOverlay.hide();
@@ -812,9 +813,9 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           if (!context.mounted) return null;
           context.loaderOverlay.hide();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-          );
+          showEmbedFromYouTube = false;
+
+          showBloqoSnackBar(context: context, text: localizedText.done);
           return url;
         } on BloqoException catch (e) {
           if (!context.mounted) return null;

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_state/user_app_state.dart';
+import '../../components/containers/bloqo_main_container.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
 import '../../model/bloqo_user_data.dart';
@@ -98,13 +99,33 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onItemTapped(int index) {
-    _navigateToPage(index);
+    _navigateToPage(index, shouldResetStack: false);
   }
 
-  void _navigateToPage(int index) {
+  void _navigateToPage(int index, {bool shouldResetStack = true}) {
     if (_selectedPageIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
+      if(shouldResetStack) {
+        _navigatorKeys[index].currentState?.popUntil((route) => false);
+        switch(index){
+          case 0:
+            _pushNewPage(_navigatorKeys[0], HomePage(onPush: (newPage) => _pushNewPage(_navigatorKeys[0], newPage), onNavigateToPage: _navigateToPage));
+            break;
+          case 1:
+            _pushNewPage(_navigatorKeys[1], LearnPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[1], newPage), onNavigateToPage: _navigateToPage));
+            break;
+          case 2:
+            _pushNewPage(_navigatorKeys[2], SearchPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[2], newPage), onNavigateToPage: _navigateToPage));
+            break;
+          case 3:
+            _pushNewPage(_navigatorKeys[3], EditorPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[3], newPage), onNavigateToPage: _navigateToPage));
+            break;
+          case 4:
+            _pushNewPage(_navigatorKeys[4], UserPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[4], newPage), onNavigateToPage: _navigateToPage));
+            break;
+        }
+      }
       setState(() {
         _selectedPageIndex = index;
       });
@@ -202,11 +223,13 @@ class _MainPageState extends State<MainPage> {
             currentIndex: _selectedPageIndex,
             onItemTapped: _onItemTapped,
           ),
-          body: PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            physics: const NeverScrollableScrollPhysics(),
-            children: _buildPageViews(),
+          body: BloqoMainContainer(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              physics: const NeverScrollableScrollPhysics(),
+              children: _buildPageViews(),
+            )
           ),
           resizeToAvoidBottomInset: false,
         );

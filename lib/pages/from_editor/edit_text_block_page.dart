@@ -115,7 +115,6 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
                                   labelText: localizedText.text,
                                   hintText: localizedText.write_text_here,
                                   maxInputLength: Constants.maxBlockTextLength,
-                                  keyboardType: TextInputType.multiline,
                                   padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                   isTextArea: true,
                                   isDisabled: !editable,
