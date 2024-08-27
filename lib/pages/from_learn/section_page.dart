@@ -103,9 +103,11 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      MarkdownBody(
-                                        data: block.content,
-                                        styleSheet: BloqoMarkdownStyleSheet.get(),
+                                      Expanded(
+                                        child: MarkdownBody(
+                                          data: block.content,
+                                          styleSheet: BloqoMarkdownStyleSheet.get(),
+                                        )
                                       ),
                                     ],
                                   ),
@@ -302,6 +304,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
         if (!context.mounted) return;
       }
 
+      if (!context.mounted) return;
       // Update chapters completed and course status
       var chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context);
 
