@@ -453,6 +453,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_results_header": MessageLookupByLibrary.simpleMessage(
             "These are the courses that match your search"),
         "section": MessageLookupByLibrary.simpleMessage("Section"),
+        "section_is_not_completed": MessageLookupByLibrary.simpleMessage(
+            "You haven\'t finished all the quizzes."),
         "sections": MessageLookupByLibrary.simpleMessage("sections"),
         "sections_header": MessageLookupByLibrary.simpleMessage("Sections"),
         "show_private_courses":

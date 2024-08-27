@@ -3230,6 +3230,16 @@ class S {
     );
   }
 
+  /// `You haven't finished all the quizzes.`
+  String get section_is_not_completed {
+    return Intl.message(
+      'You haven\'t finished all the quizzes.',
+      name: 'section_is_not_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `You already completed the course, so you cannot unsubscribe to it.`
   String get course_completed {
     return Intl.message(

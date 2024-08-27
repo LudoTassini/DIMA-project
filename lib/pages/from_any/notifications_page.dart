@@ -78,7 +78,8 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                 return Padding(
                     padding: !isTablet ? const EdgeInsetsDirectional.all(0)
                 : Constants.tabletPadding,
-                  child: Column(
+                  child: !isTablet ?
+                  Column(
                     children: List.generate(
                       notifications.length,
                           (index) {
@@ -119,7 +120,68 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                         return Container();
                       },
                     ),
+                  )
+                    : LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        double width = constraints.maxWidth / 2;
+                        double height = width / 2.25;
+                        double childAspectRatio = width / height;
+
+                        return Align(
+                          alignment: Alignment.topCenter,  // Align to the top of the container
+                          child: GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10.0,
+                              mainAxisSpacing: 10.0,
+                              childAspectRatio: childAspectRatio,
+                            ),
+                            itemCount: notifications.length,
+                            itemBuilder: (context, index) {
+                              BloqoNotificationData notification = notifications[index];
+                              if (notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
+                                return BloqoCourseEnrollmentRequestNotification(
+                                  //FIXME: richText
+                                  notification: notification,
+                                  onNotificationHandled: () {
+                                    setState(() {
+                                      notifications.removeAt(index);
+                                      _didRemoveNotifications = true;
+                                    });
+                                  },
+                                );
+                              }
+                              if (notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
+                                //FIXME: richText
+                                return BloqoCourseEnrollmentAcceptedNotification(
+                                  notification: notification,
+                                  onNotificationHandled: () {
+                                    setState(() {
+                                      notifications.removeAt(index);
+                                      _didRemoveNotifications = true;
+                                    });
+                                  },
+                                );
+                              }
+                              if (notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
+                                return BloqoNewCoursePublishedNotification(
+                                  notification: notification,
+                                  onNotificationHandled: () {
+                                    setState(() {
+                                      notifications.removeAt(index);
+                                      _didRemoveNotifications = true;
+                                    });
+                                  },
+                                );
+                              }
+                              return Container();
+                            },
+                          ),
+                        );
+                      }
                   ),
+
                 );
               }
             } else {

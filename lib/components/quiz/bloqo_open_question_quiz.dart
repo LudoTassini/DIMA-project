@@ -11,10 +11,12 @@ class BloqoOpenQuestionQuiz extends StatefulWidget {
 
   const BloqoOpenQuestionQuiz({
     super.key,
-    required this.block
+    required this.block,
+    required this.onQuestionAnsweredCorrectly,
   });
 
   final BloqoBlockData block;
+  final VoidCallback onQuestionAnsweredCorrectly;
 
   @override
   State<BloqoOpenQuestionQuiz> createState() => _BloqoOpenQuestionQuizState();
@@ -214,23 +216,23 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
   }
 
   void _checkAnswer({required TextEditingController controller, required String correctAnswer, required String flags,
-    required var localizedText, required var theme}) {
+    required var localizedText, required var theme,}) {
     setState(() {
       if (_checkConditions(controller.text, correctAnswer, flags)) {
         isAnswerCorrect = true;
+        widget.onQuestionAnsweredCorrectly(); // Invoke the callback
       } else {
         isAnswerCorrect = false;
       }
     });
+
     ScaffoldMessenger.of(context).showSnackBar(
       BloqoSnackBar.get(
         context: context,
         child: Text(
-            isAnswerCorrect ? localizedText.correct
-                : localizedText.wrong
+            isAnswerCorrect ? localizedText.correct : localizedText.wrong
         ),
-        backgroundColor: isAnswerCorrect ? theme.colors.success
-            : theme.colors.error,
+        backgroundColor: isAnswerCorrect ? theme.colors.success : theme.colors.error,
       ),
     );
   }

@@ -341,5 +341,6 @@
   "theme": "Tema",
   "purple_orchid": "Orchidea viola",
   "ocean_cornflower": "Fiordaliso oceano",
+  "section_is_not_completed": "Non hai ancora finito di completare tutti i quiz.",
   "course_completed": "Hai già completato il corso, pertanto non ti puoi disiscrivere."
 }

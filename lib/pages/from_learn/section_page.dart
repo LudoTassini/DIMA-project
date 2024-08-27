@@ -49,12 +49,25 @@ class SectionPage extends StatefulWidget {
 
 class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClientMixin<SectionPage> {
 
+  int completedBlocks = 0;
+  bool isSectionCompleted = false;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
+    int numQuizBlocks = _getNumQuizBlocks(blocks: widget.blocks);
+
+    void markBlockAsCompleted(int blockIndex) {
+      completedBlocks = completedBlocks + 1;
+      if(completedBlocks == numQuizBlocks) {
+        setState(() {
+          isSectionCompleted = true;
+        });
+      }
+    }
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -158,7 +171,12 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                         child: Column(
                           children: [
                             BloqoOpenQuestionQuiz(
-                              block: block
+                              block: block,
+                              onQuestionAnsweredCorrectly: () {
+                                setState(() {
+                                  markBlockAsCompleted(blockIndex);
+                                });
+                              },
                             ),
 
                             ],
@@ -172,7 +190,12 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       child: Column(
                         children: [
                           BloqoMultipleChoiceQuiz(
-                              block: block
+                              block: block,
+                              onQuestionAnsweredCorrectly: () {
+                                setState(() {
+                                  markBlockAsCompleted(blockIndex);
+                              });
+                            },
                           ),
 
                             ],
@@ -191,21 +214,37 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                   child:Padding(
                     padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
                         : Constants.tabletPaddingBloqoFilledButton,
-                    child: BloqoFilledButton(
-                      onPressed: () async {
-                        await _updateEnrolledCourseStatus(
-                          context: context,
-                          localizedText: localizedText,
-                          section: widget.section,
-                        );
-                        if(!context.mounted) return;
-                        Navigator.of(context).pop();
-                      },
-                      color: theme.colors.success,
-                      text: localizedText.learned,
-                      fontSize: !isTablet ? 24 : 32,
-                      height: !isTablet ? 65 : 75,
+                    child: isSectionCompleted ?
+
+                      BloqoFilledButton(
+                        onPressed: () async {
+                          await _updateEnrolledCourseStatus(
+                            context: context,
+                            localizedText: localizedText,
+                            section: widget.section,
+                          );
+                          if(!context.mounted) return;
+                          Navigator.of(context).pop();
+                        },
+                        color: theme.colors.success,
+                        text: localizedText.learned,
+                        fontSize: !isTablet ? 24 : 32,
+                        height: !isTablet ? 65 : 75,
+                      )
+
+                        : BloqoFilledButton(
+                            onPressed: () async {
+                              showBloqoErrorAlert(
+                              context: context,
+                              title: localizedText.error_title,
+                              description: localizedText.section_is_not_completed);
+                            },
+                            color: theme.colors.inactive,
+                            text: localizedText.learned,
+                            fontSize: !isTablet ? 24 : 32,
+                            height: !isTablet ? 65 : 75,
                     ),
+
                   ),
                 ),
 
@@ -369,6 +408,16 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
     }
     // Return null if there are no further sections or chapters to navigate to
     return null;
+  }
+
+  int _getNumQuizBlocks({required List<BloqoBlockData> blocks}) {
+    int numBloqoQuizBlocks = 0;
+    for(var block in blocks){
+      if(block.type == BloqoBlockType.quizMultipleChoice.toString() || block.type == BloqoBlockType.quizOpenQuestion.toString()){
+        numBloqoQuizBlocks = numBloqoQuizBlocks + 1;
+      }
+    }
+    return numBloqoQuizBlocks;
   }
 
 }

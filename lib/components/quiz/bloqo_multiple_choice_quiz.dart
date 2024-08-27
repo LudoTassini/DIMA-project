@@ -7,12 +7,15 @@ import '../buttons/bloqo_filled_button.dart';
 import '../custom/bloqo_snack_bar.dart';
 
 class BloqoMultipleChoiceQuiz extends StatefulWidget {
+
   const BloqoMultipleChoiceQuiz({
     super.key,
     required this.block,
+    required this.onQuestionAnsweredCorrectly,
   });
 
   final BloqoBlockData block;
+  final VoidCallback onQuestionAnsweredCorrectly;
 
   @override
   State<BloqoMultipleChoiceQuiz> createState() => _BloqoMultipleChoiceQuizState();
@@ -228,6 +231,11 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           selectedCheckboxAnswers.length == correctAnswers.length;
       isAnswerCorrect = allCorrect;
     }
+
+    if (isAnswerCorrect) {
+      widget.onQuestionAnsweredCorrectly();
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       BloqoSnackBar.get(
           context: context,

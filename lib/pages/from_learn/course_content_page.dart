@@ -606,26 +606,31 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                           ],
                         ),
 
-                        Padding(
-                          padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
-                              : Constants.tabletPaddingBloqoFilledButton,
-                          child: BloqoFilledButton(
-                            onPressed: () async {
-                                  _goToSectionPage(
-                                    context: context,
-                                    localizedText: localizedText,
-                                    section: widget.sectionToComplete!,
-                                    courseName: course.name,
-                                  );
-                              },
-                            color: theme.colors.success,
-                            text: sectionsCompleted.isEmpty ? localizedText.start_learning
-                                : localizedText.continue_learning,
-                            icon: Icons.lightbulb,
-                            fontSize: !isTablet ? 24 : 34,
-                            height: !isTablet ? 60 : 80,
-                          ),
-                        ),
+                  !widget.isCourseCompleted ?
+                    Padding(
+                      padding: !isTablet
+                      ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
+                          : Constants.tabletPaddingBloqoFilledButton,
+                      child: BloqoFilledButton(
+                        onPressed: () async {
+                          _goToSectionPage(
+                            context: context,
+                            localizedText: localizedText,
+                            section: widget.sectionToComplete!,
+                            courseName: course.name,
+                          );
+                        },
+                        color: theme.colors.success,
+                        text: sectionsCompleted.isEmpty
+                        ? localizedText.start_learning
+                            : localizedText.continue_learning,
+                        icon: Icons.lightbulb,
+                        fontSize: !isTablet ? 24 : 34,
+                        height: !isTablet ? 60 : 80,
+                      ),
+                    )
+                      : const SizedBox.shrink(),
+
                       ],
                     )
                     : Container(),
