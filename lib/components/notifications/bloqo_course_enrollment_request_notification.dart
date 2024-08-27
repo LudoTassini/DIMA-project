@@ -80,12 +80,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                           alignment: Alignment.topCenter, // Align image to the top center
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: FadeInImage.assetNetwork(
-                              placeholder: "assets/images/portrait_placeholder.png",
-                              image: applicant.pictureUrl,
-                              fit: BoxFit.cover,
-                              placeholderFit: BoxFit.cover,
-                            ),
+                            child: _getProfilePicture(context: context, url: applicant.pictureUrl)
                           ),
                         ),
                       ),
@@ -312,6 +307,26 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
           description: e.message
       );
     }
+  }
+
+  Widget _getProfilePicture({required BuildContext context, required String? url}){
+    if(getFromTestFromAppState(context: context) && url == "assets/tests/test.png"){
+      return Image.asset(
+        "assets/tests/test.png",
+        fit: BoxFit.cover,
+      );
+    }
+    return url != null && url != "none"
+        ? FadeInImage.assetNetwork(
+      placeholder: "assets/images/portrait_placeholder.png",
+      image: url,
+      fit: BoxFit.cover,
+      placeholderFit: BoxFit.cover,
+    )
+        : Image.asset(
+      "assets/images/portrait_placeholder.png",
+      fit: BoxFit.cover,
+    );
   }
 
 }

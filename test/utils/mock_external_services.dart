@@ -88,14 +88,16 @@ class MockExternalServices {
           enrollmentDate: Timestamp.now(),
           isRated: false,
           isCompleted: false,
+          sectionName: "test",
+          sectionToComplete: "test"
         ),
         testNotification = BloqoNotificationData(
           id: "test",
           userId: "test",
           type: BloqoNotificationType.courseEnrollmentRequest.toString(),
           timestamp: Timestamp.now(),
-          privatePublishedCourseId: "test",
-          applicantId: "test",
+          privatePublishedCourseId: "test2",
+          applicantId: "test2",
         ),
         testCourse = BloqoCourseData(
           id: "test",

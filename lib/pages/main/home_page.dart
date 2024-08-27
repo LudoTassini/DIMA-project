@@ -103,6 +103,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               builder: (context, userCoursesEnrolledAppState, _) {
                 List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
                 userCoursesEnrolled = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
+                userCoursesEnrolled.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
                 return BloqoSeasaltContainer(
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
@@ -259,6 +260,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
               builder: (context, userCoursesCreatedAppState, _) {
                 List<BloqoUserCourseCreatedData> userCoursesCreated = getUserCoursesCreatedFromAppState(context: context) ?? [];
                 userCoursesCreated = userCoursesCreated.where((course) => !course.published).toList();
+                userCoursesCreated.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
                 return  BloqoSeasaltContainer(
                   child: Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
