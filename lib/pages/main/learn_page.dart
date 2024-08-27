@@ -75,31 +75,10 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   Future<void> _checkHomePrivilege(BuildContext context) async {
     if (getComingFromHomeLearnPrivilegeFromAppState(context: context)) {
       useComingFromHomeLearnPrivilegeFromAppState(context: context);
-      BloqoCourseData? course = getLearnCourseFromAppState(context: context);
-      List<BloqoUserCourseEnrolledData>? userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context);
-      BloqoUserCourseEnrolledData? userCourseEnrolled = userCoursesEnrolled?.firstWhere((x) => x.courseId == course?.id);
-      String? sectionToCompleteId = userCourseEnrolled?.sectionToComplete;
-      bool isCourseCompleted = userCourseEnrolled!.isCompleted;
-      BloqoSectionData? sectionToComplete;
-      var firestore = getFirestoreFromAppState(context: context);
-      if(!isCourseCompleted) {
-        sectionToComplete = await getSectionFromId(firestore: firestore, localizedText: getAppLocalizations(context)!, sectionId: sectionToCompleteId!);
-      }
-      if (course != null && !isCourseCompleted) {
-        widget.onPush(
-            CourseContentPage(
-              onPush: widget.onPush,
-              sectionToComplete: sectionToComplete!,
-              isCourseCompleted: isCourseCompleted,
-            ));
-      }
-      else {
-        widget.onPush(
-            CourseContentPage(
-              onPush: widget.onPush,
-              isCourseCompleted: isCourseCompleted,
-            ));
-      }
+      widget.onPush(
+        CourseContentPage(
+          onPush: widget.onPush,
+        ));
     }
   }
 
@@ -272,7 +251,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                           child: BloqoFilledButton(
                                             onPressed: () => widget.onNavigateToPage(2),
                                             color: theme.colors.leadingColor,
@@ -479,20 +458,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
 
     try {
       BloqoCourseData? learnCourse = getLearnCourseFromAppState(context: context);
-      String? sectionToCompleteId = userCourseEnrolled.sectionToComplete;
-      bool isCourseCompleted = userCourseEnrolled.isCompleted;
-      BloqoSectionData? sectionToComplete;
 
       var firestore = getFirestoreFromAppState(context: context);
-
-      // Fetch the sectionToComplete if the course is not completed
-      if (!isCourseCompleted && sectionToCompleteId != null) {
-        sectionToComplete = await getSectionFromId(
-          firestore: firestore,
-          localizedText: localizedText,
-          sectionId: sectionToCompleteId,
-        );
-      }
 
       if (learnCourse != null && learnCourse.id == userCourseEnrolled.courseId) {
         // Navigate to the course content page if the learnCourse is already set
@@ -500,8 +467,6 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
-            isCourseCompleted: isCourseCompleted,
-            sectionToComplete: sectionToComplete,
           ),
         );
       }
@@ -547,8 +512,6 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
-            isCourseCompleted: isCourseCompleted,
-            sectionToComplete: sectionToComplete,
           ),
         );
       }

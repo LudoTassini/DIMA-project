@@ -27,7 +27,8 @@ void main() {
                             name: BloqoBlockType.quizMultipleChoice.toString(),
                             number: 1,
                             content: oneAnswerCorrect ? "q:Quale di queste risposte contiene la parola “corretto” o un suo derivato?\$a:<n>sbagliato<y>corretto<n>sbagliatissimo" : "q:Quale di queste risposte contiene la parola “corretto” o un suo derivato?\$a:<n>sbagliato<y>corretto<y>correttissimo"
-                        )
+                        ),
+                        onQuestionAnsweredCorrectly: () { },
                     )
                 );
               }

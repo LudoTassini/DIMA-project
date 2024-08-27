@@ -343,5 +343,7 @@
   "purple_orchid": "Purple Orchid",
   "ocean_cornflower": "Ocean Cornflower",
   "section_is_not_completed": "You haven't finished all the quizzes.",
-  "course_completed": "You already completed the course, so you cannot unsubscribe to it."
+  "completed_section": "Completed",
+  "course_completed": "Course completed!",
+  "cannot_unsubscribe_course_completed": "You already completed the course, so you cannot unsubscribe to it."
 }

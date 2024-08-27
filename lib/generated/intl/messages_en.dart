@@ -67,6 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "blocks_header": MessageLookupByLibrary.simpleMessage("Blocks"),
         "by": MessageLookupByLibrary.simpleMessage("by "),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cannot_unsubscribe_course_completed": MessageLookupByLibrary.simpleMessage(
+            "You already completed the course, so you cannot unsubscribe to it."),
         "chapter": MessageLookupByLibrary.simpleMessage("Chapter"),
         "chapters": MessageLookupByLibrary.simpleMessage("chapters"),
         "chapters_header": MessageLookupByLibrary.simpleMessage("Chapters"),
@@ -78,6 +80,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "comparison_ignore_case": MessageLookupByLibrary.simpleMessage(
             "Should comparison ignore case?"),
         "completed": MessageLookupByLibrary.simpleMessage("Completed"),
+        "completed_section": MessageLookupByLibrary.simpleMessage("Completed"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "content": MessageLookupByLibrary.simpleMessage("Content"),
         "continue_learning":
@@ -87,8 +90,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "correct_answer":
             MessageLookupByLibrary.simpleMessage("The correct answer is: "),
         "course": MessageLookupByLibrary.simpleMessage("Course"),
-        "course_completed": MessageLookupByLibrary.simpleMessage(
-            "You already completed the course, so you cannot unsubscribe to it."),
+        "course_completed":
+            MessageLookupByLibrary.simpleMessage("Course completed!"),
         "course_completion_certificate": MessageLookupByLibrary.simpleMessage(
             "Course Completion Certificate"),
         "course_dismiss_confirmation": MessageLookupByLibrary.simpleMessage(

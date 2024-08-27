@@ -70,6 +70,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "blocks_header": MessageLookupByLibrary.simpleMessage("Blocchi"),
         "by": MessageLookupByLibrary.simpleMessage("di "),
         "cancel": MessageLookupByLibrary.simpleMessage("Annulla"),
+        "cannot_unsubscribe_course_completed":
+            MessageLookupByLibrary.simpleMessage(
+                "Hai già completato il corso, pertanto non ti puoi disiscrivere."),
         "chapter": MessageLookupByLibrary.simpleMessage("Capitolo"),
         "chapters": MessageLookupByLibrary.simpleMessage("capitoli"),
         "chapters_header": MessageLookupByLibrary.simpleMessage("Capitoli"),
@@ -81,6 +84,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "comparison_ignore_case": MessageLookupByLibrary.simpleMessage(
             "Ignorare le differenze tra lettere maiuscole e minuscole?"),
         "completed": MessageLookupByLibrary.simpleMessage("Completati"),
+        "completed_section": MessageLookupByLibrary.simpleMessage("Completato"),
         "confirm": MessageLookupByLibrary.simpleMessage("Conferma"),
         "content": MessageLookupByLibrary.simpleMessage("Contenuto"),
         "continue_learning":
@@ -90,8 +94,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "correct_answer":
             MessageLookupByLibrary.simpleMessage("La risposta giusta è: "),
         "course": MessageLookupByLibrary.simpleMessage("Corso"),
-        "course_completed": MessageLookupByLibrary.simpleMessage(
-            "Hai già completato il corso, pertanto non ti puoi disiscrivere."),
+        "course_completed":
+            MessageLookupByLibrary.simpleMessage("Corso completato!"),
         "course_completion_certificate": MessageLookupByLibrary.simpleMessage(
             "Certificato di Completamento del Corso"),
         "course_dismiss_confirmation": MessageLookupByLibrary.simpleMessage(
@@ -318,7 +322,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Multimedia: Audio"),
         "multimedia_audio_short": MessageLookupByLibrary.simpleMessage("Audio"),
         "multimedia_block":
-            MessageLookupByLibrary.simpleMessage("Blocco Multimediale"),
+            MessageLookupByLibrary.simpleMessage("Blocco Media"),
         "multimedia_image":
             MessageLookupByLibrary.simpleMessage("Multimedia: Immagine"),
         "multimedia_image_short":
@@ -444,7 +448,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_changes":
             MessageLookupByLibrary.simpleMessage("Salva le modifiche"),
         "save_quiz_changes":
-            MessageLookupByLibrary.simpleMessage("Salva i cambiamenti al quiz"),
+            MessageLookupByLibrary.simpleMessage("Salva il quiz"),
         "save_settings":
             MessageLookupByLibrary.simpleMessage("Salva le impostazioni"),
         "scan_qr_code": MessageLookupByLibrary.simpleMessage("Leggi QR"),

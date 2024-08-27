@@ -3240,11 +3240,31 @@ class S {
     );
   }
 
-  /// `You already completed the course, so you cannot unsubscribe to it.`
+  /// `Completed`
+  String get completed_section {
+    return Intl.message(
+      'Completed',
+      name: 'completed_section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Course completed!`
   String get course_completed {
     return Intl.message(
-      'You already completed the course, so you cannot unsubscribe to it.',
+      'Course completed!',
       name: 'course_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You already completed the course, so you cannot unsubscribe to it.`
+  String get cannot_unsubscribe_course_completed {
+    return Intl.message(
+      'You already completed the course, so you cannot unsubscribe to it.',
+      name: 'cannot_unsubscribe_course_completed',
       desc: '',
       args: [],
     );

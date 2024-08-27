@@ -37,13 +37,9 @@ class CourseContentPage extends StatefulWidget {
   const CourseContentPage({
     super.key,
     required this.onPush,
-    required this.isCourseCompleted,
-    this.sectionToComplete,
   });
 
   final void Function(Widget) onPush;
-  final BloqoSectionData? sectionToComplete;
-  final bool isCourseCompleted;
 
 
   @override
@@ -52,8 +48,50 @@ class CourseContentPage extends StatefulWidget {
 
 class _CourseContentPageState extends State<CourseContentPage> with AutomaticKeepAliveClientMixin<CourseContentPage> {
 
-  final Map<String, bool> _showSectionsMap = {};
+  final List<String> _showSectionsList = [];
   bool isInitializedSectionMap = false;
+
+  // FIXME
+  void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
+    for (var chapter in chapters) {
+      if (!chaptersCompleted.contains(chapter.id)) {
+        _showSectionsList.add(chapter.id);
+        break;
+      }
+    }
+    isInitializedSectionMap = true;
+  }
+
+  void loadSections(String chapterId) {
+    setState(() {
+      _showSectionsList.add(chapterId);
+    });
+  }
+
+  void hideSections(String chapterId) {
+    setState(() {
+      _showSectionsList.remove(chapterId);
+    });
+  }
+
+  void updateSectionsToShow({required BloqoChapterData chapterCurrentSection, required BloqoChapterData? chapterNextSection}) {
+    if(chapterNextSection != null) {
+      if (chapterCurrentSection.id != chapterNextSection.id) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _showSectionsList.clear();
+            _showSectionsList.add(chapterNextSection.id);
+          });
+        });
+      }
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _showSectionsList.clear();
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,29 +99,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
-
-    // FIXME
-    void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
-      for (var chapter in chapters) {
-        if (!chaptersCompleted.contains(chapter.id)) {
-          _showSectionsMap[chapter.id] = true;
-          break;
-        }
-      }
-      isInitializedSectionMap = true;
-    }
-
-    void loadCompletedSections(String chapterId) {
-      setState(() {
-        _showSectionsMap[chapterId] = true;
-      });
-    }
-
-    void hideSections(String chapterId) {
-      setState(() {
-        _showSectionsMap.remove(chapterId);
-      });
-    }
 
     if(!isInitializedSectionMap) {
       initializeSectionsToShowMap(getLearnCourseChaptersFromAppState(context: context)?? [],
@@ -98,16 +113,35 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
         child: Consumer<UserCoursesEnrolledAppState>(
             builder: (context, userCoursesEnrolledAppState, _) {
 
+              List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)?? [];
+
               return Consumer<LearnCourseAppState>(
                 builder: (context, learnCourseAppState, _) {
 
                   BloqoCourseData course = getLearnCourseFromAppState(context: context)!;
+                  BloqoUserCourseEnrolledData? userCourseEnrolled = userCoursesEnrolled.where(
+                          (courseEnrolled) => courseEnrolled.courseId == course.id).firstOrNull;
+                  if(userCourseEnrolled == null){
+                    return Row(
+                      children: [
+                        Column(
+                          children: [
+                            Expanded(
+                              child: BloqoMainContainer(
+                                child: Container(),
+                              ),
+                            ),
+                          ])
+                      ]);
+                  }
                   List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(context: context)?? [];
                   Map<String, List<BloqoSectionData>> sections = getLearnCourseSectionsFromAppState(context: context)?? {};
                   Timestamp enrollmentDate = getLearnCourseEnrollmentDateFromAppState(context: context)!;
                   List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
                   List<dynamic> chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context)?? [];
                   int totNumSections = getLearnCourseTotNumSectionsFromAppState(context: context)!;
+                  String? sectionToComplete = userCourseEnrolled.sectionToComplete;
+                  bool isCourseCompleted = userCourseEnrolled.isCompleted;
 
                   return Column(
                     children: [
@@ -240,7 +274,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             Align(
                                                               alignment: Alignment.topRight,
                                                               child: Text(
-                                                                localizedText.completed,
+                                                                localizedText.completed_section,
                                                                 textAlign: TextAlign.start,
                                                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                                                   fontSize: 14,
@@ -327,17 +361,18 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 : const SizedBox.shrink(), // This will take up no space
                                                 ),
 
-                                                ... _showSectionsMap[chapter.id] == true
+                                                ... _showSectionsList.contains(chapter.id)
                                                     ? [
                                                   if (!isTablet)
                                                       ...List.generate(
                                                         sections[chapter.id]!.length,
                                                             (sectionIndex) {
                                                           var section = sections[chapter.id]![sectionIndex];
-                                                          if(widget.isCourseCompleted) {
+                                                          if(isCourseCompleted) {
                                                             isClickable = true;
                                                           } else {
-                                                            if (widget.sectionToComplete!.id == section.id) {
+                                                            if (sectionToComplete! == section.id
+                                                            || sectionsCompleted.contains(section.id)) {
                                                               isClickable = true;
                                                             }
                                                           }
@@ -347,11 +382,12 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         index: sectionIndex,
                                                         isClickable: isClickable,
                                                         isInLearnPage: true,
+                                                        isCompleted: sectionsCompleted.contains(section.id),
                                                         onPressed: () async {
-                                                          _goToSectionPage(
+                                                          await _goToSectionPage(
                                                             context: context,
                                                             localizedText: localizedText,
-                                                            section: section,
+                                                            sectionId: section.id,
                                                             courseName: course.name,
                                                           );
                                                         },
@@ -360,6 +396,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                   )
                                                   else Padding(
                                                     padding: const EdgeInsets.all(10),
+                                                    //FIXME
                                                     child: GridView.builder(
                                                       shrinkWrap: true,
                                                       physics: const NeverScrollableScrollPhysics(),
@@ -372,8 +409,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       itemCount: sections[chapter.id]!.length,
                                                       itemBuilder: (context, sectionIndex) {
                                                         var section = sections[chapter.id]![sectionIndex];
-                                                        bool isClickable = widget.isCourseCompleted ||
-                                                            (widget.sectionToComplete!.id == section.id);
+                                                        bool isClickable = isCourseCompleted ||
+                                                            (sectionToComplete! == section.id) ||
+                                                            (sectionsCompleted.contains(section.id));
 
                                                         return Padding(
                                                           padding: const EdgeInsets.all(5.0),
@@ -382,11 +420,12 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             index: sectionIndex,
                                                             isClickable: isClickable,
                                                             isInLearnPage: true,
+                                                            isCompleted: sectionsCompleted.contains(section.id),
                                                             onPressed: () async {
-                                                              _goToSectionPage(
+                                                              await _goToSectionPage(
                                                                 context: context,
                                                                 localizedText: localizedText,
-                                                                section: section,
+                                                                sectionId: section.id,
                                                                 courseName: course.name,
                                                               );
                                                             },
@@ -447,7 +486,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             alignment: const AlignmentDirectional(1, 0),
                                                             child: TextButton(
                                                               onPressed: () {
-                                                                loadCompletedSections(chapter.id);
+                                                                loadSections(chapter.id);
                                                               },
                                                               child: Row(
                                                                 children: [
@@ -496,12 +535,55 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 ),
                                               ),
                                             ),
-                                            const Padding(
-                                                padding: EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0),
+                                            if(!isCourseCompleted)
+                                              const Padding(
+                                                  padding: EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0),
+                                              ),
+                                            if(!isCourseCompleted)
+                                              Flexible(
+                                                fit: FlexFit.loose,
+                                                child: BloqoFilledButton(
+                                                  color: theme.colors.error,
+                                                  onPressed: () {
+                                                    showBloqoConfirmationAlert(
+                                                      context: context,
+                                                      title: localizedText.warning,
+                                                      description: localizedText.unsubscribe_confirmation,
+                                                      confirmationFunction: () async {
+                                                        await _tryDeleteUserCourseEnrolled(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          courseId: course.id,
+                                                          enrolledUserId: user.id,
+                                                        );
+                                                      },
+                                                      backgroundColor: theme.colors.error,
+                                                    );
+                                                  },
+                                                  text: localizedText.unsubscribe,
+                                                  icon: Icons.close_sharp,
+                                                  fontSize: 30,
+                                                  height: 70,
+                                                ),
+                                              ),
+                                          ],
+                                        )
+                                        : Wrap(
+                                          spacing: 10.0,
+                                          runSpacing: 10.0,
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
+                                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                                  color: theme.colors.highContrastColor,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
                                             ),
-                                            Flexible(
-                                              fit: FlexFit.loose,
-                                              child: BloqoFilledButton(
+                                            if(!isCourseCompleted)
+                                              BloqoFilledButton(
                                                 color: theme.colors.error,
                                                 onPressed: () {
                                                   showBloqoConfirmationAlert(
@@ -521,49 +603,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 },
                                                 text: localizedText.unsubscribe,
                                                 icon: Icons.close_sharp,
-                                                fontSize: 30,
-                                                height: 70,
+                                                fontSize: 20,
+                                                height: 48,
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                        : Wrap(
-                                          spacing: 10.0,
-                                          runSpacing: 10.0,
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
-                                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                  color: theme.colors.highContrastColor,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ),
-                                            BloqoFilledButton(
-                                              color: theme.colors.error,
-                                              onPressed: () {
-                                                showBloqoConfirmationAlert(
-                                                  context: context,
-                                                  title: localizedText.warning,
-                                                  description: localizedText.unsubscribe_confirmation,
-                                                  confirmationFunction: () async {
-                                                    await _tryDeleteUserCourseEnrolled(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      courseId: course.id,
-                                                      enrolledUserId: user.id,
-                                                    );
-                                                  },
-                                                  backgroundColor: theme.colors.error,
-                                                );
-                                              },
-                                              text: localizedText.unsubscribe,
-                                              icon: Icons.close_sharp,
-                                              fontSize: 20,
-                                              height: 48,
-                                            ),
                                           ],
                                         ),
                                       )
@@ -578,62 +620,93 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                       ),
                     ),
 
-                    !widget.isCourseCompleted ?
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      direction: Axis.horizontal,
-                      runAlignment: WrapAlignment.start,
-                      verticalDirection: VerticalDirection.down,
-                      children: [
-                        Column(
-                          children: [
+                    if(!isCourseCompleted)
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        direction: Axis.horizontal,
+                        runAlignment: WrapAlignment.start,
+                        verticalDirection: VerticalDirection.down,
+                        children: [
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double maxWidth = constraints.maxWidth-20;
+                                    return BloqoProgressBar(
+                                      percentage: sectionsCompleted.length / totNumSections,
+                                      width: maxWidth,
+                                      fontSize: 12,// Pass the maximum width to the progress bar
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          if(!isCourseCompleted)
                             Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  double maxWidth = constraints.maxWidth-20;
-                                  return BloqoProgressBar(
-                                    percentage: sectionsCompleted.length / totNumSections,
-                                    width: maxWidth,
-                                    fontSize: 12,// Pass the maximum width to the progress bar
+                              padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
+                                  : Constants.tabletPaddingBloqoFilledButton,
+                              child: BloqoFilledButton(
+                                onPressed: () async {
+                                  _goToSectionPage(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    sectionId: sectionToComplete!,
+                                    courseName: course.name,
                                   );
                                 },
+                                color: theme.colors.success,
+                                text: sectionsCompleted.isEmpty
+                                ? localizedText.start_learning
+                                    : localizedText.continue_learning,
+                                icon: Icons.lightbulb,
+                                fontSize: !isTablet ? 24 : 34,
+                                height: !isTablet ? 60 : 80,
+                              ),
+                            )
+                          ],
+                      ),
+
+                      if(isCourseCompleted)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                          height: !isTablet ? 73 : 95,
+                          child: Padding(
+                          padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
+                            : Constants.tabletPaddingBloqoFilledButton,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: theme.colors.highContrastColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: theme.colors.success,
+                                width: 3,
                               ),
                             ),
-                          ],
-                        ),
-
-                  !widget.isCourseCompleted ?
-                    Padding(
-                      padding: !isTablet
-                      ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
-                          : Constants.tabletPaddingBloqoFilledButton,
-                      child: BloqoFilledButton(
-                        onPressed: () async {
-                          _goToSectionPage(
-                            context: context,
-                            localizedText: localizedText,
-                            section: widget.sectionToComplete!,
-                            courseName: course.name,
-                          );
-                        },
-                        color: theme.colors.success,
-                        text: sectionsCompleted.isEmpty
-                        ? localizedText.start_learning
-                            : localizedText.continue_learning,
-                        icon: Icons.lightbulb,
-                        fontSize: !isTablet ? 24 : 34,
-                        height: !isTablet ? 60 : 80,
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                              child: Text(
+                                localizedText.course_completed,
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  color: theme.colors.success,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: !isTablet ? 24 : 34,
+                                ),
+                              ),
+                            ),
+                          ),
                       ),
-                    )
-                      : const SizedBox.shrink(),
-
-                      ],
-                    )
-                    : Container(),
+                        ),
+                  ],
+                  ),
                   ],
                 );
               }
@@ -667,6 +740,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
       );
       if (!context.mounted) return;
       deleteUserCourseEnrolledFromAppState(context: context, userCourseEnrolled: courseToRemove);
+
       publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
       await savePublishedCourseChanges(
           firestore: firestore,
@@ -691,31 +765,52 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
   }
 
-  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required BloqoSectionData section,
+  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required String sectionId,
     required String courseName}) async {
     context.loaderOverlay.show();
     try {
       var firestore = getFirestoreFromAppState(context: context);
 
+      BloqoSectionData sectionToComplete = await getSectionFromId(
+          firestore: firestore,
+          localizedText: localizedText,
+          sectionId: sectionId);
+
       List<BloqoBlockData> blocks = await getBlocksFromIds(
           firestore: firestore,
           localizedText: localizedText,
-          blockIds: section.blocks
+          blockIds: sectionToComplete.blocks
       );
       if(!context.mounted) return;
 
       context.loaderOverlay.hide();
 
-      BloqoChapterData chapter = getLearnCourseChaptersFromAppState(context: context)!.where(
-              (chapter) => chapter.sections.contains(section.id)).first;
+      List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(context: context)!;
+      BloqoChapterData currentChapter = chapters.where(
+              (chapter) => chapter.sections.contains(sectionId)).first;
+      BloqoChapterData? nextChapter;
+      String? nextChapterId = _getNextSectionChapterId(
+          chapters: chapters,
+          currentChapter: currentChapter,
+          currentSection: sectionToComplete);
+
+      if(nextChapterId != null){
+        nextChapter = chapters.where((chapter) => chapter.id == nextChapterId).first;
+      }
 
       widget.onPush(
-            SectionPage(
-            onPush: widget.onPush,
-            section: section,
-            blocks: blocks,
-            courseName: courseName,
-            chapter: chapter,
+        SectionPage(
+          onPush: widget.onPush,
+          section: sectionToComplete,
+          blocks: blocks,
+          courseName: courseName,
+          chapter: currentChapter,
+          onSectionCompleted: () {
+            updateSectionsToShow(
+              chapterCurrentSection: currentChapter,
+              chapterNextSection: nextChapter,
+            );
+          },
         )
       );
 
@@ -752,6 +847,28 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
         description: e.message,
       );
     }
+  }
+
+  String? _getNextSectionChapterId({required List<BloqoChapterData> chapters, required BloqoChapterData currentChapter,
+    required BloqoSectionData currentSection,
+  }) {
+    final sectionIndex = currentChapter.sections.indexOf(currentSection.id);
+
+    if (sectionIndex != -1 && sectionIndex < currentChapter.sections.length - 1) {
+      return currentChapter.id;
+    }
+
+    final chapterIndex = chapters.indexOf(currentChapter);
+
+    if (chapterIndex != -1 && chapterIndex < chapters.length - 1) {
+      final nextChapter = chapters[chapterIndex + 1];
+
+      if (nextChapter.sections.isNotEmpty) {
+        return nextChapter.id;
+      }
+    }
+    // Return null if there are no further sections or chapters to navigate to
+    return null;
   }
 
 }

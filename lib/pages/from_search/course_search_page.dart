@@ -381,6 +381,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   index: sectionIndex,
                                                   isClickable: false,
                                                   isInLearnPage: false,
+                                                  isCompleted: false,
                                                   onPressed: () {},
                                                 );
                                               },
@@ -613,8 +614,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         child:
                                         isEnrolled ?
                                           Text(
-                                            localizedText.enrolled_on +
-                                                DateFormat('dd/MM/yyyy').format(enrolledCourse!.enrollmentDate.toDate()),
+                                            "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrolledCourse!.enrollmentDate.toDate())}",
                                             style: Theme
                                                 .of(context)
                                                 .textTheme
@@ -855,7 +855,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         showBloqoErrorAlert(
           context: context,
           title: localizedText.error_title,
-          description: localizedText.course_completed,
+          description: localizedText.cannot_unsubscribe_course_completed,
         );
       } else {
         await deleteUserCourseEnrolled(
