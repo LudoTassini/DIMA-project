@@ -9,8 +9,20 @@ void main() {
     expect(result, true);
   });
 
-  test("Badly-formatted email is not validated test", () {
+  test("Badly-formatted email is not validated (wrong format) test", () {
     const test = "test@bloqo.c";
+    final result = validateEmail(test);
+    expect(result, false);
+  });
+
+  test("Badly-formatted email is not validated (spaces are not allowed) test", () {
+    const test = "test person@bloqo.com";
+    final result = validateEmail(test);
+    expect(result, false);
+  });
+
+  test("Badly-formatted email is not validated (special characters are not allowed) test", () {
+    const test = "test!@bloqo.com";
     final result = validateEmail(test);
     expect(result, false);
   });
@@ -641,8 +653,14 @@ void main() {
     expect(result, true);
   });
 
-  test("Badly-formatted username is not validated test", () {
+  test("Badly-formatted username is not validated (spaces are not allowed) test", () {
     const test = "Bloqo Tester";
+    final result = validateUsername(test);
+    expect(result, false);
+  });
+
+  test("Badly-formatted username is not validated (special characters are not allowed) test", () {
+    const test = "BloqoTester!";
     final result = validateUsername(test);
     expect(result, false);
   });
@@ -653,8 +671,20 @@ void main() {
     expect(result, true);
   });
 
-  test("Badly-formatted full name is not validated test", () {
+  test("Well-formatted full name is validated (' is allowed) test", () {
+    const test = "Giorgio Dell'Aquila";
+    final result = validateFullName(test);
+    expect(result, true);
+  });
+
+  test("Badly-formatted full name is not validated (numbers are not allowed) test", () {
     const test = "Vanessa Visconti 00";
+    final result = validateFullName(test);
+    expect(result, false);
+  });
+
+  test("Badly-formatted full name is not validated (special characters are not allowed) test", () {
+    const test = "Vanessa-Visconti";
     final result = validateFullName(test);
     expect(result, false);
   });
