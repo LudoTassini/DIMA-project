@@ -78,6 +78,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       widget.onPush(
         CourseContentPage(
           onPush: widget.onPush,
+          onNavigateToPage: widget.onNavigateToPage,
         ));
     }
   }
@@ -577,6 +578,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
+            onNavigateToPage: widget.onNavigateToPage,
           ),
         );
       }
@@ -622,6 +624,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
+            onNavigateToPage: widget.onNavigateToPage,
           ),
         );
       }

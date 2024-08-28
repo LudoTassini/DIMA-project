@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../../app_state/learn_course_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_course_section.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
@@ -31,16 +32,18 @@ import '../../utils/localization.dart';
 import 'package:intl/intl.dart';
 
 import '../from_any/qr_code_page.dart';
+import '../from_any/user_profile_page.dart';
 
 class CourseContentPage extends StatefulWidget {
 
   const CourseContentPage({
     super.key,
     required this.onPush,
+    required this.onNavigateToPage
   });
 
   final void Function(Widget) onPush;
-
+  final void Function(int) onNavigateToPage;
 
   @override
   State<CourseContentPage> createState() => _CourseContentPageState();
@@ -119,8 +122,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                         BloqoCourseData course = getLearnCourseFromAppState(
                             context: context)!;
                         BloqoUserCourseEnrolledData? userCourseEnrolled = userCoursesEnrolled
-                            .where(
-                                (courseEnrolled) =>
+                            .where((courseEnrolled) =>
                             courseEnrolled.courseId == course.id)
                             .firstOrNull;
                         if (userCourseEnrolled == null) {
@@ -165,71 +167,92 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      localizedText.by,
+                                                      style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                        color: theme.colors.highContrastColor,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    BloqoTextButton(
+                                                      text: userCourseEnrolled.courseAuthor,
+                                                      color: theme.colors.highContrastColor,
+                                                      onPressed: () async {
+                                                        _goToUserCoursesPage(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            authorId: course.authorId
+                                                        );
+                                                      },
+                                                      fontSize: 16,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: theme.colors.inBetweenColor,
+                                                    borderRadius: BorderRadius
+                                                        .circular(10),
+                                                  ),
+                                                  child: IconButton(
+                                                      icon: Icon(
+                                                        Icons.qr_code_2,
+                                                        color: theme.colors
+                                                            .highContrastColor,
+                                                        size: 32,
+                                                      ),
+                                                      onPressed: () async {
+                                                        await _tryGoToCourseQrCodePage(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            course: course);
+                                                      }
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                      ),
                                       Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsetsDirectional
                                                   .fromSTEB(
-                                                  20, 10, 0, 0),
+                                                  20, 0, 0, 0),
                                               child: Align(
                                                 alignment: Alignment.topLeft,
                                                 child: Text(
                                                   localizedText.description,
-                                                  style: theme
-                                                      .getThemeData()
-                                                      .textTheme
-                                                      .displayLarge
-                                                      ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                  style: theme.getThemeData().textTheme.displayLarge?.copyWith(
+                                                    color: theme.colors.highContrastColor,
                                                     fontSize: 24,
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional
-                                                  .fromSTEB(0, 0, 20, 10),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: theme.colors
-                                                      .inBetweenColor,
-                                                  borderRadius: BorderRadius
-                                                      .circular(10),
-                                                ),
-                                                child: IconButton(
-                                                    icon: Icon(
-                                                      Icons.qr_code_2,
-                                                      color: theme.colors
-                                                          .highContrastColor,
-                                                      size: 32,
-                                                    ),
-                                                    onPressed: () async {
-                                                      await _tryGoToCourseQrCodePage(
-                                                          context: context,
-                                                          localizedText: localizedText,
-                                                          course: course);
-                                                    }
-                                                ),
-                                              ),
-                                            )
                                           ]
                                       ),
                                       Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(20, 4, 20, 12),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
                                         child: Align(
                                           alignment: Alignment.topLeft,
                                           child: course.description != ''
                                               ? Text(
                                             course.description!,
-                                            style: theme
-                                                .getThemeData()
-                                                .textTheme
-                                                .displaySmall
-                                                ?.copyWith(
+                                            style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                               fontWeight: FontWeight.w400,
                                               color: theme.colors.highContrastColor,
                                               fontSize: 16,
@@ -1050,6 +1073,36 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
     // Return null if there are no further sections or chapters to navigate to
     return null;
+  }
+
+  Future<void> _goToUserCoursesPage({required BuildContext context, required var localizedText, required String authorId}) async {
+    context.loaderOverlay.show();
+    try {
+      var firestore = getFirestoreFromAppState(context: context);
+      BloqoUserData? courseAuthor = await getUserFromId(firestore: firestore, localizedText: localizedText, id: authorId);
+      List<BloqoPublishedCourseData> publishedCourses = await getPublishedCoursesFromAuthorId(
+          firestore: firestore,
+          localizedText: localizedText,
+          authorId: authorId
+      );
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onPush(
+          UserProfilePage(
+            onPush: widget.onPush,
+            onNavigateToPage: widget.onNavigateToPage,
+            author: courseAuthor,
+            publishedCourses: publishedCourses,
+          ));
+    } on BloqoException catch (e) {
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
+    }
   }
 
 }

@@ -107,7 +107,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
       });
     }
 
-    if(!isInitializedSectionMap) {
+    if (!isInitializedSectionMap) {
       initializeSectionsToShowMap(widget.chapters);
     }
 
@@ -128,8 +128,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
             alignment: const AlignmentDirectional(-1.0, -1.0),
             child: Consumer<UserCoursesEnrolledAppState>(
               builder: (context, userCoursesEnrolledAppState, _) {
-                List<
-                    BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(
+                List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(
                     context: context) ?? [];
 
                 if (userCoursesEnrolled.any((enrolledCourse) =>
@@ -156,11 +155,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 alignment: Alignment.topLeft,
                                 child: Text(
                                   widget.course.name,
-                                  style: theme
-                                      .getThemeData()
-                                      .textTheme
-                                      .displayLarge
-                                      ?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: theme.colors.highContrastColor,
                                     fontSize: 36,
@@ -184,11 +179,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                   children: [
                                     Text(
                                       localizedText.by,
-                                      style: theme
-                                          .getThemeData()
-                                          .textTheme
-                                          .displaySmall
-                                          ?.copyWith(
+                                      style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                         color: theme.colors.highContrastColor,
                                         fontSize: 16,
                                       ),
@@ -231,17 +222,12 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          20, 10, 0, 0),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 0, 0),
                                       child: Align(
                                         alignment: Alignment.topLeft,
                                         child: Text(
                                           localizedText.description,
-                                          style: theme
-                                              .getThemeData()
-                                              .textTheme
-                                              .displayLarge
-                                              ?.copyWith(
+                                          style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                                             color: theme.colors.highContrastColor,
                                             fontSize: 24,
                                           ),
@@ -249,8 +235,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 20, 10),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20, 10),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: theme.colors.inBetweenColor,
@@ -265,12 +250,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           onPressed: () {
                                             widget.onPush(
                                                 QrCodePage(
-                                                    qrCodeTitle: widget
-                                                        .publishedCourse.courseName,
-                                                    qrCodeContent: "${BloqoQrCodeType
-                                                        .course.name}_${widget
-                                                        .publishedCourse
-                                                        .publishedCourseId}"
+                                                    qrCodeTitle: widget.publishedCourse.courseName,
+                                                    qrCodeContent: "${BloqoQrCodeType.course.name}_${widget.publishedCourse.publishedCourseId}"
                                                 )
                                             );
                                           },
@@ -289,11 +270,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                         widget.course.description != ''
                                         ? Text(
                                       widget.course.description!,
-                                      style: theme
-                                          .getThemeData()
-                                          .textTheme
-                                          .displaySmall
-                                          ?.copyWith(
+                                      style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                         fontWeight: FontWeight.w400,
                                         color: theme.colors.highContrastColor,
                                         fontSize: 16,
@@ -311,11 +288,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                   alignment: Alignment.topLeft,
                                   child: Text(
                                     localizedText.content,
-                                    style: theme
-                                        .getThemeData()
-                                        .textTheme
-                                        .displayLarge
-                                        ?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                                       color: theme.colors.highContrastColor,
                                       fontSize: 24,
                                     ),
@@ -339,24 +312,15 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsetsDirectional
-                                                      .fromSTEB(15, 15, 15, 0),
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                                   child: Row(
                                                     mainAxisSize: MainAxisSize.max,
-                                                    mainAxisAlignment: MainAxisAlignment
-                                                        .spaceBetween,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Text(
-                                                        '${localizedText
-                                                            .chapter} ${chapterIndex +
-                                                            1}',
-                                                        style: Theme
-                                                            .of(context)
-                                                            .textTheme
-                                                            .displayMedium
-                                                            ?.copyWith(
-                                                          color: theme.colors
-                                                              .secondaryText,
+                                                        '${localizedText.chapter} ${chapterIndex + 1}',
+                                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                                          color: theme.colors.secondaryText,
                                                           fontSize: 18,
                                                         ),
                                                       ),
@@ -366,22 +330,15 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                 ),
 
                                                 Padding(
-                                                  padding: const EdgeInsetsDirectional
-                                                      .fromSTEB(15, 5, 15, 0),
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
                                                   child: Row(
                                                     children: [
                                                       Align(
-                                                        alignment: Alignment
-                                                            .topLeft,
+                                                        alignment: Alignment.topLeft,
                                                         child: Text(
                                                           chapter.name,
-                                                          style: Theme
-                                                              .of(context)
-                                                              .textTheme
-                                                              .displayLarge
-                                                              ?.copyWith(
-                                                            color: theme.colors
-                                                                .leadingColor,
+                                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                                            color: theme.colors.leadingColor,
                                                             fontSize: 24,
                                                           ),
                                                         ),
@@ -397,25 +354,17 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                       null &&
                                                       chapter.description != ''
                                                       ? Padding(
-                                                    padding: const EdgeInsetsDirectional
-                                                        .fromSTEB(15, 5, 15, 10),
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
                                                     child: Row(
-                                                      mainAxisSize: MainAxisSize
-                                                          .max,
+                                                      mainAxisSize: MainAxisSize.max,
                                                       children: [
                                                         Flexible(
                                                           child: Align(
-                                                            alignment: Alignment
-                                                                .topLeft,
+                                                            alignment: Alignment.topLeft,
                                                             child: Text(
                                                               chapter.description!,
-                                                              style: theme
-                                                                  .getThemeData()
-                                                                  .textTheme
-                                                                  .displaySmall
-                                                                  ?.copyWith(
-                                                                color: theme.colors
-                                                                    .primaryText,
+                                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                                color: theme.colors.primaryText,
                                                               ),
                                                             ),
                                                           ),
@@ -427,166 +376,166 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                       .shrink(), // This will take up no space
                                                 ),
 
-                                          ... _showSectionsMap[chapter.id] == true
-                                        ? [
-                                          if (!isTablet)
-                                            ...List.generate(
-                                              widget.sections[chapter.id]!.length,
-                                              (sectionIndex) {
-                                                var section = widget.sections[chapter.id]![sectionIndex];
-                                                return BloqoCourseSection(
-                                                  section: section,
-                                                  index: sectionIndex,
-                                                  isClickable: false,
-                                                  isInLearnPage: false,
-                                                  isCompleted: false,
-                                                  onPressed: () {},
-                                                );
-                                              },
-                                            )
-                                          else
-                                            Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: LayoutBuilder(
-                                              builder: (BuildContext context, BoxConstraints constraints) {
-                                                double width = constraints.maxWidth / 2;
-                                                double height = width / 3.25;
-                                                double childAspectRatio = width / height;
+                                                ... _showSectionsMap[chapter.id] == true
+                                                    ? [
+                                                  if (!isTablet)
+                                                    ...List.generate(
+                                                      widget.sections[chapter.id]!.length,
+                                                          (sectionIndex) {
+                                                        var section = widget.sections[chapter.id]![sectionIndex];
+                                                        return BloqoCourseSection(
+                                                          section: section,
+                                                          index: sectionIndex,
+                                                          isClickable: false,
+                                                          isInLearnPage: false,
+                                                          isCompleted: false,
+                                                          onPressed: () {},
+                                                        );
+                                                      },
+                                                    )
+                                                  else
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(10),
+                                                      child: LayoutBuilder(
+                                                        builder: (
+                                                            BuildContext context,
+                                                            BoxConstraints constraints) {
+                                                          double width = constraints.maxWidth / 2;
+                                                          double height = width / 3.25;
+                                                          double childAspectRatio = width / height;
 
-                                                return GridView.builder(
-                                                  shrinkWrap: true,
-                                                  physics: const NeverScrollableScrollPhysics(),
-                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 2,
-                                                    crossAxisSpacing: 10.0,
-                                                    mainAxisSpacing: 10.0,
-                                                    childAspectRatio: childAspectRatio,
-                                                  ),
-                                                  itemCount: widget.sections[chapter.id]!.length,
-                                                  itemBuilder: (context, sectionIndex) {
-                                                  var section = widget.sections[chapter.id]![sectionIndex];
+                                                          return GridView.builder(
+                                                            shrinkWrap: true,
+                                                            physics: const NeverScrollableScrollPhysics(),
+                                                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                              crossAxisCount: 2,
+                                                              crossAxisSpacing: 10.0,
+                                                              mainAxisSpacing: 10.0,
+                                                              childAspectRatio: childAspectRatio,
+                                                            ),
+                                                            itemCount: widget.sections[chapter.id]!.length,
+                                                            itemBuilder: (context, sectionIndex) {
+                                                              var section = widget.sections[chapter.id]![sectionIndex];
 
-                                                  return Padding(
-                                                    padding: const EdgeInsets.all(5.0),
-                                                    child: BloqoCourseSection(
-                                                      section: section,
-                                                      index: sectionIndex,
-                                                      isClickable: false,
-                                                      isInLearnPage: false,
-                                                      isCompleted: false,
-                                                      onPressed: () {},
+                                                              return Padding(
+                                                                padding: const EdgeInsets.all(5.0),
+                                                                child: BloqoCourseSection(
+                                                                  section: section,
+                                                                  index: sectionIndex,
+                                                                  isClickable: false,
+                                                                  isInLearnPage: false,
+                                                                  isCompleted: false,
+                                                                  onPressed: () {},
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
                                                     ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
 
-                                        // Collapse/Hide sections button
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Opacity(
-                                                opacity: 0.9,
-                                                child: Align(
-                                                  alignment: const AlignmentDirectional(1, 0),
-                                                  child: TextButton(
-                                                    onPressed: () {
-                                                      hideSections(chapter.id);
-                                                    },
+                                                  // Collapse/Hide sections button
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
                                                     child: Row(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      mainAxisAlignment: MainAxisAlignment.end,
                                                       children: [
-                                                        Text(
-                                                          localizedText.collapse,
-                                                          style: TextStyle(
-                                                            color: theme.colors.secondaryText,
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
+                                                        Opacity(
+                                                          opacity: 0.9,
+                                                          child: Align(
+                                                            alignment: const AlignmentDirectional(1, 0),
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                hideSections(
+                                                                    chapter.id
+                                                                );
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    localizedText.collapse,
+                                                                    style: TextStyle(
+                                                                      color: theme.colors.secondaryText,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight
+                                                                          .w600,
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons.keyboard_arrow_up_sharp,
+                                                                    color: theme.colors.secondaryText,
+                                                                    size: 25,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                        Icon(
-                                                        Icons.keyboard_arrow_up_sharp,
-                                                        color: theme.colors.secondaryText,
-                                                        size: 25,
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ),
-                                              ],
-                                            ),
-                                          ),
-                                        ]
+                                                ]
 
-                                          : [
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children: [
-                                                    Opacity(
-                                                      opacity: 0.9,
-                                                      child: Align(
-                                                        alignment: const AlignmentDirectional(1, 0),
-                                                        child: TextButton(
-                                                          onPressed: () {
-                                                            showSections(chapter.id);
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                localizedText.view_more,
-                                                                style: TextStyle(
-                                                                  color: theme.colors.secondaryText,
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.w600,
-                                                                ),
+                                                    : [
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      children: [
+                                                        Opacity(
+                                                          opacity: 0.9,
+                                                          child: Align(
+                                                            alignment: const AlignmentDirectional(
+                                                                1, 0),
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                showSections(
+                                                                    chapter.id);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    localizedText.view_more,
+                                                                    style: TextStyle(
+                                                                      color: theme.colors.secondaryText,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight.w600,
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons.keyboard_arrow_right_sharp,
+                                                                    color: theme.colors.secondaryText,
+                                                                    size: 25,
+                                                                  ),
+                                                                ],
                                                               ),
-                                                              Icon(
-                                                                Icons.keyboard_arrow_right_sharp,
-                                                                color: theme.colors.secondaryText,
-                                                                size: 25,
-                                                              ),
-                                                            ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ]
-                                        ],
+                                                  ),
+                                                ]
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
 
                                       Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(20, 15, 20, 12),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 12),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Align(
                                               alignment: Alignment.topLeft,
                                               child: Text(
                                                 localizedText.reviews,
-                                                style: theme
-                                                    .getThemeData()
-                                                    .textTheme
-                                                    .displayLarge
-                                                    ?.copyWith(
-                                                  color: theme.colors
-                                                      .highContrastColor,
+                                                style: theme.getThemeData().textTheme.displayLarge?.copyWith(
+                                                  color: theme.colors.highContrastColor,
                                                   fontSize: 24,
                                                 ),
                                               ),
@@ -598,29 +547,18 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                                                 widget.rating != null ?
                                                 Text(
-                                                  widget.rating!
-                                                      .toDouble()
-                                                      .toString(),
-                                                  style: theme
-                                                      .getThemeData()
-                                                      .textTheme
-                                                      .displaySmall
+                                                  widget.rating!.toDouble().toString(),
+                                                  style: theme.getThemeData().textTheme.displaySmall
                                                       ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                    color: theme.colors.highContrastColor,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 16,
                                                   ),
                                                 )
                                                     : Text(
                                                   '0',
-                                                  style: theme
-                                                      .getThemeData()
-                                                      .textTheme
-                                                      .displaySmall
-                                                      ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                    color: theme.colors.highContrastColor,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 16,
                                                   ),
@@ -631,27 +569,23 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                       .fromSTEB(8, 0, 8, 0),
                                                   child: RatingBarIndicator(
                                                     rating: widget.rating ?? 0,
-                                                    itemBuilder: (context, index) =>
+                                                    itemBuilder: (context,
+                                                        index) =>
                                                         Icon(
                                                           Icons.star,
-                                                          color: theme.colors
-                                                              .tertiary,
+                                                          color: theme.colors.tertiary,
                                                         ),
                                                     itemCount: 5,
-                                                    itemSize: !isTablet ? 22 : 29,
+                                                    itemSize: !isTablet
+                                                        ? 22
+                                                        : 29,
                                                     direction: Axis.horizontal,
                                                   ),
                                                 ),
                                                 Text(
-                                                  '(${widget.publishedCourse.reviews
-                                                      .length.toString()})',
-                                                  style: theme
-                                                      .getThemeData()
-                                                      .textTheme
-                                                      .displaySmall
-                                                      ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                  '(${widget.publishedCourse.reviews.length.toString()})',
+                                                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                    color: theme.colors.highContrastColor,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 16,
                                                   ),
@@ -675,13 +609,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   alignment: Alignment.center,
                                                   child: Text(
                                                     localizedText.no_reviews_yet,
-                                                    style: theme
-                                                        .getThemeData()
-                                                        .textTheme
-                                                        .displaySmall
-                                                        ?.copyWith(
-                                                      color: theme.colors
-                                                          .primaryText,
+                                                    style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                      color: theme.colors.primaryText,
                                                       fontSize: 15,
                                                     ),
                                                   ),
@@ -691,7 +620,8 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           ),
                                         )
                                             : _reviewsDisplayed >=
-                                            widget.publishedCourse.reviews.length ?
+                                            widget.publishedCourse.reviews
+                                                .length ?
                                         Padding(
                                           padding: const EdgeInsetsDirectional
                                               .fromSTEB(0, 15, 0, 0),
@@ -702,11 +632,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   widget.publishedCourse.reviews
                                                       .length
                                                   ?
-                                              widget.publishedCourse.reviews.length
+                                              widget.publishedCourse.reviews
+                                                  .length
                                                   : _reviewsDisplayed,
                                                   (index) {
-                                                BloqoReviewData review = widget
-                                                    .reviews![index];
+                                                BloqoReviewData review = widget.reviews![index];
                                                 return BloqoReview(
                                                   review: review,
                                                 );
@@ -721,14 +651,11 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                           child: Column(
                                             children: [
                                               ...List.generate(
-                                                _reviewsDisplayed >
-                                                    widget.publishedCourse.reviews
-                                                        .length ?
-                                                widget.publishedCourse.reviews
-                                                    .length : _reviewsDisplayed,
+                                                  _reviewsDisplayed >
+                                                  widget.publishedCourse.reviews.length ?
+                                                widget.publishedCourse.reviews.length : _reviewsDisplayed,
                                                     (index) {
-                                                  BloqoReviewData review = widget
-                                                      .reviews![index];
+                                                  BloqoReviewData review = widget.reviews![index];
                                                   return BloqoReview(
                                                     review: review,
                                                   );
@@ -747,46 +674,26 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                       ),
 
                                       Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(
-                                            20, 0, 20, 10),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Flexible(
                                                 child:
                                                 isEnrolled ?
                                                 Text(
-                                                  "${localizedText
-                                                      .enrolled_on} ${DateFormat(
-                                                      'dd/MM/yyyy').format(
-                                                      enrolledCourse!.enrollmentDate
-                                                          .toDate())}",
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displaySmall
-                                                      ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                  "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrolledCourse!.enrollmentDate.toDate())}",
+                                                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                    color: theme.colors.highContrastColor,
                                                     fontSize: 16,
                                                   ),
                                                 )
                                                     : Text(
                                                   localizedText.published_on +
-                                                      DateFormat('dd/MM/yyyy')
-                                                          .format(widget.course
-                                                          .publicationDate!
-                                                          .toDate()),
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displaySmall
-                                                      ?.copyWith(
-                                                    color: theme.colors
-                                                        .highContrastColor,
+                                                      DateFormat('dd/MM/yyyy').format(widget.course.publicationDate!.toDate()),
+                                                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                    color: theme.colors.highContrastColor,
                                                     fontSize: 16,
                                                   ),
                                                 )
@@ -825,14 +732,15 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 await _tryRequestAccessToPrivateCourse(
                                     context: context,
                                     localizedText: localizedText,
-                                    publishedCourseId: widget.publishedCourse
-                                        .publishedCourseId,
+                                    publishedCourseId: widget.publishedCourse.publishedCourseId,
                                     applicantId: myself.id,
                                     courseAuthorId: widget.publishedCourse.authorId
                                 );
                               },
                               height: 60,
-                              color: buttonEnabled ? theme.colors.warning : theme
+                              color: buttonEnabled
+                                  ? theme.colors.warning
+                                  : theme
                                   .colors.secondaryText,
                               text: localizedText.request_access,
                               icon: Icons.front_hand,
@@ -842,15 +750,14 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                               : (!isCoursePublic && widget.course.authorId ==
                               getUserFromAppState(context: context)!.id ?
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 10, 20, 10),
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                             child: BloqoFilledButton(
                               onPressed: () async {
                                 showBloqoErrorAlert(
                                     context: context,
                                     title: localizedText.error_title,
-                                    description: localizedText
-                                        .creator_cannot_subscribe);
+                                    description: localizedText.creator_cannot_subscribe
+                                );
                               },
                               height: 60,
                               color: theme.colors.secondaryText,
@@ -901,50 +808,53 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                             ),
                           )
 
-                    : Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 10, 20, 10),
-                      child: BloqoFilledButton(
-                        onPressed: () {
-                          isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
-                            showBloqoErrorAlert(
-                              context: context,
-                              title: localizedText.error_title,
-                              description: localizedText.cannot_unsubscribe_course_completed,
-                            ) :
+                              : Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                            child: BloqoFilledButton(
+                              onPressed: () {
+                                isEnrolled && enrolledCourse != null &&
+                                    enrolledCourse?.isCompleted == true ?
+                                showBloqoErrorAlert(
+                                  context: context,
+                                  title: localizedText.error_title,
+                                  description: localizedText
+                                      .cannot_unsubscribe_course_completed,
+                                ) :
 
-                            showBloqoConfirmationAlert(
-                              context: context,
-                              title: localizedText.warning,
-                              description: localizedText.unsubscribe_confirmation,
-                              confirmationFunction: () async {
-                                await _tryDeleteUserCourseEnrolled(
+                                showBloqoConfirmationAlert(
                                     context: context,
-                                    localizedText: localizedText,
-                                    courseId: widget.course.id,
-                                    enrolledUserId: myself.id
+                                    title: localizedText.warning,
+                                    description: localizedText
+                                        .unsubscribe_confirmation,
+                                    confirmationFunction: () async {
+                                      await _tryDeleteUserCourseEnrolled(
+                                          context: context,
+                                          localizedText: localizedText,
+                                          courseId: widget.course.id,
+                                          enrolledUserId: myself.id
+                                      );
+                                    },
+                                    backgroundColor: theme.colors.error
                                 );
                               },
-                              backgroundColor: theme.colors.error
-                            );
-
-                        },
-                        color: isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
-                          theme.colors.inactive : theme.colors.leadingColor,
-                        text: localizedText.unsubscribe,
-                        icon: Icons.close_sharp,
-                        fontSize: !isTablet ? 24 : 26,
-                        height: !isTablet ? 60 : 64,
+                              color: isEnrolled && enrolledCourse != null &&
+                                  enrolledCourse?.isCompleted == true ?
+                              theme.colors.inactive : theme.colors.leadingColor,
+                              text: localizedText.unsubscribe,
+                              icon: Icons.close_sharp,
+                              fontSize: !isTablet ? 24 : 26,
+                              height: !isTablet ? 60 : 64,
+                            ),
+                          )))
+                        ],
                       ),
-                    )))
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                );
+              },
             ),
           );
-
-        },
-      ),
+        }
     );
   }
 
