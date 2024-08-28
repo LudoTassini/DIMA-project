@@ -279,7 +279,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                                 child: LayoutBuilder(
                                                   builder: (BuildContext context, BoxConstraints constraints) {
                                                     double width = constraints.maxWidth / 2;
-                                                    double height = width / 2.3;
+                                                    double height = width / 2.5;
                                                     double childAspectRatio = width / height;
 
                                                     return GridView.builder(
@@ -300,7 +300,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                                               section: section,
                                                               index: sectionIndex,
                                                               isClickable: true,
-                                                              isInLearnPage: true,
+                                                              isInLearnPage: false,
                                                               isCompleted: false,
                                                               onPressed: () {
                                                                 _goToSectionPreviewPage(
