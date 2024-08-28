@@ -30,8 +30,11 @@ class MockExternalServices {
   final BloqoNotificationData testNotification;
   final BloqoCourseData testCourse;
   final BloqoChapterData testChapter;
-  final BloqoSectionData testSection;
+  final BloqoSectionData testSection1;
+  final BloqoSectionData testSection2;
   final BloqoBlockData testBlock1;
+  final BloqoBlockData testBlock2;
+  final BloqoBlockData testBlock3;
   final BloqoReviewData testReview;
 
   final BloqoUserData testUser2;
@@ -82,14 +85,14 @@ class MockExternalServices {
           courseName: "test_enrolled",
           sectionsCompleted: [],
           chaptersCompleted: [],
-          totNumSections: 1,
+          totNumSections: 2,
           authorId: "test2",
           lastUpdated: Timestamp.now(),
           enrollmentDate: Timestamp.now(),
           isRated: false,
           isCompleted: false,
           sectionName: "test",
-          sectionToComplete: "test"
+          sectionToComplete: "test1"
         ),
         testNotification = BloqoNotificationData(
           id: "test",
@@ -190,14 +193,20 @@ class MockExternalServices {
           id: "test",
           number: 1,
           name: "test",
-          sections: ["test"],
+          sections: ["test1", "test2"],
           description: "test"
         ),
-        testSection = BloqoSectionData(
-          id: "test",
+        testSection1 = BloqoSectionData(
+          id: "test1",
           number: 1,
           name: "test",
-          blocks: ["test1"]
+          blocks: ["test1", "test2", "test3"]
+        ),
+        testSection2 = BloqoSectionData(
+            id: "test2",
+            number: 2,
+            name: "test",
+            blocks: ["test1", "test2", "test3"]
         ),
         testBlock1 = BloqoBlockData(
           id: "test1",
@@ -206,6 +215,22 @@ class MockExternalServices {
           name: BloqoBlockSuperType.text.toString(),
           number: 1,
           content: "test"
+        ),
+        testBlock2 = BloqoBlockData(
+            id: "test2",
+            superType: BloqoBlockSuperType.quiz.toString(),
+            type: BloqoBlockType.quizOpenQuestion.toString(),
+            name: BloqoBlockSuperType.quiz.toString(),
+            number: 2,
+            content: "q:1+1=\$a<yy>:2"
+        ),
+        testBlock3 = BloqoBlockData(
+            id: "test3",
+            superType: BloqoBlockSuperType.quiz.toString(),
+            type: BloqoBlockType.quizMultipleChoice.toString(),
+            name: BloqoBlockSuperType.quiz.toString(),
+            number: 3,
+            content: "q:1+1=\$a:<n>1<y>2<n>3<n>4"
         ),
         testReview = BloqoReviewData(
           authorUsername: "test",
@@ -238,8 +263,11 @@ class MockExternalServices {
     await fakeFirestore.collection('published_courses').doc('test4').set(testPublishedCourse4.toFirestore());
     await fakeFirestore.collection('courses').doc('test4').set(testCourse4.toFirestore());
     await fakeFirestore.collection('chapters').doc('test').set(testChapter.toFirestore());
-    await fakeFirestore.collection('sections').doc('test').set(testSection.toFirestore());
+    await fakeFirestore.collection('sections').doc('test1').set(testSection1.toFirestore());
+    await fakeFirestore.collection('sections').doc('test2').set(testSection2.toFirestore());
     await fakeFirestore.collection('blocks').doc('test1').set(testBlock1.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test2').set(testBlock2.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test3').set(testBlock3.toFirestore());
     await fakeFirestore.collection('notifications').doc('test').set(testNotification.toFirestore());
     await fakeFirestore.collection('reviews').doc('test').set(testReview.toFirestore());
   }

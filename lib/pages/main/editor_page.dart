@@ -128,14 +128,11 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
             alignment: const AlignmentDirectional(-1.0, -1.0),
             child: Consumer<UserCoursesCreatedAppState>(
               builder: (context, userCoursesCreatedAppState, _) {
-                List<
-                    BloqoUserCourseCreatedData> userCoursesCreated = getUserCoursesCreatedFromAppState(
+                List<BloqoUserCourseCreatedData> userCoursesCreated = getUserCoursesCreatedFromAppState(
                     context: context) ?? [];
-                List<
-                    BloqoUserCourseCreatedData> inProgressCourses = userCoursesCreated
+                List<BloqoUserCourseCreatedData> inProgressCourses = userCoursesCreated
                     .where((course) => !course.published).toList();
-                List<
-                    BloqoUserCourseCreatedData> publishedCourses = userCoursesCreated
+                List<BloqoUserCourseCreatedData> publishedCourses = userCoursesCreated
                     .where((course) => course.published).toList();
                 inProgressCourses.sort((a, b) =>
                     b.lastUpdated.compareTo(a.lastUpdated));
@@ -421,7 +418,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                   return BloqoCourseCreated(
                                                       course: course,
                                                       onPressed: () async {
-                                                        _goToCoursePage(
+                                                        await _goToCoursePage(
                                                             context: context,
                                                             localizedText: localizedText,
                                                             userCourseCreated: course);
@@ -453,7 +450,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                       padding: const EdgeInsetsDirectional
                                                           .all(15),
                                                       onPressed: () async {
-                                                        _goToCoursePage(
+                                                        await _goToCoursePage(
                                                             context: context,
                                                             localizedText: localizedText,
                                                             userCourseCreated: course);
@@ -525,7 +522,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     return BloqoCourseCreated(
                                                       course: course,
                                                       onPressed: () async {
-                                                        _goToCoursePage(
+                                                        await _goToCoursePage(
                                                           context: context,
                                                           localizedText: localizedText,
                                                           userCourseCreated: course,
@@ -578,13 +575,8 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                localizedText
-                                                    .editor_page_no_published_courses,
-                                                style: theme
-                                                    .getThemeData()
-                                                    .textTheme
-                                                    .displaySmall
-                                                    ?.copyWith(
+                                                localizedText.editor_page_no_published_courses,
+                                                style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                   color: theme.colors.primaryText,
                                                   fontSize: 14,
                                                 ),
@@ -597,8 +589,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     tabController.animateTo(0);
                                                   },
                                                   color: theme.colors.leadingColor,
-                                                  text: localizedText
-                                                      .take_me_there_button,
+                                                  text: localizedText.take_me_there_button,
                                                   fontSize: 16,
                                                 ),
                                               ),

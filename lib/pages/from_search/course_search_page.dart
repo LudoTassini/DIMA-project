@@ -547,7 +547,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                                                 widget.rating != null ?
                                                 Text(
-                                                  widget.rating!.toDouble().toString(),
+                                                  widget.rating!.toDouble().toStringAsFixed(1),
                                                   style: theme.getThemeData().textTheme.displaySmall
                                                       ?.copyWith(
                                                     color: theme.colors.highContrastColor,

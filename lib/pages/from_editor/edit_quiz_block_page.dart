@@ -345,15 +345,12 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     child: BloqoTextField(
                                                         formKey: formKeyMultipleChoiceQuestion,
                                                         controller: multipleChoiceQuestionController,
-                                                        labelText: localizedText
-                                                            .question,
-                                                        hintText: localizedText
-                                                            .enter_question_here,
-                                                        maxInputLength: Constants
-                                                            .maxQuizQuestionLength,
+                                                        labelText: localizedText.question,
+                                                        hintText: localizedText.enter_question_here,
+                                                        maxInputLength: Constants.maxQuizQuestionLength,
                                                         isTextArea: true,
-                                                        padding: const EdgeInsetsDirectional
-                                                            .fromSTEB(20, 20, 20, 0)
+                                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                                        isDisabled: !editable
                                                     ),
                                                   ),
                                                   Padding(
@@ -512,15 +509,12 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                     child: BloqoTextField(
                                                         formKey: formKeyOpenQuestion,
                                                         controller: openQuestionController,
-                                                        labelText: localizedText
-                                                            .question,
-                                                        hintText: localizedText
-                                                            .enter_question_here,
-                                                        maxInputLength: Constants
-                                                            .maxQuizQuestionLength,
+                                                        labelText: localizedText.question,
+                                                        hintText: localizedText.enter_question_here,
+                                                        maxInputLength: Constants.maxQuizQuestionLength,
                                                         isTextArea: true,
-                                                        padding: const EdgeInsetsDirectional
-                                                            .fromSTEB(20, 20, 20, 0)
+                                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                                        isDisabled: !editable
                                                     ),
                                                   ),
                                                   Padding(
@@ -547,16 +541,12 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                       child: BloqoTextField(
                                                           formKey: formKeyOpenQuestionAnswer,
                                                           controller: openQuestionAnswerController,
-                                                          labelText: localizedText
-                                                              .answer,
-                                                          hintText: localizedText
-                                                              .enter_answer_here,
-                                                          maxInputLength: Constants
-                                                              .maxQuizAnswerLength,
+                                                          labelText: localizedText.answer,
+                                                          hintText: localizedText.enter_answer_here,
+                                                          maxInputLength: Constants.maxQuizAnswerLength,
                                                           isTextArea: true,
-                                                          padding: const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              20, 20, 20, 0)
+                                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                                          isDisabled: !editable
                                                       )
                                                   ),
                                                   Padding(

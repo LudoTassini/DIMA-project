@@ -103,12 +103,10 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                             formKey: formKeyCourseName,
                                             controller: courseNameController,
                                             labelText: localizedText.name,
-                                            hintText: localizedText
-                                                .editor_course_name_hint,
-                                            maxInputLength: Constants
-                                                .maxCourseNameLength,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(20, 20, 20, 0),
+                                            hintText: localizedText.editor_course_name_hint,
+                                            maxInputLength: Constants.maxCourseNameLength,
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                            isDisabled: !editable,
                                           )
                                       ),
                                       Form(
@@ -117,13 +115,11 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                             formKey: formKeyCourseDescription,
                                             controller: courseDescriptionController,
                                             labelText: localizedText.description,
-                                            hintText: localizedText
-                                                .editor_course_description_hint,
-                                            maxInputLength: Constants
-                                                .maxCourseDescriptionLength,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(20, 20, 20, 20),
+                                            hintText: localizedText.editor_course_description_hint,
+                                            maxInputLength: Constants.maxCourseDescriptionLength,
+                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                             isTextArea: true,
+                                            isDisabled: !editable
                                           )
                                       ),
                                       BloqoSeasaltContainer(
@@ -151,18 +147,11 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                                                 ),
                                                 if(course.chapters.isEmpty)
                                                   Padding(
-                                                    padding: const EdgeInsetsDirectional
-                                                        .fromSTEB(20, 15, 20, 15),
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 15),
                                                     child: Text(
-                                                      localizedText
-                                                          .edit_course_page_no_chapters,
-                                                      style: theme
-                                                          .getThemeData()
-                                                          .textTheme
-                                                          .displaySmall
-                                                          ?.copyWith(
-                                                        color: theme.colors
-                                                            .primaryText,
+                                                      localizedText.edit_course_page_no_chapters,
+                                                      style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                        color: theme.colors.primaryText,
                                                         fontSize: 14,
                                                       ),
                                                     ),
