@@ -7,12 +7,17 @@ import '../buttons/bloqo_filled_button.dart';
 import '../custom/bloqo_snack_bar.dart';
 
 class BloqoMultipleChoiceQuiz extends StatefulWidget {
+
   const BloqoMultipleChoiceQuiz({
     super.key,
     required this.block,
+    required this.onQuestionAnsweredCorrectly,
+    this.isQuizCompleted = false,
   });
 
   final BloqoBlockData block;
+  final VoidCallback onQuestionAnsweredCorrectly;
+  final bool isQuizCompleted;
 
   @override
   State<BloqoMultipleChoiceQuiz> createState() => _BloqoMultipleChoiceQuizState();
@@ -25,15 +30,23 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
   String? selectedRadioAnswer;
   List<String> selectedCheckboxAnswers = [];
 
+  late final String question;
+  late final List<String> possibleAnswers;
+  late final List<String> correctAnswers;
+  late bool isSingleCorrectAnswer;
+
   @override
   void initState() {
     super.initState();
     selectedRadioAnswer = '';
-  }
+    question = _extractQuestion(widget.block.content);
+    possibleAnswers = _extractPossibleAnswers(widget.block.content);
+    correctAnswers = _extractCorrectAnswers(widget.block.content);
+    isSingleCorrectAnswer = correctAnswers.length == 1;
 
-  @override
-  void dispose() {
-    super.dispose();
+    if (widget.isQuizCompleted) {
+      _markAsCompleted();
+    }
   }
 
   @override
@@ -41,13 +54,9 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
 
-    final question = _extractQuestion(widget.block.content);
-    final List<String> possibleAnswers = _extractPossibleAnswers(widget.block.content);
-    final List<String> correctAnswers = _extractCorrectAnswers(widget.block.content);
-
-    bool isSingleCorrectAnswer = correctAnswers.length == 1;
-
-    return Column(
+    return BloqoSeasaltContainer(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+      child: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -64,16 +73,20 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                   fontSize: 22,
                 ),
               ),
-              if (isAnswerGiven)
+              if (isAnswerGiven || widget.isQuizCompleted)
                 Expanded(
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                       child: Text(
-                        isAnswerCorrect ? localizedText.correct : localizedText.wrong,
+                        isAnswerCorrect || widget.isQuizCompleted
+                            ? localizedText.correct
+                            : localizedText.wrong,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: isAnswerCorrect ? theme.colors.success : theme.colors.error,
+                          color: isAnswerCorrect || widget.isQuizCompleted
+                              ? theme.colors.success
+                              : theme.colors.error,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -90,10 +103,13 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
-                child: Text(
-                  question,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    color: theme.colors.primaryText,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    question,
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      color: theme.colors.primaryText,
+                    ),
                   ),
                 ),
               ),
@@ -116,16 +132,15 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
               padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
               child: Align(
                 alignment: Alignment.center,
-                child: !isAnswerGiven || !isAnswerCorrect
+                child: (!isAnswerGiven || !isAnswerCorrect) && !widget.isQuizCompleted
                     ? BloqoFilledButton(
                   onPressed: () {
                     setState(() {
                       isAnswerGiven = true;
                       _checkAnswer(
-                        correctAnswers: correctAnswers,
-                        localizedText: localizedText,
-                        theme: theme
-                      );
+                          correctAnswers: correctAnswers,
+                          localizedText: localizedText,
+                          theme: theme);
                     });
                   },
                   color: theme.colors.leadingColor,
@@ -156,8 +171,8 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           ],
         ),
       ],
+      ),
     );
-
   }
 
   String _extractQuestion(String text) {
@@ -189,7 +204,8 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           title: Text(answer),
           value: answer,
           groupValue: selectedRadioAnswer,
-          onChanged: isAnswerCorrect ? null : (value) {
+          onChanged: widget.isQuizCompleted || isAnswerCorrect
+              ? null : (value) {
             setState(() {
               selectedRadioAnswer = value;
               isAnswerGiven = false;
@@ -206,7 +222,8 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
         return CheckboxListTile(
           title: Text(answer),
           value: selectedCheckboxAnswers.contains(answer),
-          onChanged: isAnswerCorrect ? null : (bool? value) {
+          onChanged: widget.isQuizCompleted || isAnswerCorrect
+              ? null : (bool? value) {
             setState(() {
               if (value == true) {
                 selectedCheckboxAnswers.add(answer);
@@ -229,17 +246,32 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
           selectedCheckboxAnswers.length == correctAnswers.length;
       isAnswerCorrect = allCorrect;
     }
+
+    if (isAnswerCorrect) {
+      widget.onQuestionAnsweredCorrectly();
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       BloqoSnackBar.get(
-          context: context,
-          child: Text(
-            isAnswerCorrect ? localizedText.correct
-            : localizedText.wrong
-          ),
-          backgroundColor: isAnswerCorrect ? theme.colors.success
-          : theme.colors.error,
+        context: context,
+        child: Text(
+          isAnswerCorrect ? localizedText.correct : localizedText.wrong,
+        ),
+        backgroundColor: isAnswerCorrect ? theme.colors.success : theme.colors.error,
       ),
     );
   }
 
+  void _markAsCompleted() {
+    final List<String> correctAnswers = _extractCorrectAnswers(widget.block.content);
+
+    if (correctAnswers.length == 1) {
+      selectedRadioAnswer = correctAnswers.first;
+    } else {
+      selectedCheckboxAnswers = List<String>.from(correctAnswers);
+    }
+
+    isAnswerCorrect = true;
+    isAnswerGiven = true;
+  }
 }

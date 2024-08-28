@@ -98,32 +98,43 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                       padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 10),
                       child: Column(
                         children: [
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(), // Prevents scrolling inside the GridView
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 10.0,
-                              mainAxisSpacing: 10.0,
-                              childAspectRatio: 2.5 / 2,
-                            ),
-                            itemCount: _publishedCoursesDisplayed > widget.publishedCourses.length
-                                ? widget.publishedCourses.length
-                                : _publishedCoursesDisplayed,
-                            itemBuilder: (context, index) {
-                              BloqoPublishedCourseData course = widget.publishedCourses[index];
-                              return BloqoSearchResultCourse(
-                                course: course,
-                                onPressed: () async {
-                                  _goToCourseSearchPage(
-                                    context: context,
-                                    localizedText: localizedText,
-                                    publishedCourse: course,
+                          LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints) {
+                              double width = constraints.maxWidth / 2;
+                              double height = width;
+                              double childAspectRatio = width / height;
+
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisSpacing: 10.0,
+                                  childAspectRatio: childAspectRatio, // 2.5 / 2
+                                ),
+                                itemCount: _publishedCoursesDisplayed >
+                                    widget.publishedCourses.length
+                                    ? widget.publishedCourses.length
+                                    : _publishedCoursesDisplayed,
+                                itemBuilder: (context, index) {
+                                  BloqoPublishedCourseData course = widget
+                                      .publishedCourses[index];
+                                  return BloqoSearchResultCourse(
+                                    course: course,
+                                    onPressed: () async {
+                                      _goToCourseSearchPage(
+                                        context: context,
+                                        localizedText: localizedText,
+                                        publishedCourse: course,
+                                      );
+                                    },
                                   );
                                 },
                               );
-                            },
+                            }
                           ),
+
                           if (_publishedCoursesDisplayed < widget.publishedCourses.length)
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),

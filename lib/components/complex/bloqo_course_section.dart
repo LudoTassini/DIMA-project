@@ -1,5 +1,4 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
-import 'package:bloqo/app_state/learn_course_app_state.dart';
 import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
 import '../../utils/localization.dart';
@@ -11,7 +10,8 @@ class BloqoCourseSection extends StatelessWidget{
     required this.section,
     required this.index,
     required this.isClickable,
-    required this.isInLearnPage
+    required this.isInLearnPage,
+    this.isCompleted = false,
   });
 
   final Function() onPressed;
@@ -19,17 +19,16 @@ class BloqoCourseSection extends StatelessWidget{
   final int index;
   final bool isClickable;
   final bool isInLearnPage;
+  final bool isCompleted;
 
   @override
   Widget build(BuildContext context) {
-    final localizedText = getAppLocalizations(context)!;
+    var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
-
-    List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
-      child: isInLearnPage & isClickable
+      child: isInLearnPage && isClickable
           ? ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
@@ -43,7 +42,7 @@ class BloqoCourseSection extends StatelessWidget{
           )),
         ),
         onPressed: onPressed,
-        child: _buildContent(context, localizedText, sectionsCompleted),
+        child: _buildContent(context, localizedText, isCompleted),
       )
           : Container(
         decoration: BoxDecoration(
@@ -55,20 +54,20 @@ class BloqoCourseSection extends StatelessWidget{
           ),
         ),
         padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-        child: _buildContent(context, localizedText, sectionsCompleted),
+        child: _buildContent(context, localizedText, isCompleted),
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, var localizedText, List<dynamic> sectionsCompleted) {
+  Widget _buildContent(BuildContext context, var localizedText, bool isCompleted) {
     var theme = getAppThemeFromAppState(context: context);
     return Column(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               child: Align(
@@ -110,14 +109,14 @@ class BloqoCourseSection extends StatelessWidget{
                       ),
                     ),
 
-                    sectionsCompleted.contains(section.id) ?
+                    isCompleted ?
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           10, 5, 10, 5),
                       child: Row(
                         children: [
                           Text(
-                            localizedText.completed,
+                            localizedText.completed_section,
                             textAlign: TextAlign.start,
                             style: Theme
                                 .of(context)

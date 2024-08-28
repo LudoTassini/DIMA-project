@@ -83,29 +83,29 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: [
-                                Text(
-                                  courseAuthor.username,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: courseAuthor.username,
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  localizedText.has_published_new_course,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontSize: 18,
+                                  TextSpan(
+                                    text: ' ${localizedText.has_published_new_course} ',
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  widget.notification.courseName!,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                  TextSpan(
+                                    text: widget.notification.courseName!,
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),

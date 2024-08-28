@@ -362,8 +362,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                               padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                               child: BloqoFilledButton(
                                                   color: theme.colors.leadingColor,
-                                                  fontSize: !isTablet ? 20 : 26,
-                                                  height: !isTablet ? 48 : 64,
+                                                  fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                                  height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                                   onPressed: () async {
                                                     await _trySaveMultipleChoiceQuizChanges(
                                                         context: context,
@@ -478,11 +478,12 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                         ),
                                         if(editable)
                                           Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                              padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20)
+                                                  : Constants.tabletPaddingBloqoFilledButton,
                                               child: BloqoFilledButton(
                                                   color: theme.colors.leadingColor,
-                                                  fontSize: !isTablet ? 20 : 26,
-                                                  height: !isTablet ? 48 : 64,
+                                                  fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                                  height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                                   onPressed: () async {
                                                     await _trySaveOpenQuestionQuizChanges(
                                                         context: context,

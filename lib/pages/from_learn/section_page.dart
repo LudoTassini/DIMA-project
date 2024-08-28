@@ -14,12 +14,15 @@ import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 import '../../components/multimedia/bloqo_audio_player.dart';
 import '../../components/multimedia/bloqo_video_player.dart';
 import '../../components/multimedia/bloqo_youtube_player.dart';
 import '../../components/navigation/bloqo_breadcrumbs.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../components/quiz/bloqo_multiple_choice_quiz.dart';
+import '../../model/bloqo_user_data.dart';
+import '../../model/courses/bloqo_course_data.dart';
 import '../../model/user_courses/bloqo_user_course_enrolled_data.dart';
 import '../../model/courses/bloqo_block_data.dart';
 import '../../style/bloqo_style_sheet.dart';
@@ -34,7 +37,8 @@ class SectionPage extends StatefulWidget {
     required this.section,
     required this.blocks,
     required this.courseName,
-    required this.chapter
+    required this.chapter,
+    required this.onSectionCompleted,
   });
 
   final void Function(Widget) onPush;
@@ -42,6 +46,7 @@ class SectionPage extends StatefulWidget {
   final List<BloqoBlockData> blocks;
   final String courseName;
   final BloqoChapterData chapter;
+  final void Function() onSectionCompleted;
 
   @override
   State<SectionPage> createState() => _SectionPageState();
@@ -49,12 +54,35 @@ class SectionPage extends StatefulWidget {
 
 class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClientMixin<SectionPage> {
 
+  int completedBlocks = 0;
+  bool isSectionCompleted = false;
+  late int numQuizBlocks;
+
+  @override
+  void initState() {
+    super.initState();
+    numQuizBlocks = _getNumQuizBlocks(blocks: widget.blocks);
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
+
+    void markBlockAsCompleted() {
+      completedBlocks = completedBlocks + 1;
+      if(completedBlocks == numQuizBlocks) {
+        setState(() {
+          isSectionCompleted = true;
+        });
+      }
+    }
+
+    return Consumer<LearnCourseAppState>(
+        builder: (context, learnCourseAppState, _) {
+          List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
 
     return BloqoMainContainer(
       alignment: const AlignmentDirectional(-1.0, -1.0),
@@ -83,6 +111,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
                         if (block.type == BloqoBlockType.text.toString()) {
                           return BloqoSeasaltContainer(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                             child: Column(
                               children: [
                                 Padding(
@@ -107,7 +136,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                         if(block.type == BloqoBlockType.multimediaAudio.toString()) {
                           return BloqoSeasaltContainer(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 0, 20, 20),
+                                20, 20, 20, 0),
                             child: Column(
                                 children: [
                                   Padding(
@@ -123,7 +152,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
 
                       if(block.type == BloqoBlockType.multimediaImage.toString()) {
                         return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                             child: Column(
                                 children: [
                                   Padding(
@@ -138,7 +167,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       if(block.type == BloqoBlockType.multimediaVideo.toString()) {
                         return BloqoSeasaltContainer(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 0, 20, 20),
+                                20, 20, 20, 0),
                             child: block.content != "" ?
                               Column(
                                 children: [
@@ -155,31 +184,24 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                       }
 
                   if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
-                    return BloqoSeasaltContainer(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                        child: Column(
-                          children: [
-                            BloqoOpenQuestionQuiz(
-                              block: block
-                            ),
+                    return BloqoOpenQuestionQuiz(
+                      block: block,
+                      isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
+                      onQuestionAnsweredCorrectly: () {
+                        markBlockAsCompleted();
+                      },
+                    );
 
-                            ],
-                          ),
-                        );
                       }
 
                   if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
-                    return BloqoSeasaltContainer(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                      child: Column(
-                        children: [
-                          BloqoMultipleChoiceQuiz(
-                              block: block
-                          ),
-
-                            ],
-                          ),
-                        );
+                    return BloqoMultipleChoiceQuiz(
+                        block: block,
+                        isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
+                        onQuestionAnsweredCorrectly: () {
+                          markBlockAsCompleted();
+                      },
+                    );
                       }
                       return const SizedBox();
                       }
@@ -191,22 +213,40 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                 Align(
                   alignment: Alignment.center,
                   child:Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                    child: BloqoFilledButton(
-                      onPressed: () async {
-                        await _updateEnrolledCourseStatus(
-                          context: context,
-                          localizedText: localizedText,
-                          section: widget.section,
-                        );
-                        if(!context.mounted) return;
-                        Navigator.of(context).pop();
-                      },
-                      color: theme.colors.success,
-                      text: localizedText.learned,
-                      fontSize: !isTablet ? 24 : 32,
-                      height: !isTablet ? 65 : 75,
-                    ),
+                    padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20)
+                        : const EdgeInsetsDirectional.fromSTEB(65, 30, 65, 30),
+                    child: isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
+
+                      BloqoFilledButton(
+                        onPressed: () async {
+                          await _updateEnrolledCourseStatus(
+                            context: context,
+                            localizedText: localizedText,
+                            section: widget.section,
+                          );
+                        },
+                        color: theme.colors.success,
+                        text: localizedText.learned,
+                        fontSize: !isTablet ? 24 : 32,
+                        height: !isTablet ? 65 : 75,
+                      )
+
+                        : !isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
+                            BloqoFilledButton(
+                              onPressed: () async {
+                                showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: localizedText.section_is_not_completed);
+                              },
+                              color: theme.colors.inactive,
+                              text: localizedText.learned,
+                              fontSize: !isTablet ? 24 : 32,
+                              height: !isTablet ? 65 : 75,
+                            )
+
+                        : const SizedBox(height: 20,),
+
                   ),
                 ),
 
@@ -219,130 +259,204 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       ),
 
     );
-  }
+  }); }
 
   @override
   bool get wantKeepAlive => true;
 
-  Future<void> _updateEnrolledCourseStatus({required BuildContext context, required var localizedText,
-    required BloqoSectionData section}) async {
+  Future<void> _updateEnrolledCourseStatus({required BuildContext context, required var localizedText, required BloqoSectionData section,
+  }) async {
     // Show loader before starting async operations
     context.loaderOverlay.show();
 
     try {
       // Fetch necessary data from the app state before any async operations
-      final course = getLearnCourseFromAppState(context: context)!;
-      final user = getUserFromAppState(context: context)!;
-      final chapters = getLearnCourseChaptersFromAppState(context: context)!;
-      var sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)!;
-      final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
+      final course = _getCourse(context);
+      final user = _getUser(context);
+      final chapters = _getChapters(context);
+      final sectionsCompleted = _getSectionsCompleted(context);
+      final courseEnrolled = _getCourseEnrolled(context, course);
+      final firestore = getFirestoreFromAppState(context: context);
+      final publishedCourse = await _getPublishedCourse(firestore, localizedText, course.id);
 
-      var firestore = getFirestoreFromAppState(context: context);
-
-      final courseEnrolled = userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
-
-      BloqoPublishedCourseData publishedCourse = await getPublishedCourseFromCourseId(firestore: firestore, localizedText: localizedText, courseId: course.id);
-
-      // Update sections completed in both the course enrollment and app state
-      if (!sectionsCompleted.contains(section.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
-
-        courseEnrolled.sectionsCompleted!.add(section.id);
-
-        if (!context.mounted) return;
-
-        updateLearnCourseSectionsCompletedFromAppState(context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
-        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
-
-        // Perform async operations and check if context is still mounted afterward
-        await updateUserCourseEnrolledCompletedSections(
-          firestore: firestore,
-          localizedText: localizedText,
-          courseId: course.id,
-          enrolledUserId: user.id,
-          sectionsCompleted: sectionsCompleted,
-        );
-        if (!context.mounted) return;
-      }
+      // Update sections and chapters completion
+      if (!context.mounted) return;
+      await _updateSectionCompletion(context, localizedText, firestore, courseEnrolled, section, sectionsCompleted);
 
       if (!context.mounted) return;
-      // Update chapters completed and course status
-      var chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context);
+      await _updateChapterCompletion(context, localizedText, firestore, courseEnrolled, section, chapters);
 
-        if (widget.chapter.sections.lastOrNull == section.id) {
-          // If the section is the last in the chapter
-          if (!chaptersCompleted!.contains(widget.chapter.id)) { //FIXME: quando button learn sarà disabilitato, sarà da togliere
-
-            courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
-
-            if (!context.mounted) return;
-
-            updateLearnCourseChaptersCompletedFromAppState(context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
-            updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
-
-            // Perform async operations and check if context is still mounted afterward
-            await updateUserCourseEnrolledCompletedChapters(
-              firestore: firestore,
-              localizedText: localizedText,
-              courseId: course.id,
-              enrolledUserId: user.id,
-              chaptersCompleted: chaptersCompleted,
-            );
-            if (!context.mounted) return;
-          }
-        }
-
-      // If the last chapter is completed, mark the course as completed
+      // Check if course is completed, or update the next section to complete
       if (chapters.last.sections.lastOrNull == section.id) {
-        courseEnrolled.isCompleted = true;
-
         if (!context.mounted) return;
-
-        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
-        await updateUserCourseEnrolledStatusCompleted(
-          firestore: firestore,
-          localizedText: localizedText,
-          courseId: course.id,
-          enrolledUserId: user.id,
-        );
-
-        publishedCourse.numberOfCompletions = publishedCourse.numberOfCompletions + 1;
-        await savePublishedCourseChanges(firestore: firestore, localizedText: localizedText, updatedPublishedCourse: publishedCourse);
-
-        if (!context.mounted) return;
+        await _markCourseAsCompleted(context, localizedText, firestore, courseEnrolled, publishedCourse, course, user);
       }
-      // Otherwise set the new sectionToComplete
       else {
-        String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
-        BloqoSectionData sectionToComplete = await getSectionFromId(
-            firestore: firestore,
-            localizedText: localizedText,
-            sectionId: nextSectionToComplete!
-        );
-
         if (!context.mounted) return;
+        await _setNextSectionToComplete(context, localizedText, firestore, courseEnrolled, chapters, section);
+      }
 
-        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
-        await updateUserCourseEnrolledNewSectionToComplete(
+      // Hide the loader when operations are complete
+      if (!context.mounted) return;
+      _hideLoader(context);
+      Navigator.of(context).pop();
+    } on BloqoException catch (e) {
+      _handleError(context, localizedText, e);
+    }
+  }
+
+// Method to fetch the current course from the app state
+  BloqoCourseData _getCourse(BuildContext context) {
+    return getLearnCourseFromAppState(context: context)!;
+  }
+
+// Method to fetch the current user from the app state
+  BloqoUserData _getUser(BuildContext context) {
+    return getUserFromAppState(context: context)!;
+  }
+
+// Method to fetch the course chapters from the app state
+  List<BloqoChapterData> _getChapters(BuildContext context) {
+    return getLearnCourseChaptersFromAppState(context: context)!;
+  }
+
+// Method to fetch completed sections from the app state
+  List<dynamic> _getSectionsCompleted(BuildContext context) {
+    return getLearnCourseSectionsCompletedFromAppState(context: context)!;
+  }
+
+// Method to fetch the course enrollment for the current user
+  BloqoUserCourseEnrolledData _getCourseEnrolled(BuildContext context, BloqoCourseData course) {
+    final userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context)!;
+    return userCoursesEnrolled.firstWhere((x) => x.courseId == course.id);
+  }
+
+// Method to fetch the published course data from Firestore
+  Future<BloqoPublishedCourseData> _getPublishedCourse(var firestore, var localizedText, String courseId) async {
+    return await getPublishedCourseFromCourseId(
+      firestore: firestore,
+      localizedText: localizedText,
+      courseId: courseId,
+    );
+  }
+
+// Method to update the completion status of a section
+  Future<void> _updateSectionCompletion(BuildContext context, var localizedText, var firestore,
+      BloqoUserCourseEnrolledData courseEnrolled, BloqoSectionData section, List<dynamic> sectionsCompleted,) async {
+    if (!sectionsCompleted.contains(section.id)) {
+      courseEnrolled.sectionsCompleted!.add(section.id);
+
+      if (!context.mounted) return;
+
+      await updateUserCourseEnrolledCompletedSections(
+        firestore: firestore,
+        localizedText: localizedText,
+        courseId: courseEnrolled.courseId,
+        enrolledUserId: courseEnrolled.enrolledUserId,
+        sectionsCompleted: courseEnrolled.sectionsCompleted!,
+      );
+
+      if (!context.mounted) return;
+      updateLearnCourseSectionsCompletedFromAppState(
+          context: context, sectionsCompleted: courseEnrolled.sectionsCompleted!);
+      updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+    }
+  }
+
+// Method to update the completion status of a chapter
+  Future<void> _updateChapterCompletion(BuildContext context, var localizedText, var firestore,
+      BloqoUserCourseEnrolledData courseEnrolled, BloqoSectionData section, List<BloqoChapterData> chapters,
+      ) async {
+    var chaptersCompleted = getLearnCourseChaptersCompletedFromAppState(context: context);
+
+    if (widget.chapter.sections.lastOrNull == section.id) {
+      if (!chaptersCompleted!.contains(widget.chapter.id)) {
+        courseEnrolled.chaptersCompleted!.add(widget.chapter.id);
+
+        await updateUserCourseEnrolledCompletedChapters(
           firestore: firestore,
           localizedText: localizedText,
-          courseId: course.id,
-          enrolledUserId: user.id,
-          sectionToComplete: sectionToComplete,
+          courseId: courseEnrolled.courseId,
+          enrolledUserId: courseEnrolled.enrolledUserId,
+          chaptersCompleted: courseEnrolled.chaptersCompleted!,
         );
 
         if (!context.mounted) return;
-      }
-      context.loaderOverlay.hide();
 
-    } on BloqoException catch (e) {
-      context.loaderOverlay.hide();
-      if (context.mounted) {
-        showBloqoErrorAlert(
-          context: context,
-          title: localizedText.error_title,
-          description: e.message,
-        );
+        updateLearnCourseChaptersCompletedFromAppState(
+            context: context, chaptersCompleted: courseEnrolled.chaptersCompleted!);
+        updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
       }
+    }
+  }
+
+// Method to mark the course as completed
+  Future<void> _markCourseAsCompleted(BuildContext context, var localizedText, var firestore,
+      BloqoUserCourseEnrolledData courseEnrolled, BloqoPublishedCourseData publishedCourse, BloqoCourseData course,
+      BloqoUserData user,) async {
+    courseEnrolled.isCompleted = true;
+
+    await updateUserCourseEnrolledStatusCompleted(
+      firestore: firestore,
+      localizedText: localizedText,
+      courseId: course.id,
+      enrolledUserId: user.id,
+    );
+    if (!context.mounted) return;
+
+    updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+    publishedCourse.numberOfCompletions += 1;
+    await savePublishedCourseChanges(
+      firestore: firestore,
+      localizedText: localizedText,
+      updatedPublishedCourse: publishedCourse,
+    );
+  }
+
+// Method to set the next section to be completed
+  Future<void> _setNextSectionToComplete(BuildContext context, var localizedText, var firestore,
+      BloqoUserCourseEnrolledData courseEnrolled, List<BloqoChapterData> chapters, BloqoSectionData section,) async {
+
+    String? nextSectionToComplete = _getNextSectionId(chapters: chapters, chapter: widget.chapter, section: section);
+    BloqoSectionData sectionToComplete = await getSectionFromId(
+      firestore: firestore,
+      localizedText: localizedText,
+      sectionId: nextSectionToComplete!,
+    );
+
+    courseEnrolled.sectionToComplete = nextSectionToComplete;
+
+    await updateUserCourseEnrolledNewSectionToComplete(
+      firestore: firestore,
+      localizedText: localizedText,
+      courseId: courseEnrolled.courseId,
+      enrolledUserId: courseEnrolled.enrolledUserId,
+      sectionToComplete: sectionToComplete,
+    );
+
+    if (!context.mounted) return;
+    updateUserCoursesEnrolledToAppState(context: context, userCourseEnrolled: courseEnrolled);
+
+    widget.onSectionCompleted();
+  }
+
+// Method to hide the loader overlay
+  void _hideLoader(BuildContext context) {
+    if (context.mounted) {
+      context.loaderOverlay.hide();
+    }
+  }
+
+// Method to handle errors
+  void _handleError(BuildContext context, var localizedText, BloqoException e) {
+    _hideLoader(context);
+    if (context.mounted) {
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: e.message,
+      );
     }
   }
 
@@ -371,6 +485,16 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
     }
     // Return null if there are no further sections or chapters to navigate to
     return null;
+  }
+
+  int _getNumQuizBlocks({required List<BloqoBlockData> blocks}) {
+    int numBloqoQuizBlocks = 0;
+    for(var block in blocks){
+      if(block.type == BloqoBlockType.quizMultipleChoice.toString() || block.type == BloqoBlockType.quizOpenQuestion.toString()){
+        numBloqoQuizBlocks = numBloqoQuizBlocks + 1;
+      }
+    }
+    return numBloqoQuizBlocks;
   }
 
 }

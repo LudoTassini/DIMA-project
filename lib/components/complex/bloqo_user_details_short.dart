@@ -53,11 +53,12 @@ class BloqoUserDetailsShort extends StatelessWidget{
         },
         child: Row(
           mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               flex: 1,
               child: Stack(
-                alignment: const AlignmentDirectional(0, 1),
+                alignment: const AlignmentDirectional(-1, -1),
                 children: [
                   AspectRatio(
                     aspectRatio: 1.0,
@@ -75,20 +76,6 @@ class BloqoUserDetailsShort extends StatelessWidget{
                         fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: const AlignmentDirectional(1, 1),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: theme.colors.leadingColor,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(0),
-                          bottomRight: Radius.circular(8),
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                      ),
-                    )
                   ),
                 ],
               ),
@@ -200,10 +187,13 @@ class BloqoUserDetailsShort extends StatelessWidget{
                   )
               ),
             ),
-            Icon(
+            Align(
+              alignment: Alignment.center,
+            child: Icon(
               Icons.play_circle,
               color: theme.colors.leadingColor,
               size: 24,
+            ),
             ),
           ],
         ),

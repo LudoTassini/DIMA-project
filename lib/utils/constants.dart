@@ -48,7 +48,14 @@ class Constants{
   static const int maxReviewLength = 300;
   static const int maxReviewTitleLength = 20;
 
+  static const double fontSizeTablet = 26;
+  static const double fontSizeNotTablet = 20;
+  static const double heightTablet = 64;
+  static const double heightNotTablet = 48;
+
   static const EdgeInsetsDirectional tabletPaddingWelcomePages = EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0);
   static const EdgeInsetsDirectional tabletPadding = EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0);
+  static const EdgeInsetsDirectional tabletPaddingBloqoFilledButton = EdgeInsetsDirectional.fromSTEB(65, 15, 65, 15);
+  static const EdgeInsetsDirectional tabletPaddingBreadcrumbs = EdgeInsetsDirectional.fromSTEB(40, 10, 40, 10);
 
 }

@@ -196,8 +196,8 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                           padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                           child: BloqoFilledButton(
                                               color: theme.colors.leadingColor,
-                                              fontSize: !isTablet ? 20 : 26,
-                                              height: !isTablet ? 48 : 64,
+                                              fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                              height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                               onPressed: () async {
                                                 final newUrl = await _askUserForAnAudio(
                                                     context: context,
@@ -239,8 +239,8 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                       padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                       child: BloqoFilledButton(
                                         color: theme.colors.leadingColor,
-                                        fontSize: !isTablet ? 20 : 26,
-                                        height: !isTablet ? 48 : 64,
+                                        fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                        height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                         onPressed: () async {
                                           final newUrl = await _askUserForAnImage(
                                               context: context,
@@ -282,8 +282,8 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                           padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                                           child: BloqoFilledButton(
                                               color: theme.colors.leadingColor,
-                                              fontSize: !isTablet ? 20 : 26,
-                                              height: !isTablet ? 48 : 64,
+                                              fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                              height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                               onPressed: () async {
                                                 final newUrl = await _askUserForAVideo(
                                                   context: context,

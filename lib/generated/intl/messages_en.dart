@@ -67,6 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "blocks_header": MessageLookupByLibrary.simpleMessage("Blocks"),
         "by": MessageLookupByLibrary.simpleMessage("by "),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cannot_unsubscribe_course_completed": MessageLookupByLibrary.simpleMessage(
+            "You already completed the course, so you cannot unsubscribe to it."),
         "chapter": MessageLookupByLibrary.simpleMessage("Chapter"),
         "chapters": MessageLookupByLibrary.simpleMessage("chapters"),
         "chapters_header": MessageLookupByLibrary.simpleMessage("Chapters"),
@@ -78,6 +80,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "comparison_ignore_case": MessageLookupByLibrary.simpleMessage(
             "Should comparison ignore case?"),
         "completed": MessageLookupByLibrary.simpleMessage("Completed"),
+        "completed_section": MessageLookupByLibrary.simpleMessage("Completed"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "content": MessageLookupByLibrary.simpleMessage("Content"),
         "continue_learning":
@@ -87,8 +90,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "correct_answer":
             MessageLookupByLibrary.simpleMessage("The correct answer is: "),
         "course": MessageLookupByLibrary.simpleMessage("Course"),
-        "course_completed": MessageLookupByLibrary.simpleMessage(
-            "You already completed the course, so you cannot unsubscribe to it."),
+        "course_completed":
+            MessageLookupByLibrary.simpleMessage("Course completed!"),
         "course_completion_certificate": MessageLookupByLibrary.simpleMessage(
             "Course Completion Certificate"),
         "course_dismiss_confirmation": MessageLookupByLibrary.simpleMessage(
@@ -300,12 +303,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "maximum_publication_date":
             MessageLookupByLibrary.simpleMessage("Maximum publication date"),
         "maximum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("e.g. 2024/01/31"),
+            MessageLookupByLibrary.simpleMessage("e.g. 31/01/2024"),
         "medicine": MessageLookupByLibrary.simpleMessage("Medicine"),
         "minimum_publication_date":
             MessageLookupByLibrary.simpleMessage("Minimum publication date"),
         "minimum_publication_date_hint":
-            MessageLookupByLibrary.simpleMessage("e.g. 2024/01/01"),
+            MessageLookupByLibrary.simpleMessage("e.g. 01/01/2024"),
         "missing_tag_error": MessageLookupByLibrary.simpleMessage(
             "You need to select a tag for every kind of tag to be able to publish a course!"),
         "modality_tag": MessageLookupByLibrary.simpleMessage("Modality Tag"),
@@ -453,6 +456,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_results_header": MessageLookupByLibrary.simpleMessage(
             "These are the courses that match your search"),
         "section": MessageLookupByLibrary.simpleMessage("Section"),
+        "section_is_not_completed": MessageLookupByLibrary.simpleMessage(
+            "You haven\'t finished all the quizzes."),
         "sections": MessageLookupByLibrary.simpleMessage("sections"),
         "sections_header": MessageLookupByLibrary.simpleMessage("Sections"),
         "show_private_courses":

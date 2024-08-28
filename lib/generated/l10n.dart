@@ -450,10 +450,10 @@ class S {
     );
   }
 
-  /// `e.g. 2024/01/01`
+  /// `e.g. 01/01/2024`
   String get minimum_publication_date_hint {
     return Intl.message(
-      'e.g. 2024/01/01',
+      'e.g. 01/01/2024',
       name: 'minimum_publication_date_hint',
       desc: '',
       args: [],
@@ -470,10 +470,10 @@ class S {
     );
   }
 
-  /// `e.g. 2024/01/31`
+  /// `e.g. 31/01/2024`
   String get maximum_publication_date_hint {
     return Intl.message(
-      'e.g. 2024/01/31',
+      'e.g. 31/01/2024',
       name: 'maximum_publication_date_hint',
       desc: '',
       args: [],
@@ -3230,11 +3230,41 @@ class S {
     );
   }
 
-  /// `You already completed the course, so you cannot unsubscribe to it.`
+  /// `You haven't finished all the quizzes.`
+  String get section_is_not_completed {
+    return Intl.message(
+      'You haven\'t finished all the quizzes.',
+      name: 'section_is_not_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get completed_section {
+    return Intl.message(
+      'Completed',
+      name: 'completed_section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Course completed!`
   String get course_completed {
     return Intl.message(
-      'You already completed the course, so you cannot unsubscribe to it.',
+      'Course completed!',
       name: 'course_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You already completed the course, so you cannot unsubscribe to it.`
+  String get cannot_unsubscribe_course_completed {
+    return Intl.message(
+      'You already completed the course, so you cannot unsubscribe to it.',
+      name: 'cannot_unsubscribe_course_completed',
       desc: '',
       args: [],
     );

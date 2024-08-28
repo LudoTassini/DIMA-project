@@ -151,34 +151,35 @@ class _BloqoAppState extends State<BloqoApp> {
   Widget _buildAppContent(BuildContext context) {
     return Consumer<ApplicationSettingsAppState>(
       builder: (context, applicationSettingsAppState, _) {
+        var theme = getAppThemeFromAppState(context: context);
         if (_isLoading) {
-          return _buildLoadingScreen();
+          return _buildLoadingScreen(theme);
         }
 
         if (_startupInformation!.isLoggedIn) {
-          return _buildMainScreen();
+          return _buildMainScreen(theme);
         } else {
-          return _buildWelcomeScreen();
+          return _buildWelcomeScreen(theme);
         }
       },
     );
   }
 
-  Widget _buildLoadingScreen() {
+  Widget _buildLoadingScreen(BloqoAppTheme theme) {
     return BloqoMainContainer(
       child: Center(
         child: LoadingAnimationWidget.prograssiveDots(
-          color: const Color(0xFFF7F9F9),
+          color: theme.colors.highContrastColor,
           size: 100,
         ),
       ),
     );
   }
 
-  Widget _buildWelcomeScreen() {
+  Widget _buildWelcomeScreen(BloqoAppTheme theme) {
     return MaterialApp(
       title: 'bloQo',
-      theme: getAppThemeFromAppState(context: context).getThemeData(),
+      theme: theme.getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),
@@ -186,10 +187,10 @@ class _BloqoAppState extends State<BloqoApp> {
     );
   }
 
-  Widget _buildMainScreen() {
+  Widget _buildMainScreen(BloqoAppTheme theme) {
     return MaterialApp(
       title: 'bloQo',
-      theme: getAppThemeFromAppState(context: context).getThemeData(),
+      theme: theme.getThemeData(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: getLanguageFromAppState(context: context),

@@ -1,6 +1,8 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
+import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
 import '../buttons/bloqo_text_button.dart';
 
 class BloqoBreadcrumbs extends StatelessWidget {
@@ -17,6 +19,7 @@ class BloqoBreadcrumbs extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var theme = getAppThemeFromAppState(context: context);
+    bool isTablet = checkDevice(context);
 
     List<Widget> breadcrumbWidgets = [];
 
@@ -59,7 +62,8 @@ class BloqoBreadcrumbs extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+      padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
+          : Constants.tabletPaddingBreadcrumbs,
       child: Align(
         alignment: Alignment.topLeft,
         child: Wrap(
