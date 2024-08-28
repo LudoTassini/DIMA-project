@@ -187,7 +187,7 @@
   "learn_page_header_1": "Questi sono i corsi che stai seguendo.",
   "learn_page_header_2": "Questi sono i corsi che hai completato.",
   "learn_page_no_in_progress_courses": "Non stai seguendo nessun corso per ora. Iscriviti ora a un nuovo corso!",
-  "learn_page_no_completed_courses": "Non hai completato nessun corso.",
+  "learn_page_no_completed_courses": "Non hai ancora completato nessun corso. Vai a completarne uno ora!",
   "editor_page_no_published_courses": "Non hai ancora pubblicato nessun corso per la community. Vai a crearne uno e pubblicalo!",
   "delete": "Cancella",
   "delete_course_confirmation": "Se confermi, questo corso verrà cancellato definitivamente e non potrà essere recuperato in alcun modo. Vuoi davvero procedere?",

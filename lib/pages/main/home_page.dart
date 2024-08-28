@@ -525,11 +525,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           chapterIds: course.chapters
         );
         Map<String, List<BloqoSectionData>> sections = {};
-        for(String chapterId in course.chapters) {
+        for (String chapterId in course.chapters) {
           List<BloqoSectionData> chapterSections = await getSectionsFromIds(
-              firestore: firestore,
-              localizedText: localizedText,
-              sectionIds: chapters.where((chapter) => chapter.id == chapterId).first.sections
+            firestore: firestore,
+            localizedText: localizedText,
+            sectionIds: chapters
+                .firstWhere((chapter) => chapter.id == chapterId)
+                .sections,
           );
           sections[chapterId] = chapterSections;
         }
