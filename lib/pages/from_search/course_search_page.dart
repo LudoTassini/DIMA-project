@@ -333,8 +333,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
                                                   child: Row(
                                                     children: [
-                                                      Align(
-                                                        alignment: Alignment.topLeft,
+                                                      Expanded(
                                                         child: Text(
                                                           chapter.name,
                                                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -401,7 +400,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                             BuildContext context,
                                                             BoxConstraints constraints) {
                                                           double width = constraints.maxWidth / 2;
-                                                          double height = width / 3.25;
+                                                          double height = width / 2.25;
                                                           double childAspectRatio = width / height;
 
                                                           return GridView.builder(
@@ -839,7 +838,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                               },
                               color: isEnrolled && enrolledCourse != null &&
                                   enrolledCourse?.isCompleted == true ?
-                              theme.colors.inactive : theme.colors.leadingColor,
+                              theme.colors.inactive : theme.colors.error,
                               text: localizedText.unsubscribe,
                               icon: Icons.close_sharp,
                               fontSize: !isTablet ? 24 : 26,
