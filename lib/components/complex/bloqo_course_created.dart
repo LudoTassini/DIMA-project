@@ -1,6 +1,9 @@
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_snack_bar.dart';
+import 'package:bloqo/model/courses/bloqo_block_data.dart';
+import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
+import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/application_settings_app_state.dart';
@@ -17,6 +20,7 @@ class BloqoCourseCreated extends StatelessWidget {
     super.key,
     required this.course,
     required this.onPressed,
+    this.onPreview,
     this.onPublish,
     this.onViewStatistics,
     this.onDismiss,
@@ -28,6 +32,7 @@ class BloqoCourseCreated extends StatelessWidget {
 
   final BloqoUserCourseCreatedData course;
   final Function() onPressed;
+  final Function()? onPreview;
   final Function()? onPublish;
   final Function()? onViewStatistics;
   final Function()? onDismiss;
@@ -145,13 +150,13 @@ class BloqoCourseCreated extends StatelessWidget {
                         fontSize: 16,
                         height: 32,
                       ),
-                      /*BloqoFilledButton(
-                        color: theme.colors.publish,
-                        onPressed: onPublish ?? () {},
-                        text: localizedText.publish,
+                      BloqoFilledButton(
+                        color: theme.colors.previewButton,
+                        onPressed: onPreview ?? () {},
+                        text: localizedText.preview,
                         fontSize: 16,
                         height: 32,
-                      )*/
+                      )
                     ]
                   ),
                 ),

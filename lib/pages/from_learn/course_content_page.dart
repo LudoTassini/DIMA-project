@@ -107,7 +107,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
 
     BloqoUserData user = getUserFromAppState(context: context)!;
-    bool isClickable = false;
 
     return Consumer<ApplicationSettingsAppState>(
         builder: (context, applicationSettingsAppState, _) {
@@ -263,17 +262,12 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(20, 4, 20, 0),
+                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
                                         child: Align(
                                           alignment: Alignment.topLeft,
                                           child: Text(
                                             localizedText.content,
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .displayLarge
-                                                ?.copyWith(
+                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                               color: theme.colors.highContrastColor,
                                               fontSize: 24,
                                             ),
@@ -292,81 +286,46 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     (chapterIndex) {
                                                   var chapter = chapters[chapterIndex];
 
-                                                  isClickable = false;
-                                                  if (chaptersCompleted.contains(
-                                                      chapter)) {
-                                                    isClickable = true;
-                                                  }
-
                                                   return BloqoSeasaltContainer(
-                                                    padding: const EdgeInsetsDirectional
-                                                        .fromSTEB(20, 20, 20, 0),
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                                                     child: Column(
-                                                      mainAxisSize: MainAxisSize
-                                                          .min,
+                                                      mainAxisSize: MainAxisSize.min,
                                                       children: [
                                                         Padding(
-                                                          padding: const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              15, 15, 15, 0),
+                                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                                           child: Row(
-                                                            mainAxisSize: MainAxisSize
-                                                                .max,
-                                                            mainAxisAlignment: MainAxisAlignment
-                                                                .spaceBetween,
+                                                            mainAxisSize: MainAxisSize.max,
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
                                                               Text(
-                                                                '${localizedText
-                                                                    .chapter} ${chapterIndex +
+                                                                '${localizedText.chapter} ${chapterIndex +
                                                                     1}',
-                                                                style: Theme
-                                                                    .of(context)
-                                                                    .textTheme
-                                                                    .displayMedium
-                                                                    ?.copyWith(
-                                                                  color: theme
-                                                                      .colors
-                                                                      .secondaryText,
+                                                                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                                                  color: theme.colors.secondaryText,
                                                                   fontSize: 18,
                                                                 ),
                                                               ),
 
-                                                              chaptersCompleted
-                                                                  .contains(chapter
-                                                                  .id) ?
+                                                              chaptersCompleted.contains(chapter.id) ?
                                                               Row(
                                                                 children: [
                                                                   Align(
-                                                                    alignment: Alignment
-                                                                        .topRight,
+                                                                    alignment: Alignment.topRight,
                                                                     child: Text(
-                                                                      localizedText
-                                                                          .completed_section,
-                                                                      textAlign: TextAlign
-                                                                          .start,
-                                                                      style: theme
-                                                                          .getThemeData()
-                                                                          .textTheme
-                                                                          .displayMedium
-                                                                          ?.copyWith(
+                                                                      localizedText.completed_section,
+                                                                      textAlign: TextAlign.start,
+                                                                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                                                         fontSize: 14,
-                                                                        color: theme
-                                                                            .colors
-                                                                            .success,
-                                                                        fontWeight: FontWeight
-                                                                            .w600,
+                                                                        color: theme.colors.success,
+                                                                        fontWeight: FontWeight.w600,
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   Padding(
-                                                                    padding: const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        5, 0, 0, 0),
+                                                                    padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                                                                     child: Icon(
                                                                       Icons.check,
-                                                                      color: theme
-                                                                          .colors
-                                                                          .success,
+                                                                      color: theme.colors.success,
                                                                       size: 24,
                                                                     ),
                                                                   ),
@@ -376,24 +335,14 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                   : Row(
                                                                 children: [
                                                                   Align(
-                                                                    alignment: Alignment
-                                                                        .topRight,
+                                                                    alignment: Alignment.topRight,
                                                                     child: Text(
-                                                                      localizedText
-                                                                          .not_completed,
-                                                                      textAlign: TextAlign
-                                                                          .start,
-                                                                      style: theme
-                                                                          .getThemeData()
-                                                                          .textTheme
-                                                                          .displayMedium
-                                                                          ?.copyWith(
+                                                                      localizedText.not_completed,
+                                                                      textAlign: TextAlign.start,
+                                                                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                                                         fontSize: 14,
-                                                                        color: theme
-                                                                            .colors
-                                                                            .secondaryText,
-                                                                        fontWeight: FontWeight
-                                                                            .w600,
+                                                                        color: theme.colors.secondaryText,
+                                                                        fontWeight: FontWeight.w600,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -410,18 +359,11 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           child: Row(
                                                             children: [
                                                               Align(
-                                                                alignment: Alignment
-                                                                    .topLeft,
+                                                                alignment: Alignment.topLeft,
                                                                 child: Text(
                                                                   chapter.name,
-                                                                  style: Theme
-                                                                      .of(context)
-                                                                      .textTheme
-                                                                      .displayLarge
-                                                                      ?.copyWith(
-                                                                    color: theme
-                                                                        .colors
-                                                                        .leadingColor,
+                                                                  style: theme.getThemeData().textTheme.displayLarge?.copyWith(
+                                                                    color: theme.colors.leadingColor,
                                                                     fontSize: 24,
                                                                   ),
                                                                 ),
@@ -431,34 +373,19 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         ),
 
                                                         Padding(
-                                                          padding: const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 0, 0, 10),
-                                                          child: chapter
-                                                              .description != ''
-                                                              ? Padding(
-                                                            padding: const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                15, 5, 15, 10),
+                                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                                                          child: chapter.description != '' ? Padding(
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
                                                             child: Row(
-                                                              mainAxisSize: MainAxisSize
-                                                                  .max,
+                                                              mainAxisSize: MainAxisSize.max,
                                                               children: [
                                                                 Flexible(
                                                                   child: Align(
-                                                                    alignment: Alignment
-                                                                        .topLeft,
+                                                                    alignment: Alignment.topLeft,
                                                                     child: Text(
-                                                                      chapter
-                                                                          .description!,
-                                                                      style: theme
-                                                                          .getThemeData()
-                                                                          .textTheme
-                                                                          .displaySmall
-                                                                          ?.copyWith(
-                                                                        color: theme
-                                                                            .colors
-                                                                            .primaryText,
+                                                                      chapter.description!,
+                                                                      style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                                        color: theme.colors.primaryText,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -466,20 +393,16 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               ],
                                                             ),
                                                           )
-                                                              : const SizedBox
-                                                              .shrink(), // This will take up no space
+                                                              : const SizedBox.shrink(), // This will take up no space
                                                         ),
 
-                                                        ... _showSectionsList
-                                                            .contains(chapter.id)
+                                                        ... _showSectionsList.contains(chapter.id)
                                                             ? [
                                                           if (!isTablet)
                                                             ...List.generate(
-                                                              sections[chapter.id]!
-                                                                  .length,
+                                                              sections[chapter.id]!.length,
                                                                   (sectionIndex) {
-                                                                var section = sections[chapter
-                                                                    .id]![sectionIndex];
+                                                                var section = sections[chapter.id]![sectionIndex];
                                                                 bool isClickable = isCourseCompleted ||
                                                                     (sectionToComplete! == section.id) ||
                                                                     (sectionsCompleted.contains(section.id));
@@ -550,46 +473,34 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 ),
 
                                                           Padding(
-                                                            padding: const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                15, 0, 15, 5),
+                                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
                                                             child: Row(
-                                                              mainAxisSize: MainAxisSize
-                                                                  .max,
-                                                              mainAxisAlignment: MainAxisAlignment
-                                                                  .end,
+                                                              mainAxisSize: MainAxisSize.max,
+                                                              mainAxisAlignment: MainAxisAlignment.end,
                                                               children: [
                                                                 Opacity(
                                                                   opacity: 0.9,
                                                                   child: Align(
-                                                                    alignment: const AlignmentDirectional(
-                                                                        1, 0),
+                                                                    alignment: const AlignmentDirectional(1, 0),
                                                                     child: TextButton(
                                                                       onPressed: () {
                                                                         hideSections(
-                                                                            chapter
-                                                                                .id);
+                                                                            chapter.id
+                                                                        );
                                                                       },
                                                                       child: Row(
                                                                         children: [
                                                                           Text(
-                                                                            localizedText
-                                                                                .collapse,
+                                                                            localizedText.collapse,
                                                                             style: TextStyle(
-                                                                              color: theme
-                                                                                  .colors
-                                                                                  .secondaryText,
+                                                                              color: theme.colors.secondaryText,
                                                                               fontSize: 14,
-                                                                              fontWeight: FontWeight
-                                                                                  .w600,
+                                                                              fontWeight: FontWeight.w600,
                                                                             ),
                                                                           ),
                                                                           Icon(
-                                                                            Icons
-                                                                                .keyboard_arrow_up_sharp,
-                                                                            color: theme
-                                                                                .colors
-                                                                                .secondaryText,
+                                                                            Icons.keyboard_arrow_up_sharp,
+                                                                            color: theme.colors.secondaryText,
                                                                             size: 25,
                                                                           ),
                                                                         ],
@@ -607,42 +518,32 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                 .fromSTEB(
                                                                 15, 0, 15, 5),
                                                             child: Row(
-                                                              mainAxisSize: MainAxisSize
-                                                                  .max,
-                                                              mainAxisAlignment: MainAxisAlignment
-                                                                  .end,
+                                                              mainAxisSize: MainAxisSize.max,
+                                                              mainAxisAlignment: MainAxisAlignment.end,
                                                               children: [
                                                                 Opacity(
                                                                   opacity: 0.9,
                                                                   child: Align(
-                                                                    alignment: const AlignmentDirectional(
-                                                                        1, 0),
+                                                                    alignment: const AlignmentDirectional(1, 0),
                                                                     child: TextButton(
                                                                       onPressed: () {
                                                                         loadSections(
-                                                                            chapter
-                                                                                .id);
+                                                                            chapter.id
+                                                                        );
                                                                       },
                                                                       child: Row(
                                                                         children: [
                                                                           Text(
-                                                                            localizedText
-                                                                                .view_more,
+                                                                            localizedText.view_more,
                                                                             style: TextStyle(
-                                                                              color: theme
-                                                                                  .colors
-                                                                                  .secondaryText,
+                                                                              color: theme.colors.secondaryText,
                                                                               fontSize: 14,
-                                                                              fontWeight: FontWeight
-                                                                                  .w600,
+                                                                              fontWeight: FontWeight.w600,
                                                                             ),
                                                                           ),
                                                                           Icon(
-                                                                            Icons
-                                                                                .keyboard_arrow_right_sharp,
-                                                                            color: theme
-                                                                                .colors
-                                                                                .secondaryText,
+                                                                            Icons.keyboard_arrow_right_sharp,
+                                                                            color: theme.colors.secondaryText,
                                                                             size: 25,
                                                                           ),
                                                                         ],
@@ -666,8 +567,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                 child: isTablet
                                                     ? Row(
                                                   mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment
-                                                      .spaceBetween,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Flexible(
                                                       fit: FlexFit.loose,
@@ -678,21 +578,15 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                             'dd/MM/yyyy').format(
                                                             enrollmentDate
                                                                 .toDate())}",
-                                                        style: theme
-                                                            .getThemeData()
-                                                            .textTheme
-                                                            .displaySmall
-                                                            ?.copyWith(
-                                                          color: theme.colors
-                                                              .highContrastColor,
+                                                        style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                          color: theme.colors.highContrastColor,
                                                           fontSize: 16,
                                                         ),
                                                       ),
                                                     ),
                                                     if(!isCourseCompleted)
                                                       const Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(45, 0, 45, 0),
+                                                        padding: EdgeInsetsDirectional.fromSTEB(45, 0, 45, 0),
                                                       ),
                                                     if(!isCourseCompleted)
                                                       Flexible(
@@ -702,26 +596,20 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                           onPressed: () {
                                                             showBloqoConfirmationAlert(
                                                               context: context,
-                                                              title: localizedText
-                                                                  .warning,
-                                                              description: localizedText
-                                                                  .unsubscribe_confirmation,
+                                                              title: localizedText.warning,
+                                                              description: localizedText.unsubscribe_confirmation,
                                                               confirmationFunction: () async {
                                                                 await _tryDeleteUserCourseEnrolled(
                                                                   context: context,
                                                                   localizedText: localizedText,
-                                                                  courseId: course
-                                                                      .id,
-                                                                  enrolledUserId: user
-                                                                      .id,
+                                                                  courseId: course.id,
+                                                                  enrolledUserId: user.id,
                                                                 );
                                                               },
-                                                              backgroundColor: theme
-                                                                  .colors.error,
+                                                              backgroundColor: theme.colors.error,
                                                             );
                                                           },
-                                                          text: localizedText
-                                                              .unsubscribe,
+                                                          text: localizedText.unsubscribe,
                                                           icon: Icons.close_sharp,
                                                           fontSize: 30,
                                                           height: 70,
@@ -736,18 +624,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     Align(
                                                       alignment: Alignment.center,
                                                       child: Text(
-                                                        "${localizedText
-                                                            .enrolled_on} ${DateFormat(
-                                                            'dd/MM/yyyy').format(
-                                                            enrollmentDate
-                                                                .toDate())}",
-                                                        style: theme
-                                                            .getThemeData()
-                                                            .textTheme
-                                                            .displaySmall
-                                                            ?.copyWith(
-                                                          color: theme.colors
-                                                              .highContrastColor,
+                                                        "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrollmentDate.toDate())}",
+                                                        style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                                                          color: theme.colors.highContrastColor,
                                                           fontSize: 16,
                                                         ),
                                                       ),
@@ -758,25 +637,20 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         onPressed: () {
                                                           showBloqoConfirmationAlert(
                                                             context: context,
-                                                            title: localizedText
-                                                                .warning,
-                                                            description: localizedText
-                                                                .unsubscribe_confirmation,
+                                                            title: localizedText.warning,
+                                                            description: localizedText.unsubscribe_confirmation,
                                                             confirmationFunction: () async {
                                                               await _tryDeleteUserCourseEnrolled(
                                                                 context: context,
                                                                 localizedText: localizedText,
                                                                 courseId: course.id,
-                                                                enrolledUserId: user
-                                                                    .id,
+                                                                enrolledUserId: user.id,
                                                               );
                                                             },
-                                                            backgroundColor: theme
-                                                                .colors.error,
+                                                            backgroundColor: theme.colors.error,
                                                           );
                                                         },
-                                                        text: localizedText
-                                                            .unsubscribe,
+                                                        text: localizedText.unsubscribe,
                                                         icon: Icons.close_sharp,
                                                         fontSize: 20,
                                                         height: 48,
@@ -871,15 +745,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                           ),
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(20, 10, 20, 10),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                                           child: Text(
                                             localizedText.course_completed,
-                                            style: theme
-                                                .getThemeData()
-                                                .textTheme
-                                                .displayMedium
-                                                ?.copyWith(
+                                            style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                               color: theme.colors.success,
                                               fontWeight: FontWeight.bold,
                                               fontSize: !isTablet ? 24 : 34,
