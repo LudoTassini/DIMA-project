@@ -129,7 +129,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                 ],
                               )
                           ),
-                          course.description != '' ?
+                          course.description != null && course.description != '' ?
                             Column(
                               children: [
                                 Row(

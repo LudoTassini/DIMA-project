@@ -16,14 +16,14 @@ void main() {
     required bool showEditOptions,
     required bool showPublishedOptions
   }) {
-    return MaterialApp(
-        localizationsDelegates: getLocalizationDelegates(),
-        supportedLocales: getSupportedLocales(),
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
-          ],
-          child: Builder(
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: getLocalizationDelegates(),
+          supportedLocales: getSupportedLocales(),
+          home: Builder(
               builder: (BuildContext context) {
                 return Scaffold(
                   body: BloqoCourseCreated(
@@ -41,6 +41,21 @@ void main() {
                     },
                     showEditOptions: showEditOptions,
                     showPublishedOptions: showPublishedOptions,
+                    onPreview: () {
+                      tapped = true;
+                    },
+                    onGetQrCode: () {
+                      tapped = true;
+                    },
+                    onViewStatistics: () {
+                      tapped = true;
+                    },
+                    onPublish: () {
+                      tapped = true;
+                    },
+                    onDismiss: () {
+                      tapped = true;
+                    },
                   ),
                 );
               }
@@ -66,12 +81,13 @@ void main() {
     expect(find.byType(BloqoFilledButton), findsNothing);
   });
 
-  testWidgets('Course created can be tapped and has two filled buttons (editor page: in progress)', (WidgetTester tester) async {
+  testWidgets('Course created can be tapped and has three filled buttons (editor page: in progress)', (WidgetTester tester) async {
     await tester.pumpWidget(buildTestWidget(showEditOptions: true, showPublishedOptions: false));
     await tester.tap(find.text("test"));
     await tester.pump();
     expect(tapped, isTrue);
-    expect(find.byType(BloqoFilledButton), findsExactly(2));
+    expect(find.byType(BloqoFilledButton), findsExactly(3));
+    expect(find.text("Preview"), findsOne);
   });
 
   testWidgets('Course created can be tapped and has three filled buttons (editor page: published)', (WidgetTester tester) async {
@@ -80,6 +96,49 @@ void main() {
     await tester.pump();
     expect(tapped, isTrue);
     expect(find.byType(BloqoFilledButton), findsExactly(3));
+    expect(find.text("Dismiss"), findsOne);
+  });
+
+  testWidgets('Course created delete button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: true, showPublishedOptions: false));
+    await tester.tap(find.text("Delete"));
+    await tester.pump();
+    expect(find.byType(AlertDialog), findsOne);
+  });
+
+  testWidgets('Course created publish button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: true, showPublishedOptions: false));
+    await tester.tap(find.text("Publish"));
+    await tester.pump();
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('Course created preview button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: true, showPublishedOptions: false));
+    await tester.tap(find.text("Preview"));
+    await tester.pump();
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('Course created QR code button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: false, showPublishedOptions: true));
+    await tester.tap(find.text("Get QR Code"));
+    await tester.pump();
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('Course created view statistics button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: false, showPublishedOptions: true));
+    await tester.tap(find.text("View statistics"));
+    await tester.pump();
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('Course created dismiss button can be tapped', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(showEditOptions: false, showPublishedOptions: true));
+    await tester.tap(find.text("Dismiss"));
+    await tester.pump();
+    expect(tapped, isTrue);
   });
 
 }

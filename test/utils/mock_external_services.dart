@@ -35,6 +35,9 @@ class MockExternalServices {
   final BloqoBlockData testBlock1;
   final BloqoBlockData testBlock2;
   final BloqoBlockData testBlock3;
+  final BloqoBlockData testBlock4;
+  final BloqoBlockData testBlock5;
+  final BloqoBlockData testBlock6;
   final BloqoReviewData testReview;
 
   final BloqoUserData testUser2;
@@ -206,7 +209,7 @@ class MockExternalServices {
             id: "test2",
             number: 2,
             name: "test",
-            blocks: ["test1", "test2", "test3"]
+            blocks: ["test4", "test5", "test6"]
         ),
         testBlock1 = BloqoBlockData(
           id: "test1",
@@ -226,6 +229,30 @@ class MockExternalServices {
         ),
         testBlock3 = BloqoBlockData(
             id: "test3",
+            superType: BloqoBlockSuperType.quiz.toString(),
+            type: BloqoBlockType.quizMultipleChoice.toString(),
+            name: BloqoBlockSuperType.quiz.toString(),
+            number: 3,
+            content: "q:1+1=\$a:<n>1<y>2<n>3<n>4"
+        ),
+        testBlock4 = BloqoBlockData(
+            id: "test4",
+            superType: BloqoBlockSuperType.text.toString(),
+            type: BloqoBlockType.text.toString(),
+            name: BloqoBlockSuperType.text.toString(),
+            number: 1,
+            content: "test"
+        ),
+        testBlock5 = BloqoBlockData(
+            id: "test5",
+            superType: BloqoBlockSuperType.quiz.toString(),
+            type: BloqoBlockType.quizOpenQuestion.toString(),
+            name: BloqoBlockSuperType.quiz.toString(),
+            number: 2,
+            content: "q:1+1=\$a<yy>:2"
+        ),
+        testBlock6 = BloqoBlockData(
+            id: "test6",
             superType: BloqoBlockSuperType.quiz.toString(),
             type: BloqoBlockType.quizMultipleChoice.toString(),
             name: BloqoBlockSuperType.quiz.toString(),
@@ -268,6 +295,9 @@ class MockExternalServices {
     await fakeFirestore.collection('blocks').doc('test1').set(testBlock1.toFirestore());
     await fakeFirestore.collection('blocks').doc('test2').set(testBlock2.toFirestore());
     await fakeFirestore.collection('blocks').doc('test3').set(testBlock3.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test4').set(testBlock4.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test5').set(testBlock5.toFirestore());
+    await fakeFirestore.collection('blocks').doc('test6').set(testBlock6.toFirestore());
     await fakeFirestore.collection('notifications').doc('test').set(testNotification.toFirestore());
     await fakeFirestore.collection('reviews').doc('test').set(testReview.toFirestore());
   }

@@ -16,7 +16,7 @@ void main() {
 
   testWidgets(
       'Users can see the content of a course they are following test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -35,7 +35,7 @@ void main() {
 
   testWidgets(
       'Users can view the QR code of a course they are following test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 3000));
 
     await initTestApp(tester: tester);
 
