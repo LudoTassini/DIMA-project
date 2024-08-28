@@ -4,11 +4,18 @@ import '../../app_state/application_settings_app_state.dart';
 import '../../utils/constants.dart';
 
 class BloqoSnackBar {
-  static SnackBar get({required BuildContext context, required Widget child, Color? backgroundColor}) {
-    backgroundColor ??= getAppThemeFromAppState(context: context).colors.leadingColor;
+  static SnackBar get({required BuildContext context, required String text, required Color? backgroundColor}) {
+    var theme = getAppThemeFromAppState(context: context);
+    backgroundColor ??= theme.colors.leadingColor;
     ScaffoldMessenger.of(context).clearSnackBars();
     return SnackBar(
-      content: child,
+      content: Text(
+        text,
+        style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+          color: theme.colors.highContrastColor,
+          fontSize: 18
+        )
+      ),
       backgroundColor: backgroundColor,
       padding: const EdgeInsets.all(24),
       duration: const Duration(seconds: Constants.snackBarDuration),
@@ -16,8 +23,12 @@ class BloqoSnackBar {
   }
 }
 
-showBloqoSnackBar({required BuildContext context, required String text}){
+showBloqoSnackBar({required BuildContext context, required String text, Color? backgroundColor}){
   ScaffoldMessenger.of(context).showSnackBar(
-    BloqoSnackBar.get(context: context, child: Text(text)),
+    BloqoSnackBar.get(
+      context: context,
+      text: text,
+      backgroundColor: backgroundColor
+    ),
   );
 }

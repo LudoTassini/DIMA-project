@@ -8,6 +8,7 @@ import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/custom/bloqo_snack_bar.dart';
@@ -42,117 +43,138 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClientMixin<SettingPage> {
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Padding(
-        padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-            : Constants.tabletPadding,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              widget.settingTitle,
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: theme.colors.highContrastColor,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              widget.settingDescription,
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                color: theme.colors.highContrastColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    BloqoSeasaltContainer(
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Padding(
+              padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                  : Constants.tabletPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: isTablet
+                          ? Constants.tabletPadding
+                          : const EdgeInsetsDirectional.all(0),
                       child: Column(
-                        children: List.generate(
-                          widget.forms.length,
-                              (index) => Padding(
-                            padding: index == widget.forms.length - 1
-                                ? const EdgeInsets.all(20)
-                                : const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                            child: widget.forms[index],
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 20, 20, 0),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    widget.settingTitle,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayLarge
+                                        ?.copyWith(
+                                      color: theme.colors.highContrastColor,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 20, 20, 0),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    widget.settingDescription,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayMedium
+                                        ?.copyWith(
+                                      color: theme.colors.highContrastColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          BloqoSeasaltContainer(
+                            child: Column(
+                              children: List.generate(
+                                widget.forms.length,
+                                    (index) =>
+                                    Padding(
+                                      padding: index == widget.forms.length - 1
+                                          ? const EdgeInsets.all(20)
+                                          : const EdgeInsetsDirectional.fromSTEB(
+                                          20, 20, 20, 0),
+                                      child: widget.forms[index],
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              20, 10, 20, 10),
+                          child: BloqoFilledButton(
+                            color: theme.colors.leadingColor,
+                            onPressed: () async {
+                              context.loaderOverlay.show();
+                              try {
+                                await _updateSettings(
+                                  context: context,
+                                  settingType: widget.settingType,
+                                  controllers: widget.controllers,
+                                );
+                                if (!context.mounted) return;
+                                showBloqoSnackBar(
+                                    context: context,
+                                    text: localizedText.done
+                                );
+                                context.loaderOverlay.hide();
+                              } on BloqoException catch (e) {
+                                if (!context.mounted) return;
+                                context.loaderOverlay.hide();
+                                showBloqoErrorAlert(
+                                  context: context,
+                                  title: localizedText.error_title,
+                                  description: e.message,
+                                );
+                              }
+                            },
+                            text: localizedText.save_settings,
+                            fontSize: !isTablet ? 20 : 26,
+                            height: !isTablet ? 48 : 64,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                    child: BloqoFilledButton(
-                      color: theme.colors.leadingColor,
-                      onPressed: () async {
-                        context.loaderOverlay.show();
-                        try {
-                          await _updateSettings(
-                            context: context,
-                            settingType: widget.settingType,
-                            controllers: widget.controllers,
-                          );
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                          );
-                          context.loaderOverlay.hide();
-                        } on BloqoException catch (e) {
-                          if (!context.mounted) return;
-                          context.loaderOverlay.hide();
-                          showBloqoErrorAlert(
-                            context: context,
-                            title: localizedText.error_title,
-                            description: e.message,
-                          );
-                        }
-                      },
-                      text: localizedText.save_settings,
-                      fontSize: !isTablet ? 20 : 26,
-                      height: !isTablet ? 48 : 64,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        }
     );
   }
 

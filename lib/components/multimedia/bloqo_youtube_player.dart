@@ -114,7 +114,7 @@ class _BloqoYouTubePlayerState extends State<BloqoYouTubePlayer> {
             : Center(
               child: Text(
                 localizationText.invalid_link,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                   fontWeight: FontWeight.w500,
                 ),

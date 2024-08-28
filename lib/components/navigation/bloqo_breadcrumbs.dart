@@ -31,7 +31,7 @@ class BloqoBreadcrumbs extends StatelessWidget {
           baselineType: TextBaseline.alphabetic,
           child: Text(
             breadcrumbs[i],
-            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+            style: theme.getThemeData().textTheme.displayMedium!.copyWith(
                 color: theme.colors.highContrastColor, fontWeight: FontWeight.w500),
           ),
         ));

@@ -59,7 +59,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
               return Center(
                 child: Text(
                   "Error",
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.error,
                   ),
                 ),
@@ -98,19 +98,19 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                               children: [
                                 Text(
                                   applicant.username,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
                                   localizedText.has_requested_access,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontSize: 18,
                                   ),
                                 ),
                                 Text(
                                   course.name,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -138,10 +138,6 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                                 applicantId: applicant.id,
                                                 originalCourse: course
                                               );
-                                              if(!context.mounted) return;
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                                              );
                                             },
                                             backgroundColor: theme.colors.leadingColor,
                                             confirmationColor: theme.colors.success
@@ -160,10 +156,6 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                                             description: localizedText.deny_enrollment_confirmation,
                                             confirmationFunction: () async {
                                               await _tryDeny(context: context, localizedText: localizedText);
-                                              if(!context.mounted) return;
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                                              );
                                             },
                                             backgroundColor: theme.colors.error
                                         );
@@ -188,7 +180,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
             return Center(
               child: Text(
                 "Error",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                 ),
               ),
@@ -269,6 +261,10 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
       );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
+      );
       widget.onNotificationHandled();
     }
     on BloqoException catch (e) {
@@ -296,6 +292,10 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
       );
       if (!context.mounted) return;
       context.loaderOverlay.hide();
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
+      );
       widget.onNotificationHandled();
     }
     on BloqoException catch (e) {

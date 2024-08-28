@@ -95,7 +95,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         Text(
                           localizedText.welcome,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                             color: theme.colors.leadingColor,
                           )
                         ),
@@ -149,7 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 children: [
                   Text(
                     localizedText.new_here,
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                       color: theme.colors.highContrastColor,
                       fontSize: 35,
                     ),

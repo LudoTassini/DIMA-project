@@ -67,7 +67,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
             children: [
               Text(
                 localizedText.quiz,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.leadingColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -83,7 +83,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                         isAnswerCorrect || widget.isQuizCompleted
                             ? localizedText.correct
                             : localizedText.wrong,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                           color: isAnswerCorrect || widget.isQuizCompleted
                               ? theme.colors.success
                               : theme.colors.error,
@@ -107,7 +107,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     question,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                       color: theme.colors.primaryText,
                     ),
                   ),
@@ -159,7 +159,7 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                     child: Text(
                       localizedText.correct,
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                         color: theme.colors.success,
                         fontWeight: FontWeight.w500,
                       ),
@@ -251,14 +251,10 @@ class _BloqoMultipleChoiceQuizState extends State<BloqoMultipleChoiceQuiz> {
       widget.onQuestionAnsweredCorrectly();
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      BloqoSnackBar.get(
+    showBloqoSnackBar(
         context: context,
-        child: Text(
-          isAnswerCorrect ? localizedText.correct : localizedText.wrong,
-        ),
-        backgroundColor: isAnswerCorrect ? theme.colors.success : theme.colors.error,
-      ),
+        text: isAnswerCorrect ? localizedText.correct : localizedText.wrong,
+        backgroundColor: isAnswerCorrect ? theme.colors.success : theme.colors.error
     );
   }
 

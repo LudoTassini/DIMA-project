@@ -64,136 +64,169 @@ class _EditTextBlockPageState extends State<EditTextBlockPage> with AutomaticKee
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Consumer<EditorCourseAppState>(
-        builder: (context, editorCourseAppState, _) {
-          BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
-          BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-          BloqoSectionData section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
-          BloqoBlockData block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
-          bool editable = !course.published;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BloqoBreadcrumbs(breadcrumbs: [
-                course.name,
-                chapter.name,
-                section.name,
-                block.name,
-              ]),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                    child: Column(
-                      children: [
-                        BloqoSeasaltContainer(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    localizedText.write_text_here,
-                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: theme.colors.leadingColor,
-                                      fontSize: 30,
-                                    ),
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Consumer<EditorCourseAppState>(
+              builder: (context, editorCourseAppState, _) {
+                BloqoCourseData course = getEditorCourseFromAppState(
+                    context: context)!;
+                BloqoChapterData chapter = getEditorCourseChapterFromAppState(
+                    context: context, chapterId: widget.chapterId)!;
+                BloqoSectionData section = getEditorCourseSectionFromAppState(
+                    context: context,
+                    chapterId: widget.chapterId,
+                    sectionId: widget.sectionId)!;
+                BloqoBlockData block = getEditorCourseBlockFromAppState(
+                    context: context,
+                    sectionId: widget.sectionId,
+                    blockId: widget.block.id)!;
+                bool editable = !course.published;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BloqoBreadcrumbs(breadcrumbs: [
+                      course.name,
+                      chapter.name,
+                      section.name,
+                      block.name,
+                    ]),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                            padding: !isTablet
+                                ? const EdgeInsetsDirectional.all(0)
+                                : Constants.tabletPadding,
+                            child: Column(
+                              children: [
+                                BloqoSeasaltContainer(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(20, 20, 20, 0),
+                                        child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                            localizedText.write_text_here,
+                                            style: theme
+                                                .getThemeData()
+                                                .textTheme
+                                                .displayLarge
+                                                ?.copyWith(
+                                              color: theme.colors.leadingColor,
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Form(
+                                        key: formKeyText,
+                                        child: BloqoTextField(
+                                          formKey: formKeyText,
+                                          controller: textController,
+                                          labelText: localizedText.text,
+                                          hintText: localizedText.write_text_here,
+                                          maxInputLength: Constants
+                                              .maxBlockTextLength,
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(20, 20, 20, 20),
+                                          isTextArea: true,
+                                          isDisabled: !editable,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              Form(
-                                key: formKeyText,
-                                child: BloqoTextField(
-                                  formKey: formKeyText,
-                                  controller: textController,
-                                  labelText: localizedText.text,
-                                  hintText: localizedText.write_text_here,
-                                  maxInputLength: Constants.maxBlockTextLength,
-                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                  isTextArea: true,
-                                  isDisabled: !editable,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        BloqoSeasaltContainer(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    localizedText.preview,
-                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: theme.colors.leadingColor,
-                                      fontSize: 30,
-                                    ),
+                                BloqoSeasaltContainer(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(20, 20, 20, 0),
+                                        child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                            localizedText.preview,
+                                            style: theme
+                                                .getThemeData()
+                                                .textTheme
+                                                .displayLarge
+                                                ?.copyWith(
+                                              color: theme.colors.leadingColor,
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(20, 10, 20, 20),
+                                        child: MarkdownBody(
+                                            data: textController.text,
+                                            styleSheet: BloqoMarkdownStyleSheet
+                                                .get()
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                                child: MarkdownBody(
-                                  data: textController.text,
-                                  styleSheet: BloqoMarkdownStyleSheet.get()
-                                ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            )
                         ),
-                      ],
-                    )
-                  ),
-                ),
-              ),
-              if(editable)
-                Padding(
-                  padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
-                      : Constants.tabletPaddingBloqoFilledButton,
-                  child: BloqoFilledButton(
-                    color: theme.colors.leadingColor,
-                    fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                    height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                    onPressed: () async {
-                      context.loaderOverlay.show();
-                      try {
-                        await _saveChanges(
-                          context: context,
-                          courseId: course.id,
-                          sectionId: section.id,
-                          block: block,
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                        );
-                        context.loaderOverlay.hide();
-                      } on BloqoException catch (e) {
-                        if (!context.mounted) return;
-                        context.loaderOverlay.hide();
-                        showBloqoErrorAlert(
-                          context: context,
-                          title: localizedText.error_title,
-                          description: e.message,
-                        );
-                      }
-                    },
-                    text: localizedText.save_changes,
-                    icon: Icons.edit,
-                  ),
-                ),
-            ],
+                      ),
+                    ),
+                    if(editable)
+                      Padding(
+                        padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(
+                            20, 10, 20, 10)
+                            : Constants.tabletPaddingBloqoFilledButton,
+                        child: BloqoFilledButton(
+                          color: theme.colors.leadingColor,
+                          fontSize: !isTablet
+                              ? Constants.fontSizeNotTablet
+                              : Constants.fontSizeTablet,
+                          height: !isTablet ? Constants.heightNotTablet : Constants
+                              .heightTablet,
+                          onPressed: () async {
+                            context.loaderOverlay.show();
+                            try {
+                              await _saveChanges(
+                                context: context,
+                                courseId: course.id,
+                                sectionId: section.id,
+                                block: block,
+                              );
+                              if (!context.mounted) return;
+                              showBloqoSnackBar(
+                                  context: context,
+                                  text: localizedText.done
+                              );
+                              context.loaderOverlay.hide();
+                            } on BloqoException catch (e) {
+                              if (!context.mounted) return;
+                              context.loaderOverlay.hide();
+                              showBloqoErrorAlert(
+                                context: context,
+                                title: localizedText.error_title,
+                                description: e.message,
+                              );
+                            }
+                          },
+                          text: localizedText.save_changes,
+                          icon: Icons.edit,
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
     );
   }
 

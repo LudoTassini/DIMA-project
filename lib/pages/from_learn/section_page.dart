@@ -68,7 +68,6 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     void markBlockAsCompleted() {
@@ -80,186 +79,193 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
       }
     }
 
-    return Consumer<LearnCourseAppState>(
-        builder: (context, learnCourseAppState, _) {
-          List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return Consumer<LearnCourseAppState>(
+              builder: (context, learnCourseAppState, _) {
+                List<dynamic> sectionsCompleted = getLearnCourseSectionsCompletedFromAppState(context: context)?? [];
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BloqoBreadcrumbs(
-              disable: true,
-              breadcrumbs: [
-                widget.courseName,
-                widget.chapter.name,
-                widget.section.name
-            ]),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
-                      child: Column(
-                        children: [
-                        ...List.generate(
-                      widget.blocks.length,
-                      (blockIndex) {
-                        var block = widget.blocks[blockIndex];
+                return BloqoMainContainer(
+                  alignment: const AlignmentDirectional(-1.0, -1.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BloqoBreadcrumbs(
+                          disable: true,
+                          breadcrumbs: [
+                            widget.courseName,
+                            widget.chapter.name,
+                            widget.section.name
+                          ]),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: isTablet ? Constants.tabletPadding : const EdgeInsetsDirectional.all(0),
+                                child: Column(
+                                  children: [
+                                    ...List.generate(
+                                        widget.blocks.length,
+                                            (blockIndex) {
+                                          var block = widget.blocks[blockIndex];
 
-                        if (block.type == BloqoBlockType.text.toString()) {
-                          return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10), //20, 10, 20, 20
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: MarkdownBody(
-                                          data: block.content,
-                                          styleSheet: BloqoMarkdownStyleSheet.get(),
-                                        )
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
+                                          if (block.type == BloqoBlockType.text.toString()) {
+                                            return BloqoSeasaltContainer(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10), //20, 10, 20, 20
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      children: [
+                                                        Expanded(
+                                                            child: MarkdownBody(
+                                                              data: block.content,
+                                                              styleSheet: BloqoMarkdownStyleSheet.get(),
+                                                            )
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }
 
-                        if(block.type == BloqoBlockType.multimediaAudio.toString()) {
-                          return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 20, 20, 0),
-                            child: Column(
-                                children: [
-                                  Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: BloqoAudioPlayer(
-                                          url: block.content
-                                      )
-                                  ),
-                                ]
-                            ),
-                          );
-                      }
+                                          if(block.type == BloqoBlockType.multimediaAudio.toString()) {
+                                            return BloqoSeasaltContainer(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                                  20, 20, 20, 0),
+                                              child: Column(
+                                                  children: [
+                                                    Padding(
+                                                        padding: const EdgeInsets.all(20),
+                                                        child: BloqoAudioPlayer(
+                                                            url: block.content
+                                                        )
+                                                    ),
+                                                  ]
+                                              ),
+                                            );
+                                          }
 
-                      if(block.type == BloqoBlockType.multimediaImage.toString()) {
-                        return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                            child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Image.network(block.content),
+                                          if(block.type == BloqoBlockType.multimediaImage.toString()) {
+                                            return BloqoSeasaltContainer(
+                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(20),
+                                                    child: Image.network(block.content),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }
+
+                                          if(block.type == BloqoBlockType.multimediaVideo.toString()) {
+                                            return BloqoSeasaltContainer(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                    20, 20, 20, 0),
+                                                child: block.content != "" ?
+                                                Column(
+                                                    children: [
+                                                      !block.content.startsWith("yt:")
+                                                          ? BloqoVideoPlayer(
+                                                          url: block.content
+                                                      )
+                                                          : BloqoYouTubePlayer(
+                                                          url: block.content.substring(3)
+                                                      ),
+                                                    ]
+                                                ) : Container()
+                                            );
+                                          }
+
+                                          if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
+                                            return BloqoOpenQuestionQuiz(
+                                              block: block,
+                                              isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
+                                              onQuestionAnsweredCorrectly: () {
+                                                markBlockAsCompleted();
+                                              },
+                                            );
+
+                                          }
+
+                                          if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
+                                            return BloqoMultipleChoiceQuiz(
+                                              block: block,
+                                              isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
+                                              onQuestionAnsweredCorrectly: () {
+                                                markBlockAsCompleted();
+                                              },
+                                            );
+                                          }
+                                          return const SizedBox();
+                                        }
                                     ),
-                                ],
-                            ),
-                        );
-                      }
+                                  ],
+                                ),
+                              ),
 
-                      if(block.type == BloqoBlockType.multimediaVideo.toString()) {
-                        return BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 20, 20, 0),
-                            child: block.content != "" ?
-                              Column(
-                                children: [
-                                  !block.content.startsWith("yt:")
-                                      ? BloqoVideoPlayer(
-                                      url: block.content
+                              Align(
+                                alignment: Alignment.center,
+                                child:Padding(
+                                  padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20)
+                                      : const EdgeInsetsDirectional.fromSTEB(65, 30, 65, 30),
+                                  child: isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
+
+                                  BloqoFilledButton(
+                                    onPressed: () async {
+                                      await _updateEnrolledCourseStatus(
+                                        context: context,
+                                        localizedText: localizedText,
+                                        section: widget.section,
+                                      );
+                                    },
+                                    color: theme.colors.success,
+                                    text: localizedText.learned,
+                                    fontSize: !isTablet ? 24 : 32,
+                                    height: !isTablet ? 65 : 75,
                                   )
-                                      : BloqoYouTubePlayer(
-                                      url: block.content.substring(3)
-                                  ),
-                                ]
-                            ) : Container()
-                        );
-                      }
 
-                  if(block.type == BloqoBlockType.quizOpenQuestion.toString()) {
-                    return BloqoOpenQuestionQuiz(
-                      block: block,
-                      isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
-                      onQuestionAnsweredCorrectly: () {
-                        markBlockAsCompleted();
-                      },
-                    );
+                                      : !isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
+                                  BloqoFilledButton(
+                                    onPressed: () async {
+                                      showBloqoErrorAlert(
+                                          context: context,
+                                          title: localizedText.error_title,
+                                          description: localizedText.section_is_not_completed);
+                                    },
+                                    color: theme.colors.inactive,
+                                    text: localizedText.learned,
+                                    fontSize: !isTablet ? 24 : 32,
+                                    height: !isTablet ? 65 : 75,
+                                  )
 
-                      }
+                                      : const SizedBox(height: 20,),
 
-                  if(block.type == BloqoBlockType.quizMultipleChoice.toString()) {
-                    return BloqoMultipleChoiceQuiz(
-                        block: block,
-                        isQuizCompleted: sectionsCompleted.contains(widget.section.id) ? true : false,
-                        onQuestionAnsweredCorrectly: () {
-                          markBlockAsCompleted();
-                      },
-                    );
-                      }
-                      return const SizedBox();
-                      }
-                    ),
-                  ],
-                ),
-              ),
+                                ),
+                              ),
 
-                Align(
-                  alignment: Alignment.center,
-                  child:Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20)
-                        : const EdgeInsetsDirectional.fromSTEB(65, 30, 65, 30),
-                    child: isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
-
-                      BloqoFilledButton(
-                        onPressed: () async {
-                          await _updateEnrolledCourseStatus(
-                            context: context,
-                            localizedText: localizedText,
-                            section: widget.section,
-                          );
-                        },
-                        color: theme.colors.success,
-                        text: localizedText.learned,
-                        fontSize: !isTablet ? 24 : 32,
-                        height: !isTablet ? 65 : 75,
-                      )
-
-                        : !isSectionCompleted && !sectionsCompleted.contains(widget.section.id) ?
-                            BloqoFilledButton(
-                              onPressed: () async {
-                                showBloqoErrorAlert(
-                                context: context,
-                                title: localizedText.error_title,
-                                description: localizedText.section_is_not_completed);
-                              },
-                              color: theme.colors.inactive,
-                              text: localizedText.learned,
-                              fontSize: !isTablet ? 24 : 32,
-                              height: !isTablet ? 65 : 75,
-                            )
-
-                        : const SizedBox(height: 20,),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
 
                   ),
-                ),
 
-                ],
-              ),
-            ),
-          ),
-      ],
-
-      ),
-
+                );
+              }
+          );
+        }
     );
-  }); }
+  }
 
   @override
   bool get wantKeepAlive => true;

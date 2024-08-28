@@ -51,7 +51,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
               return Center(
                 child: Text(
                   "Error",
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.error,
                   ),
                 ),
@@ -89,19 +89,19 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
                               children: [
                                 Text(
                                   courseAuthor.username,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
                                   localizedText.has_granted_access,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontSize: 18,
                                   ),
                                 ),
                                 Text(
                                   widget.notification.privateCourseName!,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -143,7 +143,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
             return Center(
               child: Text(
                 "Error",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                 ),
               ),

@@ -103,7 +103,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     Text(
                                       user.fullName,
                                       textAlign: TextAlign.start,
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                         color: theme.colors.secondaryText,
                                         fontSize: !isTablet ? 14 : 16,
                                         letterSpacing: 0,
@@ -113,7 +113,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                   Text(
                                     user.username,
                                     textAlign: TextAlign.start,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       color: theme.colors.primaryText,
                                       fontSize: !isTablet ? 18 : 20,
                                       letterSpacing: 0,
@@ -142,14 +142,14 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                                     child: Text(
                                       localizedText.followers,
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                         fontSize: !isTablet ? 14 : 16,
                                       )
                                     )
                                   ),
                                   Text(
                                     user.followers.length.toString(),
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontSize: !isTablet ? 18 : 20,
                                     ),
                                   ),
@@ -166,14 +166,14 @@ class BloqoUserDetailsShort extends StatelessWidget{
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
                                     child: Text(
                                       localizedText.following,
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                           fontSize: !isTablet ? 14 : 16,
                                       )
                                     )
                                   ),
                                   Text(
                                     user.following.length.toString(),
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontSize: !isTablet ? 18 : 20,
                                     ),
                                   ),

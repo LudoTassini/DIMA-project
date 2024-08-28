@@ -17,8 +17,7 @@ void main() {
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
@@ -44,7 +43,7 @@ void main() {
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.notifications), warnIfMissed: false);
+    await tester.tap(find.byType(Positioned).first);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.notifications), findsNothing);

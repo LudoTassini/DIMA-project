@@ -50,7 +50,7 @@ class BloqoCertificate extends StatelessWidget {
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20, 0),
                     child: Text(
                       'bloQo',
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                         color: theme.colors.highContrastColor,
                         fontSize: 60,
                       ),

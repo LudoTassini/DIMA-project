@@ -37,35 +37,44 @@ class PurpleOrchidTheme extends BloqoAppTheme{
   ThemeData getThemeData() {
 
     final TextTheme textTheme = TextTheme(
-      displayLarge: const TextStyle(
+      displayLarge: TextStyle(
         fontSize: 40,
         fontWeight: FontWeight.bold,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText,
+        height: 1.1
       ),
-      displayMedium: const TextStyle(
+      displayMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText,
+        height: 1.2
       ),
-      displaySmall: const TextStyle(
+      displaySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        height: 1.3,
+        color: colors.primaryText
       ),
-      bodyLarge: const TextStyle(
+      bodyLarge: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      bodyMedium: const TextStyle(
+      bodyMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
-      bodySmall: const TextStyle(
+      bodySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
       labelMedium: TextStyle(
         fontSize: 18,
@@ -73,10 +82,11 @@ class PurpleOrchidTheme extends BloqoAppTheme{
         fontFamily: 'Readex Pro',
         color: colors.leadingColor,
       ),
-      titleSmall: const TextStyle(
+      titleSmall: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         fontFamily: 'Readex Pro',
+        color: colors.primaryText
       ),
     );
 

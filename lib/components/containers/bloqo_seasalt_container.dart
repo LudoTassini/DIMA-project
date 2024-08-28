@@ -6,14 +6,14 @@ class BloqoSeasaltContainer extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-    this.borderColor = const Color(0xFFF7F9F9),
+    this.borderColor,
     this.borderRadius = 15,
     this.borderWidth,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
-  final Color borderColor;
+  final Color? borderColor;
   final double borderRadius;
   final double? borderWidth;
 
@@ -28,7 +28,7 @@ class BloqoSeasaltContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           border: borderWidth == null? null : Border.all(
             width: borderWidth!,
-            color: borderColor,
+            color: borderColor ?? theme.colors.highContrastColor,
           ),
         ),
         child: child

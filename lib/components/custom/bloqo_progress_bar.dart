@@ -43,7 +43,7 @@ class BloqoProgressBar extends StatelessWidget{
               backgroundColor: theme.colors.inactiveTracker,
               center: Text(
                 (percentage * 100).toStringAsFixed(0) + localizedText.progress_bar_completion,
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                   fontSize: fontSize,
                   fontFamily: 'Outfit',
                   color: Colors.black

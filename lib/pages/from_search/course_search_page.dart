@@ -88,7 +88,6 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     void initializeSectionsToShowMap(List<BloqoChapterData> chapters) {
@@ -122,470 +121,603 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
     bool isCoursePublic = widget.publishedCourse.isPublic;
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Consumer<UserCoursesEnrolledAppState>(
-        builder: (context, userCoursesEnrolledAppState, _) {
-          List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Consumer<UserCoursesEnrolledAppState>(
+              builder: (context, userCoursesEnrolledAppState, _) {
+                List<
+                    BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(
+                    context: context) ?? [];
 
-          if(userCoursesEnrolled.any((enrolledCourse) => enrolledCourse.courseId == widget.course.id)) {
-            isEnrolled = true;
-            enrolledCourse = userCoursesEnrolled.firstWhere(
-                (enrolledCourse) => enrolledCourse.courseId == widget.course.id);
-          }
+                if (userCoursesEnrolled.any((enrolledCourse) =>
+                enrolledCourse.courseId == widget.course.id)) {
+                  isEnrolled = true;
+                  enrolledCourse = userCoursesEnrolled.firstWhere(
+                          (enrolledCourse) =>
+                      enrolledCourse.courseId == widget.course.id);
+                }
 
-          return Padding(
-            padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-            : Constants.tabletPadding,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            widget.course.name,
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: theme.colors.highContrastColor,
-                              fontSize: 36,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return Padding(
+                  padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                      : Constants.tabletPadding,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        child: Row(
-                          children: [
-                            Text(
-                              localizedText.by,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: theme.colors.highContrastColor,
-                                fontSize: 16,
-                              ),
-                            ),
-                            BloqoTextButton(
-                              text: widget.courseAuthor.username,
-                              color: theme.colors.highContrastColor,
-                              onPressed: () async {
-                                _goToUserCoursesPage(
-                                    context: context,
-                                    localizedText: localizedText,
-                                    authorId: widget.course.authorId);
-                                },
-                              fontSize: 16,
-                            ),
-                          ],
-                        ),
-                      ),
-                      RatingBarIndicator(
-                        rating: widget.rating?? 0,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: theme.colors.tertiary,
-                        ),
-                        itemCount: 5,
-                        itemSize: !isTablet ? 24 : 35,
-                        direction: Axis.horizontal,
-                      ),
-                    ],
-                  )
-                ),
-
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
-                                  20, 10, 0, 0),
+                                  20, 4, 20, 0),
                               child: Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  localizedText.description,
-                                  style: Theme.of(context).textTheme.displayLarge
+                                  widget.course.name,
+                                  style: theme
+                                      .getThemeData()
+                                      .textTheme
+                                      .displayLarge
                                       ?.copyWith(
+                                    fontWeight: FontWeight.w600,
                                     color: theme.colors.highContrastColor,
-                                    fontSize: 24,
+                                    fontSize: 36,
                                   ),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 20, 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: theme.colors.inBetweenColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.qr_code_2,
-                                    color: theme.colors.highContrastColor,
-                                    size: 32,
-                                  ),
-                                  onPressed: () {
-                                    widget.onPush(
-                                        QrCodePage(
-                                            qrCodeTitle: widget.publishedCourse.courseName,
-                                            qrCodeContent: "${BloqoQrCodeType.course.name}_${widget.publishedCourse.publishedCourseId}"
-                                        )
-                                    );
-                                  },
-                                ),
-                              ),
-                            )
-                          ]
-                        ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 12),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: widget.course.description != null && widget.course.description != ''
-                                  ? Text(
-                                widget.course.description!,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: theme.colors.highContrastColor,
-                                  fontSize: 16,
-                                ),
-                              )
-                                  : const SizedBox.shrink(), // This will take up no space
-                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              localizedText.content,
-                              style: Theme.of(context).textTheme.displayLarge
-                                  ?.copyWith(
-                                color: theme.colors.highContrastColor,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ...List.generate(
-                                  widget.chapters.length,
-                                      (chapterIndex) {
-                                    var chapter = widget.chapters[chapterIndex];
+                        ],
+                      ),
 
-                                    return BloqoSeasaltContainer(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  '${localizedText.chapter} ${chapterIndex+1}',
-                                                  style: Theme
-                                                      .of(context)
-                                                      .textTheme
-                                                      .displayMedium
-                                                      ?.copyWith(
-                                                    color: theme.colors.secondaryText,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-
-                                              ],
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
-                                            child: Row(
-                                              children: [
-                                                Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Text(
-                                                    chapter.name,
-                                                    style: Theme
-                                                        .of(context)
-                                                        .textTheme
-                                                        .displayLarge
-                                                        ?.copyWith(
-                                                      color: theme.colors.leadingColor,
-                                                      fontSize: 24,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
-                                            child: chapter.description != null && chapter.description != ''
-                                                ? Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 10),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Flexible(
-                                                    child: Align(
-                                                      alignment: Alignment.topLeft,
-                                                      child: Text(
-                                                        chapter.description!,
-                                                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                          color: theme.colors.primaryText,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                                : const SizedBox.shrink(), // This will take up no space
-                                          ),
-
-                                          ... (_showSectionsMap[chapter.id] == true
-                                              ? [
-                                            ...List.generate(
-                                              widget.sections[chapter.id]!.length,
-                                                  (sectionIndex) {
-                                                var section = widget.sections[chapter.id]![sectionIndex];
-                                                return BloqoCourseSection(
-                                                  section: section,
-                                                  index: sectionIndex,
-                                                  isClickable: false,
-                                                  isInLearnPage: false,
-                                                  isCompleted: false,
-                                                  onPressed: () {},
-                                                );
-                                              },
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          hideSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.collapse,
-                                                              style: TextStyle(
-                                                                color: theme.colors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Icon(
-                                                              Icons.keyboard_arrow_up_sharp,
-                                                              color: theme.colors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                          ]
-
-                                              : [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          showSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.view_more,
-                                                              style: TextStyle(
-                                                                color: theme.colors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Icon(
-                                                              Icons.keyboard_arrow_right_sharp,
-                                                              color: theme.colors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ]
-                                          ),
-                                        ],
+                      Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              20, 4, 20, 12),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      localizedText.by,
+                                      style: theme
+                                          .getThemeData()
+                                          .textTheme
+                                          .displaySmall
+                                          ?.copyWith(
+                                        color: theme.colors.highContrastColor,
+                                        fontSize: 16,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    BloqoTextButton(
+                                      text: widget.courseAuthor.username,
+                                      color: theme.colors.highContrastColor,
+                                      onPressed: () async {
+                                        _goToUserCoursesPage(
+                                            context: context,
+                                            localizedText: localizedText,
+                                            authorId: widget.course.authorId);
+                                      },
+                                      fontSize: 16,
+                                    ),
+                                  ],
                                 ),
+                              ),
+                              RatingBarIndicator(
+                                rating: widget.rating ?? 0,
+                                itemBuilder: (context, index) =>
+                                    Icon(
+                                      Icons.star,
+                                      color: theme.colors.tertiary,
+                                    ),
+                                itemCount: 5,
+                                itemSize: !isTablet ? 24 : 35,
+                                direction: Axis.horizontal,
+                              ),
+                            ],
+                          )
+                      ),
 
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Align(
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          20, 10, 0, 0),
+                                      child: Align(
                                         alignment: Alignment.topLeft,
                                         child: Text(
-                                          localizedText.reviews,
-                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                          localizedText.description,
+                                          style: theme
+                                              .getThemeData()
+                                              .textTheme
+                                              .displayLarge
+                                              ?.copyWith(
                                             color: theme.colors.highContrastColor,
                                             fontSize: 24,
                                           ),
                                         ),
                                       ),
-                                      const Spacer(), // This will create space between the first Text and the rest of the Row
-                                      Row(
-                                        children: [
-
-                                          widget.rating != null ?
-                                            Text(
-                                              widget.rating!.toDouble().toString(),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                color: theme.colors.highContrastColor,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          : Text(
-                                            '0',
-                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: theme.colors.highContrastColor,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                                            child: RatingBarIndicator(
-                                              rating: widget.rating?? 0,
-                                              itemBuilder: (context, index) => Icon(
-                                                Icons.star,
-                                                color: theme.colors.tertiary,
-                                              ),
-                                              itemCount: 5,
-                                              itemSize: !isTablet ? 22 : 29,
-                                              direction: Axis.horizontal,
-                                            ),
-                                          ),
-                                          Text(
-                                            '(${widget.publishedCourse.reviews.length.toString()})',
-                                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                              color: theme.colors.highContrastColor,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                BloqoSeasaltContainer(
-                                    child:
-                                  (widget.reviews!.isEmpty) ?
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  localizedText.no_reviews_yet,
-                                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: theme.colors.primaryText,
-                                                    fontSize: 15,
-                                                    ),
-                                                  ),
-                                              ),
-                                            ),
-                                          ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          0, 0, 20, 10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: theme.colors.inBetweenColor,
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
-                                      )
-                                    : _reviewsDisplayed >= widget.publishedCourse.reviews.length ?
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
-                                        child: Column(
-                                          children:
-                                            List.generate(
-                                          _reviewsDisplayed > widget.publishedCourse.reviews.length ?
-                                          widget.publishedCourse.reviews.length : _reviewsDisplayed,
-                                              (index) {
-                                            BloqoReviewData review = widget.reviews![index];
-                                            return BloqoReview(
-                                              review: review,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.qr_code_2,
+                                            color: theme.colors.highContrastColor,
+                                            size: 32,
+                                          ),
+                                          onPressed: () {
+                                            widget.onPush(
+                                                QrCodePage(
+                                                    qrCodeTitle: widget
+                                                        .publishedCourse.courseName,
+                                                    qrCodeContent: "${BloqoQrCodeType
+                                                        .course.name}_${widget
+                                                        .publishedCourse
+                                                        .publishedCourseId}"
+                                                )
                                             );
                                           },
                                         ),
                                       ),
                                     )
+                                  ]
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      20, 4, 20, 12),
+                                  child: Align(
+                                    alignment: Alignment.topLeft,
+                                    child: widget.course.description != null &&
+                                        widget.course.description != ''
+                                        ? Text(
+                                      widget.course.description!,
+                                      style: theme
+                                          .getThemeData()
+                                          .textTheme
+                                          .displaySmall
+                                          ?.copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: theme.colors.highContrastColor,
+                                        fontSize: 16,
+                                      ),
+                                    )
+                                        : const SizedBox
+                                        .shrink(), // This will take up no space
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    20, 5, 20, 0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    localizedText.content,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayLarge
+                                        ?.copyWith(
+                                      color: theme.colors.highContrastColor,
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ...List.generate(
+                                        widget.chapters.length,
+                                            (chapterIndex) {
+                                          var chapter = widget
+                                              .chapters[chapterIndex];
 
-                                      : Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 15),
+                                          return BloqoSeasaltContainer(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(15, 15, 15, 0),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisAlignment: MainAxisAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        '${localizedText
+                                                            .chapter} ${chapterIndex +
+                                                            1}',
+                                                        style: Theme
+                                                            .of(context)
+                                                            .textTheme
+                                                            .displayMedium
+                                                            ?.copyWith(
+                                                          color: theme.colors
+                                                              .secondaryText,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(15, 5, 15, 0),
+                                                  child: Row(
+                                                    children: [
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .topLeft,
+                                                        child: Text(
+                                                          chapter.name,
+                                                          style: Theme
+                                                              .of(context)
+                                                              .textTheme
+                                                              .displayLarge
+                                                              ?.copyWith(
+                                                            color: theme.colors
+                                                                .leadingColor,
+                                                            fontSize: 24,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 0, 0, 10),
+                                                  child: chapter.description !=
+                                                      null &&
+                                                      chapter.description != ''
+                                                      ? Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(15, 5, 15, 10),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize
+                                                          .max,
+                                                      children: [
+                                                        Flexible(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .topLeft,
+                                                            child: Text(
+                                                              chapter.description!,
+                                                              style: theme
+                                                                  .getThemeData()
+                                                                  .textTheme
+                                                                  .displaySmall
+                                                                  ?.copyWith(
+                                                                color: theme.colors
+                                                                    .primaryText,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                      : const SizedBox
+                                                      .shrink(), // This will take up no space
+                                                ),
+
+                                                ... (_showSectionsMap[chapter.id] ==
+                                                    true
+                                                    ? [
+                                                  ...List.generate(
+                                                    widget.sections[chapter.id]!
+                                                        .length,
+                                                        (sectionIndex) {
+                                                      var section = widget
+                                                          .sections[chapter
+                                                          .id]![sectionIndex];
+                                                      return BloqoCourseSection(
+                                                        section: section,
+                                                        index: sectionIndex,
+                                                        isClickable: false,
+                                                        isInLearnPage: false,
+                                                        isCompleted: false,
+                                                        onPressed: () {},
+                                                      );
+                                                    },
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(15, 0, 15, 5),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize
+                                                          .max,
+                                                      mainAxisAlignment: MainAxisAlignment
+                                                          .end,
+                                                      children: [
+                                                        Opacity(
+                                                          opacity: 0.9,
+                                                          child: Align(
+                                                            alignment: const AlignmentDirectional(
+                                                                1, 0),
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                hideSections(
+                                                                    chapter.id);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    localizedText
+                                                                        .collapse,
+                                                                    style: TextStyle(
+                                                                      color: theme
+                                                                          .colors
+                                                                          .secondaryText,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight
+                                                                          .w600,
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons
+                                                                        .keyboard_arrow_up_sharp,
+                                                                    color: theme
+                                                                        .colors
+                                                                        .secondaryText,
+                                                                    size: 25,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                ]
+
+                                                    : [
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(15, 0, 15, 5),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize
+                                                          .max,
+                                                      mainAxisAlignment: MainAxisAlignment
+                                                          .end,
+                                                      children: [
+                                                        Opacity(
+                                                          opacity: 0.9,
+                                                          child: Align(
+                                                            alignment: const AlignmentDirectional(
+                                                                1, 0),
+                                                            child: TextButton(
+                                                              onPressed: () {
+                                                                showSections(
+                                                                    chapter.id);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    localizedText
+                                                                        .view_more,
+                                                                    style: TextStyle(
+                                                                      color: theme
+                                                                          .colors
+                                                                          .secondaryText,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight
+                                                                          .w600,
+                                                                    ),
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons
+                                                                        .keyboard_arrow_right_sharp,
+                                                                    color: theme
+                                                                        .colors
+                                                                        .secondaryText,
+                                                                    size: 25,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ]
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(20, 15, 20, 12),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .spaceBetween,
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: Text(
+                                                localizedText.reviews,
+                                                style: theme
+                                                    .getThemeData()
+                                                    .textTheme
+                                                    .displayLarge
+                                                    ?.copyWith(
+                                                  color: theme.colors
+                                                      .highContrastColor,
+                                                  fontSize: 24,
+                                                ),
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            // This will create space between the first Text and the rest of the Row
+                                            Row(
+                                              children: [
+
+                                                widget.rating != null ?
+                                                Text(
+                                                  widget.rating!
+                                                      .toDouble()
+                                                      .toString(),
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .highContrastColor,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                  ),
+                                                )
+                                                    : Text(
+                                                  '0',
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .highContrastColor,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(8, 0, 8, 0),
+                                                  child: RatingBarIndicator(
+                                                    rating: widget.rating ?? 0,
+                                                    itemBuilder: (context, index) =>
+                                                        Icon(
+                                                          Icons.star,
+                                                          color: theme.colors
+                                                              .tertiary,
+                                                        ),
+                                                    itemCount: 5,
+                                                    itemSize: !isTablet ? 22 : 29,
+                                                    direction: Axis.horizontal,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '(${widget.publishedCourse.reviews
+                                                      .length.toString()})',
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .highContrastColor,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      BloqoSeasaltContainer(
+                                        child:
+                                        (widget.reviews!.isEmpty) ?
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 15, 0, 15),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    localizedText.no_reviews_yet,
+                                                    style: theme
+                                                        .getThemeData()
+                                                        .textTheme
+                                                        .displaySmall
+                                                        ?.copyWith(
+                                                      color: theme.colors
+                                                          .primaryText,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                            : _reviewsDisplayed >=
+                                            widget.publishedCourse.reviews.length ?
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 15, 0, 0),
+                                          child: Column(
+                                            children:
+                                            List.generate(
+                                              _reviewsDisplayed >
+                                                  widget.publishedCourse.reviews
+                                                      .length
+                                                  ?
+                                              widget.publishedCourse.reviews.length
+                                                  : _reviewsDisplayed,
+                                                  (index) {
+                                                BloqoReviewData review = widget
+                                                    .reviews![index];
+                                                return BloqoReview(
+                                                  review: review,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        )
+
+                                            : Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 15, 0, 15),
                                           child: Column(
                                             children: [
                                               ...List.generate(
-                                                _reviewsDisplayed > widget.publishedCourse.reviews.length ?
-                                                widget.publishedCourse.reviews.length : _reviewsDisplayed,
+                                                _reviewsDisplayed >
+                                                    widget.publishedCourse.reviews
+                                                        .length ?
+                                                widget.publishedCourse.reviews
+                                                    .length : _reviewsDisplayed,
                                                     (index) {
-                                                  BloqoReviewData review = widget.reviews![index];
+                                                  BloqoReviewData review = widget
+                                                      .reviews![index];
                                                   return BloqoReview(
                                                     review: review,
                                                   );
@@ -597,117 +729,140 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   text: localizedText.load_more,
                                                   color: theme.colors.leadingColor
                                               ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(
+                                            20, 0, 20, 10),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .spaceBetween,
+                                          children: [
+                                            Flexible(
+                                                child:
+                                                isEnrolled ?
+                                                Text(
+                                                  "${localizedText
+                                                      .enrolled_on} ${DateFormat(
+                                                      'dd/MM/yyyy').format(
+                                                      enrolledCourse!.enrollmentDate
+                                                          .toDate())}",
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .highContrastColor,
+                                                    fontSize: 16,
+                                                  ),
+                                                )
+                                                    : Text(
+                                                  localizedText.published_on +
+                                                      DateFormat('dd/MM/yyyy')
+                                                          .format(widget.course
+                                                          .publicationDate!
+                                                          .toDate()),
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .displaySmall
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .highContrastColor,
+                                                    fontSize: 16,
+                                                  ),
+                                                )
+
+                                            ),
+
                                           ],
                                         ),
                                       ),
-
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      20, 0, 20, 10),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child:
-                                        isEnrolled ?
-                                          Text(
-                                            "${localizedText.enrolled_on} ${DateFormat('dd/MM/yyyy').format(enrolledCourse!.enrollmentDate.toDate())}",
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .displaySmall
-                                                ?.copyWith(
-                                              color: theme.colors.highContrastColor,
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        : Text(
-                                          localizedText.published_on +
-                                              DateFormat('dd/MM/yyyy').format(widget.course.publicationDate!.toDate()),
-                                          style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.copyWith(
-                                            color: theme.colors.highContrastColor,
-                                            fontSize: 16,
-                                          ),
-                                        )
-
-                                      ),
-
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  direction: Axis.horizontal,
-                  runAlignment: WrapAlignment.start,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    !isEnrolled && !isCoursePublic && widget.course.authorId != getUserFromAppState(context: context)!.id?
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            20, 10, 20, 10),
-                        child: BloqoFilledButton(
-                          onPressed: () async {
-                            await _tryRequestAccessToPrivateCourse(
-                              context: context,
-                              localizedText: localizedText,
-                              publishedCourseId: widget.publishedCourse.publishedCourseId,
-                              applicantId: myself.id,
-                              courseAuthorId: widget.publishedCourse.authorId
-                            );
-                          },
-                          height: 60,
-                          color: buttonEnabled ? theme.colors.warning : theme.colors.secondaryText,
-                          text: localizedText.request_access,
-                          icon: Icons.front_hand,
-                          fontSize: 24,
-                        ),
-                      )
-                    : (!isCoursePublic && widget.course.authorId == getUserFromAppState(context: context)!.id?
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 10, 20, 10),
-                      child: BloqoFilledButton(
-                        onPressed: () async {
-                          showBloqoErrorAlert(
-                              context: context,
-                              title: localizedText.error_title,
-                              description: localizedText.creator_cannot_subscribe);
-                        },
-                        height: 60,
-                        color: theme.colors.secondaryText,
-                        text: localizedText.request_access,
-                        icon: Icons.front_hand,
-                        fontSize: 24,
                       ),
-                    )
-                    : (!isEnrolled?
-                        widget.course.authorId != getUserFromAppState(context: context)!.id?
+
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        direction: Axis.horizontal,
+                        runAlignment: WrapAlignment.start,
+                        verticalDirection: VerticalDirection.down,
+                        children: [
+                          !isEnrolled && !isCoursePublic &&
+                              widget.course.authorId !=
+                                  getUserFromAppState(context: context)!.id ?
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 20, 10, 20, 10),
                             child: BloqoFilledButton(
                               onPressed: () async {
-                                _goToLearnPage(context: context, localizedText: localizedText, course: widget.course,
-                                chapters: widget.chapters, sections: widget.sections, publishedCourseId: widget.publishedCourse.publishedCourseId);
+                                await _tryRequestAccessToPrivateCourse(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    publishedCourseId: widget.publishedCourse
+                                        .publishedCourseId,
+                                    applicantId: myself.id,
+                                    courseAuthorId: widget.publishedCourse.authorId
+                                );
+                              },
+                              height: 60,
+                              color: buttonEnabled ? theme.colors.warning : theme
+                                  .colors.secondaryText,
+                              text: localizedText.request_access,
+                              icon: Icons.front_hand,
+                              fontSize: 24,
+                            ),
+                          )
+                              : (!isCoursePublic && widget.course.authorId ==
+                              getUserFromAppState(context: context)!.id ?
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 10, 20, 10),
+                            child: BloqoFilledButton(
+                              onPressed: () async {
+                                showBloqoErrorAlert(
+                                    context: context,
+                                    title: localizedText.error_title,
+                                    description: localizedText
+                                        .creator_cannot_subscribe);
+                              },
+                              height: 60,
+                              color: theme.colors.secondaryText,
+                              text: localizedText.request_access,
+                              icon: Icons.front_hand,
+                              fontSize: 24,
+                            ),
+                          )
+                              : (!isEnrolled ?
+                          widget.course.authorId !=
+                              getUserFromAppState(context: context)!.id ?
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 10, 20, 10),
+                            child: BloqoFilledButton(
+                              onPressed: () async {
+                                _goToLearnPage(context: context,
+                                    localizedText: localizedText,
+                                    course: widget.course,
+                                    chapters: widget.chapters,
+                                    sections: widget.sections,
+                                    publishedCourseId: widget.publishedCourse
+                                        .publishedCourseId);
                               },
                               height: 60,
                               color: theme.colors.leadingColor,
@@ -716,60 +871,64 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                               fontSize: 24,
                             ),
                           )
-                        : Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              20, 10, 20, 10),
-                          child: BloqoFilledButton(
-                            onPressed: () async {
-                              showBloqoErrorAlert(
-                                  context: context,
-                                  title: localizedText.error_title,
-                                  description: localizedText.creator_cannot_subscribe);
-                            },
-                            color: theme.colors.secondaryText,
-                            text: localizedText.enroll_in,
-                            icon: Icons.add,
-                            fontSize: !isTablet ? 24 : 26,
-                            height: !isTablet ? 60 : 64,
-                          ),
-                        )
+                              : Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 10, 20, 10),
+                            child: BloqoFilledButton(
+                              onPressed: () async {
+                                showBloqoErrorAlert(
+                                    context: context,
+                                    title: localizedText.error_title,
+                                    description: localizedText
+                                        .creator_cannot_subscribe);
+                              },
+                              color: theme.colors.secondaryText,
+                              text: localizedText.enroll_in,
+                              icon: Icons.add,
+                              fontSize: !isTablet ? 24 : 26,
+                              height: !isTablet ? 60 : 64,
+                            ),
+                          )
 
-                    : Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          20, 10, 20, 10),
-                      child: BloqoFilledButton(
-                        onPressed: () {
-                              showBloqoConfirmationAlert(
-                                  context: context,
-                                  title: localizedText.warning,
-                                  description: localizedText.unsubscribe_confirmation,
-                                  confirmationFunction: () async {
-                                    await _tryDeleteUserCourseEnrolled(
-                                      context: context,
-                                      localizedText: localizedText,
-                                      courseId: widget.course.id,
-                                      enrolledUserId: myself.id
-                                    );
-                                  },
-                                  backgroundColor: theme.colors.error
-                              );
-                        },
-                        color: isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
-                          theme.colors.inactive : theme.colors.leadingColor,
-                        text: localizedText.unsubscribe,
-                        icon: Icons.close_sharp,
-                        fontSize: !isTablet ? 24 : 26,
-                        height: !isTablet ? 60 : 64,
+                              : Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 10, 20, 10),
+                            child: BloqoFilledButton(
+                              onPressed: () {
+                                showBloqoConfirmationAlert(
+                                    context: context,
+                                    title: localizedText.warning,
+                                    description: localizedText
+                                        .unsubscribe_confirmation,
+                                    confirmationFunction: () async {
+                                      await _tryDeleteUserCourseEnrolled(
+                                          context: context,
+                                          localizedText: localizedText,
+                                          courseId: widget.course.id,
+                                          enrolledUserId: myself.id
+                                      );
+                                    },
+                                    backgroundColor: theme.colors.error
+                                );
+                              },
+                              color: isEnrolled && enrolledCourse != null &&
+                                  enrolledCourse?.isCompleted == true ?
+                              theme.colors.inactive : theme.colors.leadingColor,
+                              text: localizedText.unsubscribe,
+                              icon: Icons.close_sharp,
+                              fontSize: !isTablet ? 24 : 26,
+                              height: !isTablet ? 60 : 64,
+                            ),
+                          )))
+                        ],
                       ),
-                    )))
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                );
+              },
             ),
           );
-
-        },
-      ),
+        }
     );
   }
 
@@ -877,8 +1036,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         if (!context.mounted) return;
         context.loaderOverlay.hide();
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+        showBloqoSnackBar(
+            context: context,
+            text: localizedText.done
         );
       }
     }
@@ -955,8 +1115,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         );
         if(!context.mounted) return;
         context.loaderOverlay.hide();
-        ScaffoldMessenger.of(context).showSnackBar(
-          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+        showBloqoSnackBar(
+            context: context,
+            text: localizedText.done
         );
         setState(() {
           buttonEnabled = false;
