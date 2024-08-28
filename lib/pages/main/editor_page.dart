@@ -7,6 +7,7 @@ import 'package:bloqo/components/popups/bloqo_confirmation_alert.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_review_data.dart';
 import 'package:bloqo/model/courses/bloqo_course_data.dart';
 import 'package:bloqo/pages/from_any/qr_code_page.dart';
+import 'package:bloqo/pages/from_editor/course_content_preview_page.dart';
 import 'package:bloqo/pages/from_editor/publish_course_page.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
@@ -212,10 +213,17 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                           onPublish: () =>
                                                               widget.onPush(
                                                                   PublishCoursePage(
-                                                                      onPush: widget
-                                                                          .onPush,
-                                                                      courseId: course
-                                                                          .courseId)),
+                                                                      onPush: widget.onPush,
+                                                                      courseId: course.courseId
+                                                                  )
+                                                              ),
+                                                          onPreview: () async {
+                                                            await _tryShowCoursePreview(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              userCourseCreated: course
+                                                            );
+                                                          },
                                                         );
                                                       }
                                                       else {
@@ -238,7 +246,15 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                                     onPush: widget
                                                                         .onPush,
                                                                     courseId: course
-                                                                        .courseId,)),
+                                                                        .courseId,)
+                                                              ),
+                                                          onPreview: () async {
+                                                            await _tryShowCoursePreview(
+                                                                context: context,
+                                                                localizedText: localizedText,
+                                                                userCourseCreated: course
+                                                            );
+                                                          },
                                                         );
                                                       }
                                                     },
@@ -418,10 +434,11 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                   return BloqoCourseCreated(
                                                       course: course,
                                                       onPressed: () async {
-                                                        await _goToCoursePage(
+                                                        await _tryShowCoursePreview(
                                                             context: context,
                                                             localizedText: localizedText,
-                                                            userCourseCreated: course);
+                                                            userCourseCreated: course
+                                                        );
                                                       },
                                                       showPublishedOptions: true,
                                                       onViewStatistics: () async {
@@ -447,13 +464,13 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                 else {
                                                   return BloqoCourseCreated(
                                                       course: course,
-                                                      padding: const EdgeInsetsDirectional
-                                                          .all(15),
+                                                      padding: const EdgeInsetsDirectional.all(15),
                                                       onPressed: () async {
-                                                        await _goToCoursePage(
+                                                        await _tryShowCoursePreview(
                                                             context: context,
                                                             localizedText: localizedText,
-                                                            userCourseCreated: course);
+                                                            userCourseCreated: course
+                                                        );
                                                       },
                                                       showPublishedOptions: true,
                                                       onViewStatistics: () async {
@@ -477,15 +494,6 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                   );
                                                 }
                                               },
-                                            ),
-                                            Padding(
-                                              padding: !(publishedCoursesDisplayed <=
-                                                  publishedCourses.length)
-                                                  ?
-                                              const EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 0, 15)
-                                                  : const EdgeInsetsDirectional.all(
-                                                  0),
                                             ),
                                           ],
                                         ),
@@ -522,10 +530,10 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     return BloqoCourseCreated(
                                                       course: course,
                                                       onPressed: () async {
-                                                        await _goToCoursePage(
-                                                          context: context,
-                                                          localizedText: localizedText,
-                                                          userCourseCreated: course,
+                                                        await _tryShowCoursePreview(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            userCourseCreated: course
                                                         );
                                                       },
                                                       showPublishedOptions: true,
@@ -832,6 +840,73 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
         context: context,
         title: localizedText.error_title,
         description: e.message,
+      );
+    }
+  }
+
+  Future<void> _tryShowCoursePreview({required BuildContext context, required var localizedText, required BloqoUserCourseCreatedData userCourseCreated}) async {
+    context.loaderOverlay.show();
+    try{
+      var editorCourse = getEditorCourseFromAppState(context: context);
+      if(editorCourse != null && editorCourse.id == userCourseCreated.courseId){
+        context.loaderOverlay.hide();
+        widget.onPush(
+          CourseContentPreviewPage(onPush: widget.onPush)
+        );
+      }
+      else{
+        var firestore = getFirestoreFromAppState(context: context);
+
+        BloqoCourseData course = await getCourseFromId(
+            firestore: firestore,
+            localizedText: localizedText,
+            courseId: userCourseCreated.courseId
+        );
+
+        List<BloqoChapterData> chapters = await getChaptersFromIds(
+            firestore: firestore,
+            localizedText: localizedText,
+            chapterIds: course.chapters
+        );
+
+        Map<String, List<BloqoSectionData>> sections = {};
+        for(BloqoChapterData chapter in chapters){
+          List<BloqoSectionData> chapterSections = await getSectionsFromIds(
+              firestore: firestore,
+              localizedText: localizedText,
+              sectionIds: chapter.sections
+          );
+          sections[chapter.id] = chapterSections;
+        }
+
+        Map<String, List<BloqoBlockData>> blocks = {};
+        for(BloqoChapterData chapter in chapters) {
+          for (BloqoSectionData section in sections[chapter.id]!) {
+            List<BloqoBlockData> sectionBlocks = await getBlocksFromIds(
+                firestore: firestore,
+                localizedText: localizedText,
+                blockIds: section.blocks
+            );
+            blocks[section.id] = sectionBlocks;
+          }
+        }
+
+        if(!context.mounted) return;
+        saveEditorCourseToAppState(context: context, course: course, chapters: chapters, sections: sections, blocks: blocks);
+
+        context.loaderOverlay.hide();
+        widget.onPush(
+            CourseContentPreviewPage(onPush: widget.onPush)
+        );
+      }
+    }
+    on BloqoException catch (e) {
+      if (!context.mounted) return;
+      context.loaderOverlay.hide();
+      showBloqoErrorAlert(
+          context: context,
+          title: localizedText.error_title,
+          description: e.message
       );
     }
   }

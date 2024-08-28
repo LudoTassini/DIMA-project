@@ -19,7 +19,8 @@ class BloqoColors {
     required this.inactive,
     required this.textBlockButton,
     required this.multimediaBlockButton,
-    required this.quizBlockButton
+    required this.quizBlockButton,
+    required this.previewButton
   });
 
   final Color highContrastColor;
@@ -44,5 +45,7 @@ class BloqoColors {
   final Color textBlockButton;
   final Color multimediaBlockButton;
   final Color quizBlockButton;
+
+  final Color previewButton;
 
 }
