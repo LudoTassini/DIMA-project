@@ -51,7 +51,6 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
   final List<String> _showSectionsList = [];
   bool isInitializedSectionMap = false;
 
-  // FIXME
   void initializeSectionsToShowMap(List<BloqoChapterData> chapters, List<dynamic> chaptersCompleted) {
     for (var chapter in chapters) {
       if (!chaptersCompleted.contains(chapter.id)) {
@@ -474,86 +473,70 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                   }
                                                                 }
 
-                                                                return BloqoCourseSection(
+                                                      return BloqoCourseSection(
+                                                        section: section,
+                                                        index: sectionIndex,
+                                                        isClickable: isClickable,
+                                                        isInLearnPage: true,
+                                                        isCompleted: sectionsCompleted.contains(section.id),
+                                                        onPressed: () async {
+                                                          await _goToSectionPage(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            sectionId: section.id,
+                                                            courseName: course.name,
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                  )
+                                                  else Padding(
+                                                    padding: const EdgeInsets.all(10),
+                                                    child: LayoutBuilder(
+                                                      builder: (BuildContext context, BoxConstraints constraints) {
+                                                        double width = constraints.maxWidth / 2;
+                                                        double height = width / 2.3;
+                                                        double childAspectRatio = width / height;
+
+                                                        return GridView.builder(
+                                                          shrinkWrap: true,
+                                                          physics: const NeverScrollableScrollPhysics(),
+                                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 2,
+                                                            crossAxisSpacing: 10.0,
+                                                            mainAxisSpacing: 10.0,
+                                                            childAspectRatio: childAspectRatio, // 5/2
+                                                          ),
+                                                          itemCount: sections[chapter.id]!.length,
+                                                          itemBuilder: (context, sectionIndex) {
+                                                            var section = sections[chapter.id]![sectionIndex];
+                                                            bool isClickable = isCourseCompleted ||
+                                                            (sectionToComplete! == section.id) ||
+                                                            (sectionsCompleted.contains(section.id));
+
+                                                              return Padding(
+                                                                padding: const EdgeInsets.all(5.0),
+                                                                child: BloqoCourseSection(
                                                                   section: section,
                                                                   index: sectionIndex,
                                                                   isClickable: isClickable,
                                                                   isInLearnPage: true,
-                                                                  isCompleted: sectionsCompleted
-                                                                      .contains(
-                                                                      section.id),
+                                                                  isCompleted: sectionsCompleted.contains(section.id),
                                                                   onPressed: () async {
                                                                     await _goToSectionPage(
                                                                       context: context,
                                                                       localizedText: localizedText,
-                                                                      sectionId: section
-                                                                          .id,
-                                                                      courseName: course
-                                                                          .name,
+                                                                      sectionId: section.id,
+                                                                      courseName: course.name,
                                                                     );
                                                                   },
-                                                                );
-                                                              },
-                                                            )
-                                                          else
-                                                            Padding(
-                                                              padding: const EdgeInsets
-                                                                  .all(10),
-                                                              //FIXME
-                                                              child: GridView
-                                                                  .builder(
-                                                                shrinkWrap: true,
-                                                                physics: const NeverScrollableScrollPhysics(),
-                                                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  crossAxisCount: 2,
-                                                                  crossAxisSpacing: 10.0,
-                                                                  mainAxisSpacing: 10.0,
-                                                                  childAspectRatio: 5 /
-                                                                      2,
                                                                 ),
-                                                                itemCount: sections[chapter
-                                                                    .id]!.length,
-                                                                itemBuilder: (
-                                                                    context,
-                                                                    sectionIndex) {
-                                                                  var section = sections[chapter
-                                                                      .id]![sectionIndex];
-                                                                  bool isClickable = isCourseCompleted ||
-                                                                      (sectionToComplete! ==
-                                                                          section
-                                                                              .id) ||
-                                                                      (sectionsCompleted
-                                                                          .contains(
-                                                                          section
-                                                                              .id));
-
-                                                                  return Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .all(5.0),
-                                                                    child: BloqoCourseSection(
-                                                                      section: section,
-                                                                      index: sectionIndex,
-                                                                      isClickable: isClickable,
-                                                                      isInLearnPage: true,
-                                                                      isCompleted: sectionsCompleted
-                                                                          .contains(
-                                                                          section
-                                                                              .id),
-                                                                      onPressed: () async {
-                                                                        await _goToSectionPage(
-                                                                          context: context,
-                                                                          localizedText: localizedText,
-                                                                          sectionId: section
-                                                                              .id,
-                                                                          courseName: course
-                                                                              .name,
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ),
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      ),
+                                                ),
 
                                                           Padding(
                                                             padding: const EdgeInsetsDirectional
