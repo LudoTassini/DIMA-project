@@ -370,11 +370,12 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                 : const SizedBox.shrink(), // This will take up no space
                                           ),
 
-                                          ... (_showSectionsMap[chapter.id] == true
-                                              ? [
+                                          ... _showSectionsMap[chapter.id] == true
+                                        ? [
+                                          if (!isTablet)
                                             ...List.generate(
                                               widget.sections[chapter.id]!.length,
-                                                  (sectionIndex) {
+                                              (sectionIndex) {
                                                 var section = widget.sections[chapter.id]![sectionIndex];
                                                 return BloqoCourseSection(
                                                   section: section,
@@ -385,87 +386,125 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                                   onPressed: () {},
                                                 );
                                               },
-                                            ),
+                                            )
+                                          else
                                             Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          hideSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.collapse,
-                                                              style: TextStyle(
-                                                                color: theme.colors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Icon(
-                                                              Icons.keyboard_arrow_up_sharp,
-                                                              color: theme.colors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                              padding: const EdgeInsets.all(10),
+                                              child: LayoutBuilder(
+                                              builder: (BuildContext context, BoxConstraints constraints) {
+                                                double width = constraints.maxWidth / 2;
+                                                double height = width / 3.25;
+                                                double childAspectRatio = width / height;
 
-                                          ]
-
-                                              : [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Opacity(
-                                                    opacity: 0.9,
-                                                    child: Align(
-                                                      alignment: const AlignmentDirectional(1, 0),
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          showSections(chapter.id);
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              localizedText.view_more,
-                                                              style: TextStyle(
-                                                                color: theme.colors.secondaryText,
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            Icon(
-                                                              Icons.keyboard_arrow_right_sharp,
-                                                              color: theme.colors.secondaryText,
-                                                              size: 25,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
+                                                return GridView.builder(
+                                                  shrinkWrap: true,
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 10.0,
+                                                    mainAxisSpacing: 10.0,
+                                                    childAspectRatio: childAspectRatio,
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                          ]
+                                                  itemCount: widget.sections[chapter.id]!.length,
+                                                  itemBuilder: (context, sectionIndex) {
+                                                  var section = widget.sections[chapter.id]![sectionIndex];
+
+                                                  return Padding(
+                                                    padding: const EdgeInsets.all(5.0),
+                                                    child: BloqoCourseSection(
+                                                      section: section,
+                                                      index: sectionIndex,
+                                                      isClickable: false,
+                                                      isInLearnPage: false,
+                                                      isCompleted: false,
+                                                      onPressed: () {},
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
                                           ),
+                                        ),
+
+                                        // Collapse/Hide sections button
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Opacity(
+                                                opacity: 0.9,
+                                                child: Align(
+                                                  alignment: const AlignmentDirectional(1, 0),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      hideSections(chapter.id);
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          localizedText.collapse,
+                                                          style: TextStyle(
+                                                            color: theme.colors.secondaryText,
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        Icon(
+                                                        Icons.keyboard_arrow_up_sharp,
+                                                        color: theme.colors.secondaryText,
+                                                        size: 25,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              ],
+                                            ),
+                                          ),
+                                        ]
+
+                                          : [
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    Opacity(
+                                                      opacity: 0.9,
+                                                      child: Align(
+                                                        alignment: const AlignmentDirectional(1, 0),
+                                                        child: TextButton(
+                                                          onPressed: () {
+                                                            showSections(chapter.id);
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                localizedText.view_more,
+                                                                style: TextStyle(
+                                                                  color: theme.colors.secondaryText,
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w600,
+                                                                ),
+                                                              ),
+                                                              Icon(
+                                                                Icons.keyboard_arrow_right_sharp,
+                                                                color: theme.colors.secondaryText,
+                                                                size: 25,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ]
                                         ],
                                       ),
                                     );
@@ -739,20 +778,28 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                           20, 10, 20, 10),
                       child: BloqoFilledButton(
                         onPressed: () {
-                              showBloqoConfirmationAlert(
-                                  context: context,
-                                  title: localizedText.warning,
-                                  description: localizedText.unsubscribe_confirmation,
-                                  confirmationFunction: () async {
-                                    await _tryDeleteUserCourseEnrolled(
-                                      context: context,
-                                      localizedText: localizedText,
-                                      courseId: widget.course.id,
-                                      enrolledUserId: myself.id
-                                    );
-                                  },
-                                  backgroundColor: theme.colors.error
-                              );
+                          isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
+                            showBloqoErrorAlert(
+                              context: context,
+                              title: localizedText.error_title,
+                              description: localizedText.cannot_unsubscribe_course_completed,
+                            ) :
+
+                            showBloqoConfirmationAlert(
+                              context: context,
+                              title: localizedText.warning,
+                              description: localizedText.unsubscribe_confirmation,
+                              confirmationFunction: () async {
+                                await _tryDeleteUserCourseEnrolled(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    courseId: widget.course.id,
+                                    enrolledUserId: myself.id
+                                );
+                              },
+                              backgroundColor: theme.colors.error
+                            );
+
                         },
                         color: isEnrolled && enrolledCourse != null && enrolledCourse?.isCompleted == true ?
                           theme.colors.inactive : theme.colors.leadingColor,
