@@ -107,6 +107,7 @@ class _MainPageState extends State<MainPage> {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
       if(shouldResetStack) {
+        _navigatorKeys[_selectedPageIndex].currentState?.popUntil((route) => false);
         _navigatorKeys[index].currentState?.popUntil((route) => false);
         switch(index){
           case 0:
@@ -207,13 +208,17 @@ class _MainPageState extends State<MainPage> {
               onNotificationIconPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => NotificationsPage(
-                      onNotificationRemoved: () {
-                        WidgetsBinding.instance.addPostFrameCallback((_) async {
-                          await _checkForNotifications(localizedText: localizedText, userId: myself.id);
-                        });
-                      },
-                    ),
+                    builder: (context) =>
+                        NotificationsPage(
+                          onNotificationRemoved: () {
+                            WidgetsBinding.instance.addPostFrameCallback((
+                                _) async {
+                              await _checkForNotifications(
+                                  localizedText: localizedText,
+                                  userId: myself.id);
+                            });
+                          },
+                        ),
                   ),
                 );
               },
@@ -224,16 +229,16 @@ class _MainPageState extends State<MainPage> {
             onItemTapped: _onItemTapped,
           ),
           body: BloqoMainContainer(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _buildPageViews(),
-            )
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                physics: const NeverScrollableScrollPhysics(),
+                children: _buildPageViews(),
+              )
           ),
           resizeToAvoidBottomInset: false,
         );
-      },
+      }
     );
   }
 

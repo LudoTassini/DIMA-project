@@ -39,12 +39,16 @@ class ReviewPage extends StatefulWidget {
 class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMixin<ReviewPage> {
   late TextEditingController controllerTitle;
   late TextEditingController controllerReview;
+  late GlobalKey<FormState> formKeyAnswerTitle;
+  late GlobalKey<FormState> formKeyAnswerReview;
   late bool isRated;
   int selectedRating = 0;
 
   @override
   void initState() {
     super.initState();
+    formKeyAnswerTitle = GlobalKey<FormState>();
+    formKeyAnswerReview = GlobalKey<FormState>();
     controllerTitle = TextEditingController();
     controllerReview = TextEditingController();
 
@@ -71,9 +75,6 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
     final localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
-
-    final formKeyAnswerTitle = GlobalKey<FormState>();
-    final formKeyAnswerReview = GlobalKey<FormState>();
 
     return Consumer<UserCoursesEnrolledAppState>(
         builder: (context, userCoursesEnrolledAppState, _) {
@@ -149,39 +150,39 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                             labelText: localizedText.review,
                             hintText: localizedText.your_review,
                             maxInputLength: Constants.maxReviewLength,
-                            isTextArea: true, // Allow multiline input
+                            isTextArea: true,
                             isDisabled: isRated,  // Disable if already rated
                           ),
                         ),
                       ),
-
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15),
-                          child: isRated
-                              ? Container()
-
-                              : BloqoFilledButton(
-                                  fontSize: !isTablet ? 20 : 26,
-                                  height: !isTablet ? 48 : 64,
-                                  onPressed: () async {
-                                    await _tryPublishReview(
-                                      context: context,
-                                      controllerTitle: controllerTitle,
-                                      controllerReview: controllerReview,
-                                      rating: selectedRating,
-                                      userCourseEnrolled: widget.courseToReview
-                                    );
-                                  },
-                                  color: theme.colors.leadingColor,
-                                  text: localizedText.publish,
-                                  icon: Icons.comment
-                                ),
-                        ),
-                      ),
                     ],
                   ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15)
+                    : Constants.tabletPaddingBloqoFilledButton,
+                child: isRated
+                    ? Container()
+
+                    : BloqoFilledButton(
+                    fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                    height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
+                    onPressed: () async {
+                      await _tryPublishReview(
+                          context: context,
+                          controllerTitle: controllerTitle,
+                          controllerReview: controllerReview,
+                          rating: selectedRating,
+                          userCourseEnrolled: widget.courseToReview
+                      );
+                    },
+                    color: theme.colors.leadingColor,
+                    text: localizedText.publish,
+                    icon: Icons.comment
                 ),
               ),
             ),

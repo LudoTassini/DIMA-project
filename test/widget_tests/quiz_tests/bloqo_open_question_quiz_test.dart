@@ -30,7 +30,8 @@ void main() {
                             name: BloqoBlockType.quizOpenQuestion.toString(),
                             number: 1,
                             content: "q:What’s one+one?\$a<$trimExtraWhitespacesChar$ignoreCaseChar>:two"
-                        )
+                        ),
+                        onQuestionAnsweredCorrectly: () { },
                     )
                 );
               }

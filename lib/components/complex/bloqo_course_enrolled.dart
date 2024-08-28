@@ -51,192 +51,190 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
     var theme = getAppThemeFromAppState(context: context);
 
     return Padding(
-        padding: widget.padding,
-        child: ElevatedButton(
-          style: ButtonStyle(
-            padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
-            shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: theme.colors.leadingColor,
-                width: 3,
-                ),
-              )
+      padding: widget.padding,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          padding: WidgetStateProperty.resolveWith(
+                  (states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
+          backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) => theme.colors.highContrastColor),
+          shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(
+              color: theme.colors.leadingColor,
+              width: 3,
             ),
-          ),
-          onPressed: widget.onPressed,
+          )),
+        ),
+        onPressed: widget.onPressed,
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+            crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.center,
                 children: [
-                  Flexible(
-                    child: Align(
-                      alignment: const AlignmentDirectional(-1, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding:const EdgeInsetsDirectional
-                                .fromSTEB(10, 10, 10, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional
-                                      .fromSTEB(0,0,5,0),
-                                  child: Icon(
-                                    Icons.menu_book_rounded,
-                                    color: theme.colors.leadingColor,
-                                    size: 24,
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Align(
-                                    alignment:const AlignmentDirectional(-1, 0),
-                                    child: Text(
-                                      widget.course!.courseName,
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                        fontSize: 16, ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                      child: Icon(
+                                        Icons.menu_book_rounded,
+                                        color: theme.colors.leadingColor,
+                                        size: 24,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                            const EdgeInsetsDirectional
-                                .fromSTEB(10, 0, 10, 5),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional
-                                      .fromSTEB(0,0,5,0),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: theme.colors.leadingColor,
-                                    size: 24,
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    widget.course!.courseAuthor,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if(widget.showInProgress)
-                            Padding(
-                              padding:
-                              const EdgeInsetsDirectional
-                                  .fromSTEB(10, 0, 10, 0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional
-                                        .fromSTEB(0,0,5,0),
-                                    child: Icon(
-                                      Icons.bookmark_outlined,
-                                      color: theme.colors.leadingColor,
-                                      size: 24,
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      widget.course?.sectionName ?? '', // this is because completed courses do not have a section name, but text can't be of type String?
-                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                        fontSize: 20,
+                                    Expanded(
+                                      child: Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child: Text(
+                                          widget.course!.courseName,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayMedium
+                                              ?.copyWith(
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ],
+                                ),
                               ),
-                          ),
-                        ],
-                      ),
-                  ),
-                ), Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional
-                          .fromSTEB(0, 0, 10, 0),
-                      child: Icon(
-                        Icons.play_circle,
-                        color: theme.colors.leadingColor,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            if(widget.showInProgress)
-              Flexible(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              // Get the maximum available width
-                              double maxWidth = constraints.maxWidth-20;
-
-                              return BloqoProgressBar(
-                                percentage: widget.course!.isCompleted? 1 :
-                                  (widget.course!.sectionsCompleted?.length ?? 0) / widget.course!.totNumSections,
-                                width: maxWidth, // Pass the maximum width to the progress bar
-                              );
-                            },
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 5),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                      child: Icon(
+                                        Icons.person,
+                                        color: theme.colors.leadingColor,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        widget.course!.courseAuthor,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium
+                                            ?.copyWith(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (widget.showInProgress)
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                        child: Icon(
+                                          Icons.bookmark_outlined,
+                                          color: theme.colors.leadingColor,
+                                          size: 24,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          widget.course?.sectionName ?? '',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayMedium
+                                              ?.copyWith(
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                        child: Icon(
+                          Icons.play_circle,
+                          color: theme.colors.leadingColor,
+                          size: 24,
+                        ),
+                      ),
+                    ],
                   ),
-                  ],
-                ),
-              ),
-
-              if(widget.showCompleted)
-                Align(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-                      child: Wrap(
-                        alignment: WrapAlignment.end,
-                        spacing: 10,
-                        runSpacing: 5,
-                        children: [
-                          widget.course!.isRated ? BloqoFilledButton(
-                            color: theme.colors.inactive,
-                            onPressed: () async {
+                  if (widget.showInProgress)
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  width: constraints.maxWidth, // Dynamically use available width
+                                  child: BloqoProgressBar(
+                                    percentage: widget.course!.isCompleted
+                                        ? 1
+                                        : (widget.course!.sectionsCompleted?.length ?? 0) /
+                                        widget.course!.totNumSections,
+                                    width: constraints.maxWidth - 5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  if (widget.showCompleted)
+                    Align(
+                      alignment: AlignmentDirectional.bottomEnd,
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: 10,
+                          runSpacing: 5,
+                          children: [
+                            widget.course!.isRated
+                                ? BloqoFilledButton(
+                              color: theme.colors.inactive,
+                              onPressed: () async {
                                 await _goToReviewPage(
                                   context: context,
                                   localizedText: localizedText,
                                   course: widget.course!,
                                 );
-                            },
-                            text: localizedText.rated,
-                            fontSize: 16,
-                            height: 32,
-                          )
-                          :  BloqoFilledButton(
+                              },
+                              text: localizedText.rated,
+                              fontSize: 16,
+                              height: 32,
+                            )
+                                : BloqoFilledButton(
                               color: theme.colors.rate,
                               onPressed: () async {
                                 await _goToReviewPage(
@@ -271,21 +269,25 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
 
                                 Share.shareXFiles(
                                   [XFile('$directory/certificate.png')],
-                                  sharePositionOrigin: sharePositionOrigin, // Set the share position origin
+                                  sharePositionOrigin: sharePositionOrigin,
                                 );
                               },
                               text: localizedText.get_certificate,
                               fontSize: 16,
                               height: 32,
                             ),
-                        ],
+                          ],
+                        ),
                       ),
-                  )
-                ),
-              ],
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+
   }
 
   @override
