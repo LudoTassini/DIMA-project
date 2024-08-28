@@ -138,7 +138,8 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                           BoxConstraints constraints) {
                                         double width = constraints.maxWidth / 2;
                                         double height = width / 2.25;
-                                        double childAspectRatio = width / height;
+                                        double childAspectRatio = width /
+                                            height;
 
                                         return GridView.builder(
                                           shrinkWrap: true,
@@ -149,7 +150,8 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                             mainAxisSpacing: 10.0,
                                             childAspectRatio: childAspectRatio,
                                           ),
-                                          itemCount: _usersDisplayed > users.length
+                                          itemCount: _usersDisplayed >
+                                              users.length
                                               ? users.length
                                               : _usersDisplayed,
                                           itemBuilder: (context, index) {
@@ -176,8 +178,6 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                 ),
                             ],
                           ),
-
-
                         ),
                       ),
                     );

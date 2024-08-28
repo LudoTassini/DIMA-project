@@ -113,10 +113,12 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(
-                  question,
-                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
-                    color: theme.colors.primaryText,
+                Expanded(
+                  child: Text(
+                    question,
+                    style: theme.getThemeData().textTheme.displaySmall?.copyWith(
+                      color: theme.colors.primaryText,
+                    ),
                   ),
                 ),
               ],

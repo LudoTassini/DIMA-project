@@ -774,7 +774,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 20, 10, 20, 10),
                             child: BloqoFilledButton(
                               onPressed: () async {
-                                _goToLearnPage(context: context,
+                                await _goToLearnPage(context: context,
                                     localizedText: localizedText,
                                     course: widget.course,
                                     chapters: widget.chapters,
@@ -922,8 +922,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
     required String courseId, required String enrolledUserId}) async {
     context.loaderOverlay.show();
     try {
-      List<
-          BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(
+      List<BloqoUserCourseEnrolledData>? courses = getUserCoursesEnrolledFromAppState(
           context: context);
       var firestore = getFirestoreFromAppState(context: context);
       BloqoPublishedCourseData publishedCourseToUpdate = await getPublishedCourseFromCourseId(
@@ -931,19 +930,9 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           localizedText: localizedText,
           courseId: courseId
       );
-      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) =>
-      c.courseId == courseId);
+      BloqoUserCourseEnrolledData courseToRemove = courses!.firstWhere((c) => c.courseId == courseId);
 
-      if (courseToRemove.isCompleted) {
-        if (!context.mounted) return;
-        context.loaderOverlay.hide();
-        showBloqoErrorAlert(
-          context: context,
-          title: localizedText.error_title,
-          description: localizedText.cannot_unsubscribe_course_completed,
-        );
-      } else {
-        await deleteUserCourseEnrolled(
+      await deleteUserCourseEnrolled(
             firestore: firestore,
             localizedText: localizedText,
             courseId: courseId,
@@ -952,8 +941,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
         if (!context.mounted) return;
         deleteUserCourseEnrolledFromAppState(
             context: context, userCourseEnrolled: courseToRemove);
-        publishedCourseToUpdate.numberOfEnrollments =
-            publishedCourseToUpdate.numberOfEnrollments - 1;
+        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments - 1;
         await savePublishedCourseChanges(
             firestore: firestore,
             localizedText: localizedText,
@@ -966,7 +954,6 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
             context: context,
             text: localizedText.done
         );
-      }
     }
     on BloqoException catch (e) {
       if (!context.mounted) return;
