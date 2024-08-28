@@ -69,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                 return Center(
                   child: Text(
                     localizedText.no_notifications,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                       color: theme.colors.highContrastColor,
                     ),
                   ),
@@ -186,7 +186,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
               return Center(
                 child: Text(
                   "Error",
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.error,
                   ),
                 ),

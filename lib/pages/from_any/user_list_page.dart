@@ -2,6 +2,7 @@ import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/buttons/bloqo_text_button.dart';
 import '../../components/complex/bloqo_user_details_short.dart';
@@ -36,7 +37,6 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     void loadMoreUsers() {
@@ -47,50 +47,72 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
 
     var firestore = getFirestoreFromAppState(context: context);
 
-    return BloqoMainContainer(
-      child: FutureBuilder(
-        future: widget.followers
-            ? getUsersFromUserIds(firestore: firestore, localizedText: localizedText, userIds: widget.reference.followers)
-            : getUsersFromUserIds(firestore: firestore, localizedText: localizedText, userIds: widget.reference.following),
-        builder: (BuildContext context, AsyncSnapshot<List<BloqoUserData>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: LoadingAnimationWidget.prograssiveDots(
-                color: theme.colors.highContrastColor,
-                size: 100,
-              ),
-            );
-          } else if (snapshot.hasData) {
-            users = snapshot.data!;
-            if (users.isEmpty) {
-              return Center(
-                child: Text(
-                  localizedText.no_users,
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: theme.colors.highContrastColor,
-                  ),
-                ),
-              );
-            } else {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              (widget.followers ? localizedText.users_who_follow : localizedText.users_who_are_followed_by) +
-                                  widget.reference.username,
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: theme.colors.highContrastColor),
-                            ),
-                          ),
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            child: FutureBuilder(
+              future: widget.followers
+                  ? getUsersFromUserIds(firestore: firestore,
+                  localizedText: localizedText,
+                  userIds: widget.reference.followers)
+                  : getUsersFromUserIds(firestore: firestore,
+                  localizedText: localizedText,
+                  userIds: widget.reference.following),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<BloqoUserData>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: LoadingAnimationWidget.prograssiveDots(
+                      color: theme.colors.highContrastColor,
+                      size: 100,
+                    ),
+                  );
+                } else if (snapshot.hasData) {
+                  users = snapshot.data!;
+                  if (users.isEmpty) {
+                    return Center(
+                      child: Text(
+                        localizedText.no_users,
+                        style: theme
+                            .getThemeData()
+                            .textTheme
+                            .displayMedium
+                            ?.copyWith(
+                          color: theme.colors.highContrastColor,
                         ),
+                      ),
+                    );
+                  } else {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: !isTablet
+                              ? const EdgeInsetsDirectional.all(0)
+                              : Constants.tabletPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    20, 10, 20, 0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    (widget.followers ? localizedText
+                                        .users_who_follow : localizedText
+                                        .users_who_are_followed_by) +
+                                        widget.reference.username,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayLarge
+                                        ?.copyWith(fontSize: 24,
+                                        color: theme.colors.highContrastColor),
+                                  ),
+                                ),
+                              ),
 
                         !isTablet ?
                         Column(
@@ -157,7 +179,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
             return Center(
               child: Text(
                 "Error",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                 ),
               ),

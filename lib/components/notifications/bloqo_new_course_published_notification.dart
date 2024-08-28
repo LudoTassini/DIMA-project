@@ -51,7 +51,7 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
               return Center(
                 child: Text(
                   "Error",
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.error,
                   ),
                 ),
@@ -88,19 +88,19 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
                                 children: [
                                   TextSpan(
                                     text: courseAuthor.username,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   TextSpan(
                                     text: ' ${localizedText.has_published_new_course} ',
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontSize: 18,
                                     ),
                                   ),
                                   TextSpan(
                                     text: widget.notification.courseName!,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -143,7 +143,7 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
             return Center(
               child: Text(
                 "Error",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                 ),
               ),

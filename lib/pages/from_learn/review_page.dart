@@ -73,124 +73,124 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return Consumer<UserCoursesEnrolledAppState>(
-        builder: (context, userCoursesEnrolledAppState, _) {
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
 
-      return BloqoMainContainer(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                        child: Text(
-                          widget.courseToReview.courseName,
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: theme.colors.highContrastColor,
-                              fontSize: 30),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                        child: Text(
-                          !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              color: theme.colors.highContrastColor,
-                              fontSize: 20),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                        child: Row(
-                          children: [
-                            BloqoRatingBar(
-                              rating: selectedRating,  // Set the initial rating
-                              onRatingChanged: isRated ? null : (rating) {
-                                setState(() {
-                                  selectedRating = rating;
-                                });
-                              },
+          return BloqoMainContainer(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                            child: Text(
+                              widget.courseToReview.courseName,
+                              style: theme.getThemeData().textTheme.displayLarge?.copyWith(
+                                  color: theme.colors.highContrastColor,
+                                  fontSize: 30),
                             ),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                        child: Form(
-                          key: formKeyAnswerTitle,
-                          child: BloqoTextField(
-                            controller: controllerTitle, // Pre-populated text
-                            formKey: formKeyAnswerTitle,
-                            labelText: localizedText.title,
-                            hintText: localizedText.review_title,
-                            maxInputLength: Constants.maxReviewTitleLength,
-                            isDisabled: isRated,  // Disable if already rated
                           ),
-                        ),
-                      ),
 
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                        child: Form(
-                          key: formKeyAnswerReview,
-                          child: BloqoTextField(
-                            controller: controllerReview,  // Pre-populated text
-                            formKey: formKeyAnswerReview,
-                            labelText: localizedText.review,
-                            hintText: localizedText.your_review,
-                            maxInputLength: Constants.maxReviewLength,
-                            isTextArea: true,
-                            isDisabled: isRated,  // Disable if already rated
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                            child: Text(
+                              !isRated ? localizedText.review_headliner_to_rate : localizedText.review_headliner_rated,
+                              style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                  color: theme.colors.highContrastColor,
+                                  fontSize: 20),
+                            ),
                           ),
-                        ),
+
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                            child: Row(
+                              children: [
+                                BloqoRatingBar(
+                                  rating: selectedRating,  // Set the initial rating
+                                  onRatingChanged: isRated ? null : (rating) {
+                                    setState(() {
+                                      selectedRating = rating;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                            child: Form(
+                              key: formKeyAnswerTitle,
+                              child: BloqoTextField(
+                                controller: controllerTitle, // Pre-populated text
+                                formKey: formKeyAnswerTitle,
+                                labelText: localizedText.title,
+                                hintText: localizedText.review_title,
+                                maxInputLength: Constants.maxReviewTitleLength,
+                                isDisabled: isRated,  // Disable if already rated
+                              ),
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                            child: Form(
+                              key: formKeyAnswerReview,
+                              child: BloqoTextField(
+                                controller: controllerReview,  // Pre-populated text
+                                formKey: formKeyAnswerReview,
+                                labelText: localizedText.review,
+                                hintText: localizedText.your_review,
+                                maxInputLength: Constants.maxReviewLength,
+                                isTextArea: true,
+                                isDisabled: isRated,  // Disable if already rated
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15)
-                    : Constants.tabletPaddingBloqoFilledButton,
-                child: isRated
-                    ? Container()
+                Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 15)
+                        : Constants.tabletPaddingBloqoFilledButton,
+                    child: isRated
+                        ? Container()
 
-                    : BloqoFilledButton(
-                    fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                    height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                    onPressed: () async {
-                      await _tryPublishReview(
-                          context: context,
-                          controllerTitle: controllerTitle,
-                          controllerReview: controllerReview,
-                          rating: selectedRating,
-                          userCourseEnrolled: widget.courseToReview
-                      );
-                    },
-                    color: theme.colors.leadingColor,
-                    text: localizedText.publish,
-                    icon: Icons.comment
+                        : BloqoFilledButton(
+                        fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                        height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
+                        onPressed: () async {
+                          await _tryPublishReview(
+                              context: context,
+                              controllerTitle: controllerTitle,
+                              controllerReview: controllerReview,
+                              rating: selectedRating,
+                              userCourseEnrolled: widget.courseToReview
+                          );
+                        },
+                        color: theme.colors.leadingColor,
+                        text: localizedText.publish,
+                        icon: Icons.comment
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      );
+          );
 
-    }
+        }
     );
   }
 
@@ -286,8 +286,9 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
       loaderOverlay.hide();
 
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
       );
 
     } on BloqoException catch (e) {

@@ -45,7 +45,11 @@ class _BloqoSwitchState extends State<BloqoSwitch> {
         ),
         Text(
           widget.value.get() ? localizedText.yes : localizedText.no,
-          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+          style: theme
+              .getThemeData()
+              .textTheme
+              .displaySmall
+              ?.copyWith(
             color: theme.colors.leadingColor,
             fontWeight: FontWeight.w500,
           ),

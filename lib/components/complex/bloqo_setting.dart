@@ -41,7 +41,7 @@ class BloqoSetting extends StatelessWidget{
                     children: [
                       Text(
                         settingTitle,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                           fontSize: 28,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0,
@@ -52,7 +52,7 @@ class BloqoSetting extends StatelessWidget{
                         child: Text(
                           settingDescription,
                           textAlign: TextAlign.start,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: theme.getThemeData().textTheme.bodyMedium?.copyWith(
                             fontSize: 18,
                             letterSpacing: 0,
                             height: 1.2,

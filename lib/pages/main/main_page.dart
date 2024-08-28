@@ -107,31 +107,15 @@ class _MainPageState extends State<MainPage> {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
       if(shouldResetStack) {
-        _navigatorKeys[_selectedPageIndex].currentState?.popUntil((route) => false);
-        _navigatorKeys[index].currentState?.popUntil((route) => false);
-        switch(index){
-          case 0:
-            _pushNewPage(_navigatorKeys[0], HomePage(onPush: (newPage) => _pushNewPage(_navigatorKeys[0], newPage), onNavigateToPage: _navigateToPage));
-            break;
-          case 1:
-            _pushNewPage(_navigatorKeys[1], LearnPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[1], newPage), onNavigateToPage: _navigateToPage));
-            break;
-          case 2:
-            _pushNewPage(_navigatorKeys[2], SearchPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[2], newPage), onNavigateToPage: _navigateToPage));
-            break;
-          case 3:
-            _pushNewPage(_navigatorKeys[3], EditorPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[3], newPage), onNavigateToPage: _navigateToPage));
-            break;
-          case 4:
-            _pushNewPage(_navigatorKeys[4], UserPage(onPush: (newPage) => _pushNewPage(_navigatorKeys[4], newPage), onNavigateToPage: _navigateToPage));
-            break;
+        _navigatorKeys[_selectedPageIndex].currentState?.popUntil((
+              route) => route.isFirst);
+        _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
         }
       }
       setState(() {
         _selectedPageIndex = index;
       });
       _pageController.jumpToPage(index);
-    }
     _updateCanPop();
   }
 

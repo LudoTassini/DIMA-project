@@ -39,7 +39,7 @@ class BloqoReview extends StatelessWidget{
                   Text(
                     review.authorUsername,
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                       fontSize: 14,
                       color: theme.colors.primaryText,
                     ),
@@ -63,7 +63,7 @@ class BloqoReview extends StatelessWidget{
                   Text(
                     review.commentTitle,
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme
+                    style: theme.getThemeData().textTheme
                         .displayMedium?.copyWith(
                       fontSize: 18,
                       color: theme.colors.primaryText,
@@ -79,7 +79,7 @@ class BloqoReview extends StatelessWidget{
                   child: Text(
                     review.comment,
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme
+                    style: theme.getThemeData().textTheme
                         .displayMedium?.copyWith(
                       fontSize: 14,
                       color: theme.colors.secondaryText,

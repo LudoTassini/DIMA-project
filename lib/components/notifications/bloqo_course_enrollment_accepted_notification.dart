@@ -51,7 +51,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
               return Center(
                 child: Text(
                   "Error",
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.error,
                   ),
                 ),
@@ -88,19 +88,19 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
                                 children: [
                                   TextSpan(
                                     text: courseAuthor.username,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   TextSpan(
                                     text: localizedText.has_granted_access,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontSize: 18,
                                     ),
                                   ),
                                   TextSpan(
                                     text: widget.notification.privateCourseName!,
-                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -143,7 +143,7 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
             return Center(
               child: Text(
                 "Error",
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                   color: theme.colors.error,
                 ),
               ),

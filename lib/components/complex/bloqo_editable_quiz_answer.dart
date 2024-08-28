@@ -64,7 +64,7 @@ class _BloqoEditableQuizAnswerState extends State<BloqoEditableQuizAnswer>{
                         children: [
                           Text(
                             "${localizedText.answer} ${widget.answerNumber}",
-                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                               color: theme.colors.leadingColor,
                               fontWeight: FontWeight.w600
                             )
@@ -112,7 +112,7 @@ class _BloqoEditableQuizAnswerState extends State<BloqoEditableQuizAnswer>{
                   children: [
                     Text(
                         localizedText.is_answer_correct,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                             color: theme.colors.leadingColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w500

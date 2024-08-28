@@ -1,42 +1,48 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_popup_menu_filled_button.dart';
 import 'package:bloqo/style/themes/purple_orchid_theme.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-
   bool firstTapped = false;
   bool secondTapped = false;
 
-  final testedWidget = MaterialApp(
-    localizationsDelegates: getLocalizationDelegates(),
-    supportedLocales: getSupportedLocales(),
-    home: Builder(
-      builder: (BuildContext context) {
-        return Scaffold(
-          body: BloqoPopupMenuFilledButton(
-              mainColor: PurpleOrchidTheme().colors.leadingColor,
-              mainText: "Test",
-              texts: const [
-                "First",
-                "Second"
-              ],
-              colors: const [
-                Colors.red,
-                Colors.blue
-              ],
-              onPressedList: [
-                    () {
-                  firstTapped = true;
-                },
-                    () {
-                  secondTapped = true;
-                }
-              ]
-          ),
-        );
-      },
+  final testedWidget = MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => ApplicationSettingsAppState()),
+    ],
+    child: MaterialApp(
+      localizationsDelegates: getLocalizationDelegates(),
+      supportedLocales: getSupportedLocales(),
+      home: Builder(
+        builder: (BuildContext context) {
+          return Scaffold(
+            body: BloqoPopupMenuFilledButton(
+                mainColor: PurpleOrchidTheme().colors.leadingColor,
+                mainText: "Test",
+                texts: const [
+                  "First",
+                  "Second"
+                ],
+                colors: const [
+                  Colors.red,
+                  Colors.blue
+                ],
+                onPressedList: [
+                      () {
+                    firstTapped = true;
+                  },
+                      () {
+                    secondTapped = true;
+                  }
+                ]
+            ),
+          );
+        },
+      ),
     ),
   );
 

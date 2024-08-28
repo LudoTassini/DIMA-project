@@ -77,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                 child: Text(
                   'bloQo',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                     color: theme.colors.highContrastColor,
                     fontSize: 60,
                   ),
@@ -98,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Text(
                               localizedText.register_thank_you,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                                 color: theme.colors.leadingColor,
                                 fontSize: 25,
                               )
@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Text(
                             localizedText.register_explanation,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                            style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                               color: theme.colors.leadingColor,
                               fontWeight: FontWeight.w500,
                             ),
@@ -170,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               Flexible(
                                 child: Text(
                                   localizedText.full_name_visible,
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                     color: theme.colors.leadingColor,
                                     fontWeight: FontWeight.w500,
                                   ),

@@ -12,6 +12,7 @@ import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../components/containers/bloqo_main_container.dart';
@@ -71,23 +72,27 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> with AutomaticKeepAlive
     super.build(context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-      child: Padding(
-        padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-            : Constants.tabletPadding,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: QRView(
-                key: qrKey,
-                onQRViewCreated: (qrc) async {
-                  await _onQRViewCreated(context: context, controller: qrc);
-                },
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          return BloqoMainContainer(
+            child: Padding(
+              padding: !isTablet ? const EdgeInsetsDirectional.all(0)
+                  : Constants.tabletPadding,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: QRView(
+                      key: qrKey,
+                      onQRViewCreated: (qrc) async {
+                        await _onQRViewCreated(context: context, controller: qrc);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
     );
   }
 

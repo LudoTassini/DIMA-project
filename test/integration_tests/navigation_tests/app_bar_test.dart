@@ -17,8 +17,7 @@ void main() {
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
-    await tester.tap(find.text("Search"));
-    await tester.pump();
+    await goToStack(tester: tester, stack: "Search");
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
@@ -36,7 +35,7 @@ void main() {
   });
 
   testWidgets('Users can view notifications and go back to the previous page', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2388, 2000));
 
     await initTestApp(tester: tester);
 
@@ -44,7 +43,7 @@ void main() {
 
     expect(find.byIcon(Icons.arrow_back), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.notifications), warnIfMissed: false);
+    await tester.tap(find.byType(Positioned).first);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.notifications), findsNothing);

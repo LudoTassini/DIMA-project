@@ -8,6 +8,7 @@ import 'package:bloqo/pages/from_search/course_search_page.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/buttons/bloqo_text_button.dart';
@@ -49,7 +50,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
   Widget build(BuildContext context){
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     if(!_initialized && isTablet){
@@ -66,43 +66,55 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
       });
     }
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Column(
-        children: [
-          Expanded(
-          child:SingleChildScrollView(
-            child: Padding(
-              padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                      child: Text(
-                        localizedText.search_results_header,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: theme.colors.highContrastColor,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  widget.publishedCourses.isNotEmpty
-                      ? BloqoSeasaltContainer(
-                    child: isTablet
-                        ? Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(10, 20, 10, 10),
+                      padding: !isTablet
+                          ? const EdgeInsetsDirectional.all(0)
+                          : Constants.tabletPadding,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          LayoutBuilder(
-                            builder: (BuildContext context, BoxConstraints constraints) {
-                              double width = constraints.maxWidth / 2;
-                              double height = width;
-                              double childAspectRatio = width / height;
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  20, 20, 20, 0),
+                              child: Text(
+                                localizedText.search_results_header,
+                                style: theme
+                                    .getThemeData()
+                                    .textTheme
+                                    .displayLarge
+                                    ?.copyWith(
+                                  color: theme.colors.highContrastColor,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          widget.publishedCourses.isNotEmpty
+                              ? BloqoSeasaltContainer(
+                            child: isTablet
+                                ? Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(10, 20,
+                                  10, 10),
+                              child: Column(
+                                children: [
+                                  LayoutBuilder(
+                                      builder: (BuildContext context,
+                                          BoxConstraints constraints) {
+                                        double width = constraints.maxWidth / 2;
+                                        double height = width;
+                                        double childAspectRatio = width / height;
 
                               return GridView.builder(
                                 shrinkWrap: true,
@@ -184,40 +196,48 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                     ),
                   )
 
-                    : BloqoSeasaltContainer(
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
-                        child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            localizedText.no_search_results,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: theme.colors.leadingColor,
-                              fontSize: 15,
+                              : BloqoSeasaltContainer(
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  20, 15, 20, 0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    localizedText.no_search_results,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displaySmall
+                                        ?.copyWith(
+                                      color: theme.colors.leadingColor,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        30, 15, 30, 15),
+                                    child: BloqoFilledButton(
+                                      onPressed: () => widget.onNavigateToPage(2),
+                                      color: theme.colors.leadingColor,
+                                      text: localizedText.take_me_there_button,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(30, 15, 30, 15),
-                            child: BloqoFilledButton(
-                              onPressed: () => widget.onNavigateToPage(2),
-                              color: theme.colors.leadingColor,
-                              text: localizedText.take_me_there_button,
-                              fontSize: 16,
-                            ),
+
                           ),
                         ],
                       ),
-                      ),
-
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
     );
   }
 

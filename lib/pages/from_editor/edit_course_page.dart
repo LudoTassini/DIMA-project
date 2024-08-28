@@ -62,197 +62,257 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-        alignment: const AlignmentDirectional(-1.0, -1.0),
-        child: Consumer<EditorCourseAppState>(
-            builder: (context, editorCourseAppState, _){
-              BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
-              List<BloqoChapterData> chapters = getEditorCourseChaptersFromAppState(context: context) ?? [];
-              if(firstBuild) {
-                courseNameController.text = course.name;
-                if (course.description != null) {
-                  courseDescriptionController.text = course.description!;
-                }
-                firstBuild = false;
-              }
-              bool editable = !course.published;
-              return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BloqoBreadcrumbs(breadcrumbs: [
-                      course.name
-                    ]),
-                    Expanded(
-                        child: SingleChildScrollView(
-                            child: Padding(
-                              padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                              child: Column(
-                                children: [
-                                  Form(
-                                      key: formKeyCourseName,
-                                      child: BloqoTextField(
-                                        formKey: formKeyCourseName,
-                                        controller: courseNameController,
-                                        labelText: localizedText.name,
-                                        hintText: localizedText.editor_course_name_hint,
-                                        maxInputLength: Constants.maxCourseNameLength,
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      )
-                                  ),
-                                  Form(
-                                      key: formKeyCourseDescription,
-                                      child: BloqoTextField(
-                                        formKey: formKeyCourseDescription,
-                                        controller: courseDescriptionController,
-                                        labelText: localizedText.description,
-                                        hintText: localizedText.editor_course_description_hint,
-                                        maxInputLength: Constants.maxCourseDescriptionLength,
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                        isTextArea: true,
-                                      )
-                                  ),
-                                  BloqoSeasaltContainer(
-                                      child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                              child: Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  localizedText.chapters_header,
-                                                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                    color: theme.colors.leadingColor,
-                                                    fontSize: 30,
-                                                  ),
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+              alignment: const AlignmentDirectional(-1.0, -1.0),
+              child: Consumer<EditorCourseAppState>(
+                  builder: (context, editorCourseAppState, _) {
+                    BloqoCourseData course = getEditorCourseFromAppState(
+                        context: context)!;
+                    List<
+                        BloqoChapterData> chapters = getEditorCourseChaptersFromAppState(
+                        context: context) ?? [];
+                    if (firstBuild) {
+                      courseNameController.text = course.name;
+                      if (course.description != null) {
+                        courseDescriptionController.text = course.description!;
+                      }
+                      firstBuild = false;
+                    }
+                    bool editable = !course.published;
+                    return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BloqoBreadcrumbs(breadcrumbs: [
+                            course.name
+                          ]),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding: !isTablet ? const EdgeInsetsDirectional
+                                    .all(0) : Constants.tabletPadding,
+                                child: Column(
+                                    children: [
+                                      Form(
+                                          key: formKeyCourseName,
+                                          child: BloqoTextField(
+                                            formKey: formKeyCourseName,
+                                            controller: courseNameController,
+                                            labelText: localizedText.name,
+                                            hintText: localizedText
+                                                .editor_course_name_hint,
+                                            maxInputLength: Constants
+                                                .maxCourseNameLength,
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(20, 20, 20, 0),
+                                          )
+                                      ),
+                                      Form(
+                                          key: formKeyCourseDescription,
+                                          child: BloqoTextField(
+                                            formKey: formKeyCourseDescription,
+                                            controller: courseDescriptionController,
+                                            labelText: localizedText.description,
+                                            hintText: localizedText
+                                                .editor_course_description_hint,
+                                            maxInputLength: Constants
+                                                .maxCourseDescriptionLength,
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(20, 20, 20, 20),
+                                            isTextArea: true,
+                                          )
+                                      ),
+                                      BloqoSeasaltContainer(
+                                          child: Column(
+                                              children: [
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 20, 20, 0),
+                                                    child: Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: Text(
+                                                        localizedText
+                                                            .chapters_header,
+                                                        style: theme
+                                                            .getThemeData()
+                                                            .textTheme
+                                                            .displayLarge
+                                                            ?.copyWith(
+                                                          color: theme.colors
+                                                              .leadingColor,
+                                                          fontSize: 30,
+                                                        ),
+                                                      ),
+                                                    )
                                                 ),
-                                              )
-                                            ),
-                                            if(course.chapters.isEmpty)
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 15),
-                                                child: Text(
-                                                  localizedText.edit_course_page_no_chapters,
-                                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: theme.colors.primaryText,
-                                                    fontSize: 14,
+                                                if(course.chapters.isEmpty)
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 15, 20, 15),
+                                                    child: Text(
+                                                      localizedText
+                                                          .edit_course_page_no_chapters,
+                                                      style: theme
+                                                          .getThemeData()
+                                                          .textTheme
+                                                          .displaySmall
+                                                          ?.copyWith(
+                                                        color: theme.colors
+                                                            .primaryText,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            if(course.chapters.isNotEmpty)
-                                              Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: List.generate(
-                                                  course.chapters.length,
-                                                  (index) {
-                                                    BloqoChapterData chapter = chapters[index];
-                                                    if (index < course.chapters.length - 1) {
-                                                      return BloqoEditableChapter(
-                                                          course: course,
-                                                          chapter: chapter,
-                                                          editable: editable,
-                                                          onPressed: () {
-                                                            widget.onPush(EditChapterPage(onPush: widget.onPush, chapterId: chapter.id,));
+                                                if(course.chapters.isNotEmpty)
+                                                  Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: List.generate(
+                                                        course.chapters.length,
+                                                            (index) {
+                                                          BloqoChapterData chapter = chapters[index];
+                                                          if (index <
+                                                              course.chapters
+                                                                  .length - 1) {
+                                                            return BloqoEditableChapter(
+                                                                course: course,
+                                                                chapter: chapter,
+                                                                editable: editable,
+                                                                onPressed: () {
+                                                                  widget.onPush(
+                                                                      EditChapterPage(
+                                                                        onPush: widget
+                                                                            .onPush,
+                                                                        chapterId: chapter
+                                                                            .id,));
+                                                                }
+                                                            );
                                                           }
-                                                      );
-                                                    }
-                                                    else{
-                                                      return BloqoEditableChapter(
-                                                        course: course,
-                                                        chapter: chapter,
-                                                        editable: editable,
-                                                        padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                                        onPressed: () {
-                                                          widget.onPush(EditChapterPage(onPush: widget.onPush, chapterId: chapter.id,));
+                                                          else {
+                                                            return BloqoEditableChapter(
+                                                                course: course,
+                                                                chapter: chapter,
+                                                                editable: editable,
+                                                                padding: const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    15, 15, 15, 15),
+                                                                onPressed: () {
+                                                                  widget.onPush(
+                                                                      EditChapterPage(
+                                                                        onPush: widget
+                                                                            .onPush,
+                                                                        chapterId: chapter
+                                                                            .id,));
+                                                                }
+                                                            );
+                                                          }
                                                         }
-                                                      );
-                                                    }
-                                                  }
-                                                ),
-                                              ),
-                                            if(editable)
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                                child: BloqoFilledButton(
-                                                  color: theme.colors.leadingColor,
-                                                  onPressed: () async {
-                                                    context.loaderOverlay.show();
-                                                    WidgetsBinding.instance.addPostFrameCallback((_) async {
-                                                      try {
-                                                        await _addChapter(
-                                                          context: context,
-                                                          course: course,
-                                                          chapters: chapters
-                                                        );
-                                                        if (!context.mounted) return;
-                                                        ScaffoldMessenger.of(context).showSnackBar(
-                                                          BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                                                        );
-                                                        context.loaderOverlay.hide();
-                                                      } on BloqoException catch (e) {
-                                                        if (!context.mounted) return;
-                                                        context.loaderOverlay.hide();
-                                                        showBloqoErrorAlert(
-                                                          context: context,
-                                                          title: localizedText.error_title,
-                                                          description: e.message,
-                                                        );
-                                                      }
-                                                    });
-                                                  },
-                                                  text: localizedText.add_chapter,
-                                                  icon: Icons.add,
-                                                ),
-                                              )
-                                          ]
+                                                    ),
+                                                  ),
+                                                if(editable)
+                                                  Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(30, 10, 30, 20),
+                                                    child: BloqoFilledButton(
+                                                      color: theme.colors
+                                                          .leadingColor,
+                                                      onPressed: () async {
+                                                        context.loaderOverlay
+                                                            .show();
+                                                        WidgetsBinding.instance
+                                                            .addPostFrameCallback((
+                                                            _) async {
+                                                          try {
+                                                            await _addChapter(
+                                                                context: context,
+                                                                course: course,
+                                                                chapters: chapters
+                                                            );
+                                                            if (!context.mounted) return;
+                                                            showBloqoSnackBar(
+                                                                context: context,
+                                                                text: localizedText
+                                                                    .done
+                                                            );
+                                                            context.loaderOverlay
+                                                                .hide();
+                                                          } on BloqoException catch (e) {
+                                                            if (!context.mounted) return;
+                                                            context.loaderOverlay
+                                                                .hide();
+                                                            showBloqoErrorAlert(
+                                                              context: context,
+                                                              title: localizedText
+                                                                  .error_title,
+                                                              description: e
+                                                                  .message,
+                                                            );
+                                                          }
+                                                        });
+                                                      },
+                                                      text: localizedText
+                                                          .add_chapter,
+                                                      icon: Icons.add,
+                                                    ),
+                                                  )
+                                              ]
+                                          )
                                       )
-                                  )
-                                ]
+                                    ]
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                    ),
-                    if(editable)
-                      Padding(
-                        padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
-                          : Constants.tabletPaddingBloqoFilledButton,
-                        child: BloqoFilledButton(
-                          color: theme.colors.leadingColor,
-                          fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                          height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                          onPressed: () async {
-                            context.loaderOverlay.show();
-                            try {
-                              await _saveChanges(
-                                context: context,
-                                course: course,
-                                chapters: chapters
-                              );
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                              );
-                              context.loaderOverlay.hide();
-                            } on BloqoException catch (e) {
-                              if (!context.mounted) return;
-                              context.loaderOverlay.hide();
-                              showBloqoErrorAlert(
-                                context: context,
-                                title: localizedText.error_title,
-                                description: e.message,
-                              );
-                            }
-                          },
-                          text: localizedText.save_changes,
-                          icon: Icons.edit,
-                        ),
-                      ),
-                  ]
-              );
-            }
-        )
+                          if(editable)
+                            Padding(
+                              padding: !isTablet ? const EdgeInsetsDirectional
+                                  .fromSTEB(20, 10, 20, 10)
+                                  : Constants.tabletPaddingBloqoFilledButton,
+                              child: BloqoFilledButton(
+                                color: theme.colors.leadingColor,
+                                fontSize: !isTablet
+                                    ? Constants.fontSizeNotTablet
+                                    : Constants.fontSizeTablet,
+                                height: !isTablet
+                                    ? Constants.heightNotTablet
+                                    : Constants.heightTablet,
+                                onPressed: () async {
+                                  context.loaderOverlay.show();
+                                  try {
+                                    await _saveChanges(
+                                        context: context,
+                                        course: course,
+                                        chapters: chapters
+                                    );
+                                    if (!context.mounted) return;
+                                    showBloqoSnackBar(
+                                        context: context,
+                                        text: localizedText.done
+                                    );
+                                    context.loaderOverlay.hide();
+                                  } on BloqoException catch (e) {
+                                    if (!context.mounted) return;
+                                    context.loaderOverlay.hide();
+                                    showBloqoErrorAlert(
+                                      context: context,
+                                      title: localizedText.error_title,
+                                      description: e.message,
+                                    );
+                                  }
+                                },
+                                text: localizedText.save_changes,
+                                icon: Icons.edit,
+                              ),
+                            ),
+                        ]
+                    );
+                  }
+              )
+          );
+        }
     );
   }
 
