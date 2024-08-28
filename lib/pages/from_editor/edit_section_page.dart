@@ -114,12 +114,10 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                                                   formKey: formKeyChapterName,
                                                   controller: sectionNameController,
                                                   labelText: localizedText.name,
-                                                  hintText: localizedText
-                                                      .editor_section_name_hint,
-                                                  maxInputLength: Constants
-                                                      .maxChapterNameLength,
-                                                  padding: const EdgeInsetsDirectional
-                                                      .fromSTEB(20, 20, 20, 20),
+                                                  hintText: localizedText.editor_section_name_hint,
+                                                  maxInputLength: Constants.maxChapterNameLength,
+                                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                                                  isDisabled: !editable
                                                 )
                                             ),
                                             BloqoSeasaltContainer(

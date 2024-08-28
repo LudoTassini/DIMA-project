@@ -109,12 +109,10 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                                 formKey: formKeyChapterName,
                                                 controller: chapterNameController,
                                                 labelText: localizedText.name,
-                                                hintText: localizedText
-                                                    .editor_chapter_name_hint,
-                                                maxInputLength: Constants
-                                                    .maxChapterNameLength,
-                                                padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(20, 20, 20, 0),
+                                                hintText: localizedText.editor_chapter_name_hint,
+                                                maxInputLength: Constants.maxChapterNameLength,
+                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                                isDisabled: !editable
                                               )
                                           ),
                                           Form(
@@ -122,15 +120,12 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
                                               child: BloqoTextField(
                                                 formKey: formKeyChapterDescription,
                                                 controller: chapterDescriptionController,
-                                                labelText: localizedText
-                                                    .description,
-                                                hintText: localizedText
-                                                    .editor_chapter_description_hint,
-                                                maxInputLength: Constants
-                                                    .maxChapterDescriptionLength,
-                                                padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(20, 20, 20, 20),
+                                                labelText: localizedText.description,
+                                                hintText: localizedText.editor_chapter_description_hint,
+                                                maxInputLength: Constants.maxChapterDescriptionLength,
+                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                                                 isTextArea: true,
+                                                isDisabled: !editable
                                               )
                                           ),
                                           BloqoSeasaltContainer(

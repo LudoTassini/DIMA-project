@@ -504,16 +504,13 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                                 Form(
                                                     key: formKeyYouTube,
                                                     child: BloqoTextField(
-                                                      padding: const EdgeInsetsDirectional
-                                                          .fromSTEB(20, 20, 20, 10),
+                                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 10),
                                                       formKey: formKeyYouTube,
                                                       controller: youTubeLinkController,
-                                                      labelText: localizedText
-                                                          .youtube_link,
-                                                      hintText: localizedText
-                                                          .enter_youtube_link,
-                                                      maxInputLength: Constants
-                                                          .maxYouTubeLinkLength,
+                                                      labelText: localizedText.youtube_link,
+                                                      hintText: localizedText.enter_youtube_link,
+                                                      maxInputLength: Constants.maxYouTubeLinkLength,
+                                                      isDisabled: !editable
                                                     )
                                                 ),
                                                 Padding(
@@ -548,8 +545,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     .type == BloqoBlockType.multimediaAudio
                                     .toString())
                                   BloqoSeasaltContainer(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          20, 0, 20, 20),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                                       child: Column(
                                           children: [
                                             Padding(

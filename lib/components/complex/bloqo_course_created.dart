@@ -144,7 +144,14 @@ class BloqoCourseCreated extends StatelessWidget {
                         text: localizedText.publish,
                         fontSize: 16,
                         height: 32,
-                      )
+                      ),
+                      /*BloqoFilledButton(
+                        color: theme.colors.publish,
+                        onPressed: onPublish ?? () {},
+                        text: localizedText.publish,
+                        fontSize: 16,
+                        height: 32,
+                      )*/
                     ]
                   ),
                 ),
