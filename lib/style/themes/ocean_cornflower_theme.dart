@@ -30,6 +30,7 @@ class OceanCornflowerTheme extends BloqoAppTheme{
       textBlockButton: const Color(0xFF092127),
       multimediaBlockButton: const Color(0xFF3792AF),
       quizBlockButton: const Color(0xFF095A30),
+      previewButton: const Color(0xFFEF6398)
     );
   }
 

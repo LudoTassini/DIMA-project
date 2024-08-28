@@ -28,34 +28,33 @@ class BloqoCourseSection extends StatelessWidget{
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 15),
-      child: isInLearnPage && isClickable
-          ? ElevatedButton(
-        style: ButtonStyle(
-          padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8)),
-          backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
-          shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
+      child: isClickable ?
+        ElevatedButton(
+          style: ButtonStyle(
+            padding: WidgetStateProperty.resolveWith((states) => const EdgeInsetsDirectional.all(11)),
+            backgroundColor: WidgetStateProperty.resolveWith((states) => theme.colors.highContrastColor),
+            shape: WidgetStateProperty.resolveWith((states) => RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(
+                color: theme.colors.leadingColor,
+                width: 3,
+              ),
+            )),
+          ),
+          onPressed: onPressed,
+          child: _buildContent(context, localizedText, isCompleted),
+        ) : Container(
+          decoration: BoxDecoration(
+            color: theme.colors.highContrastColor,
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
+            border: Border.all(
               color: theme.colors.leadingColor,
               width: 3,
             ),
-          )),
-        ),
-        onPressed: onPressed,
-        child: _buildContent(context, localizedText, isCompleted),
-      )
-          : Container(
-        decoration: BoxDecoration(
-          color: theme.colors.highContrastColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: theme.colors.leadingColor,
-            width: 3,
           ),
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
+          child: _buildContent(context, localizedText, isCompleted),
         ),
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-        child: _buildContent(context, localizedText, isCompleted),
-      ),
     );
   }
 
@@ -66,7 +65,7 @@ class BloqoCourseSection extends StatelessWidget{
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
@@ -77,31 +76,21 @@ class BloqoCourseSection extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsetsDirectional
-                          .fromSTEB(10, 10, 10, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
                       child: Text(
                         '${localizedText.section} ${index + 1}',
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.copyWith(
+                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                           fontSize: 14,
                           color: theme.colors.secondaryText,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          10, 5, 10, 0), //10, 10, 10, 0
+                      padding: const EdgeInsetsDirectional.fromSTEB(10, 5, 10, 0), //10, 10, 10, 0
                       child: Text(
                         section.name,
                         textAlign: TextAlign.start,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.copyWith(
+                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                           fontSize: 20,
                           color: theme.colors.primaryText,
                           fontWeight: FontWeight.w500,
@@ -109,77 +98,69 @@ class BloqoCourseSection extends StatelessWidget{
                       ),
                     ),
 
-                    isCompleted ?
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          10, 5, 10, 5),
-                      child: Row(
-                        children: [
-                          Text(
-                            localizedText.completed_section,
-                            textAlign: TextAlign.start,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .displayMedium
-                                ?.copyWith(
-                              fontSize: 16,
-                              color: theme.colors.success,
-                              fontWeight: FontWeight.w600,
+                    if(isInLearnPage && isCompleted)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(10, 5, 10, 5),
+                        child: Row(
+                          children: [
+                            Text(
+                              localizedText.completed_section,
+                              textAlign: TextAlign.start,
+                              style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                fontSize: 16,
+                                color: theme.colors.success,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                            child: Icon(
-                              Icons.check,
-                              color: theme.colors.success,
-                              size: 24,
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                              child: Icon(
+                                Icons.check,
+                                color: theme.colors.success,
+                                size: 24,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )
 
-                        : isInLearnPage ?
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          10, 5, 10, 5),
-                      child: Row(
-                        children: [
-                          Text(
-                            localizedText.not_completed,
-                            textAlign: TextAlign.start,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .displayMedium
-                                ?.copyWith(
-                              fontSize: 16,
-                              color: theme.colors.secondaryText,
-                              fontWeight: FontWeight.w600,
+                    if(isInLearnPage && !isCompleted)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            10, 5, 10, 5),
+                        child: Row(
+                          children: [
+                            Text(
+                              localizedText.not_completed,
+                              textAlign: TextAlign.start,
+                              style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                fontSize: 16,
+                                color: theme.colors.secondaryText,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )
-                        : const Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
-                    ), // This will take up no space
+
+                    if(!isCompleted && !isInLearnPage)
+                      const Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
+                      ), // This will take up no space
                   ],
                 ),
               ),
             ),
 
-            isInLearnPage & isClickable ?
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 5, 5),
-              child: Icon(
-                Icons.play_circle,
-                color: theme.colors.leadingColor,
-                size: 24,
-              ),
-            )
-                : const SizedBox.shrink(),
+            isClickable ?
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 5, 5),
+                child: Icon(
+                  Icons.play_circle,
+                  color: theme.colors.leadingColor,
+                  size: 24,
+                ),
+              ) : const SizedBox.shrink(),
 
           ],
         ),
