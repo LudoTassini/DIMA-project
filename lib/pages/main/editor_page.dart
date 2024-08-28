@@ -244,7 +244,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     },
                                                   ),
                                                   Padding(
-                                                    padding: !(inProgressCoursesDisplayed <=
+                                                    padding: !(inProgressCoursesDisplayed <
                                                         inProgressCourses.length)
                                                         ?
                                                     const EdgeInsetsDirectional
@@ -479,11 +479,11 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                               },
                                             ),
                                             Padding(
-                                              padding: !(publishedCoursesDisplayed <=
+                                              padding: !(publishedCoursesDisplayed <
                                                   publishedCourses.length)
                                                   ?
                                               const EdgeInsetsDirectional.fromSTEB(
-                                                  0, 0, 0, 15)
+                                                  0, 0, 0, 0)
                                                   : const EdgeInsetsDirectional.all(
                                                   0),
                                             ),
