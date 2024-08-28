@@ -92,7 +92,7 @@ class MockExternalServices {
           isRated: false,
           isCompleted: false,
           sectionName: "test",
-          sectionToComplete: "test"
+          sectionToComplete: "test1"
         ),
         testNotification = BloqoNotificationData(
           id: "test",
@@ -204,7 +204,7 @@ class MockExternalServices {
         ),
         testSection2 = BloqoSectionData(
             id: "test2",
-            number: 1,
+            number: 2,
             name: "test",
             blocks: ["test1", "test2", "test3"]
         ),
@@ -222,7 +222,7 @@ class MockExternalServices {
             type: BloqoBlockType.quizOpenQuestion.toString(),
             name: BloqoBlockSuperType.quiz.toString(),
             number: 2,
-            content: "q:1+1=\$a<yy>2"
+            content: "q:1+1=\$a<yy>:2"
         ),
         testBlock3 = BloqoBlockData(
             id: "test3",
