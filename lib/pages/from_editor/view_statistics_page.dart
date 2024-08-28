@@ -251,8 +251,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
                                 Row(
                                   children: [
                                     Text(
-                                      widget.publishedCourse.rating.toDouble()
-                                          .toString(),
+                                      widget.publishedCourse.rating.toDouble().toStringAsFixed(1),
                                       style: theme
                                           .getThemeData()
                                           .textTheme

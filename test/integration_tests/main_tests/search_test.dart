@@ -81,6 +81,37 @@ void main() {
     await binding.setSurfaceSize(null);
   });
 
+  testWidgets('Users can search courses, select one and view its author\'s profile page test', (WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1500, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Search");
+
+    await tester.tap(find.byType(BloqoFilledButton).last);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BloqoSearchResultCourse), findsAtLeast(1));
+
+    await tester.tap(find.byType(BloqoSearchResultCourse).first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RatingBarIndicator), findsAtLeast(2));
+
+    await tester.tap(find.byType(BloqoTextButton).first);
+    await tester.pumpAndSettle();
+
+    await tester.runAsync(() async {
+      await Future.delayed(const Duration(seconds: 3));
+    });
+
+    expect(find.byType(BloqoUserDetails), findsOne);
+
+    await binding.setSurfaceSize(null);
+  });
+
   testWidgets('Users can search courses, select one and enroll in it test', (WidgetTester tester) async {
     await binding.setSurfaceSize(const Size(1500, 2000));
 
