@@ -124,7 +124,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                     : LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constraints) {
                         double width = constraints.maxWidth / 2;
-                        double height = width / 2.25;
+                        double height = width / 1.90;
                         double childAspectRatio = width / height;
 
                         return Align(
