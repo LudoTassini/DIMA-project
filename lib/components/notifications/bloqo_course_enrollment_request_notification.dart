@@ -92,29 +92,29 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: [
-                                Text(
-                                  applicant.username,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: applicant.username,
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  localizedText.has_requested_access,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontSize: 18,
+                                  TextSpan(
+                                    text: localizedText.has_requested_access,
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  course.name,
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                  TextSpan(
+                                    text: course.name,
+                                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),

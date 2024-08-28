@@ -1,6 +1,5 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/utils/check_device.dart';
-import 'package:bloqo/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 

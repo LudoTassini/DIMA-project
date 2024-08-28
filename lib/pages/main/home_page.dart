@@ -375,7 +375,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                             Padding(
                                               padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
                                               child: BloqoFilledButton(
-                                                onPressed: () async { await _createNewCourse(context: context, localizedText: localizedText); },
+                                                onPressed: () async {
+                                                  await _createNewCourse(
+                                                      context: context,
+                                                      localizedText: localizedText);
+                                                  },
                                                 color: theme.colors.leadingColor,
                                                 text: localizedText.take_me_there_button,
                                                 fontSize: 16,

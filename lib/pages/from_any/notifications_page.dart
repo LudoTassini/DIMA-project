@@ -142,7 +142,6 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                               BloqoNotificationData notification = notifications[index];
                               if (notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
                                 return BloqoCourseEnrollmentRequestNotification(
-                                  //FIXME: richText
                                   notification: notification,
                                   onNotificationHandled: () {
                                     setState(() {
@@ -153,7 +152,6 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                                 );
                               }
                               if (notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
-                                //FIXME: richText
                                 return BloqoCourseEnrollmentAcceptedNotification(
                                   notification: notification,
                                   onNotificationHandled: () {

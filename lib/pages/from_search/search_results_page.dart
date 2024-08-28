@@ -123,7 +123,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                                   return BloqoSearchResultCourse(
                                     course: course,
                                     onPressed: () async {
-                                      _goToCourseSearchPage(
+                                      await _goToCourseSearchPage(
                                         context: context,
                                         localizedText: localizedText,
                                         publishedCourse: course,
@@ -162,7 +162,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                             return BloqoSearchResultCourse(
                               course: course,
                               onPressed: () async {
-                                _goToCourseSearchPage(
+                                await _goToCourseSearchPage(
                                   context: context,
                                   localizedText: localizedText,
                                   publishedCourse: course,

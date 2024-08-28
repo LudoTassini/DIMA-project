@@ -107,9 +107,9 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                             },
                           ),
                         )
-                            : Column(
-                                children: [
-                                LayoutBuilder(
+                        : Column(
+                            children: [
+                              LayoutBuilder(
                                 builder: (BuildContext context, BoxConstraints constraints) {
                                   double width = constraints.maxWidth / 2;
                                   double height = width / 2.25;
@@ -137,8 +137,8 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                   );
                                 }
                               ),
-                          ],
-                        ),
+                            ],
+                          ),
 
                         if (_usersDisplayed < users.length)
                           BloqoTextButton(
@@ -149,9 +149,6 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                           ),
                       ],
                     ),
-
-
-
                   ),
                 ),
               );

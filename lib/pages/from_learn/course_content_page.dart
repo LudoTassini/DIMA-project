@@ -639,7 +639,8 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                           Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0),
+                                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0)
+                                  : const EdgeInsetsDirectional.fromSTEB(80, 10, 80, 0),
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
                                     double maxWidth = constraints.maxWidth-20;
@@ -660,7 +661,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   : Constants.tabletPaddingBloqoFilledButton,
                               child: BloqoFilledButton(
                                 onPressed: () async {
-                                  _goToSectionPage(
+                                  await _goToSectionPage(
                                     context: context,
                                     localizedText: localizedText,
                                     sectionId: sectionToComplete!,
