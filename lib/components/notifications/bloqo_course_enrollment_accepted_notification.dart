@@ -83,29 +83,29 @@ class _BloqoCourseEnrollmentRequestState extends State<BloqoCourseEnrollmentAcce
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: [
-                                Text(
-                                  courseAuthor.username,
-                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: courseAuthor.username,
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  localizedText.has_granted_access,
-                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
-                                    fontSize: 18,
+                                  TextSpan(
+                                    text: localizedText.has_granted_access,
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  widget.notification.privateCourseName!,
-                                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                  TextSpan(
+                                    text: widget.notification.privateCourseName!,
+                                    style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),

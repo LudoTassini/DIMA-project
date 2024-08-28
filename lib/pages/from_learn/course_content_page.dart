@@ -480,21 +480,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                   (sectionIndex) {
                                                                 var section = sections[chapter
                                                                     .id]![sectionIndex];
-                                                                if (isCourseCompleted) {
-                                                                  isClickable =
-                                                                  true;
-                                                                } else {
-                                                                  if (sectionToComplete! ==
-                                                                      section.id
-                                                                      ||
-                                                                      sectionsCompleted
-                                                                          .contains(
-                                                                          section
-                                                                              .id)) {
-                                                                    isClickable =
-                                                                    true;
-                                                                  }
-                                                                }
+                                                                bool isClickable = isCourseCompleted ||
+                                                                    (sectionToComplete! == section.id) ||
+                                                                    (sectionsCompleted.contains(section.id));
 
                                                       return BloqoCourseSection(
                                                         section: section,
@@ -807,64 +795,59 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                               ),
                             ),
 
-                            if(!isCourseCompleted)
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                alignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                direction: Axis.horizontal,
-                                runAlignment: WrapAlignment.start,
-                                verticalDirection: VerticalDirection.down,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(40, 10, 40, 0),
-                                        child: LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            double maxWidth = constraints.maxWidth -
-                                                20;
-                                            return BloqoProgressBar(
-                                              percentage: sectionsCompleted.length /
-                                                  totNumSections,
-                                              width: maxWidth,
-                                              fontSize: 12, // Pass the maximum width to the progress bar
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  if(!isCourseCompleted)
-                                    Padding(
-                                      padding: !isTablet
-                                          ? const EdgeInsetsDirectional.fromSTEB(
-                                          20, 0, 20, 20)
-                                          : Constants
-                                          .tabletPaddingBloqoFilledButton,
-                                      child: BloqoFilledButton(
-                                        onPressed: () async {
-                                          _goToSectionPage(
-                                            context: context,
-                                            localizedText: localizedText,
-                                            sectionId: sectionToComplete!,
-                                            courseName: course.name,
-                                          );
-                                        },
-                                        color: theme.colors.success,
-                                        text: sectionsCompleted.isEmpty
-                                            ? localizedText.start_learning
-                                            : localizedText.continue_learning,
-                                        icon: Icons.lightbulb,
-                                        fontSize: !isTablet ? 24 : 34,
-                                        height: !isTablet ? 60 : 80,
-                                      ),
-                                    )
-                                ],
+                    if(!isCourseCompleted)
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        direction: Axis.horizontal,
+                        runAlignment: WrapAlignment.start,
+                        verticalDirection: VerticalDirection.down,
+                        children: [
+                          Column(
+                            children: [
+                              Padding(
+                                padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0)
+                                  : const EdgeInsetsDirectional.fromSTEB(80, 10, 80, 0),
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double maxWidth = constraints.maxWidth-20;
+                                    return BloqoProgressBar(
+                                      percentage: sectionsCompleted.length / totNumSections,
+                                      width: maxWidth,
+                                      fontSize: 12,// Pass the maximum width to the progress bar
+                                    );
+                                  },
+                                ),
                               ),
+                            ],
+                          ),
+
+                          if(!isCourseCompleted)
+                            Padding(
+                              padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
+                                  : Constants.tabletPaddingBloqoFilledButton,
+                              child: BloqoFilledButton(
+                                onPressed: () async {
+                                  await _goToSectionPage(
+                                    context: context,
+                                    localizedText: localizedText,
+                                    sectionId: sectionToComplete!,
+                                    courseName: course.name,
+                                  );
+                                },
+                                color: theme.colors.success,
+                                text: sectionsCompleted.isEmpty
+                                ? localizedText.start_learning
+                                    : localizedText.continue_learning,
+                                icon: Icons.lightbulb,
+                                fontSize: !isTablet ? 24 : 34,
+                                height: !isTablet ? 60 : 80,
+                              ),
+                            )
+                          ],
+                      ),
 
                             if(isCourseCompleted)
                               Row(

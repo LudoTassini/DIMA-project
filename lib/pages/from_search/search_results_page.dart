@@ -116,92 +116,85 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                                         double height = width;
                                         double childAspectRatio = width / height;
 
-                                        return GridView.builder(
-                                          shrinkWrap: true,
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            crossAxisSpacing: 10.0,
-                                            mainAxisSpacing: 10.0,
-                                            childAspectRatio: childAspectRatio, // 2.5 / 2
-                                          ),
-                                          itemCount: _publishedCoursesDisplayed >
-                                              widget.publishedCourses.length
-                                              ? widget.publishedCourses.length
-                                              : _publishedCoursesDisplayed,
-                                          itemBuilder: (context, index) {
-                                            BloqoPublishedCourseData course = widget
-                                                .publishedCourses[index];
-                                            return BloqoSearchResultCourse(
-                                              course: course,
-                                              onPressed: () async {
-                                                _goToCourseSearchPage(
-                                                  context: context,
-                                                  localizedText: localizedText,
-                                                  publishedCourse: course,
-                                                );
-                                              },
-                                            );
-                                          },
-                                        );
-                                      }
-                                  ),
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisSpacing: 10.0,
+                                  childAspectRatio: childAspectRatio, // 2.5 / 2
+                                ),
+                                itemCount: _publishedCoursesDisplayed >
+                                    widget.publishedCourses.length
+                                    ? widget.publishedCourses.length
+                                    : _publishedCoursesDisplayed,
+                                itemBuilder: (context, index) {
+                                  BloqoPublishedCourseData course = widget
+                                      .publishedCourses[index];
+                                  return BloqoSearchResultCourse(
+                                    course: course,
+                                    onPressed: () async {
+                                      await _goToCourseSearchPage(
+                                        context: context,
+                                        localizedText: localizedText,
+                                        publishedCourse: course,
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            }
+                          ),
 
-                                  if (_publishedCoursesDisplayed <
-                                      widget.publishedCourses.length)
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 0, 15),
-                                      child: BloqoTextButton(
-                                        onPressed: loadMorePublishedCourses,
-                                        text: localizedText.load_more,
-                                        color: theme.colors.leadingColor,
-                                      ),
-                                    ),
-                                ],
+                          if (_publishedCoursesDisplayed < widget.publishedCourses.length)
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                              child: BloqoTextButton(
+                                onPressed: loadMorePublishedCourses,
+                                text: localizedText.load_more,
+                                color: theme.colors.leadingColor,
                               ),
-                            )
-                                : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 15, 0, 0),
-                                ),
-                                ...List.generate(
-                                  _publishedCoursesDisplayed >
-                                      widget.publishedCourses.length
-                                      ? widget.publishedCourses.length
-                                      : _publishedCoursesDisplayed,
-                                      (index) {
-                                    BloqoPublishedCourseData course = widget
-                                        .publishedCourses[index];
-                                    return BloqoSearchResultCourse(
-                                      course: course,
-                                      onPressed: () async {
-                                        _goToCourseSearchPage(
-                                          context: context,
-                                          localizedText: localizedText,
-                                          publishedCourse: course,
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                                if (_publishedCoursesDisplayed <
-                                    widget.publishedCourses.length)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 15),
-                                    child: BloqoTextButton(
-                                      onPressed: loadMorePublishedCourses,
-                                      text: localizedText.load_more,
-                                      color: theme.colors.leadingColor,
-                                    ),
-                                  ),
-                              ],
                             ),
-                          )
+                        ],
+                      ),
+                    )
+                        : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                        ),
+                        ...List.generate(
+                          _publishedCoursesDisplayed > widget.publishedCourses.length
+                              ? widget.publishedCourses.length
+                              : _publishedCoursesDisplayed,
+                              (index) {
+                            BloqoPublishedCourseData course = widget.publishedCourses[index];
+                            return BloqoSearchResultCourse(
+                              course: course,
+                              onPressed: () async {
+                                await _goToCourseSearchPage(
+                                  context: context,
+                                  localizedText: localizedText,
+                                  publishedCourse: course,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        if (_publishedCoursesDisplayed < widget.publishedCourses.length)
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                            child: BloqoTextButton(
+                              onPressed: loadMorePublishedCourses,
+                              text: localizedText.load_more,
+                              color: theme.colors.leadingColor,
+                            ),
+                          ),
+                      ],
+                    ),
+                  )
 
                               : BloqoSeasaltContainer(
                             child: Padding(

@@ -275,7 +275,6 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
         isRated = true;
       });
 
-      //FIXME: serve aggiornare UserCourseEnrolledAppState?
       userCourseEnrolled.isRated = true;
       if (!context.mounted) {
         return;
