@@ -73,7 +73,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                 child: Text(
                                   course!.courseName,
                                   style:
-                                  Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  theme.getThemeData().textTheme.displayMedium?.copyWith(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -98,7 +98,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                             ),
                             Text(
                               course!.authorUsername,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                 fontSize: 16,
                               ),
                             ),
@@ -120,7 +120,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                             ),
                             Text(
                               localizedText.published_on + DateFormat('dd/MM/yyyy').format(course!.publicationDate.toDate()),
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                 fontSize: 14,
                               ),
                             ),
@@ -144,13 +144,13 @@ class BloqoSearchResultCourse extends StatelessWidget{
                             course!.isPublic ?
                               Text(
                                 localizedText.public,
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                   fontSize: 14,
                                 ),
                               )
                             : Text(
                               localizedText.private,
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                 fontSize: 14,
                               ),
                             ),
@@ -189,7 +189,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           Flexible(
                                             child: Text(
                                               getLanguageTagFromString(tag: course!.language).text(localizedText: localizedText),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                               fontSize: 14,
                                             ),
                                             ),
@@ -216,7 +216,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           Flexible(
                                             child: Text(
                                               getSubjectTagFromString(tag: course!.subject).text(localizedText: localizedText),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -243,7 +243,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           Flexible(
                                             child: Text(
                                               getDurationTagFromString(tag: course!.duration).text(localizedText: localizedText),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -270,7 +270,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           Flexible(
                                             child: Text(
                                               getModalityTagFromString(tag: course!.modality).text(localizedText: localizedText),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
                                             ),
@@ -297,7 +297,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                           Flexible(
                                             child: Text(
                                               getDifficultyTagFromString(tag: course!.difficulty).text(localizedText: localizedText),
-                                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                              style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                 fontSize: 14,
                                               ),
                                             ),

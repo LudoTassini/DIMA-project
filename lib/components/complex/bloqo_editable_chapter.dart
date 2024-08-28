@@ -61,7 +61,7 @@ class BloqoEditableChapter extends StatelessWidget {
                         children: [
                           Text(
                             "${localizedText.chapter} ${chapter.number}",
-                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: theme.colors.secondaryText
@@ -73,7 +73,7 @@ class BloqoEditableChapter extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   chapter.name,
-                                  style: Theme.of(context).textTheme.displayMedium,
+                                  style: theme.getThemeData().textTheme.displayMedium,
                                 ),
                               )
                             ],
@@ -159,8 +159,9 @@ class BloqoEditableChapter extends StatelessWidget {
       updateUserCourseCreatedChaptersNumberInAppState(context: context, courseId: course.id, newChaptersNum: course.chapters.length);
       updateUserCourseCreatedSectionsNumberInAppState(context: context, courseId: course.id, of: -chapter.sections.length);
       context.loaderOverlay.hide();
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
       );
     }
     on BloqoException catch (e) {

@@ -71,54 +71,66 @@ class _BloqoTextFieldState extends State<BloqoTextField> {
     return Padding(
         padding: widget.padding,
         child: Container(
-          height: widget.isTextArea ? Constants.textAreaContainerHeight : null,
-          decoration: BoxDecoration(
-            color: theme.colors.highContrastColor,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(
-              color: theme.colors.leadingColor
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 10),
-            child: TextFormField(
-              controller: widget.controller,
-              initialValue: widget.initialValue,
-              autofocus: false,
-              focusNode: _focusNode,
-              obscureText: widget.obscureText,
-              keyboardType: widget.keyboardType,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                labelText: widget.labelText,
-                labelStyle: Theme.of(context).textTheme.labelMedium,
-                hintText: widget.hintText,
-                hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: theme.colors.secondaryText
-                ),
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                errorMaxLines: 10,
+            height: widget.isTextArea
+                ? Constants.textAreaContainerHeight
+                : null,
+            decoration: BoxDecoration(
+              color: theme.colors.highContrastColor,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                  color: theme.colors.leadingColor
               ),
-              style: Theme.of(context).textTheme.bodySmall,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(widget.maxInputLength),
-              ],
-              autovalidateMode: AutovalidateMode.disabled,
-              validator: widget.validator,
-              onChanged: (String? value) {
-                widget.formKey.currentState!.validate();
-              },
-              onTap: widget.onTap,
-              maxLines: widget.isTextArea ? null : 1,
-              expands: widget.isTextArea ? true : false,
-              enabled: !widget.isDisabled,
+            ),
+            child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 10),
+                child: TextFormField(
+                  controller: widget.controller,
+                  initialValue: widget.initialValue,
+                  autofocus: false,
+                  focusNode: _focusNode,
+                  obscureText: widget.obscureText,
+                  keyboardType: widget.keyboardType,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    labelText: widget.labelText,
+                    labelStyle: theme
+                        .getThemeData()
+                        .textTheme
+                        .labelMedium,
+                    hintText: widget.hintText,
+                    hintStyle: theme
+                        .getThemeData()
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(
+                        color: theme.colors.secondaryText
+                    ),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    errorMaxLines: 10,
+                  ),
+                  style: theme
+                      .getThemeData()
+                      .textTheme
+                      .bodySmall,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(widget.maxInputLength),
+                  ],
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: widget.validator,
+                  onChanged: (String? value) {
+                    widget.formKey.currentState!.validate();
+                  },
+                  onTap: widget.onTap,
+                  maxLines: widget.isTextArea ? null : 1,
+                  expands: widget.isTextArea ? true : false,
+                  enabled: !widget.isDisabled,
+                )
             )
-          )
         )
     );
   }

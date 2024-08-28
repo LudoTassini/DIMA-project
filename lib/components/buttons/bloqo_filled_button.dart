@@ -1,3 +1,4 @@
+import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 
 class BloqoFilledButton extends StatelessWidget{
@@ -21,15 +22,25 @@ class BloqoFilledButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    var theme = getAppThemeFromAppState(context: context);
     return FilledButton(
-      style: Theme.of(context).filledButtonTheme.style?.copyWith(
-        textStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-        )),
+      style: theme
+          .getThemeData()
+          .filledButtonTheme
+          .style
+          ?.copyWith(
+        textStyle: WidgetStateProperty.resolveWith((states) =>
+            TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+            )),
         backgroundColor: WidgetStateProperty.resolveWith((_) => color),
-        fixedSize: WidgetStateProperty.resolveWith((_) => Size(double.infinity, height)),
-        padding: WidgetStateProperty.resolveWith((_) => EdgeInsetsDirectional.fromSTEB(22 * fontSize/20, 12 * fontSize/20, 22 * fontSize/20, 12 * fontSize/20)),
+        fixedSize: WidgetStateProperty.resolveWith((_) =>
+            Size(double.infinity, height)),
+        padding: WidgetStateProperty.resolveWith((_) =>
+            EdgeInsetsDirectional.fromSTEB(
+                22 * fontSize / 20, 12 * fontSize / 20,
+                22 * fontSize / 20, 12 * fontSize / 20)),
       ),
       onPressed: onPressed,
       child: icon == null ? Text(text) : Row(

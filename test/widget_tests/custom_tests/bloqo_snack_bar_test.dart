@@ -23,8 +23,9 @@ void main() {
                 color: PurpleOrchidTheme().colors.leadingColor,
                 text: "Test",
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    BloqoSnackBar.get(context: context, child: const Text("test")),
+                  showBloqoSnackBar(
+                      context: context,
+                      text: "test"
                   );
                 },
               ),

@@ -87,470 +87,709 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Consumer<EditorCourseAppState>(
-        builder: (context, editorCourseAppState, _) {
-          BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
-          BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-          BloqoSectionData section = getEditorCourseSectionFromAppState(context: context, chapterId: widget.chapterId, sectionId: widget.sectionId)!;
-          BloqoBlockData block = getEditorCourseBlockFromAppState(context: context, sectionId: widget.sectionId, blockId: widget.block.id)!;
-          List<DropdownMenuEntry<String>> multimediaTypes = buildMultimediaTypesList(localizedText: localizedText);
-          if(firstBuild && block.type != null) {
-            multimediaTypeController.text = multimediaTypes.where((entry) => entry.label ==
-                BloqoBlockTypeExtension.fromString(block.type!)!.multimediaShortText(
-                    localizedText: localizedText)!).first.label;
-          }
-          if(firstBuild) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              multimediaTypeController.addListener(_onMultimediaTypeChanged);
-            });
-            firstBuild = false;
-          }
-          bool editable = !course.published;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BloqoBreadcrumbs(breadcrumbs: [
-                course.name,
-                chapter.name,
-                section.name,
-                block.name,
-              ]),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                    child: Column(
-                      children: [
-                        if(editable)
-                          BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Consumer<EditorCourseAppState>(
+              builder: (context, editorCourseAppState, _) {
+                BloqoCourseData course = getEditorCourseFromAppState(
+                    context: context)!;
+                BloqoChapterData chapter = getEditorCourseChapterFromAppState(
+                    context: context, chapterId: widget.chapterId)!;
+                BloqoSectionData section = getEditorCourseSectionFromAppState(
+                    context: context,
+                    chapterId: widget.chapterId,
+                    sectionId: widget.sectionId)!;
+                BloqoBlockData block = getEditorCourseBlockFromAppState(
+                    context: context,
+                    sectionId: widget.sectionId,
+                    blockId: widget.block.id)!;
+                List<DropdownMenuEntry<
+                    String>> multimediaTypes = buildMultimediaTypesList(
+                    localizedText: localizedText);
+                if (firstBuild && block.type != null) {
+                  multimediaTypeController.text = multimediaTypes.where((entry) =>
+                  entry.label ==
+                      BloqoBlockTypeExtension.fromString(block.type!)!
+                          .multimediaShortText(
+                          localizedText: localizedText)!).first.label;
+                }
+                if (firstBuild) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    multimediaTypeController.addListener(_onMultimediaTypeChanged);
+                  });
+                  firstBuild = false;
+                }
+                bool editable = !course.published;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BloqoBreadcrumbs(breadcrumbs: [
+                      course.name,
+                      chapter.name,
+                      section.name,
+                      block.name,
+                    ]),
+                    Expanded(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: !isTablet
+                                ? const EdgeInsetsDirectional.all(0)
+                                : Constants.tabletPadding,
                             child: Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      localizedText.choose_multimedia_type,
-                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                        color: theme.colors.leadingColor,
-                                        fontSize: 30,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                    children:[
-                                      Expanded(
-                                          child: Padding(
-                                              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                              child: LayoutBuilder(
-                                                  builder: (BuildContext context, BoxConstraints constraints) {
-                                                    double availableWidth = constraints.maxWidth;
-                                                    return Column(
-                                                        mainAxisSize: MainAxisSize.max,
-                                                        children: [
-                                                          BloqoDropdown(
-                                                              controller: multimediaTypeController,
-                                                              dropdownMenuEntries: multimediaTypes,
-                                                              initialSelection: multimediaTypeController.text == "" ? multimediaTypes[0].value : multimediaTypeController.text,
-                                                              width: availableWidth
-                                                          )
-                                                        ]
-                                                    );
-                                                  }
-                                              )
-                                          )
-                                      )
-                                    ]
-                                ),
-                              ],
-                            ),
-                          ),
-                        BloqoSeasaltContainer(
-                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                          child: Column(
-                            children: [
-                              if(multimediaTypeController.text == BloqoBlockType.multimediaAudio.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaAudio.toString()))
-                                Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.upload_audio,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                                              height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                                              onPressed: () async {
-                                                final newUrl = await _askUserForAnAudio(
-                                                    context: context,
-                                                    localizedText: localizedText,
-                                                    courseId: widget.courseId,
-                                                    blockId: widget.block.id
-                                                );
-                                                if(newUrl != null) {
-                                                  if(!context.mounted) return;
-                                                  block.content = newUrl;
-                                                  await _saveChanges(context: context, courseId: widget.courseId, sectionId: widget.sectionId, block: block, blockType: BloqoBlockType.multimediaAudio);
-                                                  if(!context.mounted) return;
-                                                  updateEditorCourseBlockInAppState(context: context, sectionId: section.id, block: block);
-                                                }
-                                              },
-                                              text: localizedText.upload_from_device,
-                                              icon: Icons.upload
-                                          )
-                                      ),
-                                    ]
-                                ),
-                              if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaImage.toString()))
-                                Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      child: Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          localizedText.upload_image,
-                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                            color: theme.colors.leadingColor,
-                                            fontSize: 30,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                      child: BloqoFilledButton(
-                                        color: theme.colors.leadingColor,
-                                        fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                                        height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                                        onPressed: () async {
-                                          final newUrl = await _askUserForAnImage(
-                                              context: context,
-                                              localizedText: localizedText,
-                                              courseId: widget.courseId,
-                                              blockId: widget.block.id
-                                          );
-                                          if(newUrl != null) {
-                                            if(!context.mounted) return;
-                                            block.content = newUrl;
-                                            await _saveChanges(context: context, courseId: widget.courseId, sectionId: widget.sectionId, block: block, blockType: BloqoBlockType.multimediaImage);
-                                            if(!context.mounted) return;
-                                            updateEditorCourseBlockInAppState(context: context, sectionId: section.id, block: block);
-                                          }
-                                        },
-                                        text: localizedText.upload_from_device,
-                                        icon: Icons.upload
-                                        )
-                                    ),
-                                  ]
-                                ),
-                              if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && (block.content == "" || block.type != BloqoBlockType.multimediaVideo.toString()))
-                                Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            localizedText.upload_video,
-                                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                          child: BloqoFilledButton(
-                                              color: theme.colors.leadingColor,
-                                              fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                                              height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                                              onPressed: () async {
-                                                final newUrl = await _askUserForAVideo(
-                                                  context: context,
-                                                  localizedText: localizedText,
-                                                  courseId: widget.courseId,
-                                                  blockId: widget.block.id
-                                                );
-                                                if(newUrl != null) {
-                                                  if(!context.mounted) return;
-                                                  block.content = newUrl;
-                                                  await _saveChanges(context: context, courseId: widget.courseId, sectionId: widget.sectionId, block: block, blockType: BloqoBlockType.multimediaVideo);
-                                                  if(!context.mounted) return;
-                                                  updateEditorCourseBlockInAppState(context: context, sectionId: section.id, block: block);
-                                                }
-                                              },
-                                              text: localizedText.upload_from_device,
-                                              icon: Icons.upload
-                                          )
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: theme.colors.leadingColor,
-                                              onPressed: () {
-                                                setState(() {
-                                                  showEmbedFromYouTube = true;
-                                                });
-                                              },
-                                              text: localizedText.embed_from_youtube,
-                                              icon: Icons.link
-                                          )
-                                      )
-                                    ]
-                                )
-                            ],
-                          )
-                        ),
-                        if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && showEmbedFromYouTube)
-                          BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 120),
-                            child: Column(
-                              children: [
-                                  Column(
+                                if(editable)
+                                  BloqoSeasaltContainer(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        20, 20, 20, 0),
+                                    child: Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(20, 20, 20, 0),
                                           child: Align(
                                             alignment: Alignment.topLeft,
                                             child: Text(
-                                              localizedText.embed_from_youtube,
-                                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                              localizedText.choose_multimedia_type,
+                                              style: theme
+                                                  .getThemeData()
+                                                  .textTheme
+                                                  .displayLarge
+                                                  ?.copyWith(
                                                 color: theme.colors.leadingColor,
                                                 fontSize: 30,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        Form(
-                                          key: formKeyYouTube,
-                                          child: BloqoTextField(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 10),
-                                            formKey: formKeyYouTube,
-                                            controller: youTubeLinkController,
-                                            labelText: localizedText.youtube_link,
-                                            hintText: localizedText.enter_youtube_link,
-                                            maxInputLength: Constants.maxYouTubeLinkLength,
-                                          )
+                                        Row(
+                                            children: [
+                                              Expanded(
+                                                  child: Padding(
+                                                      padding: const EdgeInsetsDirectional
+                                                          .fromSTEB(20, 20, 20, 20),
+                                                      child: LayoutBuilder(
+                                                          builder: (
+                                                              BuildContext context,
+                                                              BoxConstraints constraints) {
+                                                            double availableWidth = constraints
+                                                                .maxWidth;
+                                                            return Column(
+                                                                mainAxisSize: MainAxisSize
+                                                                    .max,
+                                                                children: [
+                                                                  BloqoDropdown(
+                                                                      controller: multimediaTypeController,
+                                                                      dropdownMenuEntries: multimediaTypes,
+                                                                      initialSelection: multimediaTypeController
+                                                                          .text ==
+                                                                          ""
+                                                                          ? multimediaTypes[0]
+                                                                          .value
+                                                                          : multimediaTypeController
+                                                                          .text,
+                                                                      width: availableWidth
+                                                                  )
+                                                                ]
+                                                            );
+                                                          }
+                                                      )
+                                                  )
+                                              )
+                                            ]
                                         ),
-                                        Padding(
-                                            padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                                            child: BloqoFilledButton(
-                                                color: theme.colors.leadingColor,
-                                                onPressed: () async {
-                                                  await _embedYouTubeVideo(
-                                                      context: context,
-                                                      localizedText: localizedText,
-                                                      videoUrl: youTubeLinkController.text,
-                                                      courseId: course.id,
-                                                      sectionId: section.id,
-                                                      block: widget.block
-                                                  );
-                                                },
-                                                text: localizedText.embed,
-                                                icon: Icons.link
-                                            )
-                                        )
-                                      ]
-                                  )
-                              ],
-                            )
-                          ),
-                        if(multimediaTypeController.text == BloqoBlockType.multimediaAudio.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaAudio.toString())
-                          BloqoSeasaltContainer(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                              child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      child: Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          localizedText.multimedia_audio_short,
-                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                            color: theme.colors.leadingColor,
-                                            fontSize: 30,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: BloqoAudioPlayer(
-                                        url: widget.block.content
-                                      )
-                                    ),
-                                    if(editable)
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: theme.colors.error,
-                                              onPressed: () {
-                                                showBloqoConfirmationAlert(
-                                                    context: context,
-                                                    title: localizedText.warning,
-                                                    description: localizedText.delete_file_confirmation,
-                                                    confirmationFunction: () async {
-                                                      await _tryDeleteFile(
-                                                          context: context,
-                                                          localizedText: localizedText,
-                                                          filePath: 'audios/courses/${course
-                                                              .id}/${block.id}',
-                                                          courseId: course.id,
-                                                          sectionId: section.id,
-                                                          block: block
-                                                      );
-                                                    },
-                                                    backgroundColor: theme.colors.error
-                                                );
-                                              },
-                                              text: localizedText.delete_file,
-                                              icon: Icons.delete_forever
-                                          )
-                                      )
-                                  ]
-                              )
-                          ),
-                        if(multimediaTypeController.text == BloqoBlockType.multimediaImage.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaImage.toString())
-                          BloqoSeasaltContainer(
-                              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                              child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      child: Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          localizedText.multimedia_image_short,
-                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                            color: theme.colors.leadingColor,
-                                            fontSize: 30,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: _getImage(url: widget.block.content)
-                                    ),
-                                    if(editable)
-                                      Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                          child: BloqoFilledButton(
-                                              color: theme.colors.error,
-                                              onPressed: () {
-                                                showBloqoConfirmationAlert(
-                                                    context: context,
-                                                    title: localizedText.warning,
-                                                    description: localizedText.delete_file_confirmation,
-                                                    confirmationFunction: () async {
-                                                      await _tryDeleteFile(
-                                                          context: context,
-                                                          localizedText: localizedText,
-                                                          filePath: 'images/courses/${course
-                                                              .id}/${block.id}',
-                                                          courseId: course.id,
-                                                          sectionId: section.id,
-                                                          block: block
-                                                      );
-                                                    },
-                                                    backgroundColor: theme.colors.error
-                                                );
-                                              },
-                                              text: localizedText.delete_file,
-                                              icon: Icons.delete_forever
-                                          )
-                                      )
-                                  ]
-                              )
-                          ),
-                        if(multimediaTypeController.text == BloqoBlockType.multimediaVideo.multimediaShortText(localizedText: localizedText) && widget.block.type == BloqoBlockType.multimediaVideo.toString())
-                          BloqoSeasaltContainer(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                            child: widget.block.content != "" ? Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      localizedText.multimedia_video_short,
-                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                        color: theme.colors.leadingColor,
-                                        fontSize: 30,
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                !widget.block.content.startsWith("yt:") ? BloqoVideoPlayer(
-                                  url: widget.block.content
-                                ) : BloqoYouTubePlayer(url: _getYouTubeUrl(str: widget.block.content)),
-                                if(editable)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
-                                    child: BloqoFilledButton(
-                                      color: theme.colors.error,
-                                      onPressed: () {
-                                        showBloqoConfirmationAlert(
-                                          context: context,
-                                          title: localizedText.warning,
-                                          description: localizedText.delete_file_confirmation,
-                                          confirmationFunction: () async {
-                                            !widget.block.content.startsWith("yt:") ?
-                                            await _tryDeleteFile(
-                                                context: context,
-                                                localizedText: localizedText,
-                                                filePath: 'videos/courses/${course
-                                                    .id}/${block.id}',
-                                                courseId: course.id,
-                                                sectionId: section.id,
-                                                block: block
-                                            ) : await _tryDeleteYouTubeLink(
-                                              context: context,
-                                              localizedText: localizedText,
-                                              courseId: course.id,
-                                              sectionId: section.id,
-                                              block: block
-                                            );
-                                          },
-                                          backgroundColor: theme.colors.error
-                                        );
-                                      },
-                                      text: localizedText.delete_file,
-                                      icon: Icons.delete_forever
+                                BloqoSeasaltContainer(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        20, 20, 20, 0),
+                                    child: Column(
+                                      children: [
+                                        if(multimediaTypeController.text ==
+                                            BloqoBlockType.multimediaAudio
+                                                .multimediaShortText(
+                                                localizedText: localizedText) &&
+                                            (block.content == "" || block.type !=
+                                                BloqoBlockType.multimediaAudio
+                                                    .toString()))
+                                          Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 20, 0),
+                                                  child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      localizedText.upload_audio,
+                                                      style: theme
+                                                          .getThemeData()
+                                                          .textTheme
+                                                          .displayLarge
+                                                          ?.copyWith(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: 30,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 20, 20, 20),
+                                                    child: BloqoFilledButton(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: !isTablet
+                                                            ? Constants
+                                                            .fontSizeNotTablet
+                                                            : Constants
+                                                            .fontSizeTablet,
+                                                        height: !isTablet
+                                                            ? Constants
+                                                            .heightNotTablet
+                                                            : Constants
+                                                            .heightTablet,
+                                                        onPressed: () async {
+                                                          final newUrl = await _askUserForAnAudio(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              courseId: widget
+                                                                  .courseId,
+                                                              blockId: widget.block
+                                                                  .id
+                                                          );
+                                                          if (newUrl != null) {
+                                                            if (!context.mounted) return;
+                                                            block.content = newUrl;
+                                                            await _saveChanges(
+                                                                context: context,
+                                                                courseId: widget
+                                                                    .courseId,
+                                                                sectionId: widget
+                                                                    .sectionId,
+                                                                block: block,
+                                                                blockType: BloqoBlockType
+                                                                    .multimediaAudio);
+                                                            if (!context.mounted) return;
+                                                            updateEditorCourseBlockInAppState(
+                                                                context: context,
+                                                                sectionId: section
+                                                                    .id,
+                                                                block: block);
+                                                          }
+                                                        },
+                                                        text: localizedText
+                                                            .upload_from_device,
+                                                        icon: Icons.upload
+                                                    )
+                                                ),
+                                              ]
+                                          ),
+                                        if(multimediaTypeController.text ==
+                                            BloqoBlockType.multimediaImage
+                                                .multimediaShortText(
+                                                localizedText: localizedText) &&
+                                            (block.content == "" || block.type !=
+                                                BloqoBlockType.multimediaImage
+                                                    .toString()))
+                                          Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 20, 0),
+                                                  child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      localizedText.upload_image,
+                                                      style: theme
+                                                          .getThemeData()
+                                                          .textTheme
+                                                          .displayLarge
+                                                          ?.copyWith(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: 30,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 20, 20, 20),
+                                                    child: BloqoFilledButton(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: !isTablet
+                                                            ? Constants
+                                                            .fontSizeNotTablet
+                                                            : Constants
+                                                            .fontSizeTablet,
+                                                        height: !isTablet
+                                                            ? Constants
+                                                            .heightNotTablet
+                                                            : Constants
+                                                            .heightTablet,
+                                                        onPressed: () async {
+                                                          final newUrl = await _askUserForAnImage(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              courseId: widget
+                                                                  .courseId,
+                                                              blockId: widget.block
+                                                                  .id
+                                                          );
+                                                          if (newUrl != null) {
+                                                            if (!context.mounted) return;
+                                                            block.content = newUrl;
+                                                            await _saveChanges(
+                                                                context: context,
+                                                                courseId: widget
+                                                                    .courseId,
+                                                                sectionId: widget
+                                                                    .sectionId,
+                                                                block: block,
+                                                                blockType: BloqoBlockType
+                                                                    .multimediaImage);
+                                                            if (!context.mounted) return;
+                                                            updateEditorCourseBlockInAppState(
+                                                                context: context,
+                                                                sectionId: section
+                                                                    .id,
+                                                                block: block);
+                                                          }
+                                                        },
+                                                        text: localizedText
+                                                            .upload_from_device,
+                                                        icon: Icons.upload
+                                                    )
+                                                ),
+                                              ]
+                                          ),
+                                        if(multimediaTypeController.text ==
+                                            BloqoBlockType.multimediaVideo
+                                                .multimediaShortText(
+                                                localizedText: localizedText) &&
+                                            (block.content == "" || block.type !=
+                                                BloqoBlockType.multimediaVideo
+                                                    .toString()))
+                                          Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 20, 0),
+                                                  child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      localizedText.upload_video,
+                                                      style: theme
+                                                          .getThemeData()
+                                                          .textTheme
+                                                          .displayLarge
+                                                          ?.copyWith(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: 30,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 20, 20, 0),
+                                                    child: BloqoFilledButton(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: !isTablet
+                                                            ? Constants
+                                                            .fontSizeNotTablet
+                                                            : Constants
+                                                            .fontSizeTablet,
+                                                        height: !isTablet
+                                                            ? Constants
+                                                            .heightNotTablet
+                                                            : Constants
+                                                            .heightTablet,
+                                                        onPressed: () async {
+                                                          final newUrl = await _askUserForAVideo(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              courseId: widget
+                                                                  .courseId,
+                                                              blockId: widget.block
+                                                                  .id
+                                                          );
+                                                          if (newUrl != null) {
+                                                            if (!context.mounted) return;
+                                                            block.content = newUrl;
+                                                            await _saveChanges(
+                                                                context: context,
+                                                                courseId: widget
+                                                                    .courseId,
+                                                                sectionId: widget
+                                                                    .sectionId,
+                                                                block: block,
+                                                                blockType: BloqoBlockType
+                                                                    .multimediaVideo);
+                                                            if (!context.mounted) return;
+                                                            updateEditorCourseBlockInAppState(
+                                                                context: context,
+                                                                sectionId: section
+                                                                    .id,
+                                                                block: block);
+                                                          }
+                                                        },
+                                                        text: localizedText
+                                                            .upload_from_device,
+                                                        icon: Icons.upload
+                                                    )
+                                                ),
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 10, 20, 20),
+                                                    child: BloqoFilledButton(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            showEmbedFromYouTube =
+                                                            true;
+                                                          });
+                                                        },
+                                                        text: localizedText
+                                                            .embed_from_youtube,
+                                                        icon: Icons.link
+                                                    )
+                                                )
+                                              ]
+                                          )
+                                      ],
                                     )
-                                  )
-                              ]
-                            ) : Container()
+                                ),
+                                if(multimediaTypeController.text == BloqoBlockType
+                                    .multimediaVideo.multimediaShortText(
+                                    localizedText: localizedText) &&
+                                    showEmbedFromYouTube)
+                                  BloqoSeasaltContainer(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          20, 20, 20, 120),
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 20, 20, 0),
+                                                  child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: Text(
+                                                      localizedText
+                                                          .embed_from_youtube,
+                                                      style: theme
+                                                          .getThemeData()
+                                                          .textTheme
+                                                          .displayLarge
+                                                          ?.copyWith(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        fontSize: 30,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Form(
+                                                    key: formKeyYouTube,
+                                                    child: BloqoTextField(
+                                                      padding: const EdgeInsetsDirectional
+                                                          .fromSTEB(20, 20, 20, 10),
+                                                      formKey: formKeyYouTube,
+                                                      controller: youTubeLinkController,
+                                                      labelText: localizedText
+                                                          .youtube_link,
+                                                      hintText: localizedText
+                                                          .enter_youtube_link,
+                                                      maxInputLength: Constants
+                                                          .maxYouTubeLinkLength,
+                                                    )
+                                                ),
+                                                Padding(
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(20, 10, 20, 20),
+                                                    child: BloqoFilledButton(
+                                                        color: theme.colors
+                                                            .leadingColor,
+                                                        onPressed: () async {
+                                                          await _embedYouTubeVideo(
+                                                              context: context,
+                                                              localizedText: localizedText,
+                                                              videoUrl: youTubeLinkController
+                                                                  .text,
+                                                              courseId: course.id,
+                                                              sectionId: section.id,
+                                                              block: widget.block
+                                                          );
+                                                        },
+                                                        text: localizedText.embed,
+                                                        icon: Icons.link
+                                                    )
+                                                )
+                                              ]
+                                          )
+                                        ],
+                                      )
+                                  ),
+                                if(multimediaTypeController.text == BloqoBlockType
+                                    .multimediaAudio.multimediaShortText(
+                                    localizedText: localizedText) && widget.block
+                                    .type == BloqoBlockType.multimediaAudio
+                                    .toString())
+                                  BloqoSeasaltContainer(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          20, 0, 20, 20),
+                                      child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional
+                                                  .fromSTEB(20, 20, 20, 0),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  localizedText
+                                                      .multimedia_audio_short,
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displayLarge
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .leadingColor,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding: const EdgeInsets.all(20),
+                                                child: BloqoAudioPlayer(
+                                                    url: widget.block.content
+                                                )
+                                            ),
+                                            if(editable)
+                                              Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 0, 20, 20),
+                                                  child: BloqoFilledButton(
+                                                      color: theme.colors.error,
+                                                      onPressed: () {
+                                                        showBloqoConfirmationAlert(
+                                                            context: context,
+                                                            title: localizedText
+                                                                .warning,
+                                                            description: localizedText
+                                                                .delete_file_confirmation,
+                                                            confirmationFunction: () async {
+                                                              await _tryDeleteFile(
+                                                                  context: context,
+                                                                  localizedText: localizedText,
+                                                                  filePath: 'audios/courses/${course
+                                                                      .id}/${block
+                                                                      .id}',
+                                                                  courseId: course
+                                                                      .id,
+                                                                  sectionId: section
+                                                                      .id,
+                                                                  block: block
+                                                              );
+                                                            },
+                                                            backgroundColor: theme
+                                                                .colors.error
+                                                        );
+                                                      },
+                                                      text: localizedText
+                                                          .delete_file,
+                                                      icon: Icons.delete_forever
+                                                  )
+                                              )
+                                          ]
+                                      )
+                                  ),
+                                if(multimediaTypeController.text == BloqoBlockType
+                                    .multimediaImage.multimediaShortText(
+                                    localizedText: localizedText) && widget.block
+                                    .type == BloqoBlockType.multimediaImage
+                                    .toString())
+                                  BloqoSeasaltContainer(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          20, 0, 20, 20),
+                                      child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional
+                                                  .fromSTEB(20, 20, 20, 0),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  localizedText
+                                                      .multimedia_image_short,
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displayLarge
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .leadingColor,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding: const EdgeInsets.all(20),
+                                                child: _getImage(
+                                                    url: widget.block.content)
+                                            ),
+                                            if(editable)
+                                              Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 0, 20, 20),
+                                                  child: BloqoFilledButton(
+                                                      color: theme.colors.error,
+                                                      onPressed: () {
+                                                        showBloqoConfirmationAlert(
+                                                            context: context,
+                                                            title: localizedText
+                                                                .warning,
+                                                            description: localizedText
+                                                                .delete_file_confirmation,
+                                                            confirmationFunction: () async {
+                                                              await _tryDeleteFile(
+                                                                  context: context,
+                                                                  localizedText: localizedText,
+                                                                  filePath: 'images/courses/${course
+                                                                      .id}/${block
+                                                                      .id}',
+                                                                  courseId: course
+                                                                      .id,
+                                                                  sectionId: section
+                                                                      .id,
+                                                                  block: block
+                                                              );
+                                                            },
+                                                            backgroundColor: theme
+                                                                .colors.error
+                                                        );
+                                                      },
+                                                      text: localizedText
+                                                          .delete_file,
+                                                      icon: Icons.delete_forever
+                                                  )
+                                              )
+                                          ]
+                                      )
+                                  ),
+                                if(multimediaTypeController.text == BloqoBlockType
+                                    .multimediaVideo.multimediaShortText(
+                                    localizedText: localizedText) && widget.block
+                                    .type == BloqoBlockType.multimediaVideo
+                                    .toString())
+                                  BloqoSeasaltContainer(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          20, 0, 20, 20),
+                                      child: widget.block.content != "" ? Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional
+                                                  .fromSTEB(20, 20, 20, 0),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  localizedText
+                                                      .multimedia_video_short,
+                                                  style: theme
+                                                      .getThemeData()
+                                                      .textTheme
+                                                      .displayLarge
+                                                      ?.copyWith(
+                                                    color: theme.colors
+                                                        .leadingColor,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            !widget.block.content.startsWith("yt:")
+                                                ? BloqoVideoPlayer(
+                                                url: widget.block.content
+                                            )
+                                                : BloqoYouTubePlayer(
+                                                url: _getYouTubeUrl(
+                                                    str: widget.block.content)),
+                                            if(editable)
+                                              Padding(
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(20, 0, 20, 20),
+                                                  child: BloqoFilledButton(
+                                                      color: theme.colors.error,
+                                                      onPressed: () {
+                                                        showBloqoConfirmationAlert(
+                                                            context: context,
+                                                            title: localizedText
+                                                                .warning,
+                                                            description: localizedText
+                                                                .delete_file_confirmation,
+                                                            confirmationFunction: () async {
+                                                              !widget.block.content
+                                                                  .startsWith("yt:")
+                                                                  ?
+                                                              await _tryDeleteFile(
+                                                                  context: context,
+                                                                  localizedText: localizedText,
+                                                                  filePath: 'videos/courses/${course
+                                                                      .id}/${block
+                                                                      .id}',
+                                                                  courseId: course
+                                                                      .id,
+                                                                  sectionId: section
+                                                                      .id,
+                                                                  block: block
+                                                              )
+                                                                  : await _tryDeleteYouTubeLink(
+                                                                  context: context,
+                                                                  localizedText: localizedText,
+                                                                  courseId: course
+                                                                      .id,
+                                                                  sectionId: section
+                                                                      .id,
+                                                                  block: block
+                                                              );
+                                                            },
+                                                            backgroundColor: theme
+                                                                .colors.error
+                                                        );
+                                                      },
+                                                      text: localizedText
+                                                          .delete_file,
+                                                      icon: Icons.delete_forever
+                                                  )
+                                              )
+                                          ]
+                                      ) : Container()
+                                  ),
+                              ],
+                            ),
                           ),
-                      ],
+                        )
                     ),
-                  ),
-                )
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
     );
   }
 
@@ -709,11 +948,9 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           if (!context.mounted) return null;
           context.loaderOverlay.hide();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            BloqoSnackBar.get(
+          showBloqoSnackBar(
               context: context,
-              child: Text(localizedText.done),
-            ),
+              text: localizedText.done
           );
           return url;
         } on BloqoException catch (e) {
@@ -762,8 +999,9 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
           if (!context.mounted) return null;
           context.loaderOverlay.hide();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+          showBloqoSnackBar(
+              context: context,
+              text: localizedText.done
           );
           return url;
         } on BloqoException catch (e) {
@@ -863,8 +1101,9 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
       
       context.loaderOverlay.hide();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
       );
       
     } on BloqoException catch (e) {

@@ -125,7 +125,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                         Text(
                                           widget.user.fullName,
                                           textAlign: TextAlign.start,
-                                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                          style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                             color: theme.colors.secondaryText,
                                             fontSize: !isTablet ? 16 : 22,
                                             letterSpacing: 0,
@@ -135,7 +135,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                       Text(
                                         widget.user.username,
                                         textAlign: TextAlign.start,
-                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                           color: theme.colors.primaryText,
                                           fontSize: !isTablet ? 22 : 30,
                                           letterSpacing: 0,
@@ -200,7 +200,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                       ),
                                       Text(
                                         widget.user.followers.length.toString(),
-                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                           fontSize: !isTablet ? 18 : 20,
                                         ),
                                       ),
@@ -231,7 +231,7 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
                                       ),
                                       Text(
                                         widget.user.following.length.toString(),
-                                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                           fontSize: !isTablet ? 18 : 20
                                         ),
                                       ),
@@ -298,8 +298,9 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       addFollowingToUserAppState(context: context, newFollowing: widget.user.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
       );
       setState(() {
         widget.user.followers.add(getUserFromAppState(context: context)!.id);
@@ -330,8 +331,9 @@ class _BloqoUserDetailsState extends State<BloqoUserDetails> {
       if(!context.mounted) return;
       context.loaderOverlay.hide();
       removeFollowingFromUserAppState(context: context, oldFollowing: widget.user.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
+      showBloqoSnackBar(
+          context: context,
+          text: localizedText.done
       );
       setState(() {
         widget.user.followers.remove(getUserFromAppState(context: context)!.id);

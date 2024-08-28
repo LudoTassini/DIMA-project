@@ -77,7 +77,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
               children: [
                 Text(
                   localizedText.quiz,
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                     color: theme.colors.leadingColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
@@ -94,7 +94,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
                           isAnswerCorrect
                               ? localizedText.correct
                               : localizedText.wrong,
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                             color: isAnswerCorrect
                                 ? theme.colors.success
                                 : theme.colors.error,
@@ -115,7 +115,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
               children: [
                 Text(
                   question,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                     color: theme.colors.primaryText,
                   ),
                 ),
@@ -174,7 +174,7 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
                 const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: Text(
                   localizedText.correct,
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                       color: theme.colors.success,
                       fontWeight: FontWeight.w500),
                 ),
@@ -250,14 +250,10 @@ class _BloqoOpenQuestionQuizState extends State<BloqoOpenQuestionQuiz> {
       }
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      BloqoSnackBar.get(
+    showBloqoSnackBar(
         context: context,
-        child: Text(
-            isAnswerCorrect ? localizedText.correct : localizedText.wrong),
-        backgroundColor:
-        isAnswerCorrect ? theme.colors.success : theme.colors.error,
-      ),
+        text: isAnswerCorrect ? localizedText.correct : localizedText.wrong,
+        backgroundColor: isAnswerCorrect ? theme.colors.success : theme.colors.error
     );
   }
 }

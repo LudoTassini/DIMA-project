@@ -78,6 +78,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       widget.onPush(
         CourseContentPage(
           onPush: widget.onPush,
+          onNavigateToPage: widget.onNavigateToPage,
         ));
     }
   }
@@ -86,7 +87,6 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
     if(isTablet && !initialized){
@@ -111,327 +111,439 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
       });
     }
 
-    return BloqoMainContainer(
-      alignment: const AlignmentDirectional(-1.0, -1.0),
-      child: Consumer<UserCoursesEnrolledAppState>(
-        builder: (context, userCoursesEnrolledAppState, _) {
-          List<BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(context: context) ?? [];
-          List<BloqoUserCourseEnrolledData> inProgressCourses = userCoursesEnrolled.where((course) => !course.isCompleted).toList();
-          List<BloqoUserCourseEnrolledData> completedCourses = userCoursesEnrolled.where((course) => course.isCompleted).toList();
-          inProgressCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
-          completedCourses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
-          return Column(
-            children: [
-              TabBar(
-                tabs: [
-                  Tab(text: localizedText.enrollings),
-                  Tab(text: localizedText.completed),
-                ],
-                controller: tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: tabController,
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+            alignment: const AlignmentDirectional(-1.0, -1.0),
+            child: Consumer<UserCoursesEnrolledAppState>(
+              builder: (context, userCoursesEnrolledAppState, _) {
+                List<
+                    BloqoUserCourseEnrolledData> userCoursesEnrolled = getUserCoursesEnrolledFromAppState(
+                    context: context) ?? [];
+                List<
+                    BloqoUserCourseEnrolledData> inProgressCourses = userCoursesEnrolled
+                    .where((course) => !course.isCompleted).toList();
+                List<
+                    BloqoUserCourseEnrolledData> completedCourses = userCoursesEnrolled
+                    .where((course) => course.isCompleted).toList();
+                inProgressCourses.sort((a, b) =>
+                    b.lastUpdated.compareTo(a.lastUpdated));
+                completedCourses.sort((a, b) =>
+                    b.lastUpdated.compareTo(a.lastUpdated));
+                return Column(
                   children: [
-                    Padding(
-                      padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
-                      child: ListView(
+                    TabBar(
+                      tabs: [
+                        Tab(text: localizedText.enrollings),
+                        Tab(text: localizedText.completed),
+                      ],
+                      controller: tabController,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: tabController,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                            child: Text(
-                              localizedText.learn_page_header_1,
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: theme.colors.highContrastColor,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          BloqoSeasaltContainer(
-                            child: Column(
+                            padding: !isTablet
+                                ? const EdgeInsetsDirectional.all(0)
+                                : Constants.tabletPadding,
+                            child: ListView(
                               children: [
-                                if (inProgressCourses.isNotEmpty && !isTablet)
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      20, 20, 20, 0),
+                                  child: Text(
+                                    localizedText.learn_page_header_1,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayLarge
+                                        ?.copyWith(
+                                      color: theme.colors.highContrastColor,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                BloqoSeasaltContainer(
+                                  child: Column(
                                     children: [
-                                      ...List.generate(
-                                        inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed,
-                                            (index) {
-                                          BloqoUserCourseEnrolledData course = inProgressCourses[index];
-                                          if(index != (inProgressCoursesDisplayed > inProgressCourses.length ? inProgressCourses.length : inProgressCoursesDisplayed) - 1) {
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showInProgress: true,
-                                                onPressed: () async {
-                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                      if (inProgressCourses.isNotEmpty && !isTablet)
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ...List.generate(
+                                              inProgressCoursesDisplayed >
+                                                  inProgressCourses.length
+                                                  ? inProgressCourses.length
+                                                  : inProgressCoursesDisplayed,
+                                                  (index) {
+                                                BloqoUserCourseEnrolledData course = inProgressCourses[index];
+                                                if (index !=
+                                                    (inProgressCoursesDisplayed >
+                                                        inProgressCourses.length
+                                                        ? inProgressCourses.length
+                                                        : inProgressCoursesDisplayed) -
+                                                        1) {
+                                                  return BloqoCourseEnrolled(
+                                                      course: course,
+                                                      showInProgress: true,
+                                                      onPressed: () async {
+                                                        await _goToCoursePage(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            userCourseEnrolled: course);
+                                                      }
+                                                  );
                                                 }
-                                            );
-                                          }
-                                          else{
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showInProgress: true,
-                                                onPressed: () async {
-                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
+                                                else {
+                                                  return BloqoCourseEnrolled(
+                                                      course: course,
+                                                      showInProgress: true,
+                                                      onPressed: () async {
+                                                        await _goToCoursePage(
+                                                            context: context,
+                                                            localizedText: localizedText,
+                                                            userCourseEnrolled: course);
+                                                      }
+                                                  );
                                                 }
-                                            );
-                                          }
-                                        },
-                                      ),
-                                      Padding(
-                                        padding: !(inProgressCoursesDisplayed < inProgressCourses.length) ?
-                                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15) : const EdgeInsetsDirectional.all(0),
-                                      ),
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: !(inProgressCoursesDisplayed <
+                                                  inProgressCourses.length)
+                                                  ?
+                                              const EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 0, 15)
+                                                  : const EdgeInsetsDirectional.all(
+                                                  0),
+                                            ),
+                                          ],
+                                        ),
+
+                                      if (inProgressCourses.isNotEmpty && isTablet)
+                                        LayoutBuilder(
+                                            builder: (BuildContext context,
+                                                BoxConstraints constraints) {
+                                              double width = constraints.maxWidth /
+                                                  2;
+                                              double height = width / 2.30;
+                                              double childAspectRatio = width /
+                                                  height;
+
+                                              return GridView.builder(
+                                                shrinkWrap: true,
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2,
+                                                  crossAxisSpacing: 10.0,
+                                                  mainAxisSpacing: 10.0,
+                                                  childAspectRatio: childAspectRatio, // 3
+                                                ),
+                                                itemCount: inProgressCoursesDisplayed >
+                                                    inProgressCourses.length
+                                                    ? inProgressCourses.length
+                                                    : inProgressCoursesDisplayed,
+                                                itemBuilder: (context, index) {
+                                                  BloqoUserCourseEnrolledData course = inProgressCourses[index];
+                                                  return BloqoCourseEnrolled(
+                                                    course: course,
+                                                    showInProgress: true,
+                                                    onPressed: () async {
+                                                      await _goToCoursePage(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          userCourseEnrolled: course
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(0, 0, 0, 15),
+                                              );
+                                            }
+                                        ),
+
+                                      if (inProgressCoursesDisplayed <
+                                          inProgressCourses.length)
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 10, 0, 10),
+                                          child: BloqoTextButton(
+                                              onPressed: loadMoreInProgressCourses,
+                                              text: localizedText.load_more,
+                                              color: theme.colors.leadingColor
+                                          ),
+                                        ),
+
+
+                                      if (inProgressCourses.isEmpty)
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(15, 15, 15, 0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                localizedText
+                                                    .learn_page_no_in_progress_courses,
+                                                style: theme
+                                                    .getThemeData()
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.copyWith(
+                                                  color: theme.colors.primaryText,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(30, 10, 30, 20),
+                                                child: BloqoFilledButton(
+                                                  onPressed: () =>
+                                                      widget.onNavigateToPage(2),
+                                                  color: theme.colors.leadingColor,
+                                                  text: localizedText
+                                                      .take_me_there_button,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   ),
-
-                                if (inProgressCourses.isNotEmpty && isTablet)
-                                  LayoutBuilder(
-                                    builder: (BuildContext context, BoxConstraints constraints) {
-                                      double width = constraints.maxWidth / 2;
-                                      double height = width / 2.30;
-                                      double childAspectRatio = width / height;
-
-                                      return GridView.builder(
-                                        shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          crossAxisSpacing: 10.0,
-                                          mainAxisSpacing: 10.0,
-                                          childAspectRatio: childAspectRatio, // 3
-                                        ),
-                                        itemCount: inProgressCoursesDisplayed >
-                                            inProgressCourses.length
-                                            ? inProgressCourses.length
-                                            : inProgressCoursesDisplayed,
-                                        itemBuilder: (context, index) {
-                                          BloqoUserCourseEnrolledData course = inProgressCourses[index];
-                                          return BloqoCourseEnrolled(
-                                            course: course,
-                                            showInProgress: true,
-                                            onPressed: () async {
-                                              await _goToCoursePage(
-                                                  context: context,
-                                                  localizedText: localizedText,
-                                                  userCourseEnrolled: course
-                                              );
-                                            },
-                                          );
-                                        },
-                                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
-                                      );
-                                    }
-                                  ),
-
-                                if (inProgressCoursesDisplayed < inProgressCourses.length)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                    child: BloqoTextButton(
-                                        onPressed: loadMoreInProgressCourses,
-                                        text: localizedText.load_more,
-                                        color: theme.colors.leadingColor
-                                    ),
-                                  ),
-
-
-                                if (inProgressCourses.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          localizedText.learn_page_no_in_progress_courses,
-                                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                            color: theme.colors.primaryText,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                          child: BloqoFilledButton(
-                                            onPressed: () => widget.onNavigateToPage(2),
-                                            color: theme.colors.leadingColor,
-                                            text: localizedText.take_me_there_button,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: !isTablet ? const EdgeInsetsDirectional.all(0): Constants.tabletPadding,
-                      child: ListView(
-                        children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                            child: Text(
-                              localizedText.learn_page_header_2,
-                              textAlign: TextAlign.end,
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                color: theme.colors.highContrastColor,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          BloqoSeasaltContainer(
-                            child: Column(
+                            padding: !isTablet
+                                ? const EdgeInsetsDirectional.all(0)
+                                : Constants.tabletPadding,
+                            child: ListView(
                               children: [
-
-                                if (completedCourses.isNotEmpty && !isTablet)
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      20, 20, 20, 0),
+                                  child: Text(
+                                    localizedText.learn_page_header_2,
+                                    textAlign: TextAlign.end,
+                                    style: theme
+                                        .getThemeData()
+                                        .textTheme
+                                        .displayLarge
+                                        ?.copyWith(
+                                      color: theme.colors.highContrastColor,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                BloqoSeasaltContainer(
+                                  child: Column(
                                     children: [
-                                      ... List.generate(
-                                        completedCoursesDisplayed > completedCourses.length ? completedCourses.length : completedCoursesDisplayed,
-                                            (index) {
-                                          BloqoUserCourseEnrolledData course = completedCourses[index];
-                                          if(index != (completedCoursesDisplayed > completedCourses.length ? completedCourses.length : completedCoursesDisplayed) - 1) {
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showCompleted: true,
-                                                onPush: widget.onPush,
-                                                onPressed: () async {
-                                                  await _goToCoursePage(context: context, localizedText: localizedText, userCourseEnrolled: course);
-                                                },
-                                            );
-                                          }
-                                          else{
-                                            return BloqoCourseEnrolled(
-                                                course: course,
-                                                showCompleted: true,
-                                                onPush: widget.onPush,
-                                                padding: const  EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                                onPressed: () async {
-                                                  await _goToCoursePage(
+
+                                      if (completedCourses.isNotEmpty && !isTablet)
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ... List.generate(
+                                              completedCoursesDisplayed >
+                                                  completedCourses.length
+                                                  ? completedCourses.length
+                                                  : completedCoursesDisplayed,
+                                                  (index) {
+                                                BloqoUserCourseEnrolledData course = completedCourses[index];
+                                                if (index !=
+                                                    (completedCoursesDisplayed >
+                                                        completedCourses.length
+                                                        ? completedCourses.length
+                                                        : completedCoursesDisplayed) -
+                                                        1) {
+                                                  return BloqoCourseEnrolled(
+                                                    course: course,
+                                                    showCompleted: true,
+                                                    onPush: widget.onPush,
+                                                    onPressed: () async {
+                                                      await _goToCoursePage(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          userCourseEnrolled: course);
+                                                    },
+                                                  );
+                                                }
+                                                else {
+                                                  return BloqoCourseEnrolled(
+                                                    course: course,
+                                                    showCompleted: true,
+                                                    onPush: widget.onPush,
+                                                    padding: const EdgeInsetsDirectional
+                                                        .fromSTEB(15, 15, 15, 0),
+                                                    onPressed: () async {
+                                                      await _goToCoursePage(
+                                                          context: context,
+                                                          localizedText: localizedText,
+                                                          userCourseEnrolled: course);
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: !(completedCoursesDisplayed <
+                                                  completedCourses.length)
+                                                  ?
+                                              const EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 0, 15)
+                                                  : const EdgeInsetsDirectional.all(
+                                                  0),
+                                            ),
+                                          ],
+                                        ),
+
+                                      if (completedCourses.isNotEmpty && isTablet)
+                                        LayoutBuilder(
+                                          builder: (BuildContext context,
+                                              BoxConstraints constraints) {
+                                            double width = constraints.maxWidth / 2;
+                                            double height = width / 2.40;
+                                            double childAspectRatio = width /
+                                                height;
+
+                                            return GridView.builder(
+                                              shrinkWrap: true,
+                                              // Ensures the GridView only takes up as much vertical space as needed
+                                              physics: const NeverScrollableScrollPhysics(),
+                                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                // Number of columns in the grid
+                                                crossAxisSpacing: 10.0,
+                                                mainAxisSpacing: 10.0,
+                                                childAspectRatio: childAspectRatio,
+                                              ),
+                                              itemCount: completedCoursesDisplayed >
+                                                  completedCourses.length
+                                                  ? completedCourses.length
+                                                  : completedCoursesDisplayed,
+                                              itemBuilder: (context, index) {
+                                                BloqoUserCourseEnrolledData course = completedCourses[index];
+                                                return BloqoCourseEnrolled(
+                                                  course: course,
+                                                  showCompleted: true,
+                                                  onPush: widget.onPush,
+                                                  padding: const EdgeInsetsDirectional
+                                                      .fromSTEB(15, 15, 15, 0),
+                                                  onPressed: () async {
+                                                    await _goToCoursePage(
                                                       context: context,
                                                       localizedText: localizedText,
-                                                      userCourseEnrolled: course);
-                                                },
+                                                      userCourseEnrolled: course,
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              padding: !(completedCoursesDisplayed <
+                                                  completedCourses.length)
+                                                  ?
+                                              const EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 0, 15)
+                                                  : const EdgeInsetsDirectional.all(
+                                                  0),
                                             );
-                                          }
-                                        },
-                                      ),
-                                      Padding(
-                                        padding: !(completedCoursesDisplayed < completedCourses.length) ?
-                                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15) : const EdgeInsetsDirectional.all(0),
-                                      ),
+                                          },
+                                        ),
+
+
+                                      if (completedCoursesDisplayed <
+                                          completedCourses.length)
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 10, 0, 10),
+                                          child: BloqoTextButton(
+                                              onPressed: loadMoreCompletedCourses,
+                                              text: localizedText.load_more,
+                                              color: theme.colors.leadingColor
+                                          ),
+                                        ),
+
+                                      if (completedCourses.isEmpty &&
+                                          inProgressCourses.isEmpty)
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(15, 15, 15, 0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                localizedText
+                                                    .learn_page_no_in_progress_courses,
+                                                style: theme
+                                                    .getThemeData()
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.copyWith(
+                                                  color: theme.colors.primaryText,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(30, 10, 30, 5),
+                                                child: BloqoFilledButton(
+                                                  onPressed: () =>
+                                                      widget.onNavigateToPage(2),
+                                                  color: theme.colors.leadingColor,
+                                                  text: localizedText
+                                                      .take_me_there_button,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      if (completedCourses.isEmpty &&
+                                          inProgressCourses.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(15, 15, 15, 15),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                localizedText
+                                                    .learn_page_no_completed_courses,
+                                                style: theme
+                                                    .getThemeData()
+                                                    .textTheme
+                                                    .displaySmall
+                                                    ?.copyWith(
+                                                  color: theme.colors.primaryText,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(30, 10, 30, 20),
+                                                child: BloqoFilledButton(
+                                                  onPressed: () {
+                                                    tabController.animateTo(0);
+                                                  },
+                                                  color: theme.colors.leadingColor,
+                                                  text: localizedText
+                                                      .take_me_there_button,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   ),
-
-                                if (completedCourses.isNotEmpty && isTablet)
-                                  LayoutBuilder(
-                                    builder: (BuildContext context, BoxConstraints constraints) {
-                                      double width = constraints.maxWidth / 2;
-                                      double height = width / 2.40;
-                                      double childAspectRatio = width / height;
-
-                                      return GridView.builder(
-                                        shrinkWrap: true,
-                                        // Ensures the GridView only takes up as much vertical space as needed
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2, // Number of columns in the grid
-                                          crossAxisSpacing: 10.0,
-                                          mainAxisSpacing: 10.0,
-                                          childAspectRatio: childAspectRatio,
-                                        ),
-                                        itemCount: completedCoursesDisplayed > completedCourses.length
-                                            ? completedCourses.length
-                                            : completedCoursesDisplayed,
-                                        itemBuilder: (context, index) {
-                                          BloqoUserCourseEnrolledData course = completedCourses[index];
-                                          return BloqoCourseEnrolled(
-                                            course: course,
-                                            showCompleted: true,
-                                            onPush: widget.onPush,
-                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                            onPressed: () async {
-                                              await _goToCoursePage(
-                                                context: context,
-                                                localizedText: localizedText,
-                                                userCourseEnrolled: course,
-                                              );
-                                            },
-                                          );
-                                        },
-                                        padding: !(completedCoursesDisplayed < completedCourses.length) ?
-                                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15) : const EdgeInsetsDirectional.all(0),
-                                      );
-                                    },
-                                  ),
-
-
-                                if (completedCoursesDisplayed < completedCourses.length)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                                    child: BloqoTextButton(
-                                        onPressed: loadMoreCompletedCourses,
-                                        text: localizedText.load_more,
-                                        color: theme.colors.leadingColor
-                                    ),
-                                  ),
-
-                                if (completedCourses.isEmpty && inProgressCourses.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          localizedText.learn_page_no_in_progress_courses,
-                                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                            color: theme.colors.primaryText,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 5),
-                                          child: BloqoFilledButton(
-                                            onPressed: () => widget.onNavigateToPage(2),
-                                            color: theme.colors.leadingColor,
-                                            text: localizedText.take_me_there_button,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                if (completedCourses.isEmpty && inProgressCourses.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          localizedText.learn_page_no_completed_courses,
-                                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                            color: theme.colors.primaryText,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                          child: BloqoFilledButton(
-                                            onPressed: () { tabController.animateTo(0); },
-                                            color: theme.colors.leadingColor,
-                                            text: localizedText.take_me_there_button,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -439,12 +551,11 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
     );
 
   }
@@ -467,6 +578,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
+            onNavigateToPage: widget.onNavigateToPage,
           ),
         );
       }
@@ -512,6 +624,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
         widget.onPush(
           CourseContentPage(
             onPush: widget.onPush,
+            onNavigateToPage: widget.onNavigateToPage,
           ),
         );
       }

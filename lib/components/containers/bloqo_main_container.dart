@@ -1,7 +1,7 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:flutter/material.dart';
 
-class BloqoMainContainer extends StatefulWidget {
+class BloqoMainContainer extends StatelessWidget {
   const BloqoMainContainer({
     super.key,
     required this.child,
@@ -10,13 +10,6 @@ class BloqoMainContainer extends StatefulWidget {
 
   final Widget child;
   final AlignmentGeometry alignment;
-
-  @override
-  State<BloqoMainContainer> createState() => _BloqoMainContainerState();
-
-}
-
-class _BloqoMainContainerState extends State<BloqoMainContainer> {
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +26,10 @@ class _BloqoMainContainerState extends State<BloqoMainContainer> {
           end: const AlignmentDirectional(0, 1),
         ),
       ),
-      alignment: widget.alignment,
+      alignment: alignment,
       child: SafeArea(
         bottom: false,
-        child: widget.child
+        child: child
       )
     );
   }

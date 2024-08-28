@@ -27,27 +27,27 @@ class BloqoConfirmationAlert extends StatelessWidget{
       title: Text(title),
       content: Text(description),
       backgroundColor: backgroundColor,
-      titleTextStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
+      titleTextStyle: theme.getThemeData().textTheme.displayLarge?.copyWith(
           color: theme.colors.highContrastColor,
           fontSize: 24
       ),
-      contentTextStyle: Theme.of(context).textTheme.displayMedium?.copyWith(
+      contentTextStyle: theme.getThemeData().textTheme.displayMedium?.copyWith(
         color: theme.colors.highContrastColor,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       actions: [
         FilledButton(
-          style: Theme.of(context).filledButtonTheme.style?.copyWith(
+          style: theme.getThemeData().filledButtonTheme.style?.copyWith(
               backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () => Navigator.pop(context, 'Cancel'),
-          child: Text(localizedText.cancel, style: Theme.of(context).textTheme.displayMedium?.copyWith(
+          child: Text(localizedText.cancel, style: theme.getThemeData().textTheme.displayMedium?.copyWith(
               color: theme.colors.leadingColor,
               fontWeight: FontWeight.bold
           )),
         ),
         FilledButton(
-          style: Theme.of(context).filledButtonTheme.style?.copyWith(
+          style: theme.getThemeData().filledButtonTheme.style?.copyWith(
               backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () {
@@ -56,7 +56,7 @@ class BloqoConfirmationAlert extends StatelessWidget{
               Navigator.pop(context, "OK");
             }
           },
-          child: Text(localizedText.ok, style: Theme.of(context).textTheme.displayMedium?.copyWith(
+          child: Text(localizedText.ok, style: theme.getThemeData().textTheme.displayMedium?.copyWith(
               color: confirmationColor,
               fontWeight: FontWeight.bold
           )),

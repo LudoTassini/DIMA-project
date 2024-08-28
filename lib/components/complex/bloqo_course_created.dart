@@ -81,7 +81,7 @@ class BloqoCourseCreated extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 course.courseName,
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                                   fontSize: 16,
                                 ),
                               ),
@@ -92,7 +92,7 @@ class BloqoCourseCreated extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
                             "${course.numChaptersCreated} ${localizedText.chapters}, ${course.numSectionsCreated} ${localizedText.sections}",
-                            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            style: theme.getThemeData().textTheme.displayMedium?.copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
                               fontStyle: FontStyle.italic,

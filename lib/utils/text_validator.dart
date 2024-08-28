@@ -111,6 +111,6 @@ bool validateUsername(String username){
 }
 
 bool validateFullName(String fullName) {
-  RegExp regExp = RegExp(r'^[a-zA-Z\s]+$');
+  RegExp regExp = RegExp(r"^[a-zA-Z\s']+$");
   return regExp.hasMatch(fullName);
 }

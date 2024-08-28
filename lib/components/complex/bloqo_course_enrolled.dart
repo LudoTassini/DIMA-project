@@ -105,7 +105,7 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                                         alignment: AlignmentDirectional.centerStart,
                                         child: Text(
                                           widget.course!.courseName,
-                                          style: Theme.of(context)
+                                          style: theme.getThemeData()
                                               .textTheme
                                               .displayMedium
                                               ?.copyWith(
@@ -133,7 +133,7 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                                     Expanded(
                                       child: Text(
                                         widget.course!.courseAuthor,
-                                        style: Theme.of(context)
+                                        style: theme.getThemeData()
                                             .textTheme
                                             .displayMedium
                                             ?.copyWith(
@@ -161,7 +161,7 @@ class _BloqoCourseEnrolledState extends State<BloqoCourseEnrolled> with Automati
                                       Expanded(
                                         child: Text(
                                           widget.course?.sectionName ?? '',
-                                          style: Theme.of(context)
+                                          style: theme.getThemeData()
                                               .textTheme
                                               .displayMedium
                                               ?.copyWith(

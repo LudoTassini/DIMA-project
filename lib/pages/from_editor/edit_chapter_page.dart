@@ -65,201 +65,271 @@ class _EditChapterPageState extends State<EditChapterPage> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     final localizedText = getAppLocalizations(context)!;
-    var theme = getAppThemeFromAppState(context: context);
     bool isTablet = checkDevice(context);
 
-    return BloqoMainContainer(
-        alignment: const AlignmentDirectional(-1.0, -1.0),
-        child: Consumer<EditorCourseAppState>(
-            builder: (context, editorCourseAppState, _){
-              BloqoCourseData course = getEditorCourseFromAppState(context: context)!;
-              BloqoChapterData chapter = getEditorCourseChapterFromAppState(context: context, chapterId: widget.chapterId)!;
-              List<BloqoSectionData> sections = getEditorCourseChapterSectionsFromAppState(context: context, chapterId: widget.chapterId) ?? [];
-              if(firstBuild) {
-                chapterNameController.text = chapter.name;
-                if (chapter.description != null) {
-                  chapterDescriptionController.text = chapter.description!;
-                }
-                firstBuild = false;
-              }
-              bool editable = !course.published;
-              return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BloqoBreadcrumbs(breadcrumbs: [
-                      course.name,
-                      chapter.name
-                    ]),
-                    Expanded(
-                        child: SingleChildScrollView(
-                            child: Padding(
-                              padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
-                              child: Column(
-                                children: [
-                                  Form(
-                                      key: formKeyChapterName,
-                                      child: BloqoTextField(
-                                        formKey: formKeyChapterName,
-                                        controller: chapterNameController,
-                                        labelText: localizedText.name,
-                                        hintText: localizedText.editor_chapter_name_hint,
-                                        maxInputLength: Constants.maxChapterNameLength,
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                      )
-                                  ),
-                                  Form(
-                                      key: formKeyChapterDescription,
-                                      child: BloqoTextField(
-                                        formKey: formKeyChapterDescription,
-                                        controller: chapterDescriptionController,
-                                        labelText: localizedText.description,
-                                        hintText: localizedText.editor_chapter_description_hint,
-                                        maxInputLength: Constants.maxChapterDescriptionLength,
-                                        padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-                                        isTextArea: true,
-                                      )
-                                  ),
-                                  BloqoSeasaltContainer(
-                                      child: Column(
-                                          children: [
-                                            Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                                child: Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Text(
-                                                    localizedText.sections_header,
-                                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                                      color: theme.colors.leadingColor,
-                                                      fontSize: 30,
-                                                    ),
-                                                  ),
-                                                )
-                                            ),
-                                            if(sections.isEmpty)
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(20, 15, 20, 15),
-                                                child: Text(
-                                                  localizedText.edit_chapter_page_no_sections,
-                                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                                    color: theme.colors.primaryText,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            if(sections.isNotEmpty)
-                                              Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: List.generate(
-                                                    sections.length,
-                                                        (index) {
-                                                      BloqoSectionData section = sections[index];
-                                                      if (index < sections.length - 1) {
-                                                        return BloqoEditableSection(
-                                                            course: course,
-                                                            chapter: chapter,
-                                                            section: section,
-                                                            editable: editable,
-                                                            onPressed: () {
-                                                              widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
-                                                            }
-                                                        );
-                                                      }
-                                                      else{
-                                                        return BloqoEditableSection(
-                                                            course: course,
-                                                            chapter: chapter,
-                                                            section: section,
-                                                            editable: editable,
-                                                            padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
-                                                            onPressed: () {
-                                                              widget.onPush(EditSectionPage(onPush: widget.onPush, chapterId: chapter.id, sectionId: section.id,));
-                                                            }
-                                                        );
-                                                      }
-                                                    }
-                                                ),
-                                              ),
-                                            if(editable)
-                                              Padding(
-                                                padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
-                                                child: BloqoFilledButton(
-                                                  color: theme.colors.leadingColor,
-                                                  onPressed: () async {
-                                                  context.loaderOverlay.show();
-                                                    try {
-                                                      await _addSection(
-                                                        context: context,
-                                                        course: course,
-                                                        chapter: chapter,
-                                                        sections: sections
-                                                      );
-                                                      if (!context.mounted) return;
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                                                      );
-                                                      context.loaderOverlay.hide();
-                                                    } on BloqoException catch (e) {
-                                                      if (!context.mounted) return;
-                                                      context.loaderOverlay.hide();
-                                                      showBloqoErrorAlert(
-                                                        context: context,
-                                                        title: localizedText.error_title,
-                                                        description: e.message,
-                                                      );
-                                                    }
-                                                  },
-                                                  text: localizedText.add_section,
-                                                  icon: Icons.add,
-                                                ),
+    return Consumer<ApplicationSettingsAppState>(
+        builder: (context, applicationSettingsAppState, _) {
+          var theme = getAppThemeFromAppState(context: context);
+          return BloqoMainContainer(
+              alignment: const AlignmentDirectional(-1.0, -1.0),
+              child: Consumer<EditorCourseAppState>(
+                  builder: (context, editorCourseAppState, _) {
+                    BloqoCourseData course = getEditorCourseFromAppState(
+                        context: context)!;
+                    BloqoChapterData chapter = getEditorCourseChapterFromAppState(
+                        context: context, chapterId: widget.chapterId)!;
+                    List<
+                        BloqoSectionData> sections = getEditorCourseChapterSectionsFromAppState(
+                        context: context, chapterId: widget.chapterId) ?? [];
+                    if (firstBuild) {
+                      chapterNameController.text = chapter.name;
+                      if (chapter.description != null) {
+                        chapterDescriptionController.text = chapter.description!;
+                      }
+                      firstBuild = false;
+                    }
+                    bool editable = !course.published;
+                    return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BloqoBreadcrumbs(breadcrumbs: [
+                            course.name,
+                            chapter.name
+                          ]),
+                          Expanded(
+                            child: SingleChildScrollView(
+                                child: Padding(
+                                    padding: !isTablet ? const EdgeInsetsDirectional
+                                        .all(0) : Constants.tabletPadding,
+                                    child: Column(
+                                        children: [
+                                          Form(
+                                              key: formKeyChapterName,
+                                              child: BloqoTextField(
+                                                formKey: formKeyChapterName,
+                                                controller: chapterNameController,
+                                                labelText: localizedText.name,
+                                                hintText: localizedText
+                                                    .editor_chapter_name_hint,
+                                                maxInputLength: Constants
+                                                    .maxChapterNameLength,
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(20, 20, 20, 0),
                                               )
-                                          ]
-                                      )
-                                  )
-                                ]
-                            )
-                          )
-                        ),
-                    ),
-                    if(editable)
-                      Padding(
-                        padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10)
-                            : Constants.tabletPaddingBloqoFilledButton,
-                        child: BloqoFilledButton(
-                          color: theme.colors.leadingColor,
-                          fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
-                          height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
-                          onPressed: () async {
-                            context.loaderOverlay.show();
-                            try {
-                              await _saveChanges(
-                                context: context,
-                                course: course,
-                                chapter: chapter,
-                                sections: sections
-                              );
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                BloqoSnackBar.get(context: context, child: Text(localizedText.done)),
-                              );
-                              context.loaderOverlay.hide();
-                            } on BloqoException catch (e) {
-                              if (!context.mounted) return;
-                              context.loaderOverlay.hide();
-                              showBloqoErrorAlert(
-                                context: context,
-                                title: localizedText.error_title,
-                                description: e.message,
-                              );
-                            }
-                          },
-                          text: localizedText.save_changes,
-                          icon: Icons.edit,
-                        ),
-                      ),
-                  ]
-              );
-            }
-        )
+                                          ),
+                                          Form(
+                                              key: formKeyChapterDescription,
+                                              child: BloqoTextField(
+                                                formKey: formKeyChapterDescription,
+                                                controller: chapterDescriptionController,
+                                                labelText: localizedText
+                                                    .description,
+                                                hintText: localizedText
+                                                    .editor_chapter_description_hint,
+                                                maxInputLength: Constants
+                                                    .maxChapterDescriptionLength,
+                                                padding: const EdgeInsetsDirectional
+                                                    .fromSTEB(20, 20, 20, 20),
+                                                isTextArea: true,
+                                              )
+                                          ),
+                                          BloqoSeasaltContainer(
+                                              child: Column(
+                                                  children: [
+                                                    Padding(
+                                                        padding: const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            20, 20, 20, 0),
+                                                        child: Align(
+                                                          alignment: Alignment
+                                                              .topLeft,
+                                                          child: Text(
+                                                            localizedText
+                                                                .sections_header,
+                                                            style: theme
+                                                                .getThemeData()
+                                                                .textTheme
+                                                                .displayLarge
+                                                                ?.copyWith(
+                                                              color: theme.colors
+                                                                  .leadingColor,
+                                                              fontSize: 30,
+                                                            ),
+                                                          ),
+                                                        )
+                                                    ),
+                                                    if(sections.isEmpty)
+                                                      Padding(
+                                                        padding: const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            20, 15, 20, 15),
+                                                        child: Text(
+                                                          localizedText
+                                                              .edit_chapter_page_no_sections,
+                                                          style: theme
+                                                              .getThemeData()
+                                                              .textTheme
+                                                              .displaySmall
+                                                              ?.copyWith(
+                                                            color: theme.colors
+                                                                .primaryText,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if(sections.isNotEmpty)
+                                                      Column(
+                                                        mainAxisSize: MainAxisSize
+                                                            .min,
+                                                        children: List.generate(
+                                                            sections.length,
+                                                                (index) {
+                                                              BloqoSectionData section = sections[index];
+                                                              if (index <
+                                                                  sections.length -
+                                                                      1) {
+                                                                return BloqoEditableSection(
+                                                                    course: course,
+                                                                    chapter: chapter,
+                                                                    section: section,
+                                                                    editable: editable,
+                                                                    onPressed: () {
+                                                                      widget.onPush(
+                                                                          EditSectionPage(
+                                                                            onPush: widget
+                                                                                .onPush,
+                                                                            chapterId: chapter
+                                                                                .id,
+                                                                            sectionId: section
+                                                                                .id,));
+                                                                    }
+                                                                );
+                                                              }
+                                                              else {
+                                                                return BloqoEditableSection(
+                                                                    course: course,
+                                                                    chapter: chapter,
+                                                                    section: section,
+                                                                    editable: editable,
+                                                                    padding: const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        15, 15, 15,
+                                                                        15),
+                                                                    onPressed: () {
+                                                                      widget.onPush(
+                                                                          EditSectionPage(
+                                                                            onPush: widget
+                                                                                .onPush,
+                                                                            chapterId: chapter
+                                                                                .id,
+                                                                            sectionId: section
+                                                                                .id,));
+                                                                    }
+                                                                );
+                                                              }
+                                                            }
+                                                        ),
+                                                      ),
+                                                    if(editable)
+                                                      Padding(
+                                                        padding: const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            30, 10, 30, 20),
+                                                        child: BloqoFilledButton(
+                                                          color: theme.colors
+                                                              .leadingColor,
+                                                          onPressed: () async {
+                                                            context.loaderOverlay
+                                                                .show();
+                                                            try {
+                                                              await _addSection(
+                                                                  context: context,
+                                                                  course: course,
+                                                                  chapter: chapter,
+                                                                  sections: sections
+                                                              );
+                                                              if (!context.mounted) return;
+                                                              showBloqoSnackBar(
+                                                                  context: context,
+                                                                  text: localizedText
+                                                                      .done
+                                                              );
+                                                              context.loaderOverlay
+                                                                  .hide();
+                                                            } on BloqoException catch (e) {
+                                                              if (!context.mounted) return;
+                                                              context.loaderOverlay
+                                                                  .hide();
+                                                              showBloqoErrorAlert(
+                                                                context: context,
+                                                                title: localizedText
+                                                                    .error_title,
+                                                                description: e
+                                                                    .message,
+                                                              );
+                                                            }
+                                                          },
+                                                          text: localizedText
+                                                              .add_section,
+                                                          icon: Icons.add,
+                                                        ),
+                                                      )
+                                                  ]
+                                              )
+                                          )
+                                        ]
+                                    )
+                                )
+                            ),
+                          ),
+                          if(editable)
+                            Padding(
+                              padding: !isTablet ? const EdgeInsetsDirectional
+                                  .fromSTEB(20, 10, 20, 10)
+                                  : Constants.tabletPaddingBloqoFilledButton,
+                              child: BloqoFilledButton(
+                                color: theme.colors.leadingColor,
+                                fontSize: !isTablet
+                                    ? Constants.fontSizeNotTablet
+                                    : Constants.fontSizeTablet,
+                                height: !isTablet
+                                    ? Constants.heightNotTablet
+                                    : Constants.heightTablet,
+                                onPressed: () async {
+                                  context.loaderOverlay.show();
+                                  try {
+                                    await _saveChanges(
+                                        context: context,
+                                        course: course,
+                                        chapter: chapter,
+                                        sections: sections
+                                    );
+                                    if (!context.mounted) return;
+                                    showBloqoSnackBar(
+                                        context: context,
+                                        text: localizedText.done
+                                    );
+                                    context.loaderOverlay.hide();
+                                  } on BloqoException catch (e) {
+                                    if (!context.mounted) return;
+                                    context.loaderOverlay.hide();
+                                    showBloqoErrorAlert(
+                                      context: context,
+                                      title: localizedText.error_title,
+                                      description: e.message,
+                                    );
+                                  }
+                                },
+                                text: localizedText.save_changes,
+                                icon: Icons.edit,
+                              ),
+                            ),
+                        ]
+                    );
+                  }
+              )
+          );
+        }
     );
   }
 

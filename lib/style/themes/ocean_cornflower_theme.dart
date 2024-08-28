@@ -13,7 +13,7 @@ class OceanCornflowerTheme extends BloqoAppTheme{
   OceanCornflowerTheme(){
     type = BloqoAppThemeType.oceanCornflower;
     colors = BloqoColors(
-      highContrastColor: const Color(0xFF224A4A),
+      highContrastColor: const Color(0xFF2D6161),
       leadingColor: const Color(0xFF0CD6D8),
       inBetweenColor: const Color(0xFF00A5D6),
       trailingColor: const Color(0xFF4873F3),
@@ -21,9 +21,9 @@ class OceanCornflowerTheme extends BloqoAppTheme{
       primaryText: const Color(0xFFF7F9F9),
       secondaryText: const Color(0xFFB1B1B1),
       tertiary: const Color(0xFFEE8b60),
-      error: const Color(0xFFFA2B36),
+      error: const Color(0xFFF64E58),
       warning: const Color(0xFFD5A203),
-      success: const Color(0xFF249689),
+      success: const Color(0xFF30C67B),
       okay: const Color(0xFF29AEDD),
       rate: const Color(0xFFC5A600),
       inactive: const Color(0xFF7E8A92),
@@ -41,19 +41,22 @@ class OceanCornflowerTheme extends BloqoAppTheme{
         fontSize: 40,
         fontWeight: FontWeight.bold,
         fontFamily: 'Readex Pro',
-        color: colors.primaryText
+        color: colors.primaryText,
+        height: 1.1
       ),
       displayMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
-          color: colors.primaryText
+        color: colors.primaryText,
+        height: 1.2,
       ),
       displaySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
         fontFamily: 'Readex Pro',
-        color: colors.primaryText
+        color: colors.primaryText,
+        height: 1.3
       ),
       bodyLarge: TextStyle(
         fontSize: 20,
