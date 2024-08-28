@@ -260,7 +260,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                     },
                                                   ),
                                                   Padding(
-                                                    padding: !(inProgressCoursesDisplayed <=
+                                                    padding: !(inProgressCoursesDisplayed <
                                                         inProgressCourses.length)
                                                         ?
                                                     const EdgeInsetsDirectional
@@ -278,7 +278,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                       BoxConstraints constraints) {
                                                     double width = constraints
                                                         .maxWidth / 2;
-                                                    double height = width / 2.30;
+                                                    double height = width / 1.6;
                                                     double childAspectRatio = width /
                                                         height;
 
@@ -313,6 +313,13 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                               );
                                                             },
                                                             showEditOptions: true,
+                                                            onPreview: () async {
+                                                              await _tryShowCoursePreview(
+                                                                  context: context,
+                                                                  localizedText: localizedText,
+                                                                  userCourseCreated: course
+                                                              );
+                                                            },
                                                             onPublish: () =>
                                                                 widget.onPush(
                                                                   PublishCoursePage(

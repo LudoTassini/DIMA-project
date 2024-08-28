@@ -62,6 +62,9 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
   void initState() {
     super.initState();
     numQuizBlocks = _getNumQuizBlocks(blocks: widget.blocks);
+    if(numQuizBlocks == completedBlocks){
+      isSectionCompleted = true;
+    }
   }
 
   @override
