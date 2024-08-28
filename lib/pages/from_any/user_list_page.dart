@@ -114,79 +114,92 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                 ),
                               ),
 
-                        !isTablet ?
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                            _usersDisplayed > users.length ? users.length : _usersDisplayed,
-                                (index) {
-                              BloqoUserData user = users[index];
-                              return BloqoUserDetailsShort(
-                                user: user,
-                                onPush: widget.onPush,
-                                onNavigateToPage: widget.onNavigateToPage,
-                              );
-                            },
-                          ),
-                        )
-                        : Column(
-                            children: [
-                              LayoutBuilder(
-                                builder: (BuildContext context, BoxConstraints constraints) {
-                                  double width = constraints.maxWidth / 2;
-                                  double height = width / 2.25;
-                                  double childAspectRatio = width / height;
+                              !isTablet ?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(
+                                  _usersDisplayed > users.length
+                                      ? users.length
+                                      : _usersDisplayed,
+                                      (index) {
+                                    BloqoUserData user = users[index];
+                                    return BloqoUserDetailsShort(
+                                      user: user,
+                                      onPush: widget.onPush,
+                                      onNavigateToPage: widget.onNavigateToPage,
+                                    );
+                                  },
+                                ),
+                              )
+                                  : Column(
+                                children: [
+                                  LayoutBuilder(
+                                      builder: (BuildContext context,
+                                          BoxConstraints constraints) {
+                                        double width = constraints.maxWidth / 2;
+                                        double height = width / 2.25;
+                                        double childAspectRatio = width /
+                                            height;
 
-                                  return GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 10.0,
-                                      mainAxisSpacing: 10.0,
-                                      childAspectRatio: childAspectRatio,
-                                    ),
-                                    itemCount: _usersDisplayed > users.length ? users.length : _usersDisplayed,
-                                    itemBuilder: (context, index) {
-                                      BloqoUserData user = users[index];
-                                      return BloqoUserDetailsShort(
-                                        user: user,
-                                        onPush: widget.onPush,
-                                        onNavigateToPage: widget
-                                            .onNavigateToPage,
-                                      );
-                                    },
-                                  );
-                                }
+                                        return GridView.builder(
+                                          shrinkWrap: true,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 10.0,
+                                            mainAxisSpacing: 10.0,
+                                            childAspectRatio: childAspectRatio,
+                                          ),
+                                          itemCount: _usersDisplayed >
+                                              users.length
+                                              ? users.length
+                                              : _usersDisplayed,
+                                          itemBuilder: (context, index) {
+                                            BloqoUserData user = users[index];
+                                            return BloqoUserDetailsShort(
+                                              user: user,
+                                              onPush: widget.onPush,
+                                              onNavigateToPage: widget
+                                                  .onNavigateToPage,
+                                            );
+                                          },
+                                        );
+                                      }
+                                  ),
+                                ],
                               ),
+
+                              if (_usersDisplayed < users.length)
+                                BloqoTextButton(
+                                  onPressed: loadMoreUsers,
+                                  text: localizedText.load_more,
+                                  color: theme.colors.highContrastColor,
+                                  fontSize: !isTablet ? 14 : 16,
+                                ),
                             ],
                           ),
-
-                        if (_usersDisplayed < users.length)
-                          BloqoTextButton(
-                            onPressed: loadMoreUsers,
-                            text: localizedText.load_more,
-                            color: theme.colors.highContrastColor,
-                            fontSize: !isTablet ? 14 : 16,
-                          ),
-                      ],
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  return Center(
+                    child: Text(
+                      "Error",
+                      style: theme
+                          .getThemeData()
+                          .textTheme
+                          .displayMedium
+                          ?.copyWith(
+                        color: theme.colors.error,
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }
-          } else {
-            return Center(
-              child: Text(
-                "Error",
-                style: theme.getThemeData().textTheme.displayMedium?.copyWith(
-                  color: theme.colors.error,
-                ),
-              ),
-            );
-          }
-        },
-      ),
+                  );
+                }
+              },
+            ),
+          );
+        }
     );
   }
 

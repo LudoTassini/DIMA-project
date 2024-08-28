@@ -480,21 +480,9 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                   (sectionIndex) {
                                                                 var section = sections[chapter
                                                                     .id]![sectionIndex];
-                                                                if (isCourseCompleted) {
-                                                                  isClickable =
-                                                                  true;
-                                                                } else {
-                                                                  if (sectionToComplete! ==
-                                                                      section.id
-                                                                      ||
-                                                                      sectionsCompleted
-                                                                          .contains(
-                                                                          section
-                                                                              .id)) {
-                                                                    isClickable =
-                                                                    true;
-                                                                  }
-                                                                }
+                                                                bool isClickable = isCourseCompleted ||
+                                                                    (sectionToComplete! == section.id) ||
+                                                                    (sectionsCompleted.contains(section.id));
 
                                                       return BloqoCourseSection(
                                                         section: section,
