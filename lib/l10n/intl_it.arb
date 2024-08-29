@@ -345,5 +345,9 @@
   "completed_section": "Completato",
   "course_completed":"Corso completato!",
   "cannot_unsubscribe_course_completed": "Hai già completato il corso, pertanto non ti puoi disiscrivere.",
-  "error_review": "Non puoi pubblicare una recensione incompleta!"
+  "error_review": "Non puoi pubblicare una recensione incompleta!",
+  "error_quiz_question_empty": "Una domanda di un quiz non deve essere vuota.",
+  "error_quiz_question_invalid": "Una domanda di un quiz non deve contenere testo non valido.",
+  "error_multiple_choice_answer_empty": "Una risposta di un quiz a scelta multipla non deve essere vuota.",
+  "error_multiple_choice_answer_invalid": "Una risposta di un quiz a scelta multipla non deve contenere testo non valido."
 }

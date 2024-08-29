@@ -346,5 +346,9 @@
   "completed_section": "Completed",
   "course_completed": "Course completed!",
   "cannot_unsubscribe_course_completed": "You already completed the course, so you cannot unsubscribe to it.",
-  "error_review": "You cannot publish an incomplete review!"
+  "error_review": "You cannot publish an incomplete review!",
+  "error_quiz_question_empty": "A quiz question must not be empty.",
+  "error_quiz_question_invalid": "A quiz question must not contain invalid text.",
+  "error_multiple_choice_answer_empty": "A multiple choice answer must not be empty.",
+  "error_multiple_choice_answer_invalid": "A multiple choice answer must not contain invalid text."
 }
