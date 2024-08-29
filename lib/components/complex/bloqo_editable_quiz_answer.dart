@@ -1,5 +1,6 @@
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/forms/bloqo_switch.dart';
+import 'package:bloqo/utils/text_validator.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
@@ -103,7 +104,8 @@ class _BloqoEditableQuizAnswerState extends State<BloqoEditableQuizAnswer>{
                     maxInputLength: Constants.maxQuizAnswerLength,
                     isTextArea: true,
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 5, 15),
-                    isDisabled: !widget.editable
+                    isDisabled: !widget.editable,
+                    validator: (String? value) { return multipleChoiceAnswerValidator(multipleChoiceAnswer: value, localizedText: localizedText); },
                   )
                 ),
                 Wrap(

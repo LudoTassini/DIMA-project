@@ -6,6 +6,7 @@ import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:bloqo/model/user_courses/bloqo_user_course_created_data.dart';
 import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
 import 'package:bloqo/utils/check_device.dart';
+import 'package:bloqo/utils/text_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -350,7 +351,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                         maxInputLength: Constants.maxQuizQuestionLength,
                                                         isTextArea: true,
                                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                                        isDisabled: !editable
+                                                        isDisabled: !editable,
+                                                        validator: (String? value) { return quizQuestionValidator(quizQuestion: value, localizedText: localizedText); },
                                                     ),
                                                   ),
                                                   Padding(
@@ -514,7 +516,8 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                         maxInputLength: Constants.maxQuizQuestionLength,
                                                         isTextArea: true,
                                                         padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                                                        isDisabled: !editable
+                                                        isDisabled: !editable,
+                                                        validator: (String? value) { return quizQuestionValidator(quizQuestion: value, localizedText: localizedText); },
                                                     ),
                                                   ),
                                                   Padding(
@@ -562,19 +565,11 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                               children: [
                                                                 Expanded(
                                                                     child: Text(
-                                                                        localizedText
-                                                                            .trim_extra_whitespaces,
-                                                                        style: theme
-                                                                            .getThemeData()
-                                                                            .textTheme
-                                                                            .displayMedium
-                                                                            ?.copyWith(
-                                                                            color: theme
-                                                                                .colors
-                                                                                .leadingColor,
+                                                                        localizedText.trim_extra_whitespaces,
+                                                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                                                            color: theme.colors.leadingColor,
                                                                             fontSize: 18,
-                                                                            fontWeight: FontWeight
-                                                                                .w500
+                                                                            fontWeight: FontWeight.w500
                                                                         )
                                                                     )
                                                                 ),
@@ -588,19 +583,11 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                               children: [
                                                                 Expanded(
                                                                     child: Text(
-                                                                        localizedText
-                                                                            .comparison_ignore_case,
-                                                                        style: theme
-                                                                            .getThemeData()
-                                                                            .textTheme
-                                                                            .displayMedium
-                                                                            ?.copyWith(
-                                                                            color: theme
-                                                                                .colors
-                                                                                .leadingColor,
+                                                                        localizedText.comparison_ignore_case,
+                                                                        style: theme.getThemeData().textTheme.displayMedium?.copyWith(
+                                                                            color: theme.colors.leadingColor,
                                                                             fontSize: 18,
-                                                                            fontWeight: FontWeight
-                                                                                .w500
+                                                                            fontWeight: FontWeight.w500
                                                                         )
                                                                     )
                                                                 ),
@@ -615,39 +602,21 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
                                                   ),
                                                   if(editable)
                                                     Padding(
-                                                        padding: !isTablet
-                                                            ? const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            20, 20, 20, 20)
-                                                            : Constants
-                                                            .tabletPaddingBloqoFilledButton,
+                                                        padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20) : Constants.tabletPaddingBloqoFilledButton,
                                                         child: BloqoFilledButton(
-                                                            color: theme.colors
-                                                                .leadingColor,
-                                                            fontSize: !isTablet
-                                                                ? Constants
-                                                                .fontSizeNotTablet
-                                                                : Constants
-                                                                .fontSizeTablet,
-                                                            height: !isTablet
-                                                                ? Constants
-                                                                .heightNotTablet
-                                                                : Constants
-                                                                .heightTablet,
+                                                            color: theme.colors.leadingColor,
+                                                            fontSize: !isTablet ? Constants.fontSizeNotTablet : Constants.fontSizeTablet,
+                                                            height: !isTablet ? Constants.heightNotTablet : Constants.heightTablet,
                                                             onPressed: () async {
                                                               await _trySaveOpenQuestionQuizChanges(
                                                                   context: context,
                                                                   localizedText: localizedText,
-                                                                  courseId: course
-                                                                      .id,
-                                                                  sectionId: section
-                                                                      .id,
-                                                                  block: widget
-                                                                      .block
+                                                                  courseId: course.id,
+                                                                  sectionId: section.id,
+                                                                  block: widget.block
                                                               );
                                                             },
-                                                            text: localizedText
-                                                                .save_quiz_changes,
+                                                            text: localizedText.save_quiz_changes,
                                                             icon: Icons.edit
                                                         )
                                                     ),
@@ -689,15 +658,17 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   }
 
   String _generateContentStringForMultipleChoiceQuiz({required var localizedText}){
-    if(multipleChoiceQuestionController.text == ""){
-      throw BloqoException(message: localizedText.question_not_empty_error);
+    String? quizQuestionValidationResult = quizQuestionValidator(quizQuestion: multipleChoiceQuestionController.text, localizedText: localizedText);
+    if(quizQuestionValidationResult != null){
+      throw BloqoException(message: quizQuestionValidationResult);
     }
     if(multipleChoiceControllers.isEmpty){
       throw BloqoException(message: localizedText.no_answers_error);
     }
     for(TextEditingController answerController in multipleChoiceControllers){
-      if(answerController.text == ""){
-        throw BloqoException(message: localizedText.answer_not_empty_error);
+      String? multipleChoiceAnswerValidationResult = multipleChoiceAnswerValidator(multipleChoiceAnswer: answerController.text, localizedText: localizedText);
+      if(multipleChoiceAnswerValidationResult != null){
+        throw BloqoException(message: multipleChoiceAnswerValidationResult);
       }
     }
     bool hasCorrectAnswer = false;
@@ -769,8 +740,9 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   }
 
   String _generateContentStringForOpenQuestionQuiz({required var localizedText}){
-    if(openQuestionController.text == ""){
-      throw BloqoException(message: localizedText.question_not_empty_error);
+    String? quizQuestionValidationResult = quizQuestionValidator(quizQuestion: openQuestionController.text, localizedText: localizedText);
+    if(quizQuestionValidationResult != null){
+      throw BloqoException(message: quizQuestionValidationResult);
     }
     if(openQuestionAnswerController.text == ""){
       throw BloqoException(message: localizedText.answer_not_empty_error);

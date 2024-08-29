@@ -413,10 +413,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                         isInLearnPage: true,
                                                         isCompleted: sectionsCompleted.contains(section.id),
                                                         onPressed: () async {
-                                                          await _goToSectionPage(
+                                                          await _tryGoToSectionPage(
                                                             context: context,
                                                             localizedText: localizedText,
-                                                            sectionId: section.id,
+                                                            section: section,
                                                             courseName: course.name,
                                                           );
                                                         },
@@ -456,10 +456,10 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                                   isInLearnPage: true,
                                                                   isCompleted: sectionsCompleted.contains(section.id),
                                                                   onPressed: () async {
-                                                                    await _goToSectionPage(
+                                                                    await _tryGoToSectionPage(
                                                                       context: context,
                                                                       localizedText: localizedText,
-                                                                      sectionId: section.id,
+                                                                      section: section,
                                                                       courseName: course.name,
                                                                     );
                                                                   },
@@ -703,10 +703,19 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                   : Constants.tabletPaddingBloqoFilledButton,
                               child: BloqoFilledButton(
                                 onPressed: () async {
-                                  await _goToSectionPage(
+                                  late BloqoSectionData sectionToLearn;
+                                  for(BloqoChapterData chapter in chapters){
+                                    List<String> sectionIds = sections[chapter.id]!.map<String>((x) => x.id).toList();
+                                    for(String sectionId in sectionIds){
+                                      if(sectionId == sectionToComplete){
+                                        sectionToLearn = sections[chapter.id]!.where((section) => section.id == sectionId).first;
+                                      }
+                                    }
+                                  }
+                                  await _tryGoToSectionPage(
                                     context: context,
                                     localizedText: localizedText,
-                                    sectionId: sectionToComplete!,
+                                    section: sectionToLearn,
                                     courseName: course.name,
                                   );
                                 },
@@ -820,57 +829,58 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
     }
   }
 
-  Future<void> _goToSectionPage({required BuildContext context, required var localizedText, required String sectionId,
+  Future<void> _tryGoToSectionPage({required BuildContext context, required var localizedText, required BloqoSectionData section,
     required String courseName}) async {
+
     context.loaderOverlay.show();
     try {
-      var firestore = getFirestoreFromAppState(context: context);
-
-      BloqoSectionData sectionToComplete = await getSectionFromId(
-          firestore: firestore,
-          localizedText: localizedText,
-          sectionId: sectionId);
-
-      List<BloqoBlockData> blocks = await getBlocksFromIds(
-          firestore: firestore,
-          localizedText: localizedText,
-          blockIds: sectionToComplete.blocks
-      );
-      if(!context.mounted) return;
-
-      context.loaderOverlay.hide();
-
-      List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(context: context)!;
-      BloqoChapterData currentChapter = chapters.where(
-              (chapter) => chapter.sections.contains(sectionId)).first;
+      List<BloqoChapterData> chapters = getLearnCourseChaptersFromAppState(
+          context: context)!;
+      BloqoChapterData currentChapter = chapters
+          .where(
+              (chapter) => chapter.sections.contains(section.id))
+          .first;
       BloqoChapterData? nextChapter;
       String? nextChapterId = _getNextSectionChapterId(
           chapters: chapters,
           currentChapter: currentChapter,
-          currentSection: sectionToComplete);
-
-      if(nextChapterId != null){
-        nextChapter = chapters.where((chapter) => chapter.id == nextChapterId).first;
-      }
-
-      widget.onPush(
-        SectionPage(
-          onPush: widget.onPush,
-          section: sectionToComplete,
-          blocks: blocks,
-          courseName: courseName,
-          chapter: currentChapter,
-          onSectionCompleted: () {
-            updateSectionsToShow(
-              chapterCurrentSection: currentChapter,
-              chapterNextSection: nextChapter,
-            );
-          },
-        )
+          currentSection: section
       );
 
-    } on BloqoException catch (e) {
+      if (nextChapterId != null) {
+        nextChapter = chapters
+            .where((chapter) => chapter.id == nextChapterId)
+            .first;
+      }
+
+      var firestore = getFirestoreFromAppState(context: context);
+
+      List<BloqoBlockData> blocks = await getBlocksFromIds(
+          firestore: firestore,
+          localizedText: localizedText,
+          blockIds: section.blocks
+      );
+
       if(!context.mounted) return;
+
+      context.loaderOverlay.hide();
+      widget.onPush(
+          SectionPage(
+            onPush: widget.onPush,
+            section: section,
+            blocks: blocks,
+            courseName: courseName,
+            chapter: currentChapter,
+            onSectionCompleted: () {
+              updateSectionsToShow(
+                chapterCurrentSection: currentChapter,
+                chapterNextSection: nextChapter,
+              );
+            },
+          )
+      );
+    } on BloqoException catch (e) {
+      if (!context.mounted) return;
       context.loaderOverlay.hide();
       showBloqoErrorAlert(
         context: context,
@@ -878,6 +888,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
         description: e.message,
       );
     }
+
   }
 
   Future<void> _tryGoToCourseQrCodePage({required BuildContext context, required var localizedText, required BloqoCourseData course}) async {

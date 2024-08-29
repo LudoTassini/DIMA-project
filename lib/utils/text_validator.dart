@@ -51,6 +51,30 @@ String? fullNameValidator({String? fullName, required AppLocalizations localized
   }
 }
 
+String? quizQuestionValidator({String? quizQuestion, required AppLocalizations localizedText}){
+  if (quizQuestion == null || quizQuestion == ""){
+    return localizedText.error_quiz_question_empty;
+  }
+  if (!validateQuizQuestion(quizQuestion)){
+    return localizedText.error_quiz_question_invalid;
+  }
+  else{
+    return null;
+  }
+}
+
+String? multipleChoiceAnswerValidator({String? multipleChoiceAnswer, required AppLocalizations localizedText}){
+  if (multipleChoiceAnswer == null || multipleChoiceAnswer == ""){
+    return localizedText.error_multiple_choice_answer_empty;
+  }
+  if (!validateMultipleChoiceAnswer(multipleChoiceAnswer)){
+    return localizedText.error_multiple_choice_answer_invalid;
+  }
+  else{
+    return null;
+  }
+}
+
 bool validateEmail(String email){
   // regex definition
   final RegExp emailRegex = RegExp(
@@ -113,4 +137,14 @@ bool validateUsername(String username){
 bool validateFullName(String fullName) {
   RegExp regExp = RegExp(r"^[a-zA-Z\s']+$");
   return regExp.hasMatch(fullName);
+}
+
+bool validateQuizQuestion(String quizQuestion) {
+  RegExp regExp = RegExp(r"\$a");
+  return !regExp.hasMatch(quizQuestion);
+}
+
+bool validateMultipleChoiceAnswer(String multipleChoiceAnswer) {
+  RegExp regExp = RegExp(r"<[yn]>");
+  return !regExp.hasMatch(multipleChoiceAnswer);
 }

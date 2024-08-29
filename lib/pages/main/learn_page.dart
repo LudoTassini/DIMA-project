@@ -282,32 +282,23 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
 
                                       if (inProgressCourses.isEmpty)
                                         Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(15, 15, 15, 0),
+                                          padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                localizedText
-                                                    .learn_page_no_in_progress_courses,
-                                                style: theme
-                                                    .getThemeData()
-                                                    .textTheme
-                                                    .displaySmall
-                                                    ?.copyWith(
+                                                localizedText.learn_page_no_in_progress_courses,
+                                                style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                   color: theme.colors.primaryText,
                                                   fontSize: 14,
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(30, 10, 30, 20),
+                                                padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 20),
                                                 child: BloqoFilledButton(
-                                                  onPressed: () =>
-                                                      widget.onNavigateToPage(2),
+                                                  onPressed: () => widget.onNavigateToPage(2),
                                                   color: theme.colors.leadingColor,
-                                                  text: localizedText
-                                                      .take_me_there_button,
+                                                  text: localizedText.take_me_there_button,
                                                   fontSize: 16,
                                                 ),
                                               ),
@@ -332,11 +323,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                   child: Text(
                                     localizedText.learn_page_header_2,
                                     textAlign: TextAlign.end,
-                                    style: theme
-                                        .getThemeData()
-                                        .textTheme
-                                        .displayLarge
-                                        ?.copyWith(
+                                    style: theme.getThemeData().textTheme.displayLarge?.copyWith(
                                       color: theme.colors.highContrastColor,
                                       fontSize: 30,
                                       fontWeight: FontWeight.w600,
@@ -474,7 +461,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                           inProgressCourses.isEmpty)
                                         Padding(
                                           padding: const EdgeInsetsDirectional
-                                              .fromSTEB(15, 15, 15, 0),
+                                              .fromSTEB(15, 15, 15, 15),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -514,27 +501,20 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                localizedText
-                                                    .learn_page_no_completed_courses,
-                                                style: theme
-                                                    .getThemeData()
-                                                    .textTheme
-                                                    .displaySmall
-                                                    ?.copyWith(
+                                                localizedText.learn_page_no_completed_courses,
+                                                style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                                   color: theme.colors.primaryText,
                                                   fontSize: 14,
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(30, 10, 30, 20),
+                                                padding: const EdgeInsetsDirectional.fromSTEB(30, 10, 30, 10),
                                                 child: BloqoFilledButton(
                                                   onPressed: () {
                                                     tabController.animateTo(0);
                                                   },
                                                   color: theme.colors.leadingColor,
-                                                  text: localizedText
-                                                      .take_me_there_button,
+                                                  text: localizedText.take_me_there_button,
                                                   fontSize: 16,
                                                 ),
                                               ),
@@ -595,6 +575,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
           localizedText: localizedText,
           chapterIds: course.chapters,
         );
+
         Map<String, List<BloqoSectionData>> sections = {};
         for (String chapterId in course.chapters) {
           List<BloqoSectionData> chapterSections = await getSectionsFromIds(

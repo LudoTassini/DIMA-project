@@ -15,7 +15,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Users can update their profile picture test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -40,7 +40,7 @@ void main() {
   });
 
   testWidgets('Users can show their QR code test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 3000));
 
     await initTestApp(tester: tester);
 
@@ -57,7 +57,7 @@ void main() {
   });
 
   testWidgets('Users can update their account settings test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -80,7 +80,7 @@ void main() {
   });
 
   testWidgets('Users can update their application settings (language) test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -109,7 +109,7 @@ void main() {
   });
 
   testWidgets('Users can update their application settings (theme) test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -142,7 +142,7 @@ void main() {
   });
 
   testWidgets('Users can logout test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -162,7 +162,7 @@ void main() {
   });
 
   testWidgets('Users can see the users who follow them test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -179,7 +179,7 @@ void main() {
   });
 
   testWidgets('Users can see the users who they are following test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 

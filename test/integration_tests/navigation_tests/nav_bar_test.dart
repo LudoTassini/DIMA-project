@@ -9,7 +9,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Users can navigate from and to main stacks test', (WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 

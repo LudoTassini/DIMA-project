@@ -1,5 +1,6 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_course_created.dart';
+import 'package:bloqo/components/complex/bloqo_course_section.dart';
 import 'package:bloqo/components/complex/bloqo_editable_block.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/complex/bloqo_editable_quiz_answer.dart';
@@ -7,6 +8,7 @@ import 'package:bloqo/components/complex/bloqo_editable_section.dart';
 import 'package:bloqo/components/forms/bloqo_dropdown.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
 import 'package:bloqo/components/multimedia/bloqo_audio_player.dart';
+import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -19,7 +21,7 @@ void main() {
 
   testWidgets('Users can create a new course test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -34,7 +36,7 @@ void main() {
 
   testWidgets('Users can edit a course and add a chapter to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -51,7 +53,7 @@ void main() {
 
   testWidgets('Users can edit a chapter and add a section to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -73,7 +75,7 @@ void main() {
 
   testWidgets('Users can edit a section and add a text block to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -107,7 +109,7 @@ void main() {
 
   testWidgets('Users can edit a section and add a multimedia block to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -141,7 +143,7 @@ void main() {
 
   testWidgets('Users can edit a section and add a quiz block to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -175,7 +177,7 @@ void main() {
 
   testWidgets('Users can edit a text block and add text to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -224,7 +226,7 @@ void main() {
 
   testWidgets('Users can edit a multimedia block and add an image to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -287,7 +289,7 @@ void main() {
 
   testWidgets('Users can edit a multimedia block and add an audio to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -342,7 +344,7 @@ void main() {
 
   testWidgets('Users can edit a multimedia block and add a video (from device) to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -401,7 +403,7 @@ void main() {
 
   testWidgets('Users can edit a multimedia block and add a video (from YouTube) to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -466,7 +468,7 @@ void main() {
 
   testWidgets('Users can edit a quiz block and add a multiple choice question to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -542,7 +544,7 @@ void main() {
 
   testWidgets('Users can edit a quiz block and remove a choice from a multiple choice question test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -637,7 +639,7 @@ void main() {
 
   testWidgets('Users can edit a quiz block and add a open question to it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -705,7 +707,7 @@ void main() {
 
   testWidgets('Users can edit a section and remove a block from it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -754,7 +756,7 @@ void main() {
 
   testWidgets('Users can edit a chapter and remove a section from it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -788,7 +790,7 @@ void main() {
 
   testWidgets('Users can edit a course and remove a chapter from it test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -817,7 +819,7 @@ void main() {
 
   testWidgets('Users can delete a course test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 2000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -838,6 +840,27 @@ void main() {
     });
 
     expect(find.byType(BloqoCourseCreated), findsNothing);
+
+    await binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Users can preview a course test', (
+      WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(2400, 2000));
+
+    await initTestApp(tester: tester);
+
+    await doLogin(tester: tester);
+
+    await goToStack(tester: tester, stack: "Editor");
+
+    expect(find.byType(BloqoCourseCreated), findsOne);
+
+    await tester.tap(find.text("Preview").first);
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(BloqoCourseSection), findsAtLeast(1));
+    expect(find.byType(BloqoBreadcrumbs), findsOne);
 
     await binding.setSurfaceSize(null);
   });
@@ -918,7 +941,7 @@ void main() {
 
   testWidgets('Users can view the QR code of a published course test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1500, 3000));
+    await binding.setSurfaceSize(const Size(2400, 3000));
 
     await initTestApp(tester: tester);
 
@@ -1035,6 +1058,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(BloqoFilledButton), findsNothing);
+    expect(find.byType(BloqoBreadcrumbs), findsOne);
 
     await binding.setSurfaceSize(null);
   });
