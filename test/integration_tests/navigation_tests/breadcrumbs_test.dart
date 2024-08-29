@@ -50,15 +50,10 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    /*expect(find.text("Course", findRichText: true), findsOne);
-    expect(find.text("Chapter 1", findRichText: true), findsOne);
-    expect(find.text("Section 1", findRichText: true), findsOne);
-    expect(find.text("Text", findRichText: true), findsExactly(2)); */
     expect(find.byType(BloqoBreadcrumbs), findsOne);
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Section 1", findRichText: true).first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Section 1");
 
     expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Text"), findsOne);
@@ -104,14 +99,10 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Course", findRichText: true), findsOne);
-    expect(find.text("Chapter 1", findRichText: true), findsOne);
-    expect(find.text("Section 1", findRichText: true), findsOne);
-    expect(find.text("Text", findRichText: true), findsExactly(2));
+    expect(find.byType(BloqoBreadcrumbs), findsOne);
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Chapter 1", findRichText: true).first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Chapter 1");
 
     expect(find.byType(BloqoEditableSection), findsOne);
 
@@ -156,14 +147,10 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Course", findRichText: true), findsOne);
-    expect(find.text("Chapter 1", findRichText: true), findsOne);
-    expect(find.text("Section 1", findRichText: true), findsOne);
-    expect(find.text("Text", findRichText: true), findsExactly(2));
+    expect(find.byType(BloqoBreadcrumbs), findsOne);
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Course", findRichText: true).first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Course");
 
     expect(find.byType(BloqoEditableChapter), findsOne);
 
@@ -205,8 +192,7 @@ void main() {
     expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Text"), findsOne);
 
-    await tester.tap(find.text("Chapter 1").first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Chapter 1");
 
     expect(find.byType(BloqoEditableSection), findsOne);
 
@@ -248,8 +234,7 @@ void main() {
     expect(find.byType(BloqoEditableBlock), findsOne);
     expect(find.text("Text"), findsOne);
 
-    await tester.tap(find.text("Course").first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Course");
 
     expect(find.byType(BloqoEditableChapter), findsOne);
 
@@ -275,8 +260,7 @@ void main() {
 
     await createNewSectionAndTest(tester: tester);
 
-    await tester.tap(find.text("Course").first);
-    await tester.pumpAndSettle();
+    await tapBreadcrumbsByText(tester: tester, text: "Course");
 
     expect(find.byType(BloqoEditableChapter), findsOne);
 

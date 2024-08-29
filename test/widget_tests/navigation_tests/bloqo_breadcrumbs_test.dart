@@ -46,7 +46,7 @@ void main() {
                   ),
                 ),
               ],
-              onPopPage: (route, result) => route.didPop(result),
+              onDidRemovePage: (_) => (),
             );
           },
         ),
@@ -61,17 +61,29 @@ void main() {
 
   testWidgets('Breadcrumbs can be tapped (if enabled)', (WidgetTester tester) async {
     await tester.pumpWidget(buildTestWidget());
-    await tester.tap(find.text("test2"));
-    await tester.pumpAndSettle(); // Wait for animations and state changes
+    final breadcrumbFinder = find.byWidgetPredicate(
+          (widget) =>
+      widget is RichText &&
+          widget.text.toPlainText().contains('test2'),
+    );
 
+    expect(breadcrumbFinder, findsOneWidget);
+    await tester.tap(breadcrumbFinder);
+    await tester.pumpAndSettle();
     expect(find.text("This is Page 2"), findsOneWidget);
   });
 
   testWidgets('Breadcrumbs cannot be tapped (if disabled)', (WidgetTester tester) async {
     await tester.pumpWidget(buildTestWidget(disable: true));
-    await tester.tap(find.text("test2"));
-    await tester.pumpAndSettle(); // Wait for animations and state changes
+    final breadcrumbFinder = find.byWidgetPredicate(
+          (widget) =>
+      widget is RichText &&
+          widget.text.toPlainText().contains('test2'),
+    );
 
+    expect(breadcrumbFinder, findsOneWidget);
+    await tester.tap(breadcrumbFinder);
+    await tester.pumpAndSettle();
     expect(find.text("This is Page 2"), findsNothing);
   });
 
