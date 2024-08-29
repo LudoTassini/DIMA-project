@@ -45,7 +45,7 @@ Future<void> createNewCourseAndTest({required WidgetTester tester, bool andComeB
   await tester.tap(find.byType(BloqoFilledButton).last);
   await tester.pumpAndSettle();
 
-  expect(find.text("Course"), findsExactly(2));
+  expect(find.text("Course", findRichText: true), findsExactly(2));
 
   if(andComeBack) {
     await tester.tap(find.byIcon(Icons.arrow_back).last);
