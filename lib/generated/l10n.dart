@@ -1690,10 +1690,10 @@ class S {
     );
   }
 
-  /// `You have no completed courses.`
+  /// `You have not completed any course. Go complete one now!`
   String get learn_page_no_completed_courses {
     return Intl.message(
-      'You have no completed courses.',
+      'You have not completed any course. Go complete one now!',
       name: 'learn_page_no_completed_courses',
       desc: '',
       args: [],
@@ -2150,10 +2150,10 @@ class S {
     );
   }
 
-  /// `by `
+  /// `by`
   String get by {
     return Intl.message(
-      'by ',
+      'by',
       name: 'by',
       desc: '',
       args: [],
@@ -3265,6 +3265,56 @@ class S {
     return Intl.message(
       'You already completed the course, so you cannot unsubscribe to it.',
       name: 'cannot_unsubscribe_course_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You cannot publish an incomplete review!`
+  String get error_review {
+    return Intl.message(
+      'You cannot publish an incomplete review!',
+      name: 'error_review',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A quiz question must not be empty.`
+  String get error_quiz_question_empty {
+    return Intl.message(
+      'A quiz question must not be empty.',
+      name: 'error_quiz_question_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A quiz question must not contain invalid text.`
+  String get error_quiz_question_invalid {
+    return Intl.message(
+      'A quiz question must not contain invalid text.',
+      name: 'error_quiz_question_invalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A multiple choice answer must not be empty.`
+  String get error_multiple_choice_answer_empty {
+    return Intl.message(
+      'A multiple choice answer must not be empty.',
+      name: 'error_multiple_choice_answer_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A multiple choice answer must not contain invalid text.`
+  String get error_multiple_choice_answer_invalid {
+    return Intl.message(
+      'A multiple choice answer must not contain invalid text.',
+      name: 'error_multiple_choice_answer_invalid',
       desc: '',
       args: [],
     );

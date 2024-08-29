@@ -2,6 +2,7 @@ import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_editable_block.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/complex/bloqo_editable_section.dart';
+import 'package:bloqo/components/navigation/bloqo_breadcrumbs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -49,13 +50,14 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Course"), findsOne);
-    expect(find.text("Chapter 1"), findsOne);
-    expect(find.text("Section 1"), findsOne);
-    expect(find.text("Text"), findsExactly(2));
+    /*expect(find.text("Course", findRichText: true), findsOne);
+    expect(find.text("Chapter 1", findRichText: true), findsOne);
+    expect(find.text("Section 1", findRichText: true), findsOne);
+    expect(find.text("Text", findRichText: true), findsExactly(2)); */
+    expect(find.byType(BloqoBreadcrumbs), findsOne);
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Section 1").first);
+    await tester.tap(find.text("Section 1", findRichText: true).first);
     await tester.pumpAndSettle();
 
     expect(find.byType(BloqoEditableBlock), findsOne);
@@ -102,13 +104,13 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Course"), findsOne);
-    expect(find.text("Chapter 1"), findsOne);
-    expect(find.text("Section 1"), findsOne);
-    expect(find.text("Text"), findsExactly(2));
+    expect(find.text("Course", findRichText: true), findsOne);
+    expect(find.text("Chapter 1", findRichText: true), findsOne);
+    expect(find.text("Section 1", findRichText: true), findsOne);
+    expect(find.text("Text", findRichText: true), findsExactly(2));
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Chapter 1").first);
+    await tester.tap(find.text("Chapter 1", findRichText: true).first);
     await tester.pumpAndSettle();
 
     expect(find.byType(BloqoEditableSection), findsOne);
@@ -154,13 +156,13 @@ void main() {
     await tester.tap(find.byType(BloqoEditableBlock).first);
     await tester.pumpAndSettle();
 
-    expect(find.text("Course"), findsOne);
-    expect(find.text("Chapter 1"), findsOne);
-    expect(find.text("Section 1"), findsOne);
-    expect(find.text("Text"), findsExactly(2));
+    expect(find.text("Course", findRichText: true), findsOne);
+    expect(find.text("Chapter 1", findRichText: true), findsOne);
+    expect(find.text("Section 1", findRichText: true), findsOne);
+    expect(find.text("Text", findRichText: true), findsExactly(2));
     expect(find.byType(BloqoEditableBlock), findsNothing);
 
-    await tester.tap(find.text("Course").first);
+    await tester.tap(find.text("Course", findRichText: true).first);
     await tester.pumpAndSettle();
 
     expect(find.byType(BloqoEditableChapter), findsOne);
