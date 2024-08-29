@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     LayoutBuilder(
                                         builder: (BuildContext context, BoxConstraints constraints) {
                                           double width = constraints.maxWidth / 2;
-                                          double height = width / 1.85;
+                                          double height = width / 1.70;
                                           double childAspectRatio = width / height;
 
                                           return GridView.builder(
@@ -312,7 +312,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                                     LayoutBuilder(
                                       builder: (BuildContext context, BoxConstraints constraints) {
                                         double width = constraints.maxWidth / 2;
-                                        double height = width / 3.5;
+                                        double height = width / 2.5;
                                         double childAspectRatio = width / height;
 
                                         return GridView.builder(

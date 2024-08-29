@@ -278,7 +278,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                       BoxConstraints constraints) {
                                                     double width = constraints
                                                         .maxWidth / 2;
-                                                    double height = width / 1.6;
+                                                    double height = width / 1.45;
                                                     double childAspectRatio = width /
                                                         height;
 
@@ -511,7 +511,7 @@ class _EditorPageState extends State<EditorPage> with TickerProviderStateMixin, 
                                                 BoxConstraints constraints) {
                                               double width = constraints.maxWidth /
                                                   2;
-                                              double height = width / 1.25;
+                                              double height = width / 1.20;
                                               double childAspectRatio = width /
                                                   height;
 

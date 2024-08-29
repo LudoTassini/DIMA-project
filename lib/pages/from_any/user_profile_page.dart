@@ -124,7 +124,7 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
                                     builder: (BuildContext context,
                                         BoxConstraints constraints) {
                                       double width = constraints.maxWidth / 2;
-                                      double height = width;
+                                      double height = width * 1.15;
                                       double childAspectRatio = width / height;
 
                                       return GridView.builder(
