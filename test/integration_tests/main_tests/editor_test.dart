@@ -537,6 +537,9 @@ void main() {
     });
 
     expect(find.byType(BloqoEditableQuizAnswer), findsExactly(2));
+
+    await tapBreadcrumbsByText(tester: tester, text: "Section 1");
+
     expect(find.text("Quiz: Multiple choice"), findsOne);
 
     await binding.setSurfaceSize(null);
@@ -613,7 +616,6 @@ void main() {
     });
 
     expect(find.byType(BloqoEditableQuizAnswer), findsExactly(2));
-    expect(find.text("Quiz: Multiple choice"), findsOne);
 
     await tester.tap(find.byIcon(Icons.delete_forever).last);
     await tester.pumpAndSettle();
@@ -632,6 +634,9 @@ void main() {
     });
 
     expect(find.byType(BloqoEditableQuizAnswer), findsExactly(1));
+
+    await tapBreadcrumbsByText(tester: tester, text: "Section 1");
+
     expect(find.text("Quiz: Multiple choice"), findsOne);
 
     await binding.setSurfaceSize(null);
@@ -699,6 +704,8 @@ void main() {
     await tester.runAsync(() async {
       await Future.delayed(const Duration(seconds: 3));
     });
+
+    await tapBreadcrumbsByText(tester: tester, text: "Section 1");
 
     expect(find.text("Quiz: Open question"), findsOne);
 
@@ -1085,7 +1092,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("title"), findsExactly(2));
+    expect(find.text("title"), findsExactly(1));
 
     await binding.setSurfaceSize(null);
   });
@@ -1116,7 +1123,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("title"), findsExactly(2));
+    expect(find.text("title"), findsExactly(1));
 
     await binding.setSurfaceSize(null);
   });
@@ -1156,7 +1163,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 3));
     });
 
-    expect(find.text("title"), findsExactly(2));
+    expect(find.text("title"), findsExactly(1));
 
     await binding.setSurfaceSize(null);
   });

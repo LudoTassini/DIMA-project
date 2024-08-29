@@ -45,7 +45,7 @@ Future<void> createNewCourseAndTest({required WidgetTester tester, bool andComeB
   await tester.tap(find.byType(BloqoFilledButton).last);
   await tester.pumpAndSettle();
 
-  expect(find.text("Course", findRichText: true), findsExactly(2));
+  expect(find.text("Course"), findsOne);
 
   if(andComeBack) {
     await tester.tap(find.byIcon(Icons.arrow_back).last);
@@ -171,4 +171,14 @@ Future<void> completeCourseAndTest({required WidgetTester tester}) async {
 
   await completeFinalSectionAndTest(tester: tester);
 
+}
+
+Future<void> tapBreadcrumbsByText({required WidgetTester tester, required String text}) async {
+  final breadcrumbFinder = find.byWidgetPredicate(
+        (widget) =>
+    widget is RichText &&
+        widget.text.toPlainText().contains(text),
+  );
+  await tester.tap(breadcrumbFinder);
+  await tester.pumpAndSettle();
 }
