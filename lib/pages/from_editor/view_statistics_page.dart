@@ -61,6 +61,7 @@ class _ViewStatisticsPageState extends State<ViewStatisticsPage> with AutomaticK
           return BloqoMainContainer(
             alignment: const AlignmentDirectional(-1, -1),
             child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: Padding(
                     padding: !isTablet
                         ? const EdgeInsetsDirectional.all(0)

@@ -87,6 +87,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                     return Align(
                       alignment: Alignment.topLeft,
                       child: SingleChildScrollView(
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Padding(
                           padding: !isTablet
                               ? const EdgeInsetsDirectional.all(0)

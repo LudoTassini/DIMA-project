@@ -102,6 +102,7 @@ class _EditSectionPageState extends State<EditSectionPage> with AutomaticKeepAli
                           ]),
                           Expanded(
                               child: SingleChildScrollView(
+padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                                   child: Padding(
                                       padding: !isTablet
                                           ? const EdgeInsetsDirectional.all(0)
