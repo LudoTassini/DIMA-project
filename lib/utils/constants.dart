@@ -45,8 +45,8 @@ class Constants{
 
   static const int notificationCheckSeconds = 10;
 
-  static const int maxReviewLength = 300;
-  static const int maxReviewTitleLength = 20;
+  static const int maxReviewLength = 500;
+  static const int maxReviewTitleLength = 50;
 
   static const double fontSizeTablet = 26;
   static const double fontSizeNotTablet = 20;

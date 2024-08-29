@@ -234,7 +234,7 @@
   "published_on": "Published on: ",
   "enroll_in": "Enroll in Course",
   "unsubscribe": "Unsubscribe",
-  "by": "by ",
+  "by": "by",
   "reviews": "Reviews",
   "no_reviews_yet": "There are no reviews yet.",
   "block": "Block",
@@ -345,5 +345,6 @@
   "section_is_not_completed": "You haven't finished all the quizzes.",
   "completed_section": "Completed",
   "course_completed": "Course completed!",
-  "cannot_unsubscribe_course_completed": "You already completed the course, so you cannot unsubscribe to it."
+  "cannot_unsubscribe_course_completed": "You already completed the course, so you cannot unsubscribe to it.",
+  "error_review": "You cannot publish an incomplete review!"
 }

@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import '../../app_state/application_settings_app_state.dart';
 
 class BloqoRatingBar extends StatefulWidget {
+
   final int rating;
+  final bool disabled;
   final ValueChanged<int>? onRatingChanged;
 
   const BloqoRatingBar({
     super.key,
     this.rating = 0,
+    this.disabled = false,
     this.onRatingChanged,
   });
 
@@ -37,7 +40,7 @@ class _BloqoRatingBarState extends State<BloqoRatingBar> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
         return IconButton(
-          onPressed: () {
+          onPressed: widget.disabled ? null : () {
             if (widget.onRatingChanged != null) {
               widget.onRatingChanged!(index + 1); // Notify the parent about the selected rating
             }

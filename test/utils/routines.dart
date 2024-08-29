@@ -1,5 +1,6 @@
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/complex/bloqo_course_created.dart';
+import 'package:bloqo/components/complex/bloqo_course_enrolled.dart';
 import 'package:bloqo/components/complex/bloqo_course_section.dart';
 import 'package:bloqo/components/complex/bloqo_editable_chapter.dart';
 import 'package:bloqo/components/complex/bloqo_editable_section.dart';
@@ -131,7 +132,7 @@ Future<void> _completeSection({required WidgetTester tester}) async {
   expect(find.text("Correct!"), findsExactly(5));
 
   await tester.tap(find.byType(BloqoFilledButton).last);
-  await tester.pump();
+  await tester.pumpAndSettle();
 
   await tester.runAsync(() async {
     await Future.delayed(const Duration(seconds: 3));
@@ -148,10 +149,26 @@ Future<void> completeFirstSectionAndTest({required WidgetTester tester}) async {
 }
 
 Future<void> completeFinalSectionAndTest({required WidgetTester tester}) async {
+
+  await tester.pumpAndSettle();
   await tester.tap(find.text("Continue learning!").last);
   await tester.pumpAndSettle();
 
   await _completeSection(tester: tester);
 
   expect(find.text("Course completed!"), findsOne);
+}
+
+Future<void> completeCourseAndTest({required WidgetTester tester}) async {
+
+  await tester.tap(find.byType(BloqoCourseEnrolled).first);
+  await tester.pumpAndSettle();
+
+  expect(find.byType(BloqoCourseSection), findsAtLeast(2));
+  expect(find.byType(BloqoFilledButton), findsExactly(2));
+
+  await completeFirstSectionAndTest(tester: tester);
+
+  await completeFinalSectionAndTest(tester: tester);
+
 }

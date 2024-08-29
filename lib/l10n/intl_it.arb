@@ -233,7 +233,7 @@
   "published_on": "Pubblicato il: ",
   "enroll_in": "Iscriviti al Corso",
   "unsubscribe": "Disiscriviti",
-  "by": "di ",
+  "by": "di",
   "reviews": "Recensioni",
   "no_reviews_yet": "Non ci sono ancora recensioni.",
   "block": "Blocco",
@@ -344,5 +344,6 @@
   "section_is_not_completed": "Non hai ancora finito di completare tutti i quiz.",
   "completed_section": "Completato",
   "course_completed":"Corso completato!",
-  "cannot_unsubscribe_course_completed": "Hai già completato il corso, pertanto non ti puoi disiscrivere."
+  "cannot_unsubscribe_course_completed": "Hai già completato il corso, pertanto non ti puoi disiscrivere.",
+  "error_review": "Non puoi pubblicare una recensione incompleta!"
 }

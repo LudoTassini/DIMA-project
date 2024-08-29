@@ -110,7 +110,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                     child: Row(
                                       children: [
                                         Text(
-                                          localizedText.by,
+                                          "${localizedText.by} ",
                                           style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                             color: theme.colors.highContrastColor,
                                             fontSize: 16,

@@ -206,10 +206,10 @@ class MockExternalServices {
           blocks: ["test1", "test2", "test3"]
         ),
         testSection2 = BloqoSectionData(
-            id: "test2",
-            number: 2,
-            name: "test",
-            blocks: ["test4", "test5", "test6"]
+          id: "test2",
+          number: 2,
+          name: "test",
+          blocks: ["test4", "test5", "test6"]
         ),
         testBlock1 = BloqoBlockData(
           id: "test1",
