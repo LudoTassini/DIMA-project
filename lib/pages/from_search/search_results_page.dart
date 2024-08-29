@@ -113,7 +113,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with AutomaticKee
                                       builder: (BuildContext context,
                                           BoxConstraints constraints) {
                                         double width = constraints.maxWidth / 2;
-                                        double height = width;
+                                        double height = width * 1.2;
                                         double childAspectRatio = width / height;
 
                               return GridView.builder(
