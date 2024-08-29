@@ -278,7 +278,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                                 child: LayoutBuilder(
                                                   builder: (BuildContext context, BoxConstraints constraints) {
                                                     double width = constraints.maxWidth / 2;
-                                                    double height = width / 2.5;
+                                                    double height = width / 2.35;
                                                     double childAspectRatio = width / height;
 
                                                     return GridView.builder(

@@ -137,7 +137,7 @@ class _UserListPageState extends State<UserListPage> with AutomaticKeepAliveClie
                                       builder: (BuildContext context,
                                           BoxConstraints constraints) {
                                         double width = constraints.maxWidth / 2;
-                                        double height = width / 2.25;
+                                        double height = width / 2.1;
                                         double childAspectRatio = width /
                                             height;
 

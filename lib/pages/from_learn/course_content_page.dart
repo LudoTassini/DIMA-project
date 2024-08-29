@@ -428,7 +428,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     child: LayoutBuilder(
                                                       builder: (BuildContext context, BoxConstraints constraints) {
                                                         double width = constraints.maxWidth / 2;
-                                                        double height = width / 2;
+                                                        double height = width / 1.9;
                                                         double childAspectRatio = width / height;
 
                                                         return GridView.builder(
