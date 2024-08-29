@@ -39,6 +39,7 @@ class _BloqoCourseEnrollmentRequestNotificationState extends State<BloqoCourseEn
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     return BloqoSeasaltContainer(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
       child: FutureBuilder<List<Object>>(
         future: _getRequiredData(
           context: context,

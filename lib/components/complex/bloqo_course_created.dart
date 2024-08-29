@@ -1,9 +1,6 @@
 import 'package:bloqo/app_state/editor_course_app_state.dart';
 import 'package:bloqo/components/buttons/bloqo_filled_button.dart';
 import 'package:bloqo/components/custom/bloqo_snack_bar.dart';
-import 'package:bloqo/model/courses/bloqo_block_data.dart';
-import 'package:bloqo/model/courses/bloqo_chapter_data.dart';
-import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../../app_state/application_settings_app_state.dart';

@@ -32,6 +32,7 @@ class _BloqoNewCoursePublishedNotificationState extends State<BloqoNewCoursePubl
     var localizedText = getAppLocalizations(context)!;
     var theme = getAppThemeFromAppState(context: context);
     return BloqoSeasaltContainer(
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
       child: FutureBuilder<BloqoUserData?>(
         future: _getRequiredData(
           context: context,
