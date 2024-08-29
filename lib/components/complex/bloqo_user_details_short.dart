@@ -35,7 +35,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
     bool isTablet = checkDevice(context);
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
       child: ElevatedButton(
         style: ButtonStyle(
           padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.all(15)),
@@ -53,7 +53,7 @@ class BloqoUserDetailsShort extends StatelessWidget{
         },
         child: Row(
           mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Flexible(
               flex: 1,

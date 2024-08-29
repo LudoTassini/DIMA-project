@@ -178,7 +178,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
                                 child: Row(
                                   children: [
                                     Text(
-                                      localizedText.by,
+                                      "${localizedText.by} ",
                                       style: theme.getThemeData().textTheme.displaySmall?.copyWith(
                                         color: theme.colors.highContrastColor,
                                         fontSize: 16,
@@ -873,40 +873,42 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
           localizedText: localizedText,
           courseId: course.id
       );
-        BloqoUserCourseEnrolledData userCourseEnrolled = await saveNewUserCourseEnrolled(
-            firestore: firestore,
-            localizedText: localizedText,
-            course: course,
-            publishedCourseId: publishedCourseId,
-            userId: user!.id
-        );
-        if(!context.mounted) return;
-        saveLearnCourseToAppState(
-            context: context,
-            course: course,
-            chapters: chapters,
-            sections: sections,
-            enrollmentDate: userCourseEnrolled.enrollmentDate,
-            sectionsCompleted: [],
-            chaptersCompleted: [],
-            totNumSections: userCourseEnrolled.totNumSections,
-            comingFromHome: true);
-        List<BloqoUserCourseEnrolledData>? enrolledCourses = getUserCoursesEnrolledFromAppState(context: context);
-        if (enrolledCourses != null) {
-          enrolledCourses.insert(0, userCourseEnrolled);
-        } else {
-          enrolledCourses = [userCourseEnrolled];
-        }
-        saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
-        publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments + 1;
-        await savePublishedCourseChanges(
-            firestore: firestore,
-            localizedText: localizedText,
-            updatedPublishedCourse: publishedCourseToUpdate
-        );
-        if(!context.mounted) return;
-        context.loaderOverlay.hide();
-        widget.onNavigateToPage(1);
+      BloqoUserCourseEnrolledData userCourseEnrolled = await saveNewUserCourseEnrolled(
+          firestore: firestore,
+          localizedText: localizedText,
+          course: course,
+          publishedCourseId: publishedCourseId,
+          userId: user!.id
+      );
+
+      if(!context.mounted) return;
+      saveLearnCourseToAppState(
+          context: context,
+          course: course,
+          chapters: chapters,
+          sections: sections,
+          enrollmentDate: userCourseEnrolled.enrollmentDate,
+          sectionsCompleted: [],
+          chaptersCompleted: [],
+          totNumSections: userCourseEnrolled.totNumSections,
+          comingFromHome: true);
+
+      List<BloqoUserCourseEnrolledData>? enrolledCourses = getUserCoursesEnrolledFromAppState(context: context);
+      if (enrolledCourses != null) {
+        enrolledCourses.insert(0, userCourseEnrolled);
+      } else {
+        enrolledCourses = [userCourseEnrolled];
+      }
+      saveUserCoursesEnrolledToAppState(context: context, courses: enrolledCourses);
+      publishedCourseToUpdate.numberOfEnrollments = publishedCourseToUpdate.numberOfEnrollments + 1;
+      await savePublishedCourseChanges(
+          firestore: firestore,
+          localizedText: localizedText,
+          updatedPublishedCourse: publishedCourseToUpdate
+      );
+      if(!context.mounted) return;
+      context.loaderOverlay.hide();
+      widget.onNavigateToPage(1);
     } on BloqoException catch (e) {
       if(!context.mounted) return;
       context.loaderOverlay.hide();

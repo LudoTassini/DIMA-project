@@ -10,7 +10,8 @@ void main() {
   int rating = 0;
 
   Widget buildTestWidget({
-    int initialRating = 0
+    int initialRating = 0,
+    bool disabled = false
   }) {
     return MaterialApp(
         localizationsDelegates: getLocalizationDelegates(),
@@ -27,6 +28,7 @@ void main() {
                     onRatingChanged: (newRating) {
                       rating = newRating;
                     },
+                    disabled: disabled
                   ),
                 );
               }
@@ -73,6 +75,17 @@ void main() {
   testWidgets('Rating bar shows the amount of stars it starts with', (WidgetTester tester) async {
     await tester.pumpWidget(buildTestWidget(initialRating: 3));
     final starFinder = find.byIcon(Icons.star);
+    expect(starFinder, findsNWidgets(3));
+  });
+
+  testWidgets('Rating bar cannot be modified if it is disabled', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget(initialRating: 3, disabled: true));
+    final starFinder = find.byIcon(Icons.star);
+    expect(starFinder, findsNWidgets(3));
+
+    await tester.tap(find.byIcon(Icons.star_border).last);
+    await tester.pump();
+
     expect(starFinder, findsNWidgets(3));
   });
 

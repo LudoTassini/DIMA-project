@@ -13,7 +13,7 @@ void main() {
 
   testWidgets('Users can go back from editing block to editing section through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -66,7 +66,7 @@ void main() {
 
   testWidgets('Users can go back from editing block to editing chapter through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -118,7 +118,7 @@ void main() {
 
   testWidgets('Users can go back from editing block to editing course through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -170,7 +170,7 @@ void main() {
 
   testWidgets('Users can go back from editing section to editing chapter through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -213,7 +213,7 @@ void main() {
 
   testWidgets('Users can go back from editing section to editing course through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 
@@ -256,7 +256,7 @@ void main() {
 
   testWidgets('Users can go back from editing chapter to editing course through breadcrumbs test', (
       WidgetTester tester) async {
-    await binding.setSurfaceSize(const Size(1000, 1000));
+    await binding.setSurfaceSize(const Size(2400, 2000));
 
     await initTestApp(tester: tester);
 

@@ -120,6 +120,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                                       selectedRating = rating;
                                     });
                                   },
+                                  disabled: isRated,
                                 ),
                               ],
                             ),
@@ -174,6 +175,7 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
                         onPressed: () async {
                           await _tryPublishReview(
                               context: context,
+                              localizedText: localizedText,
                               controllerTitle: controllerTitle,
                               controllerReview: controllerReview,
                               rating: selectedRating,
@@ -198,12 +200,20 @@ class _ReviewPageState extends State<ReviewPage> with AutomaticKeepAliveClientMi
   bool get wantKeepAlive => true;
 
 
-  Future<void> _tryPublishReview({required BuildContext context, required TextEditingController controllerTitle, required TextEditingController controllerReview,
+  Future<void> _tryPublishReview({required BuildContext context, required var localizedText, required TextEditingController controllerTitle, required TextEditingController controllerReview,
     required int rating, required BloqoUserCourseEnrolledData userCourseEnrolled}) async {
+
+    if(rating == 0 || controllerTitle.text == "" || controllerReview.text == ""){
+      showBloqoErrorAlert(
+        context: context,
+        title: localizedText.error_title,
+        description: localizedText.error_review,
+      );
+      return;
+    }
 
     BloqoUserData myself = getUserFromAppState(context: context)!;
 
-    final localizedText = getAppLocalizations(context)!;
     final loaderOverlay = context.loaderOverlay;
     loaderOverlay.show();
 
