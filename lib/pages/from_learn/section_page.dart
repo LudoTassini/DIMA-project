@@ -11,6 +11,7 @@ import 'package:bloqo/model/courses/bloqo_section_data.dart';
 import 'package:bloqo/model/courses/published_courses/bloqo_published_course_data.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -435,6 +436,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
     );
 
     courseEnrolled.sectionToComplete = nextSectionToComplete;
+    courseEnrolled.lastUpdated = Timestamp.now();
 
     await updateUserCourseEnrolledNewSectionToComplete(
       firestore: firestore,

@@ -99,7 +99,6 @@ class BloqoUserCourseEnrolledData {
 
 }
 
-// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseEnrolledData>> getUserCoursesEnrolled({
   required FirebaseFirestore firestore,
   required var localizedText,
@@ -118,7 +117,6 @@ Future<List<BloqoUserCourseEnrolledData>> getUserCoursesEnrolled({
   }
 }
 
-// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseEnrolledData>> silentGetUserCoursesEnrolled({
   required BloqoUserData user
 }) async {
