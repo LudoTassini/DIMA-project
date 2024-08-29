@@ -46,7 +46,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
         title: localizedText.notifications,
         onPop: () {
           Navigator.of(context).pop();
-          if(_didRemoveNotifications) {
+          if (_didRemoveNotifications) {
             widget.onNotificationRemoved();
           }
         },
@@ -76,110 +76,45 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
                 );
               } else {
                 return Padding(
-                    padding: !isTablet ? const EdgeInsetsDirectional.all(0)
-                : Constants.tabletPadding,
-                  child: !isTablet ?
-                  Column(
-                    children: List.generate(
-                      notifications.length,
-                          (index) {
-                        BloqoNotificationData notification = notifications[index];
-                        if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
-                          return BloqoCourseEnrollmentRequestNotification(
-                            notification: notification,
-                            onNotificationHandled: () {
-                              setState(() {
-                                notifications.removeAt(index);
-                                _didRemoveNotifications = true;
-                              });
-                            },
-                          );
-                        }
-                        if(notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
-                          return BloqoCourseEnrollmentAcceptedNotification(
-                            notification: notification,
-                            onNotificationHandled: () {
-                              setState(() {
-                                notifications.removeAt(index);
-                                _didRemoveNotifications = true;
-                              });
-                            },
-                          );
-                        }
-                        if(notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
-                          return BloqoNewCoursePublishedNotification(
-                            notification: notification,
-                            onNotificationHandled: () {
-                              setState(() {
-                                notifications.removeAt(index);
-                                _didRemoveNotifications = true;
-                              });
-                            },
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
-                  )
-                    : LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
-                        double width = constraints.maxWidth / 2;
-                        double height = width / 1.40;
-                        double childAspectRatio = width / height;
+                  padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40) :
+                    (Constants.tabletPadding + const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40)),
+                  child: isTablet
+                      ? LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      double width = constraints.maxWidth / 2;
+                      double height = width / 1.40;
+                      double childAspectRatio = width / height;
 
-                        return Align(
-                          alignment: Alignment.topCenter,  // Align to the top of the container
-                          child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 10.0,
-                              mainAxisSpacing: 10.0,
-                              childAspectRatio: childAspectRatio,
-                            ),
-                            itemCount: notifications.length,
-                            itemBuilder: (context, index) {
-                              BloqoNotificationData notification = notifications[index];
-                              if (notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
-                                return BloqoCourseEnrollmentRequestNotification(
-                                  notification: notification,
-                                  onNotificationHandled: () {
-                                    setState(() {
-                                      notifications.removeAt(index);
-                                      _didRemoveNotifications = true;
-                                    });
-                                  },
-                                );
-                              }
-                              if (notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
-                                return BloqoCourseEnrollmentAcceptedNotification(
-                                  notification: notification,
-                                  onNotificationHandled: () {
-                                    setState(() {
-                                      notifications.removeAt(index);
-                                      _didRemoveNotifications = true;
-                                    });
-                                  },
-                                );
-                              }
-                              if (notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
-                                return BloqoNewCoursePublishedNotification(
-                                  notification: notification,
-                                  onNotificationHandled: () {
-                                    setState(() {
-                                      notifications.removeAt(index);
-                                      _didRemoveNotifications = true;
-                                    });
-                                  },
-                                );
-                              }
-                              return Container();
-                            },
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: constraints.maxHeight, // Constrain GridView to the available height
+                        ),
+                        child: GridView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(), // Ensure GridView is scrollable
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: childAspectRatio,
                           ),
-                        );
-                      }
+                          itemCount: notifications.length,
+                          itemBuilder: (context, index) {
+                            return _buildNotificationWidget(notifications[index]);
+                          },
+                        ),
+                      );
+                    },
+                  )
+                      : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ...List.generate(
+                          notifications.length,
+                              (index) => _buildNotificationWidget(notifications[index]),
+                        ),
+                      ],
+                    ),
                   ),
-
                 );
               }
             } else {
@@ -196,6 +131,46 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
         ),
       ),
     );
+
+  }
+
+  // Helper method to build notification widget
+  Widget _buildNotificationWidget(BloqoNotificationData notification) {
+    if(notification.type == BloqoNotificationType.courseEnrollmentRequest.toString()) {
+      return BloqoCourseEnrollmentRequestNotification(
+        notification: notification,
+        onNotificationHandled: () {
+          setState(() {
+            notifications.remove(notification);
+            _didRemoveNotifications = true;
+          });
+        },
+      );
+    }
+    else if (notification.type == BloqoNotificationType.courseEnrollmentAccepted.toString()) {
+      return BloqoCourseEnrollmentAcceptedNotification(
+        notification: notification,
+        onNotificationHandled: () {
+          setState(() {
+            notifications.remove(notification);
+            _didRemoveNotifications = true;
+          });
+        },
+      );
+    }
+    else if (notification.type == BloqoNotificationType.newCourseFromFollowedUser.toString()) {
+      return BloqoNewCoursePublishedNotification(
+        notification: notification,
+        onNotificationHandled: () {
+          setState(() {
+            notifications.remove(notification);
+            _didRemoveNotifications = true;
+          });
+        },
+      );
+    } else {
+      return Container(); // Return empty container if type doesn't match
+    }
   }
 
   @override
