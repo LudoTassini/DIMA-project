@@ -15,6 +15,7 @@ import 'package:bloqo/utils/permissions.dart';
 import 'package:bloqo/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -339,37 +340,44 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
     PermissionStatus permissionStatus = await requestPhotoLibraryPermission();
     if(permissionStatus.isGranted) {
       final pickedFile = await ImagePicker().pickImage(
-          source: ImageSource.gallery);
+          source: ImageSource.gallery
+      );
       if (pickedFile != null) {
-        if(!context.mounted) return null;
-        var firestore = getFirestoreFromAppState(context: context);
-        var storage = getStorageFromAppState(context: context);
-        context.loaderOverlay.show();
-        try {
-          final image = File(pickedFile.path);
-          final url = await uploadProfilePicture(
-              firestore: firestore,
-              storage: storage,
-              localizedText: localizedText,
-              image: image,
-              userId: userId
-          );
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        );
+        if (croppedFile != null) {
           if (!context.mounted) return null;
-          context.loaderOverlay.hide();
-          showBloqoSnackBar(
-              context: context,
-              text: localizedText.done
-          );
-          return url;
-        }
-        on BloqoException catch (e) {
-          if (!context.mounted) return null;
-          context.loaderOverlay.hide();
-          showBloqoErrorAlert(
-              context: context,
-              title: localizedText.error_title,
-              description: e.message
-          );
+          var firestore = getFirestoreFromAppState(context: context);
+          var storage = getStorageFromAppState(context: context);
+          context.loaderOverlay.show();
+          try {
+            final image = File(croppedFile.path);
+            final url = await uploadProfilePicture(
+                firestore: firestore,
+                storage: storage,
+                localizedText: localizedText,
+                image: image,
+                userId: userId
+            );
+            if (!context.mounted) return null;
+            context.loaderOverlay.hide();
+            showBloqoSnackBar(
+                context: context,
+                text: localizedText.done
+            );
+            return url;
+          }
+          on BloqoException catch (e) {
+            if (!context.mounted) return null;
+            context.loaderOverlay.hide();
+            showBloqoErrorAlert(
+                context: context,
+                title: localizedText.error_title,
+                description: e.message
+            );
+          }
         }
       }
     }

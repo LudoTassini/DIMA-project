@@ -64,6 +64,7 @@ dependencies:
   fake_cloud_firestore: ^3.0.2
   firebase_auth_mocks: ^0.14.0
   firebase_storage_mocks: ^0.7.0
+  image_cropper: ^8.0.2
 
 flutter_launcher_icons:
   image_path: assets/images/bloqo_logo.png
