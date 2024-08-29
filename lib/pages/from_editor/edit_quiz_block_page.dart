@@ -740,7 +740,7 @@ class _EditQuizBlockPageState extends State<EditQuizBlockPage> with AutomaticKee
   }
 
   String _generateContentStringForOpenQuestionQuiz({required var localizedText}){
-    String? quizQuestionValidationResult = quizQuestionValidator(quizQuestion: multipleChoiceQuestionController.text, localizedText: localizedText);
+    String? quizQuestionValidationResult = quizQuestionValidator(quizQuestion: openQuestionController.text, localizedText: localizedText);
     if(quizQuestionValidationResult != null){
       throw BloqoException(message: quizQuestionValidationResult);
     }

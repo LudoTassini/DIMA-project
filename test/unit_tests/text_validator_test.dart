@@ -689,4 +689,28 @@ void main() {
     expect(result, false);
   });
 
+  test("Well-formatted quiz question is validated test", () {
+    const test = "What is 1+1?";
+    final result = validateQuizQuestion(test);
+    expect(result, true);
+  });
+
+  test("Badly-formatted quiz question is not validated test", () {
+    const test = "What is 1+1?\$a:";
+    final result = validateQuizQuestion(test);
+    expect(result, false);
+  });
+
+  test("Well-formatted multiple choice answer is validated test", () {
+    const test = "correct";
+    final result = validateMultipleChoiceAnswer(test);
+    expect(result, true);
+  });
+
+  test("Badly-formatted multiple choice answer is not validated test", () {
+    const test = "<y>correct<n>wrong";
+    final result = validateMultipleChoiceAnswer(test);
+    expect(result, false);
+  });
+
 }
