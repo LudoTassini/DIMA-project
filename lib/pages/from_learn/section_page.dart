@@ -104,6 +104,7 @@ class _SectionPageState extends State<SectionPage> with AutomaticKeepAliveClient
                           ]),
                       Expanded(
                         child: SingleChildScrollView(
+                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: Column(
                             children: [
                               Padding(

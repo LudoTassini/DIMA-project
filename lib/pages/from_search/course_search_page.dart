@@ -215,6 +215,7 @@ class _CourseSearchPageState extends State<CourseSearchPage> with AutomaticKeepA
 
                       Expanded(
                         child: SingleChildScrollView(
+                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [

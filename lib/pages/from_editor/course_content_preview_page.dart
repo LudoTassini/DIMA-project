@@ -95,6 +95,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                 ]),
                 Expanded(
                   child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Padding(
                       padding: !isTablet ? const EdgeInsetsDirectional.all(0) : Constants.tabletPadding,
                       child: Column(

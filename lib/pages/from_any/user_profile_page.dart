@@ -73,6 +73,7 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
           return BloqoMainContainer(
             alignment: const AlignmentDirectional(-1.0, -1.0),
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Consumer<UserAppState>(
                 builder: (context, userAppState, _) {
                   if (widget.author.pictureUrl != "none") {

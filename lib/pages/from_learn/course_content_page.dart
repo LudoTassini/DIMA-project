@@ -159,6 +159,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                             ]),
                             Expanded(
                               child: SingleChildScrollView(
+                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                                 child: Padding(
                                   padding: !isTablet ? const EdgeInsetsDirectional
                                       .all(0)
@@ -682,7 +683,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                             children: [
                               Padding(
                                 padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(40, 10, 40, 0)
-                                  : const EdgeInsetsDirectional.fromSTEB(80, 10, 80, 0),
+                                  : const EdgeInsetsDirectional.fromSTEB(80, 15, 80, 0),
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
                                     double maxWidth = constraints.maxWidth-20;
@@ -700,7 +701,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                           if(!isCourseCompleted)
                             Padding(
                               padding: !isTablet ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20)
-                                  : Constants.tabletPaddingBloqoFilledButton,
+                                  : (Constants.tabletPaddingBloqoFilledButton - const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0)),
                               child: BloqoFilledButton(
                                 onPressed: () async {
                                   late BloqoSectionData sectionToLearn;
