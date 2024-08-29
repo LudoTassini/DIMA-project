@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../utils/bloqo_exception.dart';
 
@@ -199,8 +200,14 @@ Future<List<BloqoPublishedCourseData>> getCoursesFromSearch({
     } else {
       return [];
     }
-  } on Exception catch (e) {
-    print(e);
+  } on FirebaseException catch (e) {
+    if (e.code == 'failed-precondition') {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    throw BloqoException(message: localizedText.sort_error);
+  } on Exception catch (_) {
     throw BloqoException(message: localizedText.generic_error);
   }
 

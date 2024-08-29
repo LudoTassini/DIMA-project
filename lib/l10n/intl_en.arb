@@ -351,5 +351,6 @@
   "error_quiz_question_invalid": "A quiz question must not contain invalid text.",
   "error_multiple_choice_answer_empty": "A multiple choice answer must not be empty.",
   "error_multiple_choice_answer_invalid": "A multiple choice answer must not contain invalid text.",
-  "resize_profile_picture": "Resize your profile picture"
+  "resize_profile_picture": "Resize your profile picture",
+  "sort_error": "Technical limitations prevent bloQo to perform this search. Please change your filters and sorting options. Notice that simply removing the sorting option may make your request possible."
 }
