@@ -230,7 +230,7 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin, Au
                                                 BoxConstraints constraints) {
                                               double width = constraints.maxWidth /
                                                   2;
-                                              double height = width / 2.30;
+                                              double height = width / 1.85;
                                               double childAspectRatio = width /
                                                   height;
 

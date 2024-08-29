@@ -65,7 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "best_rated": MessageLookupByLibrary.simpleMessage("Best rated"),
         "block": MessageLookupByLibrary.simpleMessage("Block"),
         "blocks_header": MessageLookupByLibrary.simpleMessage("Blocks"),
-        "by": MessageLookupByLibrary.simpleMessage("by "),
+        "by": MessageLookupByLibrary.simpleMessage("by"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "cannot_unsubscribe_course_completed": MessageLookupByLibrary.simpleMessage(
             "You already completed the course, so you cannot unsubscribe to it."),
@@ -195,6 +195,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "The full name must not be empty."),
         "error_invalid_date_format":
             MessageLookupByLibrary.simpleMessage("Invalid format."),
+        "error_multiple_choice_answer_empty":
+            MessageLookupByLibrary.simpleMessage(
+                "A multiple choice answer must not be empty."),
+        "error_multiple_choice_answer_invalid":
+            MessageLookupByLibrary.simpleMessage(
+                "A multiple choice answer must not contain invalid text."),
         "error_password_empty": MessageLookupByLibrary.simpleMessage(
             "The password cannot be empty."),
         "error_password_long": m0,
@@ -207,6 +213,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must contain at least one special character."),
         "error_password_uppercase": MessageLookupByLibrary.simpleMessage(
             "Password must contain at least one uppercase letter."),
+        "error_quiz_question_empty": MessageLookupByLibrary.simpleMessage(
+            "A quiz question must not be empty."),
+        "error_quiz_question_invalid": MessageLookupByLibrary.simpleMessage(
+            "A quiz question must not contain invalid text."),
+        "error_review": MessageLookupByLibrary.simpleMessage(
+            "You cannot publish an incomplete review!"),
         "error_title":
             MessageLookupByLibrary.simpleMessage("Oops, an error occurred!"),
         "error_username_alphanumeric": MessageLookupByLibrary.simpleMessage(
@@ -279,7 +291,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learn_page_header_2": MessageLookupByLibrary.simpleMessage(
             "These are the courses you completed."),
         "learn_page_no_completed_courses": MessageLookupByLibrary.simpleMessage(
-            "You have no completed courses."),
+            "You have not completed any course. Go complete one now!"),
         "learn_page_no_in_progress_courses":
             MessageLookupByLibrary.simpleMessage(
                 "You are not enrolled in any courses. Start learning now!"),

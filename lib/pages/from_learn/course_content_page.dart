@@ -358,8 +358,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                               15, 5, 15, 0),
                                                           child: Row(
                                                             children: [
-                                                              Align(
-                                                                alignment: Alignment.topLeft,
+                                                              Expanded(
                                                                 child: Text(
                                                                   chapter.name,
                                                                   style: theme.getThemeData().textTheme.displayLarge?.copyWith(
@@ -429,7 +428,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                     child: LayoutBuilder(
                                                       builder: (BuildContext context, BoxConstraints constraints) {
                                                         double width = constraints.maxWidth / 2;
-                                                        double height = width / 2.3;
+                                                        double height = width / 2;
                                                         double childAspectRatio = width / height;
 
                                                         return GridView.builder(

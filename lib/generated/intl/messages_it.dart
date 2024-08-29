@@ -68,7 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "best_rated": MessageLookupByLibrary.simpleMessage("Meglio valutato"),
         "block": MessageLookupByLibrary.simpleMessage("Blocco"),
         "blocks_header": MessageLookupByLibrary.simpleMessage("Blocchi"),
-        "by": MessageLookupByLibrary.simpleMessage("di "),
+        "by": MessageLookupByLibrary.simpleMessage("di"),
         "cancel": MessageLookupByLibrary.simpleMessage("Annulla"),
         "cannot_unsubscribe_course_completed":
             MessageLookupByLibrary.simpleMessage(
@@ -200,6 +200,11 @@ class MessageLookup extends MessageLookupByLibrary {
             "Il nome completo non deve essere vuoto."),
         "error_invalid_date_format":
             MessageLookupByLibrary.simpleMessage("Formato non valido."),
+        "error_multiple_choice_answer_empty": MessageLookupByLibrary.simpleMessage(
+            "Una risposta di un quiz a scelta multipla non deve essere vuota."),
+        "error_multiple_choice_answer_invalid":
+            MessageLookupByLibrary.simpleMessage(
+                "Una risposta di un quiz a scelta multipla non deve contenere testo non valido."),
         "error_password_empty": MessageLookupByLibrary.simpleMessage(
             "La password non può essere vuota."),
         "error_password_long": m0,
@@ -212,6 +217,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "La password deve contenere almeno un carattere speciale."),
         "error_password_uppercase": MessageLookupByLibrary.simpleMessage(
             "La password deve contenere almeno una lettera maiuscola."),
+        "error_quiz_question_empty": MessageLookupByLibrary.simpleMessage(
+            "Una domanda di un quiz non deve essere vuota."),
+        "error_quiz_question_invalid": MessageLookupByLibrary.simpleMessage(
+            "Una domanda di un quiz non deve contenere testo non valido."),
+        "error_review": MessageLookupByLibrary.simpleMessage(
+            "Non puoi pubblicare una recensione incompleta!"),
         "error_title": MessageLookupByLibrary.simpleMessage(
             "Oops, si è verificato un errore!"),
         "error_username_alphanumeric": MessageLookupByLibrary.simpleMessage(
@@ -285,7 +296,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "learn_page_header_2": MessageLookupByLibrary.simpleMessage(
             "Questi sono i corsi che hai completato."),
         "learn_page_no_completed_courses": MessageLookupByLibrary.simpleMessage(
-            "Non hai completato nessun corso."),
+            "Non hai ancora completato nessun corso. Vai a completarne uno ora!"),
         "learn_page_no_in_progress_courses": MessageLookupByLibrary.simpleMessage(
             "Non stai seguendo nessun corso per ora. Iscriviti ora a un nuovo corso!"),
         "learn_page_title": MessageLookupByLibrary.simpleMessage("Impara"),

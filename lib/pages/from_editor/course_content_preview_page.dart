@@ -211,8 +211,7 @@ class _CourseContentPreviewPageState extends State<CourseContentPreviewPage> wit
                                               padding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 0),
                                               child: Row(
                                                 children: [
-                                                  Align(
-                                                    alignment: Alignment.topLeft,
+                                                  Expanded(
                                                     child: Text(
                                                       chapter.name,
                                                       style: theme.getThemeData().textTheme.displayLarge?.copyWith(
