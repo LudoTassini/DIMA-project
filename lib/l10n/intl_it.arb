@@ -349,5 +349,6 @@
   "error_quiz_question_empty": "Una domanda di un quiz non deve essere vuota.",
   "error_quiz_question_invalid": "Una domanda di un quiz non deve contenere testo non valido.",
   "error_multiple_choice_answer_empty": "Una risposta di un quiz a scelta multipla non deve essere vuota.",
-  "error_multiple_choice_answer_invalid": "Una risposta di un quiz a scelta multipla non deve contenere testo non valido."
+  "error_multiple_choice_answer_invalid": "Una risposta di un quiz a scelta multipla non deve contenere testo non valido.",
+  "resize_profile_picture": "Ritaglia la tua immagine profilo"
 }
