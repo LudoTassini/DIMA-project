@@ -1022,55 +1022,77 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     }
 
     if (languageTagController.text.isNotEmpty && languageTagController.text != localizedText.none) {
-      DropdownMenuEntry<String> languageEntry = languageTags.where((tag) => tag.label == languageTagController.text).first;
-      query = query.where('language', isEqualTo: languageEntry.value);
+      DropdownMenuEntry<String>? languageEntry = languageTags.where((tag) => tag.label == languageTagController.text).firstOrNull;
+      if(languageEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        query = query.where('language', isEqualTo: languageEntry.value);
+      }
     }
     if (subjectTagController.text.isNotEmpty && subjectTagController.text != localizedText.none) {
-      DropdownMenuEntry<String> subjectEntry = subjectTags.where((tag) => tag.label == subjectTagController.text).first;
-      query = query.where('subject', isEqualTo: subjectEntry.value);
+      DropdownMenuEntry<String>? subjectEntry = subjectTags.where((tag) => tag.label == subjectTagController.text).firstOrNull;
+      if(subjectEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        query = query.where('subject', isEqualTo: subjectEntry.value);
+      }
     }
     if (durationTagController.text.isNotEmpty && durationTagController.text != localizedText.none) {
-      DropdownMenuEntry<String> durationEntry = durationTags.where((tag) => tag.label == durationTagController.text).first;
-      query = query.where('duration', isEqualTo: durationEntry.value);
+      DropdownMenuEntry<String>? durationEntry = durationTags.where((tag) => tag.label == durationTagController.text).firstOrNull;
+      if(durationEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        query = query.where('duration', isEqualTo: durationEntry.value);
+      }
     }
     if (modalityTagController.text.isNotEmpty && modalityTagController.text != localizedText.none) {
-      DropdownMenuEntry<String> modalityEntry = modalityTags.where((tag) => tag.label == modalityTagController.text).first;
-      query = query.where('modality', isEqualTo: modalityEntry.value);
+      DropdownMenuEntry<String>? modalityEntry = modalityTags.where((tag) => tag.label == modalityTagController.text).firstOrNull;
+      if(modalityEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        query = query.where('modality', isEqualTo: modalityEntry.value);
+      }
     }
     if (difficultyTagController.text.isNotEmpty && difficultyTagController.text != localizedText.none) {
-      DropdownMenuEntry<String> difficultyEntry = difficultyTags.where((tag) => tag.label == difficultyTagController.text).first;
-      query = query.where('difficulty', isEqualTo: difficultyEntry.value);
+      DropdownMenuEntry<String>? difficultyEntry = difficultyTags.where((tag) => tag.label == difficultyTagController.text).firstOrNull;
+      if(difficultyEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        query = query.where('difficulty', isEqualTo: difficultyEntry.value);
+      }
     }
 
     if (sortByController.text.isNotEmpty && sortByController.text != localizedText.none) {
-      DropdownMenuEntry<String> sortByEntry = sortingOptions
-          .where((tag) => tag.label == sortByController.text)
-          .first;
-
-      switch (sortByEntry.value) {
-        case BloqoSortingOption.bestRated:
-          query = query.orderBy('rating', descending: true);
-          break;
-        case BloqoSortingOption.publicationDateLatestFirst:
-          query = query.orderBy('publication_date', descending: true);
-          break;
-        case BloqoSortingOption.publicationDateOldestFirst:
-          query = query.orderBy('publication_date', descending: false);
-          break;
-        case BloqoSortingOption.courseNameAZ:
-          query = query.orderBy('course_name', descending: false);
-          break;
-        case BloqoSortingOption.courseNameZA:
-          query = query.orderBy('course_name', descending: true);
-          break;
-        case BloqoSortingOption.authorNameAZ:
-          query = query.orderBy('author_username', descending: false);
-          break;
-        case BloqoSortingOption.authorNameZA:
-          query = query.orderBy('author_username', descending: true);
-          break;
-        default:
-        //
+      DropdownMenuEntry<String>? sortByEntry = sortingOptions.where((tag) => tag.label == sortByController.text).firstOrNull;
+      if(sortByEntry == null){
+        throw BloqoException(message: localizedText.generic_error);
+      } else {
+        var sortingOption = getSortingOptionFromString(sortingOption: sortByEntry.value);
+        switch (sortingOption) {
+          case BloqoSortingOption.bestRated:
+            query = query.orderBy('rating', descending: true);
+            break;
+          case BloqoSortingOption.publicationDateLatestFirst:
+            query = query.orderBy('publication_date', descending: true);
+            break;
+          case BloqoSortingOption.publicationDateOldestFirst:
+            query = query.orderBy('publication_date', descending: false);
+            break;
+          case BloqoSortingOption.courseNameAZ:
+            query = query.orderBy('course_name', descending: false);
+            break;
+          case BloqoSortingOption.courseNameZA:
+            query = query.orderBy('course_name', descending: true);
+            break;
+          case BloqoSortingOption.authorNameAZ:
+            query = query.orderBy('author_username', descending: false);
+            break;
+          case BloqoSortingOption.authorNameZA:
+            query = query.orderBy('author_username', descending: true);
+            break;
+          default:
+            throw BloqoException(message: localizedText.generic_error);
+        }
       }
     }
     return query.limit(Constants.maxCoursesToFetch);

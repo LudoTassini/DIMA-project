@@ -199,7 +199,8 @@ Future<List<BloqoPublishedCourseData>> getCoursesFromSearch({
     } else {
       return [];
     }
-  } on Exception catch (_) {
+  } on Exception catch (e) {
+    print(e);
     throw BloqoException(message: localizedText.generic_error);
   }
 

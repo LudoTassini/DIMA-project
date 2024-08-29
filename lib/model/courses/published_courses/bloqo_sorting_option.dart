@@ -10,6 +10,19 @@ enum BloqoSortingOption{
   authorNameZA
 }
 
+BloqoSortingOption getSortingOptionFromString({required String sortingOption}){
+  Map<int, BloqoSortingOption> sortingOptionMap = {};
+  Map<String, int> sortingOptionStringMap = {};
+  int index = 0;
+  for(BloqoSortingOption sortingOption in BloqoSortingOption.values){
+    sortingOptionMap[index] = sortingOption;
+    sortingOptionStringMap[sortingOption.toString()] = index;
+    index++;
+  }
+  int tagIndex = sortingOptionStringMap[sortingOption]!;
+  return sortingOptionMap[tagIndex]!;
+}
+
 extension BloqoSortingOptionExtension on BloqoSortingOption{
   String text({required var localizedText}) {
     switch (this) {
