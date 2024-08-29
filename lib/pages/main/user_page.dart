@@ -343,9 +343,21 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
           source: ImageSource.gallery
       );
       if (pickedFile != null) {
+        if (!context.mounted) return null;
+        var theme = getAppThemeFromAppState(context: context);
         final croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
           aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: localizedText.resize_profile_picture,
+              toolbarColor: theme.colors.leadingColor,
+              toolbarWidgetColor: theme.colors.highContrastColor,
+            ),
+            IOSUiSettings(
+              title: localizedText.resize_profile_picture,
+            ),
+          ]
         );
         if (croppedFile != null) {
           if (!context.mounted) return null;

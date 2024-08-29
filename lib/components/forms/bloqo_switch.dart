@@ -37,7 +37,7 @@ class _BloqoSwitchState extends State<BloqoSwitch> {
               setState(() => widget.value.toggle());
             }
                 : null,
-            activeColor: theme.colors.leadingColor,
+            activeColor: theme.colors.highContrastColor,
             activeTrackColor: theme.colors.leadingColor,
             inactiveTrackColor: theme.colors.inactiveTracker,
             inactiveThumbColor: theme.colors.highContrastColor,

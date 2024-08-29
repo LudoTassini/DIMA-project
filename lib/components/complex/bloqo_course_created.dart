@@ -118,7 +118,8 @@ class BloqoCourseCreated extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Wrap(
                     spacing: 10,
-                    runSpacing: 10,
+                    runSpacing: 4,
+                    alignment: WrapAlignment.end,
                     children: [
                       BloqoFilledButton(
                         color: theme.colors.error,
@@ -167,7 +168,7 @@ class BloqoCourseCreated extends StatelessWidget {
                   child: Wrap(
                     alignment: WrapAlignment.end,
                     spacing: 10,
-                    runSpacing: 5,
+                    runSpacing: 4,
                     children: [
                       BloqoFilledButton(
                         color: theme.colors.inBetweenColor,

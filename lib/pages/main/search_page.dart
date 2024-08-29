@@ -996,25 +996,6 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     final List<DropdownMenuEntry<String>> difficultyTags = buildTagList(type: BloqoCourseTagType.difficulty, localizedText: localizedText);
     final List<DropdownMenuEntry<String>> sortingOptions = buildSortingOptionsList(localizedText: localizedText);
 
-    //FIXME: Implementing non-exact search for course_name
-    //FIXME: Funziona solo se DB lowercase
-    /*if (courseNameController.text.isNotEmpty) {
-      final String searchText = courseNameController.text.toLowerCase();
-      query = query
-          .where('course_name', isGreaterThanOrEqualTo: searchText)
-          .where('course_name', isLessThanOrEqualTo: '$searchText\uf8ff');
-    }
-
-    //FIXME: Implementing non-exact search for author_username
-    //FIXME: Funziona solo se DB lowercase
-    if (authorUsernameController.text.isNotEmpty) {
-      final String searchText = authorUsernameController.text.toLowerCase();
-      query = query
-          .where('author_username', isGreaterThanOrEqualTo: searchText)
-          .where('author_username', isLessThanOrEqualTo: '$searchText\uf8ff');
-    } */
-
-    //FIXME: per ora exact search
     if (courseNameController.text.isNotEmpty) {
       query = query.where('course_name', isEqualTo: courseNameController.text);
     }
@@ -1032,7 +1013,6 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     }
 
     if(!(publicCoursesToggle.get() && privateCoursesToggle.get())) {
-      //FIXME: fare prove, se entrambi true, devo avere corsi sia public che private
       if (publicCoursesToggle.get()) {
         query = query.where('is_public', isEqualTo: true);
       }
