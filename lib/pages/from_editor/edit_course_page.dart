@@ -92,6 +92,7 @@ class _EditCoursePageState extends State<EditCoursePage> with AutomaticKeepAlive
                           ]),
                           Expanded(
                             child: SingleChildScrollView(
+                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                               child: Padding(
                                 padding: !isTablet ? const EdgeInsetsDirectional
                                     .all(0) : Constants.tabletPadding,

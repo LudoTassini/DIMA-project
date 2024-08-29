@@ -103,6 +103,7 @@ class _UserPageState extends State<UserPage> with AutomaticKeepAliveClientMixin<
           return BloqoMainContainer(
             alignment: const AlignmentDirectional(-1.0, -1.0),
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Consumer<UserAppState>(
                 builder: (context, userAppState, _) {
                   return Padding(

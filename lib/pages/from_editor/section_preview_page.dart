@@ -57,6 +57,7 @@ class _SectionPageState extends State<SectionPreviewPage> with AutomaticKeepAliv
                     ]),
                 Expanded(
                   child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Column(
                       children: [
                         Padding(
