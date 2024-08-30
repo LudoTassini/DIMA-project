@@ -934,13 +934,6 @@ void main() {
     await tester.tap(find.byType(BloqoFilledButton).last);
     await tester.pump();
 
-    await tester.tap(find.text("OK").last);
-    await tester.pump();
-
-    await tester.runAsync(() async {
-      await Future.delayed(const Duration(seconds: 3));
-    });
-
     expect(find.byType(AlertDialog), findsOne);
 
     await binding.setSurfaceSize(null);
