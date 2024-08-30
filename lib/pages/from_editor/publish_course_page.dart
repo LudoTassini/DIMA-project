@@ -460,23 +460,37 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
                         height: !isTablet ? Constants.heightNotTablet : Constants
                             .heightTablet,
                         onPressed: () async {
-                          await showBloqoConfirmationAlert(
+                          if (languageTagController.text == localizedText.none ||
+                              subjectTagController.text == localizedText.none ||
+                              durationTagController.text == localizedText.none ||
+                              modalityTagController.text == localizedText.none ||
+                              difficultyTagController.text == localizedText.none) {
+
+                            showBloqoErrorAlert(
                               context: context,
-                              title: localizedText.warning,
-                              description: localizedText
-                                  .course_publish_confirmation,
-                              confirmationFunction: () async {
-                                context.loaderOverlay.show();
-                                await _tryPublishCourse(
-                                    context: context,
-                                    localizedText: localizedText,
-                                    userCourseCreated: userCourseCreated,
-                                    myself: myself
-                                );
-                              },
-                              backgroundColor: theme.colors.leadingColor,
-                              confirmationColor: theme.colors.success
-                          );
+                              title: localizedText.error_title,
+                              description: localizedText.missing_tag_error,
+                            );
+
+                          } else {
+                            await showBloqoConfirmationAlert(
+                                context: context,
+                                title: localizedText.warning,
+                                description: localizedText
+                                    .course_publish_confirmation,
+                                confirmationFunction: () async {
+                                  context.loaderOverlay.show();
+                                  await _tryPublishCourse(
+                                      context: context,
+                                      localizedText: localizedText,
+                                      userCourseCreated: userCourseCreated,
+                                      myself: myself
+                                  );
+                                },
+                                backgroundColor: theme.colors.leadingColor,
+                                confirmationColor: theme.colors.success
+                            );
+                          }
                         },
                         text: localizedText.publish,
                         icon: Icons.upload,
@@ -494,14 +508,6 @@ class _PublishCoursePageState extends State<PublishCoursePage> with AutomaticKee
 
   Future<void> _tryPublishCourse({required BuildContext context, required var localizedText, required BloqoUserCourseCreatedData userCourseCreated, required BloqoUserData myself}) async {
     try {
-
-      if (languageTagController.text == localizedText.none ||
-          subjectTagController.text == localizedText.none ||
-          durationTagController.text == localizedText.none ||
-          modalityTagController.text == localizedText.none ||
-          difficultyTagController.text == localizedText.none) {
-        throw BloqoException(message: localizedText.missing_tag_error);
-      }
 
       final List<DropdownMenuEntry<String>> languageTags = buildTagList(
           type: BloqoCourseTagType.language, localizedText: localizedText);
