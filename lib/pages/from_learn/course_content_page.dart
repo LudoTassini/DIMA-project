@@ -187,7 +187,7 @@ class _CourseContentPageState extends State<CourseContentPage> with AutomaticKee
                                                       text: userCourseEnrolled.courseAuthor,
                                                       color: theme.colors.highContrastColor,
                                                       onPressed: () async {
-                                                        _goToUserCoursesPage(
+                                                        await _goToUserCoursesPage(
                                                             context: context,
                                                             localizedText: localizedText,
                                                             authorId: course.authorId

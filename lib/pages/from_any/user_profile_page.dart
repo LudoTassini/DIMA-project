@@ -94,27 +94,27 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
                           showFollowingOptions: widget.author.id !=
                               getUserFromAppState(context: context)!.id,
                         ),
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              20, 10, 20, 0),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              localizedText.published_courses_by_author + widget
-                                  .author.username,
-                              style: theme
-                                  .getThemeData()
-                                  .textTheme
-                                  .displayLarge
-                                  ?.copyWith(
-                                  fontSize: 24,
-                                  color: theme.colors.highContrastColor
+
+                        if (widget.publishedCourses.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 10, 20, 0),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                localizedText.published_courses_by_author + widget
+                                    .author.username,
+                                style: theme
+                                    .getThemeData()
+                                    .textTheme
+                                    .displayLarge
+                                    ?.copyWith(
+                                    fontSize: 24,
+                                    color: theme.colors.highContrastColor
+                                ),
                               ),
                             ),
                           ),
-                        ),
-
-                        if (widget.publishedCourses.isNotEmpty)
                           isTablet ? BloqoSeasaltContainer(
                             child: Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(10, 20,
@@ -216,8 +216,6 @@ class _UserProfilePageState extends State<UserProfilePage> with AutomaticKeepAli
                               ],
                             ),
                           )
-                        else
-                          const SizedBox()
                       ],
                     ),
                   );
