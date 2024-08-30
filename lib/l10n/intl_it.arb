@@ -351,5 +351,6 @@
   "error_multiple_choice_answer_empty": "Una risposta di un quiz a scelta multipla non deve essere vuota.",
   "error_multiple_choice_answer_invalid": "Una risposta di un quiz a scelta multipla non deve contenere testo non valido.",
   "resize_profile_picture": "Ritaglia la tua immagine profilo",
-  "sort_error": "Limitazioni tecniche impediscono a bloQo di eseguire questa ricerca. Per favore, cambia i tuoi filtri e l'ordinamento. Nota che la semplice rimozione del criterio di ordinamento potrebbe rendere la tua richiesta possibile."
+  "sort_error": "Limitazioni tecniche impediscono a bloQo di eseguire questa ricerca. Per favore, cambia i tuoi filtri e l'ordinamento. Nota che la semplice rimozione del criterio di ordinamento potrebbe rendere la tua richiesta possibile.",
+  "close_app_confirmation": "Vuoi davvero chiudere l'applicazione?"
 }

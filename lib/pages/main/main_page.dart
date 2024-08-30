@@ -7,12 +7,14 @@ import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
+import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../utils/constants.dart';
 import '../from_any/notifications_page.dart';
@@ -78,7 +80,17 @@ class _MainPageState extends State<MainPage> {
       _updateCanPop();
     }
     else{
-      // TODO ask for closing app
+      var localizedText = getAppLocalizations(context)!;
+      var theme = getAppThemeFromAppState(context: context);
+      showBloqoConfirmationAlert(
+          context: context,
+          title: localizedText.warning,
+          description: localizedText.close_app_confirmation,
+          confirmationFunction: () {
+            SystemNavigator.pop();
+          },
+          backgroundColor: theme.colors.leadingColor
+      );
     }
     return true;
   }
