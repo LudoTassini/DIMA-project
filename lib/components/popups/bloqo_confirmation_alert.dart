@@ -51,10 +51,10 @@ class BloqoConfirmationAlert extends StatelessWidget{
               backgroundColor: WidgetStateProperty.resolveWith((_) => theme.colors.highContrastColor)
           ),
           onPressed: () {
-            confirmationFunction();
             if(context.mounted) {
               Navigator.pop(context, "OK");
             }
+            confirmationFunction();
           },
           child: Text(localizedText.ok, style: theme.getThemeData().textTheme.displayMedium?.copyWith(
               color: confirmationColor,
