@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:bloqo/components/containers/bloqo_main_container.dart';
 import 'package:bloqo/components/containers/bloqo_seasalt_container.dart';
 import 'package:bloqo/components/forms/bloqo_text_field.dart';
@@ -9,6 +10,7 @@ import 'package:bloqo/utils/bloqo_exception.dart';
 import 'package:bloqo/utils/check_device.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import '../../app_state/application_settings_app_state.dart';
@@ -16,6 +18,7 @@ import '../../app_state/user_app_state.dart';
 import '../../app_state/user_courses_created_app_state.dart';
 import '../../app_state/user_courses_enrolled_app_state.dart';
 import '../../components/buttons/bloqo_filled_button.dart';
+import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../components/popups/bloqo_error_alert.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../model/user_courses/bloqo_user_course_created_data.dart';
@@ -47,13 +50,30 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    BackButtonInterceptor.add(backButtonInterceptor);
   }
 
   @override
   void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    var localizedText = getAppLocalizations(context)!;
+    var theme = getAppThemeFromAppState(context: context);
+    showBloqoConfirmationAlert(
+        context: context,
+        title: localizedText.warning,
+        description: localizedText.close_app_confirmation,
+        confirmationFunction: () {
+          SystemNavigator.pop();
+        },
+        backgroundColor: theme.colors.leadingColor
+    );
+    return true;
   }
 
   @override
