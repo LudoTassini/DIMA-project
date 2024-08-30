@@ -53,6 +53,7 @@ class _NotificationsPageState extends State<NotificationsPage> with AutomaticKee
         canPop: true,
       ),
       body: BloqoMainContainer(
+        alignment: const AlignmentDirectional(-1, -1),
         child: FutureBuilder<List<BloqoNotificationData>>(
           future: getNotificationsFromUserId(firestore: firestore, localizedText: localizedText, userId: user.id),
           builder: (BuildContext context, AsyncSnapshot<List<BloqoNotificationData>> snapshot) {
