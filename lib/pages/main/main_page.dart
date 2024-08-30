@@ -1,17 +1,20 @@
 import 'dart:async';
 
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/model/bloqo_notification_data.dart';
 import 'package:bloqo/pages/main/search_page.dart';
 import 'package:bloqo/pages/main/user_page.dart';
 import 'package:bloqo/utils/localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../app_state/user_app_state.dart';
 import '../../components/containers/bloqo_main_container.dart';
 import '../../components/navigation/bloqo_app_bar.dart';
 import '../../components/navigation/bloqo_nav_bar.dart';
+import '../../components/popups/bloqo_confirmation_alert.dart';
 import '../../model/bloqo_user_data.dart';
 import '../../utils/constants.dart';
 import '../from_any/notifications_page.dart';
@@ -35,6 +38,8 @@ class _MainPageState extends State<MainPage> {
   Timer? _firstNotificationTimer;
   Timer? _notificationTimer;
 
+  bool _isInNotificationsPage = false;
+
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -47,6 +52,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _selectedPageIndex);
+    BackButtonInterceptor.add(backButtonInterceptor);
   }
 
   @override
@@ -57,11 +63,36 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
     _notificationTimer?.cancel();
     _firstNotificationTimer?.cancel();
     _pageController.dispose();
     _canPopNotifier.dispose();
     super.dispose();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    if(_isInNotificationsPage){
+      Navigator.of(context).pop();
+    }
+    else if(_navigatorKeys[_selectedPageIndex].currentState?.canPop() ?? false) {
+      _navigatorKeys[_selectedPageIndex].currentState?.pop();
+      _updateCanPop();
+    }
+    else{
+      var localizedText = getAppLocalizations(context)!;
+      var theme = getAppThemeFromAppState(context: context);
+      showBloqoConfirmationAlert(
+          context: context,
+          title: localizedText.warning,
+          description: localizedText.close_app_confirmation,
+          confirmationFunction: () {
+            SystemNavigator.pop();
+          },
+          backgroundColor: theme.colors.leadingColor
+      );
+    }
+    return true;
   }
 
   void _startNotificationTimers() {
@@ -148,12 +179,31 @@ class _MainPageState extends State<MainPage> {
     super.didUpdateWidget(oldWidget);
   }
 
+  void _onNotificationIconPressed({required var localizedText, required BloqoUserData myself}) {
+    _isInNotificationsPage = true;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => NotificationsPage(
+          onNotificationRemoved: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              await _checkForNotifications(
+                localizedText: localizedText,
+                userId: myself.id,
+              );
+            });
+          },
+        ),
+      ),
+    ).then((_) {
+      _isInNotificationsPage = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     late String title;
     if (!context.mounted) return const Text("Error");
     BloqoUserData myself = getUserFromAppState(context: context)!;
-    var localizedText = getAppLocalizations(context)!;
     switch (_selectedPageIndex) {
       case 0:
         title = "${AppLocalizations.of(context)!.home_page_title}, ${myself.username}!";
@@ -190,20 +240,10 @@ class _MainPageState extends State<MainPage> {
               }
                   : null,
               onNotificationIconPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        NotificationsPage(
-                          onNotificationRemoved: () {
-                            WidgetsBinding.instance.addPostFrameCallback((
-                                _) async {
-                              await _checkForNotifications(
-                                  localizedText: localizedText,
-                                  userId: myself.id);
-                            });
-                          },
-                        ),
-                  ),
+                var localizedText = getAppLocalizations(context);
+                _onNotificationIconPressed(
+                  localizedText: localizedText,
+                  myself: myself
                 );
               },
               notificationCount: notificationCount

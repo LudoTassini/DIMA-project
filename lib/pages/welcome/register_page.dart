@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:bloqo/app_state/application_settings_app_state.dart';
 import 'package:bloqo/components/popups/bloqo_error_alert.dart';
 import 'package:bloqo/model/bloqo_user_data.dart';
@@ -48,15 +49,28 @@ class _RegisterPageState extends State<RegisterPage> {
     passwordController = TextEditingController();
     usernameController = TextEditingController();
     fullNameController = TextEditingController();
+    BackButtonInterceptor.add(backButtonInterceptor);
   }
 
   @override
   void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
     emailController.dispose();
     passwordController.dispose();
     usernameController.dispose();
     fullNameController.dispose();
     super.dispose();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+          const WelcomePage(),
+        )
+    );
+    return true;
   }
 
   @override
