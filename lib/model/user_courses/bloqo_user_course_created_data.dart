@@ -82,7 +82,6 @@ Future<BloqoUserCourseCreatedData> saveNewUserCourseCreated({
   }
 }
 
-// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({
   required FirebaseFirestore firestore,
   required var localizedText,
@@ -101,7 +100,6 @@ Future<List<BloqoUserCourseCreatedData>> getUserCoursesCreated({
   }
 }
 
-// FIXME: limitare a tre corsi
 Future<List<BloqoUserCourseCreatedData>> silentGetUserCoursesCreated({
   required BloqoUserData user
 }) async {
