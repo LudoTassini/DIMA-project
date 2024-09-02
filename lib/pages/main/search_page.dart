@@ -754,7 +754,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                                                     .fromSTEB(0, 0, 15, 0),
                                                 child: Icon(
                                                   Icons.label,
-                                                  color: Color(0xFFFFFF00),
+                                                  color: Color(0xFFFFEA00),
                                                   size: 24,
                                                 ),
                                               ),

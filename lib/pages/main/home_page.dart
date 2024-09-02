@@ -360,7 +360,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
                                   if (userCoursesCreated.isEmpty)
                                     Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 15),
+                                      padding: const EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
                                       child: Column(
                                         children: [
                                           Row(
