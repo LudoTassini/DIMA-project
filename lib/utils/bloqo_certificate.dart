@@ -131,6 +131,8 @@ Future<ui.Image> getCertificateImage({
   );
 
   WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+
     RenderRepaintBoundary? renderRepaintBoundary =
     globalKeyContainer.currentContext?.findRenderObject() as RenderRepaintBoundary?;
 

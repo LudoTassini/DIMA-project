@@ -290,7 +290,7 @@ class BloqoSearchResultCourse extends StatelessWidget{
                                                 0, 0, 5, 0),
                                             child: Icon(
                                               Icons.label,
-                                              color: Color(0xFFFFFF00),
+                                              color: Color(0xFFFFEA00),
                                               size: 24,
                                             ),
                                           ),
