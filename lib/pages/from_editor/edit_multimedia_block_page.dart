@@ -477,7 +477,7 @@ class _EditMultimediaBlockPageState extends State<EditMultimediaBlockPage> with 
                                     showEmbedFromYouTube)
                                   BloqoSeasaltContainer(
                                       padding: const EdgeInsetsDirectional.fromSTEB(
-                                          20, 20, 20, 120),
+                                          20, 20, 20, 20),
                                       child: Column(
                                         children: [
                                           Column(
