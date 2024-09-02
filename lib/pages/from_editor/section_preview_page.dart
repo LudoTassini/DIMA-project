@@ -165,12 +165,11 @@ class _SectionPageState extends State<SectionPreviewPage> with AutomaticKeepAliv
                             ],
                           ),
                         ),
-
+                        const SizedBox(height: 20)
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 20)
               ],
 
             ),
