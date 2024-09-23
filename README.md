@@ -1,4 +1,5 @@
 # bloQo
+![alt text](https://github.com/LudoTassini/DIMA-project/blob/master/bloqo-icon.png)
 
 **A.Y. 2023/2024 - Politecnico di Milano**  
 *Design and Implementation of Mobile Applications*
