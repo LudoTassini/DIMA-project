@@ -28,7 +28,7 @@ bloQo is a mobile app designed to offer users a unified platform to create, shar
 - **QR Codes**: Users and courses can be quickly found by scanning in-app generated QR codes.
 - **Notifications**: Stay updated on course-related activities and new publications.
 
-[__Here__](https://github.com/LudoTassini/(https://github.com/LudoTassini/DIMA-project/blob/master/bloQo%20Design%20Document.pdf) you can find the full documentation.
+[__Here__](https://github.com/LudoTassini/DIMA-project/blob/master/bloQo%20Design%20Document.pdf) you can find the full documentation.
 
 ## Group members 
 
