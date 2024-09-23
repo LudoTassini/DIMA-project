@@ -1,16 +1,15 @@
-# bloqo
+# Design and Implementation of Mobile Applications project - A.Y. 2023/2024
 
-A new Flutter project.
+This project consisted of choosing two technologies between Neo4J, MongoDB and ElasticSearch and performing some analyses on two datasets of our choosing.
+The full project request can be found [__here__](https://github.com/LudoTassini/smbud-project-2023/blob/main/SMBUD%20Project%20-%202023_2024.pdf).
 
-## Getting Started
+We chose to work with Neo4J and MongoDB. Extensive details about our project can be found [__here__](https://github.com/LudoTassini/smbud-project-2023/blob/main/SMBUD%20Project%20-%20Samuele%20Scherini%2C%20Matteo%20Spreafico%2C%20Ludovica%20Tassini.pdf).
 
-This project is a starting point for a Flutter application.
+## Group members 
 
-A few resources to get you started if this is your first Flutter project:
+- [__Matteo Spreafico__](https://github.com/MattBlue00)
+- [__Ludovica Tassini__](https://github.com/LudoTassini)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Evaluation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Our project was graded 30/30.
