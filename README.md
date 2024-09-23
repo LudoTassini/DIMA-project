@@ -1,9 +1,6 @@
 <h1>
-  bloQo 
-  
-  <span style="float: right;">
-    <img src="https://github.com/LudoTassini/DIMA-project/blob/master/bloqo-icon.png" alt="bloQo logo" width="100"/>
-  </span>
+  <img src="https://github.com/LudoTassini/DIMA-project/blob/master/bloqo-icon.png" alt="bloQo logo" width="35"/>
+  bloQo
 </h1>
 
 **A.Y. 2023/2024 - Politecnico di Milano**  
